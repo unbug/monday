@@ -1,3 +1,4 @@
+import { BorderBeam } from 'border-beam'
 import type { ModelInfo, ModelState } from '../types'
 import { MODELS } from '../lib/models'
 
@@ -21,42 +22,50 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
             isActive && modelState.status === 'downloading'
 
           return (
-            <button
+            <BorderBeam
               key={model.id}
-              className={`model-card ${isActive ? 'model-card-active' : ''}`}
-              onClick={() => onSelect(model)}
-              disabled={isLoading}
+              size="md"
+              colorVariant={isActive ? 'ocean' : 'mono'}
+              strength={isActive ? 0.8 : 0.3}
+              active={isActive || false}
+              duration={2.4}
             >
-              <div className="model-card-header">
-                <span className="model-card-name">{model.name}</span>
-                {model.recommended && (
-                  <span className="model-badge">Recommended</span>
-                )}
-              </div>
-              <p className="model-card-desc">{model.description}</p>
-              <div className="model-card-meta">
-                <span>{model.parameters} params</span>
-                <span>{model.size}</span>
-                <span>{model.provider}</span>
-              </div>
-              {isLoading && (
-                <div className="model-progress">
-                  <div
-                    className="model-progress-bar"
-                    style={{ width: `${modelState.progress}%` }}
-                  />
-                  <span className="model-progress-text">
-                    {modelState.progress}%
-                  </span>
+              <button
+                className={`model-card ${isActive ? 'model-card-active' : ''}`}
+                onClick={() => onSelect(model)}
+                disabled={isLoading}
+              >
+                <div className="model-card-header">
+                  <span className="model-card-name">{model.name}</span>
+                  {model.recommended && (
+                    <span className="model-badge">Recommended</span>
+                  )}
                 </div>
-              )}
-              {isActive && modelState.status === 'ready' && (
-                <div className="model-ready">Ready</div>
-              )}
-              {isActive && modelState.status === 'error' && (
-                <div className="model-error">{modelState.error}</div>
-              )}
-            </button>
+                <p className="model-card-desc">{model.description}</p>
+                <div className="model-card-meta">
+                  <span>{model.parameters} params</span>
+                  <span>{model.size}</span>
+                  <span>{model.provider}</span>
+                </div>
+                {isLoading && (
+                  <div className="model-progress">
+                    <div
+                      className="model-progress-bar"
+                      style={{ width: `${modelState.progress}%` }}
+                    />
+                    <span className="model-progress-text">
+                      {modelState.progress}%
+                    </span>
+                  </div>
+                )}
+                {isActive && modelState.status === 'ready' && (
+                  <div className="model-ready">● Ready</div>
+                )}
+                {isActive && modelState.status === 'error' && (
+                  <div className="model-error">{modelState.error}</div>
+                )}
+              </button>
+            </BorderBeam>
           )
         })}
       </div>

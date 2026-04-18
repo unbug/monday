@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { BorderBeam } from 'border-beam'
 import { Sidebar } from './components/Sidebar'
 import { ModelSelector } from './components/ModelSelector'
 import { MessageList } from './components/MessageList'
@@ -81,15 +82,19 @@ export default function App() {
 
           <div className="header-center">
             {selectedModelId && model.status === 'ready' && (
-              <span className="header-model-badge">
-                <span className="header-model-dot" />
-                {modelBadgeText}
-              </span>
+              <BorderBeam size="sm" colorVariant="ocean" strength={0.5} duration={3}>
+                <span className="header-model-badge">
+                  <span className="header-model-dot" />
+                  {modelBadgeText}
+                </span>
+              </BorderBeam>
             )}
             {model.status === 'downloading' && (
-              <span className="header-loading">
-                Loading model... {model.progress}%
-              </span>
+              <BorderBeam size="sm" colorVariant="colorful" strength={0.6} duration={1.5} active>
+                <span className="header-loading">
+                  Loading model... {model.progress}%
+                </span>
+              </BorderBeam>
             )}
           </div>
 
