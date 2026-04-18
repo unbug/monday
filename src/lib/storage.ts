@@ -1,0 +1,82 @@
+import type { ChatSession, ChatMessage } from '../types'
+
+const DB_NAME = 'monday-ai'
+const DB_VERSION = 1
+const SESSIONS_STORE = 'sessions'
+
+function openDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION)
+    request.onupgradeneeded = () => {
+      const db = request.result
+      if (!db.objectStoreNames.contains(SESSIONS_STORE)) {
+        db.createObjectStore(SESSIONS_STORE, { keyPath: 'id' })
+      }
+    }
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function saveSessions(sessions: ChatSession[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(SESSIONS_STORE, 'readwrite')
+  const store = tx.objectStore(SESSIONS_STORE)
+
+  // Clear and rewrite
+  store.clear()
+  for (const session of sessions) {
+    store.put(session)
+  }
+
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadSessions(): Promise<ChatSession[]> {
+  const db = await openDB()
+  const tx = db.transaction(SESSIONS_STORE, 'readonly')
+  const store = tx.objectStore(SESSIONS_STORE)
+
+  return new Promise((resolve, reject) => {
+    const request = store.getAll()
+    request.onsuccess = () => {
+      const sessions = request.result as ChatSession[]
+      sessions.sort((a, b) => b.updatedAt - a.updatedAt)
+      resolve(sessions)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export function createSession(modelId: string): ChatSession {
+  return {
+    id: crypto.randomUUID(),
+    title: 'New Chat',
+    modelId,
+    messages: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  }
+}
+
+export function createMessage(
+  role: ChatMessage['role'],
+  content: string,
+): ChatMessage {
+  return {
+    id: crypto.randomUUID(),
+    role,
+    content,
+    timestamp: Date.now(),
+  }
+}
+
+export function generateTitle(messages: ChatMessage[]): string {
+  const firstUserMsg = messages.find((m) => m.role === 'user')
+  if (!firstUserMsg) return 'New Chat'
+  const text = firstUserMsg.content.slice(0, 40)
+  return text.length < firstUserMsg.content.length ? `${text}...` : text
+}
