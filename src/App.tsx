@@ -6,18 +6,19 @@ import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { WebGPUCheck } from './components/WebGPUCheck'
 import { ThemeToggle } from './components/ThemeToggle'
+import { Changelog } from './components/Changelog'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
 import type { ModelInfo } from './types'
 import './App.css'
 
-type View = 'chat' | 'models'
+type View = 'chat' | 'models' | 'changelog'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
   const [view, setView] = useState<View>('models')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
@@ -54,19 +55,34 @@ export default function App() {
     ? selectedModelId.split('-').slice(0, 2).join(' ')
     : ''
 
+  const closeSidebarOnMobile = useCallback(() => {
+    if (window.innerWidth <= 768) setSidebarOpen(false)
+  }, [])
+
   return (
     <div className="app">
       {sidebarOpen && (
-        <Sidebar
-          sessions={chat.sessions}
-          activeSessionId={chat.activeSession?.id ?? null}
-          onSelect={(id) => {
-            chat.switchSession(id)
-            setView('chat')
-          }}
-          onNew={handleNewChat}
-          onDelete={chat.deleteSession}
-        />
+        <>
+          <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+          <Sidebar
+            sessions={chat.sessions}
+            activeSessionId={chat.activeSession?.id ?? null}
+            onSelect={(id) => {
+              chat.switchSession(id)
+              setView('chat')
+              closeSidebarOnMobile()
+            }}
+            onNew={() => {
+              handleNewChat()
+              closeSidebarOnMobile()
+            }}
+            onDelete={chat.deleteSession}
+            onVersionClick={() => {
+              setView('changelog')
+              closeSidebarOnMobile()
+            }}
+          />
+        </>
       )}
 
       <main className="main">
@@ -124,6 +140,10 @@ export default function App() {
               }}
               onSelect={handleSelectModel}
             />
+          </div>
+        ) : view === 'changelog' ? (
+          <div className="main-content">
+            <Changelog />
           </div>
         ) : (
           <div className="chat-layout">

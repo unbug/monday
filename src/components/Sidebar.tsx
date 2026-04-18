@@ -7,6 +7,7 @@ interface Props {
   onSelect: (id: string) => void
   onNew: () => void
   onDelete: (id: string) => void
+  onVersionClick?: () => void
 }
 
 export function Sidebar({
@@ -15,6 +16,7 @@ export function Sidebar({
   onSelect,
   onNew,
   onDelete,
+  onVersionClick,
 }: Props) {
   return (
     <aside className="sidebar">
@@ -104,7 +106,13 @@ export function Sidebar({
           GitHub
         </a>
         <span className="sidebar-separator">·</span>
-        <span className="sidebar-version">v0.1.0</span>
+        <button
+          className="sidebar-version-btn"
+          onClick={onVersionClick}
+          title="View changelog"
+        >
+          v0.1.0
+        </button>
       </div>
     </aside>
   )

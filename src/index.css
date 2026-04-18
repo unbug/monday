@@ -93,6 +93,7 @@ body,
 #root {
   height: 100%;
   width: 100%;
+  overscroll-behavior: none;
 }
 
 body {
@@ -101,6 +102,7 @@ body {
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {

@@ -1,0 +1,16 @@
+{
+  "name": "Monday - Browser AI Chat",
+  "short_name": "Monday",
+  "description": "Run open-source AI models directly in your browser. No server, no install, 100% private.",
+  "start_url": "/monday/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#a78bfa",
+  "icons": [
+    {
+      "src": "/monday/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
