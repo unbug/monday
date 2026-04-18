@@ -25,6 +25,7 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
             <BorderBeam
               key={model.id}
               size="md"
+              theme="auto"
               colorVariant={isActive ? 'ocean' : 'mono'}
               strength={isActive ? 0.8 : 0.3}
               active={isActive || false}

@@ -5,8 +5,10 @@ import { ModelSelector } from './components/ModelSelector'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { WebGPUCheck } from './components/WebGPUCheck'
+import { ThemeToggle } from './components/ThemeToggle'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
+import { useTheme } from './hooks/useTheme'
 import type { ModelInfo } from './types'
 import './App.css'
 
@@ -19,6 +21,7 @@ export default function App() {
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
+  const theme = useTheme()
 
   useEffect(() => {
     chat.initSessions()
@@ -82,7 +85,7 @@ export default function App() {
 
           <div className="header-center">
             {selectedModelId && model.status === 'ready' && (
-              <BorderBeam size="sm" colorVariant="ocean" strength={0.5} duration={3}>
+              <BorderBeam size="sm" theme="auto" colorVariant="ocean" strength={0.5} duration={3}>
                 <span className="header-model-badge">
                   <span className="header-model-dot" />
                   {modelBadgeText}
@@ -90,13 +93,15 @@ export default function App() {
               </BorderBeam>
             )}
             {model.status === 'downloading' && (
-              <BorderBeam size="sm" colorVariant="colorful" strength={0.6} duration={1.5} active>
+              <BorderBeam size="sm" theme="auto" colorVariant="colorful" strength={0.6} duration={1.5} active>
                 <span className="header-loading">
                   Loading model... {model.progress}%
                 </span>
               </BorderBeam>
             )}
           </div>
+
+          <ThemeToggle mode={theme.mode} onChange={theme.setMode} />
 
           <button
             className="header-models-btn"

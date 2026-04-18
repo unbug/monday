@@ -29,6 +29,7 @@ export function ChatInput({ onSend, onStop, isGenerating, disabled }: Props) {
     <div className="chat-input-wrapper">
       <BorderBeam
         size="line"
+        theme="auto"
         colorVariant="colorful"
         strength={focused ? 0.8 : 0.3}
         active={focused || isGenerating}
