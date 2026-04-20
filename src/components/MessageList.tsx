@@ -1,16 +1,43 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import type { ChatMessage } from '../types'
+import { MarkdownRenderer } from './MarkdownRenderer'
 
 interface Props {
   messages: ChatMessage[]
 }
 
-export function MessageList({ messages }: Props) {
-  const endRef = useRef<HTMLDivElement>(null)
+interface Props {
+  messages: ChatMessage[]
+  isStreaming: boolean
+}
 
+export function MessageList({ messages, isStreaming }: Props) {
+  const endRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
+
+  // Track scroll position to detect if user scrolled up
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    const container = chatContainerRef.current
+    if (!container) return
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container
+      // User is within 80px of bottom = consider them "at bottom"
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 80
+      setShouldAutoScroll(isNearBottom)
+    }
+
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Auto-scroll only when user is at bottom or during streaming
+  useEffect(() => {
+    if (shouldAutoScroll || isStreaming) {
+      endRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages, shouldAutoScroll, isStreaming])
 
   if (messages.length === 0) {
     return (
@@ -45,10 +72,41 @@ export function MessageList({ messages }: Props) {
             )}
           </div>
           <div className="message-content">
-            <div className="message-text">
-              {msg.content}
-              {msg.isStreaming && <span className="cursor-blink">|</span>}
-            </div>
+            {msg.role === 'assistant' ? (
+              <div className="message-text message-text-assistant">
+                {msg.isStreaming ? (
+                  <>
+                    <MarkdownRenderer content={msg.content} />
+                    <span className="cursor-blink">|</span>
+                  </>
+                ) : (
+                  <MarkdownRenderer content={msg.content} />
+                )}
+              </div>
+            ) : (
+              <div className="message-text message-text-user">
+                <div className="user-msg-content">{msg.content}</div>
+                <button
+                  className="msg-copy-btn"
+                  onClick={() => navigator.clipboard.writeText(msg.content)}
+                  title="Copy message"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       ))}

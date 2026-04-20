@@ -1,5 +1,16 @@
+import { useState } from 'react'
 import { BorderBeam } from 'border-beam'
 import type { ChatSession } from '../types'
+import { downloadSession, downloadAll } from '../lib/export'
+
+interface Props {
+  sessions: ChatSession[]
+  activeSessionId: string | null
+  onSelect: (id: string) => void
+  onNew: () => void
+  onDelete: (id: string) => void
+  onVersionClick?: () => void
+}
 
 interface Props {
   sessions: ChatSession[]
@@ -18,6 +29,9 @@ export function Sidebar({
   onDelete,
   onVersionClick,
 }: Props) {
+  const [showExport, setShowExport] = useState(false)
+  const activeSession = sessions.find((s) => s.id === activeSessionId)
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -111,8 +125,45 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.1.0
+          v0.2.0
         </button>
+        <span className="sidebar-separator">·</span>
+        <div className="sidebar-export-wrapper">
+          <button
+            className="sidebar-export-btn"
+            onClick={() => setShowExport(!showExport)}
+            title="Export conversations"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          </button>
+          {showExport && (
+            <div className="sidebar-export-menu">
+              <button
+                className="sidebar-export-menu-item"
+                onClick={() => {
+                  if (activeSession) downloadSession(activeSession)
+                  setShowExport(false)
+                }}
+                disabled={!activeSession}
+              >
+                Export current conversation
+              </button>
+              <button
+                className="sidebar-export-menu-item"
+                onClick={() => {
+                  downloadAll(sessions)
+                  setShowExport(false)
+                }}
+              >
+                Export all conversations
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </aside>
   )

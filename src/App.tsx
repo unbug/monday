@@ -148,7 +148,7 @@ export default function App() {
         ) : (
           <div className="chat-layout">
             <div className="chat-messages">
-              <MessageList messages={chat.messages} />
+              <MessageList messages={chat.messages} isStreaming={chat.isGenerating} />
             </div>
             <ChatInput
               onSend={handleSend}

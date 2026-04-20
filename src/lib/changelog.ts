@@ -11,6 +11,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.2.0',
+    date: '2026-04-21',
+    title: 'Markdown Rendering & Chat Export',
+    description:
+      'Major UX improvements: assistant responses now render as rich Markdown with code highlighting, and conversations can be exported as Markdown files.',
+    changes: [
+      { type: 'added', text: 'Markdown rendering for assistant messages (headings, lists, bold, italic, links)' },
+      { type: 'added', text: 'Syntax-highlighted code blocks with language detection and copy button' },
+      { type: 'added', text: 'Inline code styling with monospace font' },
+      { type: 'added', text: 'LaTeX math equation support via KaTeX (inline $...$ and display $$...$$)' },
+      { type: 'added', text: 'GitHub Flavored Markdown (tables, strikethrough, task lists)' },
+      { type: 'added', text: 'Message copy button (appears on hover for user messages)' },
+      { type: 'added', text: 'Smart auto-scroll control — pauses when user scrolls up, resumes during streaming' },
+      { type: 'added', text: 'Export current conversation as Markdown file' },
+      { type: 'added', text: 'Export all conversations as a single Markdown file' },
+      { type: 'changed', text: 'Updated version to v0.2.0' },
+    ],
+  },
+  {
     version: '0.1.0',
     date: '2026-06-15',
     title: 'Initial Release',
