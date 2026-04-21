@@ -5,6 +5,7 @@ import {
   getCurrentModelId,
   checkWebGPUSupport,
 } from '../lib/engine'
+import { getDownloadedModelIds, markModelDownloaded } from '../lib/storage'
 import type { ModelState } from '../types'
 import type { InitProgressReport } from '@mlc-ai/web-llm'
 
@@ -15,6 +16,7 @@ export function useModel() {
     error: null,
   })
   const [webgpuSupported, setWebgpuSupported] = useState<boolean | null>(null)
+  const [downloadedModelIds, setDownloadedModelIds] = useState<Set<string>>(() => getDownloadedModelIds())
   const abortRef = useRef(false)
 
   useEffect(() => {
@@ -44,6 +46,8 @@ export function useModel() {
       })
 
       if (!abortRef.current) {
+        markModelDownloaded(modelId)
+        setDownloadedModelIds(getDownloadedModelIds())
         setState({ status: 'ready', progress: 100, error: null })
       }
     } catch (err) {
@@ -64,6 +68,7 @@ export function useModel() {
   return {
     ...state,
     webgpuSupported,
+    downloadedModelIds,
     load,
     unload,
   }

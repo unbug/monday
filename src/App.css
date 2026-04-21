@@ -378,6 +378,11 @@
   color: var(--color-text-on-primary);
 }
 
+.model-badge-downloaded {
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--color-success);
+}
+
 .model-badge-tag {
   text-transform: none;
 }

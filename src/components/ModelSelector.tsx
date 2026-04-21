@@ -3,21 +3,31 @@ import { useState, useMemo } from 'react'
 import type { ModelInfo, ModelState } from '../types'
 import { MODELS } from '../lib/models'
 
-type SortMode = 'latest' | 'size'
+type SortMode = 'popular' | 'latest' | 'size'
 
 interface Props {
   currentModelId: string | null
   modelState: ModelState
+  downloadedModelIds: Set<string>
   onSelect: (model: ModelInfo) => void
 }
 
-export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
-  const [sortMode, setSortMode] = useState<SortMode>('latest')
+export function ModelSelector({ currentModelId, modelState, downloadedModelIds, onSelect }: Props) {
+  const [sortMode, setSortMode] = useState<SortMode>('popular')
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null)
 
   const sortedModels = useMemo(() => {
     const list = [...MODELS]
-    if (sortMode === 'size') {
+    if (sortMode === 'popular') {
+      list.sort((a, b) => {
+        const aRec = a.recommended ? 1 : 0
+        const bRec = b.recommended ? 1 : 0
+        if (bRec !== aRec) return bRec - aRec
+        const dateA = new Date(a.releaseDate).getTime()
+        const dateB = new Date(b.releaseDate).getTime()
+        return dateB - dateA
+      })
+    } else if (sortMode === 'size') {
       list.sort((a, b) => b.paramCount - a.paramCount)
     } else {
       list.sort((a, b) => {
@@ -51,6 +61,12 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
           All models run directly in your browser using WebGPU. No server needed.
         </p>
         <div className="model-sort-group">
+          <button
+            className={`model-sort-btn ${sortMode === 'popular' ? 'model-sort-active' : ''}`}
+            onClick={() => setSortMode('popular')}
+          >
+            Popular
+          </button>
           <button
             className={`model-sort-btn ${sortMode === 'latest' ? 'model-sort-active' : ''}`}
             onClick={() => setSortMode('latest')}
@@ -93,6 +109,9 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
                   <div className="model-card-badges">
                     {model.recommended && (
                       <span className="model-badge model-badge-recommended">Recommended</span>
+                    )}
+                    {downloadedModelIds.has(model.id) && (
+                      <span className="model-badge model-badge-downloaded">✓ Downloaded</span>
                     )}
                     {model.tags?.map((tag) => (
                       <span

@@ -101,3 +101,21 @@ export function generateTitle(messages: ChatMessage[]): string {
   const text = firstUserMsg.content.slice(0, 40)
   return text.length < firstUserMsg.content.length ? `${text}...` : text
 }
+
+const DOWNLOADED_MODELS_KEY = 'monday-downloaded-models'
+
+export function getDownloadedModelIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DOWNLOADED_MODELS_KEY)
+    if (!raw) return new Set()
+    return new Set(JSON.parse(raw) as string[])
+  } catch {
+    return new Set()
+  }
+}
+
+export function markModelDownloaded(modelId: string): void {
+  const ids = getDownloadedModelIds()
+  ids.add(modelId)
+  localStorage.setItem(DOWNLOADED_MODELS_KEY, JSON.stringify([...ids]))
+}

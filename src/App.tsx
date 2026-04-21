@@ -147,6 +147,7 @@ export default function App() {
                 progress: model.progress,
                 error: model.error,
               }}
+              downloadedModelIds={model.downloadedModelIds}
               onSelect={handleSelectModel}
             />
           </div>
