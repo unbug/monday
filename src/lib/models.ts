@@ -9,6 +9,7 @@ export const MODELS: ModelInfo[] = [
     parameters: '0.6B',
     provider: 'Alibaba',
     recommended: true,
+    tags: ['thinking'],
   },
   {
     id: 'Qwen3-1.7B-q4f16_1-MLC',
@@ -17,6 +18,7 @@ export const MODELS: ModelInfo[] = [
     size: '~1 GB',
     parameters: '1.7B',
     provider: 'Alibaba',
+    tags: ['thinking'],
   },
   {
     id: 'Qwen3-4B-q4f16_1-MLC',
@@ -25,6 +27,7 @@ export const MODELS: ModelInfo[] = [
     size: '~2.5 GB',
     parameters: '4B',
     provider: 'Alibaba',
+    tags: ['thinking'],
   },
   {
     id: 'Qwen3-8B-q4f16_1-MLC',
@@ -33,6 +36,7 @@ export const MODELS: ModelInfo[] = [
     size: '~5 GB',
     parameters: '8B',
     provider: 'Alibaba',
+    tags: ['thinking'],
   },
   {
     id: 'Qwen3.5-0.8B-q4f16_1-MLC',
@@ -41,6 +45,7 @@ export const MODELS: ModelInfo[] = [
     size: '~500 MB',
     parameters: '0.8B',
     provider: 'Alibaba',
+    tags: ['thinking', 'tools'],
   },
   {
     id: 'Qwen3.5-2B-q4f16_1-MLC',
@@ -49,6 +54,7 @@ export const MODELS: ModelInfo[] = [
     size: '~1.2 GB',
     parameters: '2B',
     provider: 'Alibaba',
+    tags: ['thinking', 'tools'],
   },
   {
     id: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',
@@ -58,6 +64,7 @@ export const MODELS: ModelInfo[] = [
     parameters: '0.5B',
     provider: 'Alibaba',
     recommended: true,
+    tags: ['thinking'],
   },
   {
     id: 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',
@@ -66,6 +73,7 @@ export const MODELS: ModelInfo[] = [
     size: '~900 MB',
     parameters: '1.5B',
     provider: 'Alibaba',
+    tags: ['thinking'],
   },
   {
     id: 'SmolLM2-360M-Instruct-q4f16_1-MLC',
@@ -74,6 +82,7 @@ export const MODELS: ModelInfo[] = [
     size: '~200 MB',
     parameters: '360M',
     provider: 'HuggingFace',
+    tags: ['thinking'],
   },
   {
     id: 'SmolLM2-1.7B-Instruct-q4f16_1-MLC',
@@ -82,6 +91,7 @@ export const MODELS: ModelInfo[] = [
     size: '~1 GB',
     parameters: '1.7B',
     provider: 'HuggingFace',
+    tags: ['thinking'],
   },
   {
     id: 'gemma-2-2b-it-q4f16_1-MLC',
@@ -90,6 +100,7 @@ export const MODELS: ModelInfo[] = [
     size: '~1.3 GB',
     parameters: '2B',
     provider: 'Google',
+    tags: ['thinking'],
   },
   {
     id: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
@@ -98,6 +109,7 @@ export const MODELS: ModelInfo[] = [
     size: '~2 GB',
     parameters: '3.8B',
     provider: 'Microsoft',
+    tags: ['thinking'],
   },
   {
     id: 'TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC',
@@ -106,6 +118,7 @@ export const MODELS: ModelInfo[] = [
     size: '~600 MB',
     parameters: '1.1B',
     provider: 'Community',
+    tags: ['thinking'],
   },
 ]
 

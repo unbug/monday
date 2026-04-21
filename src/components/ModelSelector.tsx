@@ -1,6 +1,9 @@
 import { BorderBeam } from 'border-beam'
+import { useState, useMemo } from 'react'
 import type { ModelInfo, ModelState } from '../types'
 import { MODELS } from '../lib/models'
+
+type SortMode = 'latest' | 'size'
 
 interface Props {
   currentModelId: string | null
@@ -9,14 +12,62 @@ interface Props {
 }
 
 export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
+  const [sortMode, setSortMode] = useState<SortMode>('latest')
+
+  const sortedModels = useMemo(() => {
+    const list = [...MODELS]
+    if (sortMode === 'size') {
+      list.sort((a, b) => {
+        const parseSize = (s: string) => {
+          const match = s.match(/[\d.]+/)
+          return match ? parseFloat(match[0]) : 0
+        }
+        const sizeA = parseSize(a.size)
+        const sizeB = parseSize(b.size)
+        return sizeA - sizeB
+      })
+    }
+    return list
+  }, [sortMode])
+
+  const tagColors: Record<string, string> = {
+    thinking: '#a78bfa',
+    tools: '#60a5fa',
+    vision: '#34d399',
+    embedding: '#fbbf24',
+  }
+
+  const tagLabels: Record<string, string> = {
+    thinking: '🧠',
+    tools: '🔧',
+    vision: '👁️',
+    embedding: '📇',
+  }
+
   return (
     <div className="model-selector">
-      <h2 className="model-selector-title">Select a Model</h2>
-      <p className="model-selector-desc">
-        All models run directly in your browser using WebGPU. No server needed.
-      </p>
+      <div className="model-selector-header">
+        <h2 className="model-selector-title">Select a Model</h2>
+        <p className="model-selector-desc">
+          All models run directly in your browser using WebGPU. No server needed.
+        </p>
+        <div className="model-sort-group">
+          <button
+            className={`model-sort-btn ${sortMode === 'latest' ? 'model-sort-active' : ''}`}
+            onClick={() => setSortMode('latest')}
+          >
+            Latest
+          </button>
+          <button
+            className={`model-sort-btn ${sortMode === 'size' ? 'model-sort-active' : ''}`}
+            onClick={() => setSortMode('size')}
+          >
+            Size
+          </button>
+        </div>
+      </div>
       <div className="model-grid">
-        {MODELS.map((model) => {
+        {sortedModels.map((model) => {
           const isActive = currentModelId === model.id
           const isLoading =
             isActive && modelState.status === 'downloading'
@@ -38,9 +89,20 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
               >
                 <div className="model-card-header">
                   <span className="model-card-name">{model.name}</span>
-                  {model.recommended && (
-                    <span className="model-badge">Recommended</span>
-                  )}
+                  <div className="model-card-badges">
+                    {model.recommended && (
+                      <span className="model-badge model-badge-recommended">Recommended</span>
+                    )}
+                    {model.tags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className="model-badge model-badge-tag"
+                        style={{ backgroundColor: tagColors[tag] + '20', color: tagColors[tag] }}
+                      >
+                        {tagLabels[tag]} {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
                 <p className="model-card-desc">{model.description}</p>
                 <div className="model-card-meta">

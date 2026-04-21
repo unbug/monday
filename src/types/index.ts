@@ -1,3 +1,5 @@
+export type ModelTag = 'vision' | 'tools' | 'thinking' | 'embedding'
+
 export interface ModelInfo {
   id: string
   name: string
@@ -6,6 +8,7 @@ export interface ModelInfo {
   parameters: string
   provider: string
   recommended?: boolean
+  tags?: ModelTag[]
 }
 
 export interface ChatMessage {
