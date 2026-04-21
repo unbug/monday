@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
-import { streamChat } from '../lib/engine'
+import { streamChatWithUsage } from '../lib/engine'
+import { useTokenStats } from './useTokenStats'
 import {
   createMessage,
   generateTitle,
@@ -25,6 +26,7 @@ export function useChat(modelId: string) {
   const [isGenerating, setIsGenerating] = useState(false)
   const abortRef = useRef(false)
   const sessionsLoaded = useRef(false)
+  const tokenStats = useTokenStats()
 
   const activeSession = sessions.find((s) => s.id === activeSessionId) ?? null
   const messages = activeSession?.messages ?? []
@@ -45,12 +47,13 @@ export function useChat(modelId: string) {
   }, [])
 
   const newSession = useCallback(() => {
+    tokenStats.reset()
     const session = createSession(modelId)
     const updated = [session, ...sessions]
     setActiveSessionId(session.id)
     persistSessions(updated)
     return session.id
-  }, [modelId, sessions, persistSessions])
+  }, [modelId, sessions, persistSessions, tokenStats])
 
   const sendMessage = useCallback(
     async (content: string) => {
@@ -105,10 +108,17 @@ export function useChat(modelId: string) {
         }))
         const opts = paramsForSession(active)
 
+        // Start token tracking
+        tokenStats.startStreaming()
         let fullContent = ''
-        for await (const token of streamChat(history, opts)) {
+        let tokenCount = 0
+
+        const { generator, usage } = streamChatWithUsage(history, opts)
+        for await (const token of generator) {
           if (abortRef.current) break
           fullContent += token
+          tokenCount++
+          tokenStats.addTokens(1)
           const captured = fullContent
           currentSessions = currentSessions.map((s) =>
             s.id === sessionId
@@ -125,7 +135,13 @@ export function useChat(modelId: string) {
           setSessions([...currentSessions])
         }
 
-        // Finalize
+        // Finalize with usage stats
+        tokenStats.finishStreaming(usage.current ?? {
+          promptTokens: 0,
+          completionTokens: tokenCount,
+          totalTokens: tokenCount,
+        })
+
         currentSessions = currentSessions.map((s) => {
           if (s.id !== sessionId) return s
           const msgs = s.messages.map((m) =>
@@ -143,6 +159,12 @@ export function useChat(modelId: string) {
 
         await persistSessions(currentSessions)
       } catch (err) {
+        tokenStats.finishStreaming({
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+        })
+
         const errorContent =
           err instanceof Error ? err.message : 'Generation failed'
 
@@ -176,18 +198,20 @@ export function useChat(modelId: string) {
 
   const deleteSession = useCallback(
     async (id: string) => {
+      tokenStats.reset()
       const updated = sessions.filter((s) => s.id !== id)
       if (activeSessionId === id) {
         setActiveSessionId(updated.length > 0 ? updated[0].id : null)
       }
       await persistSessions(updated)
     },
-    [sessions, activeSessionId, persistSessions],
+    [sessions, activeSessionId, persistSessions, tokenStats],
   )
 
   const switchSession = useCallback((id: string) => {
+    tokenStats.reset()
     setActiveSessionId(id)
-  }, [])
+  }, [tokenStats])
 
   const updateSessions = useCallback(
     (updated: ChatSession[]) => {
@@ -202,6 +226,8 @@ export function useChat(modelId: string) {
     activeSession,
     messages,
     isGenerating,
+    tokenStats: tokenStats.stats,
+    isStreaming: tokenStats.isStreaming,
     initSessions,
     newSession,
     sendMessage,

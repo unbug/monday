@@ -11,6 +11,21 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.4.0',
+    date: '2026-04-21',
+    title: 'Token Counter & Performance Metrics',
+    description:
+      'Real-time token counting and performance metrics during generation — see tokens/sec, elapsed time, and total token count as the model generates responses.',
+    changes: [
+      { type: 'added', text: 'Token counter hook (useTokenStats) — tracks tokens/sec, elapsed time, and session token count' },
+      { type: 'added', text: 'Live performance stats displayed in chat input during generation (tokens/sec, elapsed time, token count)' },
+      { type: 'added', text: 'streamChatWithUsage — captures Web-LLM usage stats from streaming chunks' },
+      { type: 'added', text: 'Token stats auto-reset on new session, session switch, and session delete' },
+      { type: 'added', text: 'Styled token stats pills with icons (dark/light theme support)' },
+      { type: 'changed', text: 'Updated version to v0.4.0' },
+    ],
+  },
+  {
     version: '0.3.0',
     date: '2026-04-21',
     title: 'Generation Parameters & System Prompts',

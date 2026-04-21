@@ -119,7 +119,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.3.0
+          v0.4.0
         </button>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">

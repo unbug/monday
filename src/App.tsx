@@ -164,6 +164,8 @@ export default function App() {
               onStop={chat.stopGenerating}
               isGenerating={chat.isGenerating}
               disabled={!isReady}
+              tokenStats={chat.tokenStats}
+              isStreaming={chat.isStreaming}
             />
           </div>
         )}
