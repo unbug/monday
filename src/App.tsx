@@ -158,7 +158,18 @@ export default function App() {
         ) : (
           <div className="chat-layout">
             <div className="chat-messages">
-              <MessageList messages={chat.messages} isStreaming={chat.isGenerating} />
+              <MessageList
+                messages={chat.messages}
+                isStreaming={chat.isGenerating}
+                onRegenerateMessage={(id) => {
+                  const session = chat.activeSession
+                  if (session) {
+                    const msg = session.messages.find((m) => m.id === id)
+                    if (msg) chat.regenerateMessage(msg.id)
+                  }
+                }}
+                onEditMessage={(id, content) => chat.editMessage(id, content)}
+              />
             </div>
             <ChatInput
               onSend={handleSend}

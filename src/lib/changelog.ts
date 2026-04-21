@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.5.0',
+    date: '2026-04-22',
+    title: 'Message Actions — Edit & Regenerate',
+    description:
+      'User messages now have inline edit and regenerate actions — hover over your message to edit text or regenerate the assistant\'s response.',
+    changes: [
+      { type: 'added', text: 'MessageActions component — hover to reveal Edit and Regenerate buttons on user messages' },
+      { type: 'added', text: 'Inline message editing — click Edit to modify your message with a textarea, Save/Cancel buttons' },
+      { type: 'added', text: 'Regenerate response — re-send the last user message to generate a fresh assistant response' },
+      { type: 'added', text: 'Keyboard shortcuts — Enter to save edit, Escape to cancel' },
+      { type: 'added', text: 'Regenerate button disabled while streaming to prevent conflicts' },
+      { type: 'added', text: 'Refactored useChat — extracted sendUserMessage internal function shared by sendMessage and regenerateMessage' },
+      { type: 'changed', text: 'Updated version to v0.5.0' },
+    ],
+  },
+  {
     version: '0.4.0',
     date: '2026-04-21',
     title: 'Token Counter & Performance Metrics',

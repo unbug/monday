@@ -1,17 +1,21 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import type { ChatMessage } from '../types'
 import { MarkdownRenderer } from './MarkdownRenderer'
-
-interface Props {
-  messages: ChatMessage[]
-}
+import { MessageActions } from './MessageActions'
 
 interface Props {
   messages: ChatMessage[]
   isStreaming: boolean
+  onRegenerateMessage?: (messageId: string) => void
+  onEditMessage?: (messageId: string, content: string) => void
 }
 
-export function MessageList({ messages, isStreaming }: Props) {
+export function MessageList({
+  messages,
+  isStreaming,
+  onRegenerateMessage,
+  onEditMessage,
+}: Props) {
   const endRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
@@ -105,6 +109,15 @@ export function MessageList({ messages, isStreaming }: Props) {
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
                 </button>
+                {onRegenerateMessage && onEditMessage && (
+                  <MessageActions
+                    messageContent={msg.content}
+                    isUser={true}
+                    isStreaming={isStreaming}
+                    onEdit={(content) => onEditMessage(msg.id, content)}
+                    onRegenerate={() => onRegenerateMessage(msg.id)}
+                  />
+                )}
               </div>
             )}
           </div>

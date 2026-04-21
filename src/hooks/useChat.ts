@@ -196,6 +196,216 @@ export function useChat(modelId: string) {
     abortRef.current = true
   }, [])
 
+  /**
+   * Internal function to send a message and stream the response.
+   * Used by both sendMessage and regenerateMessage.
+   */
+  const sendUserMessage = useCallback(
+    async (
+      content: string,
+      userMsg?: ChatMessage,
+      existingAssistantMsg?: ChatMessage,
+    ) => {
+      let currentSessions = [...sessions]
+      let sessionId = activeSessionId
+
+      if (!sessionId) {
+        const session = createSession(modelId)
+        currentSessions = [session, ...currentSessions]
+        sessionId = session.id
+        setActiveSessionId(sessionId)
+      }
+
+      const messageToSend =
+        userMsg ?? createMessage('user', content)
+      const assistantMsg =
+        existingAssistantMsg ?? {
+          ...createMessage('assistant', ''),
+          isStreaming: true,
+        }
+
+      // Add user message
+      currentSessions = currentSessions.map((s) =>
+        s.id === sessionId
+          ? {
+              ...s,
+              messages: [...s.messages, messageToSend],
+              updatedAt: Date.now(),
+            }
+          : s,
+      )
+      setSessions(currentSessions)
+      setIsGenerating(true)
+      abortRef.current = false
+
+      // Add empty assistant message
+      currentSessions = currentSessions.map((s) =>
+        s.id === sessionId
+          ? {
+              ...s,
+              messages: [...s.messages, assistantMsg],
+            }
+          : s,
+      )
+      setSessions(currentSessions)
+
+      try {
+        const active = currentSessions.find((s) => s.id === sessionId)!
+        const history = active.messages
+          .filter((m) => !m.isStreaming)
+          .map((m) => ({ role: m.role, content: m.content }))
+        const opts = paramsForSession(active)
+
+        // Start token tracking
+        tokenStats.startStreaming()
+        let fullContent = ''
+        let tokenCount = 0
+
+        const { generator, usage } = streamChatWithUsage(history, opts)
+        for await (const token of generator) {
+          if (abortRef.current) break
+          fullContent += token
+          tokenCount++
+          tokenStats.addTokens(1)
+          const captured = fullContent
+          currentSessions = currentSessions.map((s) =>
+            s.id === sessionId
+              ? {
+                  ...s,
+                  messages: s.messages.map((m) =>
+                    m.id === assistantMsg.id
+                      ? { ...m, content: captured }
+                      : m,
+                  ),
+                }
+              : s,
+          )
+          setSessions([...currentSessions])
+        }
+
+        // Finalize with usage stats
+        tokenStats.finishStreaming(
+          usage.current ?? {
+            promptTokens: 0,
+            completionTokens: tokenCount,
+            totalTokens: tokenCount,
+          },
+        )
+
+        currentSessions = currentSessions.map((s) => {
+          if (s.id !== sessionId) return s
+          const msgs = s.messages.map((m) =>
+            m.id === assistantMsg.id
+              ? { ...m, content: fullContent, isStreaming: false }
+              : m,
+          )
+          return {
+            ...s,
+            messages: msgs,
+            title:
+              s.title === 'New Chat'
+                ? generateTitle(msgs)
+                : s.title,
+            updatedAt: Date.now(),
+          }
+        })
+
+        await persistSessions(currentSessions)
+      } catch (err) {
+        tokenStats.finishStreaming({
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+        })
+
+        const errorContent =
+          err instanceof Error ? err.message : 'Generation failed'
+
+        currentSessions = currentSessions.map((s) =>
+          s.id === sessionId
+            ? {
+                ...s,
+                messages: s.messages.map((m) =>
+                  m.id === assistantMsg.id
+                    ? {
+                        ...m,
+                        content: `Error: ${errorContent}`,
+                        isStreaming: false,
+                      }
+                    : m,
+                ),
+              }
+            : s,
+        )
+        await persistSessions(currentSessions)
+      } finally {
+        setIsGenerating(false)
+      }
+    },
+    [
+      sessions,
+      activeSessionId,
+      modelId,
+      persistSessions,
+      tokenStats,
+    ],
+  )
+
+  const regenerateMessage = useCallback(
+    (messageId: string) => {
+      const active = sessions.find((s) => s.id === activeSessionId)
+      if (!active) return
+
+      // Find the last user message before the current assistant response
+      const messages = active.messages.filter((m) => !m.isStreaming)
+      const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user')
+      if (!lastUserMsg) return
+
+      // Find the current assistant message
+      const assistantMsg = active.messages.find((m) => m.isStreaming)
+
+      // Clear the current assistant response
+      const updatedSessions = sessions.map((s) =>
+        s.id === activeSessionId
+          ? {
+              ...s,
+              messages: s.messages.map((m) =>
+                m.isStreaming
+                  ? { ...m, content: '', isStreaming: true }
+                  : m,
+              ),
+            }
+          : s,
+      )
+      setSessions(updatedSessions)
+
+      // Re-send the last user message
+      sendUserMessage(lastUserMsg.content, lastUserMsg, assistantMsg)
+    },
+    [sessions, activeSessionId, sendUserMessage],
+  )
+
+  const editMessage = useCallback(
+    (messageId: string, newContent: string) => {
+      const updatedSessions = sessions.map((s) =>
+        s.id === activeSessionId
+          ? {
+              ...s,
+              messages: s.messages.map((m) =>
+                m.id === messageId
+                  ? { ...m, content: newContent }
+                  : m,
+              ),
+              updatedAt: Date.now(),
+            }
+          : s,
+      )
+      setSessions(updatedSessions)
+      persistSessions(updatedSessions)
+    },
+    [sessions, activeSessionId, persistSessions],
+  )
+
   const deleteSession = useCallback(
     async (id: string) => {
       tokenStats.reset()
@@ -232,6 +442,8 @@ export function useChat(modelId: string) {
     newSession,
     sendMessage,
     stopGenerating,
+    regenerateMessage,
+    editMessage,
     deleteSession,
     switchSession,
     updateSessions,
