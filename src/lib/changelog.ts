@@ -11,6 +11,21 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.3.0',
+    date: '2026-04-21',
+    title: 'Generation Parameters & System Prompts',
+    description:
+      'Users can now fine-tune model behavior with per-session generation parameters (temperature, top-p, max tokens) and custom system prompts — all persisted across sessions.',
+    changes: [
+      { type: 'added', text: 'Generation parameters panel (temperature, top-p, max tokens) with sliders' },
+      { type: 'added', text: 'Per-session customizable system prompt (persisted in IndexedDB)' },
+      { type: 'added', text: 'Migration system for existing sessions — old chats automatically get default params' },
+      { type: 'added', text: 'Reset button to restore default generation parameters' },
+      { type: 'added', text: 'Visual indicator (dot) when custom parameters are active' },
+      { type: 'changed', text: 'Updated version to v0.3.0' },
+    ],
+  },
+  {
     version: '0.2.0',
     date: '2026-04-21',
     title: 'Markdown Rendering & Chat Export',

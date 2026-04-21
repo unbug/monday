@@ -50,21 +50,45 @@ export function getCurrentModelId(): string | null {
 
 export async function* streamChat(
   messages: Array<{ role: string; content: string }>,
-  options: { temperature?: number; maxTokens?: number } = {},
+  options: {
+    temperature?: number
+    top_p?: number
+    maxTokens?: number
+    systemPrompt?: string
+  } = {},
 ): AsyncGenerator<string, void, unknown> {
   const engine = engineInstance
   if (!engine) {
     throw new Error('No model loaded')
   }
 
-  const { temperature = 0.7, maxTokens = 1024 } = options
+  const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt } =
+    options
 
-  const chunks = await engine.chat.completions.create({
-    messages: messages as Array<{
+  // Prepend system prompt if provided
+  let chatMessages: Array<{
+    role: 'user' | 'assistant' | 'system'
+    content: string
+  }>
+  if (systemPrompt?.trim()) {
+    chatMessages = [
+      { role: 'system', content: systemPrompt.trim() },
+      ...messages,
+    ] as Array<{
       role: 'user' | 'assistant' | 'system'
       content: string
-    }>,
+    }>
+  } else {
+    chatMessages = messages as Array<{
+      role: 'user' | 'assistant' | 'system'
+      content: string
+    }>
+  }
+
+  const chunks = await engine.chat.completions.create({
+    messages: chatMessages,
     temperature,
+    top_p,
     max_tokens: maxTokens,
     stream: true,
     stream_options: { include_usage: true },

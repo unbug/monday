@@ -4,6 +4,7 @@ import { Sidebar } from './components/Sidebar'
 import { ModelSelector } from './components/ModelSelector'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
+import { SettingsPanel } from './components/SettingsPanel'
 import { WebGPUCheck } from './components/WebGPUCheck'
 import { ThemeToggle } from './components/ThemeToggle'
 import { Changelog } from './components/Changelog'
@@ -80,6 +81,14 @@ export default function App() {
             onVersionClick={() => {
               setView('changelog')
               closeSidebarOnMobile()
+            }}
+            onUpdateSession={(updated) => {
+              const idx = chat.sessions.findIndex((s) => s.id === updated.id)
+              if (idx !== -1) {
+                const updatedSessions = [...chat.sessions]
+                updatedSessions[idx] = updated
+                chat.updateSessions(updatedSessions)
+              }
             }}
           />
         </>

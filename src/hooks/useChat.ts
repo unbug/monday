@@ -9,6 +9,16 @@ import {
 } from '../lib/storage'
 import type { ChatSession, ChatMessage } from '../types'
 
+function paramsForSession(session: ChatSession | undefined) {
+  const params = session?.generationParams
+  return {
+    temperature: params?.temperature ?? 0.7,
+    top_p: params?.top_p ?? 0.9,
+    maxTokens: params?.maxTokens ?? 1024,
+    systemPrompt: session?.systemPrompt,
+  }
+}
+
 export function useChat(modelId: string) {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -88,13 +98,15 @@ export function useChat(modelId: string) {
       setSessions(currentSessions)
 
       try {
-        const history = currentSessions
-          .find((s) => s.id === sessionId)!
-          .messages.filter((m) => !m.isStreaming)
-          .map((m) => ({ role: m.role, content: m.content }))
+        const active = currentSessions.find((s) => s.id === sessionId)!
+        const history = active.messages.filter((m) => !m.isStreaming).map((m) => ({
+          role: m.role,
+          content: m.content,
+        }))
+        const opts = paramsForSession(active)
 
         let fullContent = ''
-        for await (const token of streamChat(history)) {
+        for await (const token of streamChat(history, opts)) {
           if (abortRef.current) break
           fullContent += token
           const captured = fullContent
@@ -177,6 +189,14 @@ export function useChat(modelId: string) {
     setActiveSessionId(id)
   }, [])
 
+  const updateSessions = useCallback(
+    (updated: ChatSession[]) => {
+      setSessions(updated)
+      saveSessions(updated)
+    },
+    [],
+  )
+
   return {
     sessions,
     activeSession,
@@ -188,5 +208,6 @@ export function useChat(modelId: string) {
     stopGenerating,
     deleteSession,
     switchSession,
+    updateSessions,
   }
 }

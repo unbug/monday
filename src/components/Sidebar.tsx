@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BorderBeam } from 'border-beam'
 import type { ChatSession } from '../types'
 import { downloadSession, downloadAll } from '../lib/export'
+import { SettingsPanel } from './SettingsPanel'
 
 interface Props {
   sessions: ChatSession[]
@@ -10,15 +11,7 @@ interface Props {
   onNew: () => void
   onDelete: (id: string) => void
   onVersionClick?: () => void
-}
-
-interface Props {
-  sessions: ChatSession[]
-  activeSessionId: string | null
-  onSelect: (id: string) => void
-  onNew: () => void
-  onDelete: (id: string) => void
-  onVersionClick?: () => void
+  onUpdateSession?: (session: ChatSession) => void
 }
 
 export function Sidebar({
@@ -28,6 +21,7 @@ export function Sidebar({
   onNew,
   onDelete,
   onVersionClick,
+  onUpdateSession,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const activeSession = sessions.find((s) => s.id === activeSessionId)
@@ -125,7 +119,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.2.0
+          v0.3.0
         </button>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">
@@ -165,6 +159,15 @@ export function Sidebar({
           )}
         </div>
       </div>
+
+      {activeSession && onUpdateSession && (
+        <div className="sidebar-settings">
+          <SettingsPanel
+            session={activeSession}
+            onUpdate={onUpdateSession}
+          />
+        </div>
+      )}
     </aside>
   )
 }

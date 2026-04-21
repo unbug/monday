@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams } from '../types'
 
 const DB_NAME = 'monday-ai'
 const DB_VERSION = 1
@@ -45,10 +45,25 @@ export async function loadSessions(): Promise<ChatSession[]> {
     request.onsuccess = () => {
       const sessions = request.result as ChatSession[]
       sessions.sort((a, b) => b.updatedAt - a.updatedAt)
-      resolve(sessions)
+      resolve(sessions.map(migrateSession))
     }
     request.onerror = () => reject(request.error)
   })
+}
+
+function migrateSession(session: ChatSession): ChatSession {
+  const migrated = { ...session }
+  if (!migrated.systemPrompt) {
+    migrated.systemPrompt = ''
+  }
+  if (!migrated.generationParams) {
+    migrated.generationParams = {
+      temperature: 0.7,
+      top_p: 0.9,
+      maxTokens: 1024,
+    }
+  }
+  return migrated
 }
 
 export function createSession(modelId: string): ChatSession {
@@ -57,6 +72,12 @@ export function createSession(modelId: string): ChatSession {
     title: 'New Chat',
     modelId,
     messages: [],
+    systemPrompt: '',
+    generationParams: {
+      temperature: 0.7,
+      top_p: 0.9,
+      maxTokens: 1024,
+    },
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }

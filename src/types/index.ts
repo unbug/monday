@@ -16,11 +16,19 @@ export interface ChatMessage {
   timestamp: number
 }
 
+export interface GenerationParams {
+  temperature: number
+  top_p: number
+  maxTokens: number
+}
+
 export interface ChatSession {
   id: string
   title: string
   modelId: string
   messages: ChatMessage[]
+  systemPrompt: string
+  generationParams: GenerationParams
   createdAt: number
   updatedAt: number
 }

@@ -207,15 +207,15 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 ### Phase 1 — Core Chat Enhancement (v0.2.x)
 > Bring chat to feature parity with basic ChatGPT UX
 
-- [ ] **Markdown rendering** — Render assistant responses with proper Markdown, code blocks, syntax highlighting
-- [ ] **Code copy button** — One-click copy for code blocks
-- [ ] **LaTeX support** — Math equation rendering with KaTeX
-- [ ] **System prompt** — Customizable system prompt per session
-- [ ] **Generation params** — Temperature, top_p, max_tokens sliders
+- [x] **Markdown rendering** — Render assistant responses with proper Markdown, code blocks, syntax highlighting
+- [x] **Code copy button** — One-click copy for code blocks
+- [x] **LaTeX support** — Math equation rendering with KaTeX
+- [x] **System prompt** — Customizable system prompt per session
+- [x] **Generation params** — Temperature, top_p, max_tokens sliders
+- [x] **Auto-scroll control** — Pause auto-scroll when user scrolls up
+- [x] **Chat export** — Export conversations as Markdown/JSON
 - [ ] **Token counter** — Display tokens/sec and total token usage
-- [ ] **Auto-scroll control** — Pause auto-scroll when user scrolls up
 - [ ] **Message actions** — Copy, regenerate, edit user messages
-- [ ] **Chat export** — Export conversations as Markdown/JSON
 
 ### Phase 2 — Model Management (v0.3.x)
 > Rich model lifecycle and expanded model support
