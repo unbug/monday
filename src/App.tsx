@@ -8,13 +8,15 @@ import { SettingsPanel } from './components/SettingsPanel'
 import { WebGPUCheck } from './components/WebGPUCheck'
 import { ThemeToggle } from './components/ThemeToggle'
 import { Changelog } from './components/Changelog'
+import { CommandPalette } from './components/CommandPalette'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import type { ModelInfo } from './types'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog'
+type View = 'chat' | 'models' | 'changelog' | 'cache'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
@@ -49,6 +51,14 @@ export default function App() {
     chat.newSession()
     setView('chat')
   }, [chat])
+
+  const keyboard = useKeyboardShortcuts({
+    onNewChat: handleNewChat,
+    onStopGeneration: chat.stopGenerating,
+    onOpenModels: () => setView('models'),
+    onOpenCache: () => setView('cache'),
+    onOpenChangelog: () => setView('changelog'),
+  })
 
   const isReady = model.status === 'ready'
 
@@ -94,6 +104,18 @@ export default function App() {
         </>
       )}
 
+      <CommandPalette
+        show={keyboard.showCommandPalette}
+        onClose={() => {
+          keyboard.setShowCommandPalette(false)
+          keyboard.setCommandSearch('')
+        }}
+        search={keyboard.commandSearch}
+        onSearchChange={keyboard.setCommandSearch}
+        searchRef={keyboard.searchRef}
+        commands={keyboard.filteredCommands}
+      />
+
       <main className="main">
         <header className="header">
           <button
@@ -134,6 +156,10 @@ export default function App() {
           >
             {view === 'models' ? 'Chat' : 'Models'}
           </button>
+
+          <kbd className="header-shortcut-hint">
+            <span className="header-shortcut-key">⌘</span><span className="header-shortcut-key">K</span>
+          </kbd>
         </header>
 
         <WebGPUCheck supported={model.webgpuSupported} />
@@ -149,11 +175,27 @@ export default function App() {
               }}
               downloadedModelIds={model.downloadedModelIds}
               onSelect={handleSelectModel}
+              onOpenCache={() => setView('cache')}
             />
           </div>
         ) : view === 'changelog' ? (
           <div className="main-content">
             <Changelog />
+          </div>
+        ) : view === 'cache' ? (
+          <div className="main-content">
+            <ModelSelector
+              currentModelId={selectedModelId}
+              modelState={{
+                status: model.status,
+                progress: model.progress,
+                error: model.error,
+              }}
+              downloadedModelIds={model.downloadedModelIds}
+              onSelect={handleSelectModel}
+              onOpenCache={() => setView('cache')}
+              showCacheManager
+            />
           </div>
         ) : (
           <div className="chat-layout">

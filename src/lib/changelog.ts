@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.6.0',
+    date: '2026-04-22',
+    title: 'Command Palette & Model Cache Management',
+    description:
+      'New command palette (⌘K) for quick navigation, plus model cache management to view and delete downloaded models from browser storage.',
+    changes: [
+      { type: 'added', text: 'Command Palette — press ⌘K to open a quick-access command menu for navigating between features' },
+      { type: 'added', text: 'Keyboard shortcuts — ⌘K (command palette), ⌘N (new chat), ⌘⇧S (stop generation), Escape (close)' },
+      { type: 'added', text: 'Model Cache Manager — view cached models with disk usage, delete individual or all caches' },
+      { type: 'added', text: 'Cache link in Model Selector — quick access to cache management from the models page' },
+      { type: 'added', text: 'Keyboard shortcut hint in header — shows ⌘K shortcut with hover effect' },
+      { type: 'added', text: 'formatBytes utility — human-readable file size formatting' },
+      { type: 'changed', text: 'Updated version to v0.6.0' },
+    ],
+  },
+  {
     version: '0.5.0',
     date: '2026-04-22',
     title: 'Message Actions — Edit & Regenerate',
