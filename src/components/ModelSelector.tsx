@@ -13,6 +13,7 @@ interface Props {
 
 export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
   const [sortMode, setSortMode] = useState<SortMode>('latest')
+  const [hoveredModelId, setHoveredModelId] = useState<string | null>(null)
 
   const sortedModels = useMemo(() => {
     const list = [...MODELS]
@@ -75,15 +76,17 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
               key={model.id}
               size="md"
               theme="auto"
-              colorVariant={isActive ? 'ocean' : 'mono'}
-              strength={isActive ? 0.8 : 0.3}
-              active={isActive || false}
+              colorVariant={isActive ? 'ocean' : 'colorful'}
+              strength={isActive ? 0.8 : 0.4}
+              active={isActive || hoveredModelId === model.id}
               duration={2.4}
             >
               <button
                 className={`model-card ${isActive ? 'model-card-active' : ''}`}
                 onClick={() => onSelect(model)}
                 disabled={isLoading}
+                onMouseEnter={() => setHoveredModelId(model.id)}
+                onMouseLeave={() => setHoveredModelId(null)}
               >
                 <div className="model-card-header">
                   <span className="model-card-name">{model.name}</span>

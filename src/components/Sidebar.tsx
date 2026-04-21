@@ -24,6 +24,7 @@ export function Sidebar({
   onUpdateSession,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
+  const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
   const activeSession = sessions.find((s) => s.id === activeSessionId)
 
   return (
@@ -79,30 +80,43 @@ export function Sidebar({
                   </div>
                 </BorderBeam>
               ) : (
-                <div
-                  className="sidebar-session"
-                  onClick={() => onSelect(session.id)}
-                >
-                  <span className="sidebar-session-title">{session.title}</span>
-                  <button
-                    className="sidebar-session-delete"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete(session.id)
-                    }}
-                    title="Delete"
+                <BorderBeam size="sm" theme="auto" colorVariant="mono" strength={0.4} active={hoveredSessionId === session.id} duration={2.4}>
+                  <div
+                    className="sidebar-session"
+                    onClick={() => onSelect(session.id)}
+                    onMouseEnter={() => setHoveredSessionId(session.id)}
+                    onMouseLeave={() => setHoveredSessionId(null)}
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-                </div>
+                    <span className="sidebar-session-title">{session.title}</span>
+                    <button
+                      className="sidebar-session-delete"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete(session.id)
+                      }}
+                      title="Delete"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
+                </BorderBeam>
               )}
             </div>
           )
         })}
       </div>
+
+      {activeSession && onUpdateSession && (
+        <div className="sidebar-settings">
+          <SettingsPanel
+            session={activeSession}
+            onUpdate={onUpdateSession}
+          />
+        </div>
+      )}
 
       <div className="sidebar-footer">
         <a
@@ -159,15 +173,6 @@ export function Sidebar({
           )}
         </div>
       </div>
-
-      {activeSession && onUpdateSession && (
-        <div className="sidebar-settings">
-          <SettingsPanel
-            session={activeSession}
-            onUpdate={onUpdateSession}
-          />
-        </div>
-      )}
     </aside>
   )
 }
