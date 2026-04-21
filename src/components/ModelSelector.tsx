@@ -17,14 +17,12 @@ export function ModelSelector({ currentModelId, modelState, onSelect }: Props) {
   const sortedModels = useMemo(() => {
     const list = [...MODELS]
     if (sortMode === 'size') {
+      list.sort((a, b) => b.paramCount - a.paramCount)
+    } else {
       list.sort((a, b) => {
-        const parseSize = (s: string) => {
-          const match = s.match(/[\d.]+/)
-          return match ? parseFloat(match[0]) : 0
-        }
-        const sizeA = parseSize(a.size)
-        const sizeB = parseSize(b.size)
-        return sizeA - sizeB
+        const dateA = new Date(a.releaseDate).getTime()
+        const dateB = new Date(b.releaseDate).getTime()
+        return dateB - dateA
       })
     }
     return list

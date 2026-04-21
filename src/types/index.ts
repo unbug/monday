@@ -7,6 +7,8 @@ export interface ModelInfo {
   size: string
   parameters: string
   provider: string
+  paramCount: number
+  releaseDate: string
   recommended?: boolean
   tags?: ModelTag[]
 }
