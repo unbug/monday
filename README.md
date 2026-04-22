@@ -269,7 +269,18 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 - [ ] **Plugin system** — Load third-party tool plugins from URL (JSON manifest)
 - [ ] **MCP client** — Model Context Protocol support for external tool servers
 
-### Phase 7 — Collaboration & Sharing (v0.8.x)
+### Phase 0.8 — Personalization & Discovery (v0.8.x)
+> Personalized experience and easier conversation discovery
+
+- [x] **Model usage tracking** — Automatically track which models you use most
+- [x] **Recommended models** — Top 3 most-used models displayed in Model Selector
+- [x] **Reset recommendations** — Clear usage history to reset model recommendations
+- [x] **Session search** — Search conversations by title in the sidebar
+- [x] **Date filtering** — Filter sessions by Today, Yesterday, This Week, This Month
+- [ ] **Model usage stats** — Visual chart of model usage frequency
+- [ ] **Recent models** — Quick access to recently used models
+
+### Phase 7 — Collaboration & Sharing (v0.9.x)
 > Social features inspired by LobeHub channels and Open WebUI community
 
 - [ ] **Share conversations** — Generate shareable link (static HTML export)
