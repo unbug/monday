@@ -58,143 +58,6 @@ export function useChat(modelId: string) {
     return session.id
   }, [modelId, sessions, persistSessions, tokenStats])
 
-  const sendMessage = useCallback(
-    async (content: string) => {
-      if (isGenerating || !content.trim()) return
-
-      let currentSessions = [...sessions]
-      let sessionId = activeSessionId
-
-      if (!sessionId) {
-        const session = createSession(modelId)
-        currentSessions = [session, ...currentSessions]
-        sessionId = session.id
-        setActiveSessionId(sessionId)
-      }
-
-      const userMsg = createMessage('user', content)
-      const assistantMsg: ChatMessage = {
-        ...createMessage('assistant', ''),
-        isStreaming: true,
-      }
-
-      // Add user message
-      currentSessions = currentSessions.map((s) =>
-        s.id === sessionId
-          ? {
-              ...s,
-              messages: [...s.messages, userMsg],
-              updatedAt: Date.now(),
-            }
-          : s,
-      )
-      setSessions(currentSessions)
-      setIsGenerating(true)
-      abortRef.current = false
-
-      // Add empty assistant message
-      currentSessions = currentSessions.map((s) =>
-        s.id === sessionId
-          ? {
-              ...s,
-              messages: [...s.messages, assistantMsg],
-            }
-          : s,
-      )
-      setSessions(currentSessions)
-
-      try {
-        const active = currentSessions.find((s) => s.id === sessionId)!
-        const history = active.messages.filter((m) => !m.isStreaming).map((m) => ({
-          role: m.role,
-          content: m.content,
-        }))
-        const opts = paramsForSession(active)
-
-        // Start token tracking
-        tokenStats.startStreaming()
-        let fullContent = ''
-        let tokenCount = 0
-
-        const { generator, usage } = streamChatWithUsage(history, opts)
-        for await (const token of generator) {
-          if (abortRef.current) break
-          fullContent += token
-          tokenCount++
-          tokenStats.addTokens(1)
-          const captured = fullContent
-          currentSessions = currentSessions.map((s) =>
-            s.id === sessionId
-              ? {
-                  ...s,
-                  messages: s.messages.map((m) =>
-                    m.id === assistantMsg.id
-                      ? { ...m, content: captured }
-                      : m,
-                  ),
-                }
-              : s,
-          )
-          setSessions([...currentSessions])
-        }
-
-        // Finalize with usage stats
-        tokenStats.finishStreaming(usage.current ?? {
-          promptTokens: 0,
-          completionTokens: tokenCount,
-          totalTokens: tokenCount,
-        })
-
-        currentSessions = currentSessions.map((s) => {
-          if (s.id !== sessionId) return s
-          const msgs = s.messages.map((m) =>
-            m.id === assistantMsg.id
-              ? { ...m, content: fullContent, isStreaming: false }
-              : m,
-          )
-          return {
-            ...s,
-            messages: msgs,
-            title: s.title === 'New Chat' ? generateTitle(msgs) : s.title,
-            updatedAt: Date.now(),
-          }
-        })
-
-        await persistSessions(currentSessions)
-      } catch (err) {
-        tokenStats.finishStreaming({
-          promptTokens: 0,
-          completionTokens: 0,
-          totalTokens: 0,
-        })
-
-        const errorContent =
-          err instanceof Error ? err.message : 'Generation failed'
-
-        currentSessions = currentSessions.map((s) =>
-          s.id === sessionId
-            ? {
-                ...s,
-                messages: s.messages.map((m) =>
-                  m.id === assistantMsg.id
-                    ? {
-                        ...m,
-                        content: `Error: ${errorContent}`,
-                        isStreaming: false,
-                      }
-                    : m,
-                ),
-              }
-            : s,
-        )
-        await persistSessions(currentSessions)
-      } finally {
-        setIsGenerating(false)
-      }
-    },
-    [sessions, activeSessionId, modelId, isGenerating, persistSessions],
-  )
-
   const stopGenerating = useCallback(() => {
     abortRef.current = true
   }, [])
@@ -352,6 +215,14 @@ export function useChat(modelId: string) {
       persistSessions,
       tokenStats,
     ],
+  )
+
+  const sendMessage = useCallback(
+    (content: string) => {
+      if (isGenerating || !content.trim()) return
+      sendUserMessage(content)
+    },
+    [isGenerating, sendUserMessage],
   )
 
   const regenerateMessage = useCallback(

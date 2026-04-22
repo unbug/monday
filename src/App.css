@@ -1540,9 +1540,8 @@
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 20vh;
   z-index: 1000;
   animation: fadeIn 0.15s ease;
 }
@@ -1563,13 +1562,11 @@
 }
 
 .command-palette-border {
-  position: absolute;
-  inset: -2px;
   border-radius: 18px;
+  padding: 2px;
   background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4, #6366f1);
   background-size: 300% 300%;
   animation: borderGlow 3s ease infinite;
-  z-index: -1;
 }
 
 @keyframes borderGlow {

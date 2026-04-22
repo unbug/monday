@@ -7,8 +7,6 @@
 
 const CACHE_PREFIX = 'webllm/'
 
-type CacheWithName = Cache & { name: string }
-
 /**
  * Extract model ID from a cache entry URL.
  * web-llm stores model files under URLs like:
@@ -35,13 +33,14 @@ function extractModelIdFromUrl(url: string): string | null {
 export async function listModelCaches(): Promise<
   Array<{ name: string; size: number; modelId: string }>
 > {
-  const allCaches = await (globalThis as any).caches.keys()
-  const modelCaches = allCaches.filter((c: CacheWithName) => c.name.startsWith(CACHE_PREFIX))
+  const allCacheNames: string[] = await (globalThis as any).caches.keys()
+  const modelCacheNames = allCacheNames.filter((name: string) => name.startsWith(CACHE_PREFIX))
 
   // Aggregate by model ID across all web-llm caches
   const modelMap = new Map<string, { name: string; size: number }>()
 
-  for (const cache of modelCaches) {
+  for (const cacheName of modelCacheNames) {
+    const cache: Cache = await (globalThis as any).caches.open(cacheName)
     const keys: ReadonlyArray<Request> = await cache.keys()
     for (const key of keys) {
       const modelId = extractModelIdFromUrl(key.url)
@@ -54,7 +53,7 @@ export async function listModelCaches(): Promise<
       if (existing) {
         existing.size += blobSize
       } else {
-        modelMap.set(modelId, { name: cache.name, size: blobSize })
+        modelMap.set(modelId, { name: cacheName, size: blobSize })
       }
     }
   }
@@ -74,17 +73,18 @@ export async function listModelCaches(): Promise<
  * Searches all web-llm caches for entries matching the model ID.
  */
 export async function deleteModelCache(modelId: string): Promise<boolean> {
-  const allCaches = await (globalThis as any).caches.keys()
-  const webllmCaches = allCaches.filter((c: CacheWithName) => c.name.startsWith(CACHE_PREFIX))
+  const allCacheNames: string[] = await (globalThis as any).caches.keys()
+  const webllmCacheNames = allCacheNames.filter((name: string) => name.startsWith(CACHE_PREFIX))
 
   // Find caches that contain entries for this model
   const targetNames = new Set<string>()
-  for (const cache of webllmCaches) {
+  for (const cacheName of webllmCacheNames) {
+    const cache: Cache = await (globalThis as any).caches.open(cacheName)
     const keys: ReadonlyArray<Request> = await cache.keys()
     for (const key of keys) {
       const entryModelId = extractModelIdFromUrl(key.url)
       if (entryModelId === modelId) {
-        targetNames.add(cache.name)
+        targetNames.add(cacheName)
         break
       }
     }
@@ -104,12 +104,12 @@ export async function deleteModelCache(modelId: string): Promise<boolean> {
  * Delete all model caches.
  */
 export async function deleteAllModelCaches(): Promise<number> {
-  const allCaches = await (globalThis as any).caches.keys()
-  const modelCaches = allCaches.filter((c: CacheWithName) => c.name.startsWith(CACHE_PREFIX))
+  const allCacheNames: string[] = await (globalThis as any).caches.keys()
+  const modelCacheNames = allCacheNames.filter((name: string) => name.startsWith(CACHE_PREFIX))
   let deleted = 0
 
-  for (const cache of modelCaches) {
-    const result = await (globalThis as any).caches.delete(cache.name)
+  for (const cacheName of modelCacheNames) {
+    const result = await (globalThis as any).caches.delete(cacheName)
     if (result) deleted++
   }
 
