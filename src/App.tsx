@@ -9,6 +9,7 @@ import { WebGPUCheck } from './components/WebGPUCheck'
 import { ThemeToggle } from './components/ThemeToggle'
 import { Changelog } from './components/Changelog'
 import { CommandPalette } from './components/CommandPalette'
+import { ModelStats } from './components/ModelStats'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -18,11 +19,11 @@ import { PROMPT_TEMPLATES } from './lib/prompts'
 import { resetModelUsage } from './lib/modelUsage'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
-  const [view, setView] = useState<View>('models')
+  const [view, setView] = useState<View>('stats')
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
 
   const model = useModel()
@@ -66,6 +67,7 @@ export default function App() {
     onOpenModels: () => setView('models'),
     onOpenCache: () => setView('cache'),
     onOpenChangelog: () => setView('changelog'),
+    onOpenStats: () => setView('stats'),
     onResetRecommendations: handleResetRecommendations,
   })
 
@@ -99,6 +101,10 @@ export default function App() {
             onDelete={chat.deleteSession}
             onVersionClick={() => {
               setView('changelog')
+              closeSidebarOnMobile()
+            }}
+            onOpenStats={() => {
+              setView('stats')
               closeSidebarOnMobile()
             }}
             onUpdateSession={(updated) => {
@@ -209,6 +215,10 @@ export default function App() {
               onOpenCache={() => setView('cache')}
               showCacheManager
             />
+          </div>
+        ) : view === 'stats' ? (
+          <div className="main-content main-content--stats">
+            <ModelStats onResetRecommendations={handleResetRecommendations} />
           </div>
         ) : (
           <div className="chat-layout">

@@ -15,6 +15,7 @@ interface Props {
   onNew: () => void
   onDelete: (id: string) => void
   onVersionClick?: () => void
+  onOpenStats?: () => void
   onUpdateSession?: (session: ChatSession) => void
   activePersonaId: string | null
   onApplyPersona?: (persona: any) => void
@@ -28,6 +29,7 @@ export function Sidebar({
   onNew,
   onDelete,
   onVersionClick,
+  onOpenStats,
   onUpdateSession,
   activePersonaId,
   onApplyPersona,
@@ -181,6 +183,32 @@ export function Sidebar({
         </div>
       )}
 
+      {/* Quick Nav */}
+      <div className="sidebar-quick-nav">
+        <button
+          className="sidebar-nav-btn"
+          onClick={onOpenStats}
+          title="Usage Statistics"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 20V10" />
+            <path d="M12 20V4" />
+            <path d="M6 20v-6" />
+          </svg>
+        </button>
+        <button
+          className="sidebar-nav-btn"
+          onClick={onVersionClick}
+          title="Changelog"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+        </button>
+      </div>
+
       <div className="sidebar-footer">
         <a
           href="https://github.com/unbug/monday"
@@ -196,7 +224,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.8.0
+          v0.9.0
         </button>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">

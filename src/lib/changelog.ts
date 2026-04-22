@@ -11,6 +11,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.9.0',
+    date: '2026-04-23',
+    title: 'Usage Statistics Dashboard',
+    description:
+      'New usage statistics dashboard to track model usage over time — view daily charts, per-model breakdown, and provider-level analytics.',
+    changes: [
+      { type: 'added', text: 'Usage Statistics dashboard (default landing page) — overview of total usage, models used, top model, and peak usage day' },
+      { type: 'added', text: 'Weekly usage chart — bar chart showing daily usage over the last 7 days' },
+      { type: 'added', text: 'All-time usage breakdown — horizontal bars showing usage count per model' },
+      { type: 'added', text: 'Usage by provider chart — aggregated bar chart showing usage across model providers' },
+      { type: 'added', text: 'Daily usage history tracking — records usage per day for date-based analytics' },
+      { type: 'added', text: 'Peak day detection — identifies the day with highest usage' },
+      { type: 'added', text: 'Quick nav buttons in sidebar — one-click access to Stats and Changelog' },
+      { type: 'added', text: 'Usage Statistics command in Command Palette (⌘K)' },
+      { type: 'changed', text: 'Updated default view to Usage Statistics' },
+      { type: 'changed', text: 'Updated version to v0.9.0' },
+    ],
+  },
+  {
     version: '0.8.0',
     date: '2026-04-23',
     title: 'Model Recommendations & Session Search',
