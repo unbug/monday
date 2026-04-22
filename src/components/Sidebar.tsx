@@ -4,7 +4,9 @@ import type { ChatSession } from '../types'
 import { downloadSession, downloadAll } from '../lib/export'
 import { SettingsPanel } from './SettingsPanel'
 import { QuickPrompts } from './QuickPrompts'
+import { SessionSearch } from './SessionSearch'
 import { DEFAULT_PERSONA, PROMPT_TEMPLATES } from '../lib/prompts'
+import type { DateFilter } from './SessionSearch'
 
 interface Props {
   sessions: ChatSession[]
@@ -33,7 +35,32 @@ export function Sidebar({
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all')
   const activeSession = sessions.find((s) => s.id === activeSessionId)
+
+  // Filter sessions by search query and date filter
+  const filteredSessions = sessions.filter((session) => {
+    // Date filter
+    if (dateFilter !== 'all') {
+      const now = new Date()
+      const cutoff =
+        dateFilter === 'today'
+          ? new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+          : dateFilter === 'yesterday'
+            ? new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime()
+            : dateFilter === 'week'
+              ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).getTime()
+              : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()).getTime()
+      if (session.updatedAt < cutoff) return false
+    }
+    // Search query
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase()
+      if (!session.title.toLowerCase().includes(q)) return false
+    }
+    return true
+  })
 
   return (
     <aside className="sidebar">
@@ -57,11 +84,29 @@ export function Sidebar({
         </BorderBeam>
       </div>
 
+      <SessionSearch
+        sessions={sessions}
+        activeSessionId={activeSessionId}
+        searchQuery={searchQuery}
+        dateFilter={dateFilter}
+        onSearchChange={setSearchQuery}
+        onDateFilterChange={setDateFilter}
+        filteredSessions={filteredSessions}
+      />
+
+      {/* Hidden state sync — keep App.tsx in sync for command palette filtering */}
+      {typeof window !== 'undefined' && searchQuery && (
+        <div style={{ display: 'none' }} data-search-query={searchQuery} />
+      )}
+
       <div className="sidebar-sessions">
         {sessions.length === 0 && (
           <p className="sidebar-empty">No conversations yet</p>
         )}
-        {sessions.map((session) => {
+        {filteredSessions.length === 0 && sessions.length > 0 && (
+          <p className="sidebar-empty">No matching conversations</p>
+        )}
+        {filteredSessions.map((session) => {
           const isActive = session.id === activeSessionId
           return (
             <div key={session.id} className="sidebar-session-wrapper">
@@ -151,7 +196,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.7.0
+          v0.8.0
         </button>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">

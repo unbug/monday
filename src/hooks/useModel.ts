@@ -6,6 +6,7 @@ import {
   checkWebGPUSupport,
 } from '../lib/engine'
 import { getDownloadedModelIds, markModelDownloaded } from '../lib/storage'
+import { recordModelUsage } from '../lib/modelUsage'
 import type { ModelState } from '../types'
 import type { InitProgressReport } from '@mlc-ai/web-llm'
 
@@ -47,6 +48,7 @@ export function useModel() {
 
       if (!abortRef.current) {
         markModelDownloaded(modelId)
+        recordModelUsage(modelId)
         setDownloadedModelIds(getDownloadedModelIds())
         setState({ status: 'ready', progress: 100, error: null })
       }

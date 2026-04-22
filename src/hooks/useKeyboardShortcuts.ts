@@ -13,6 +13,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenModels?: () => void
   onOpenCache?: () => void
   onOpenChangelog?: () => void
+  onResetRecommendations?: () => void
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -67,6 +68,15 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               id: 'open-changelog',
               label: 'Changelog',
               action: options.onOpenChangelog,
+            },
+          ]
+        : []),
+      ...(options.onResetRecommendations
+        ? [
+            {
+              id: 'reset-recommendations',
+              label: 'Reset Model Recommendations',
+              action: options.onResetRecommendations,
             },
           ]
         : []),

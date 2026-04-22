@@ -15,6 +15,7 @@ import { useTheme } from './hooks/useTheme'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import type { ModelInfo } from './types'
 import { PROMPT_TEMPLATES } from './lib/prompts'
+import { resetModelUsage } from './lib/modelUsage'
 import './App.css'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache'
@@ -43,6 +44,10 @@ export default function App() {
     [model],
   )
 
+  const handleResetRecommendations = useCallback(() => {
+    resetModelUsage()
+  }, [])
+
   const handleSend = useCallback(
     (content: string) => {
       chat.sendMessage(content)
@@ -61,6 +66,7 @@ export default function App() {
     onOpenModels: () => setView('models'),
     onOpenCache: () => setView('cache'),
     onOpenChangelog: () => setView('changelog'),
+    onResetRecommendations: handleResetRecommendations,
   })
 
   const isReady = model.status === 'ready'
@@ -182,6 +188,7 @@ export default function App() {
               downloadedModelIds={model.downloadedModelIds}
               onSelect={handleSelectModel}
               onOpenCache={() => setView('cache')}
+              onResetRecommendations={handleResetRecommendations}
             />
           </div>
         ) : view === 'changelog' ? (

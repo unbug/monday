@@ -11,6 +11,23 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.8.0',
+    date: '2026-04-23',
+    title: 'Model Recommendations & Session Search',
+    description:
+      'Personalized model recommendations based on your usage history, plus powerful session search with date filtering to quickly find conversations.',
+    changes: [
+      { type: 'added', text: 'Model usage tracking — automatically counts how many times each model is loaded and used' },
+      { type: 'added', text: 'Recommended for you section in Model Selector — top 3 most-used models displayed at the top of the models page' },
+      { type: 'added', text: 'Reset recommendations button — clear usage history to reset model recommendations' },
+      { type: 'added', text: 'Session search — search conversations by title in the sidebar' },
+      { type: 'added', text: 'Date filter — filter sessions by Today, Yesterday, This Week, or This Month' },
+      { type: 'added', text: 'Result count indicator — shows filtered count (e.g., "3 of 12 conversations")' },
+      { type: 'added', text: 'Reset Model Recommendations command in Command Palette (⌘K)' },
+      { type: 'changed', text: 'Updated version to v0.8.0' },
+    ],
+  },
+  {
     version: '0.7.0',
     date: '2026-04-22',
     title: 'Prompt Templates & Personas',
