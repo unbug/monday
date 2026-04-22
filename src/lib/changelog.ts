@@ -11,6 +11,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.7.0',
+    date: '2026-04-22',
+    title: 'Prompt Templates & Personas',
+    description:
+      'Apply pre-built personas (Coding Assistant, Translator, Tutor, etc.) to shape the AI\'s behavior. Create custom personas, use slash commands, and browse personas by category.',
+    changes: [
+      { type: 'added', text: 'Built-in prompt templates — 8 pre-configured personas (Coding Assistant, Code Explainer, Translator, Personal Tutor, Writing Assistant, Brainstorm Partner, Devil\'s Advocate, Summarizer)' },
+      { type: 'added', text: 'QuickPrompts panel — browse personas in the sidebar with category filtering and search' },
+      { type: 'added', text: 'Custom persona creation — create and save your own personas with custom icons, names, and system prompts' },
+      { type: 'added', text: 'Slash commands — type /code, /translate, /tutor, etc. in the chat input to quickly apply a persona' },
+      { type: 'added', text: 'Slash hint popup — typing / shows available persona shortcuts above the input' },
+      { type: 'added', text: 'Persona persistence — custom personas saved to localStorage, survive browser restarts' },
+      { type: 'added', text: 'Active persona indicator — visual dot shows which persona is currently active' },
+      { type: 'added', text: 'Persona system prompt merging — persona prompt is prepended to the session\'s system prompt' },
+      { type: 'added', text: 'Persona clearing — one-click to remove the active persona from a session' },
+      { type: 'changed', text: 'Updated version to v0.7.0' },
+    ],
+  },
+  {
     version: '0.6.0',
     date: '2026-04-22',
     title: 'Command Palette & Model Cache Management',

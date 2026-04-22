@@ -34,6 +34,7 @@ export interface ChatSession {
   messages: ChatMessage[]
   systemPrompt: string
   generationParams: GenerationParams
+  personaId: string | null
   createdAt: number
   updatedAt: number
 }

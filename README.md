@@ -214,27 +214,27 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 - [x] **Generation params** — Temperature, top_p, max_tokens sliders
 - [x] **Auto-scroll control** — Pause auto-scroll when user scrolls up
 - [x] **Chat export** — Export conversations as Markdown/JSON
-- [ ] **Token counter** — Display tokens/sec and total token usage
-- [ ] **Message actions** — Copy, regenerate, edit user messages
+- [x] **Token counter** — Display tokens/sec and total token usage
+- [x] **Message actions** — Copy, regenerate, edit user messages
 
 ### Phase 2 — Model Management (v0.3.x)
 > Rich model lifecycle and expanded model support
 
-- [ ] **Model cache manager** — View/delete cached models, show disk usage
-- [ ] **More models** — Add Llama 3.2 1B/3B, DeepSeek-R1-Distill, Mistral 7B, Stable Code 3B
+- [x] **Model cache manager** — View/delete cached models, show disk usage
+- [x] **More models** — Add Llama 3.2 1B/3B, DeepSeek-R1-Distill, Mistral 7B, Stable Code 3B
 - [ ] **Model benchmarks** — Auto-run speed benchmark on load, show tokens/sec
 - [ ] **Custom model import** — Load custom MLC-compiled models from URL
 - [ ] **Model comparison** — Side-by-side generation from two models
 - [ ] **Download resume** — Resume interrupted model downloads
 - [ ] **Storage quota** — Show browser storage used vs available
 
-### Phase 3 — Prompt Templates & Personas (v0.4.x)
+### Phase 3 — Prompt Templates & Personas (v0.7.x)
 > Inspired by NextChat masks, GPT-Runner presets, LobeHub agents
 
-- [ ] **Prompt templates** — Pre-built conversation starters (coding assistant, translator, tutor, etc.)
-- [ ] **Custom personas** — Create/save/share AI personas with system prompts + params
+- [x] **Prompt templates** — Pre-built conversation starters (coding assistant, translator, tutor, etc.)
+- [x] **Custom personas** — Create/save/share AI personas with system prompts + params
 - [ ] **Persona marketplace** — Browse community-shared personas (static JSON registry)
-- [ ] **Quick prompts** — Slash commands (`/translate`, `/code`, `/explain`) in chat input
+- [x] **Quick prompts** — Slash commands (`/translate`, `/code`, `/explain`) in chat input
 - [ ] **Context injection** — Attach text/code snippets as context before sending
 
 ### Phase 4 — Multimodal & Rich Input (v0.5.x)

@@ -3,6 +3,8 @@ import { BorderBeam } from 'border-beam'
 import type { ChatSession } from '../types'
 import { downloadSession, downloadAll } from '../lib/export'
 import { SettingsPanel } from './SettingsPanel'
+import { QuickPrompts } from './QuickPrompts'
+import { DEFAULT_PERSONA, PROMPT_TEMPLATES } from '../lib/prompts'
 
 interface Props {
   sessions: ChatSession[]
@@ -12,6 +14,9 @@ interface Props {
   onDelete: (id: string) => void
   onVersionClick?: () => void
   onUpdateSession?: (session: ChatSession) => void
+  activePersonaId: string | null
+  onApplyPersona?: (persona: any) => void
+  onClearPersona: () => void
 }
 
 export function Sidebar({
@@ -22,6 +27,9 @@ export function Sidebar({
   onDelete,
   onVersionClick,
   onUpdateSession,
+  activePersonaId,
+  onApplyPersona,
+  onClearPersona,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -118,6 +126,16 @@ export function Sidebar({
         </div>
       )}
 
+      {activeSession && onApplyPersona && (
+        <div className="sidebar-quick-prompts">
+          <QuickPrompts
+            activePersonaId={activePersonaId}
+            onApplyPersona={onApplyPersona}
+            onClearPersona={onClearPersona}
+          />
+        </div>
+      )}
+
       <div className="sidebar-footer">
         <a
           href="https://github.com/unbug/monday"
@@ -133,7 +151,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.6.0
+          v0.7.0
         </button>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">

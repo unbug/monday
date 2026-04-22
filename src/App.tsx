@@ -14,6 +14,7 @@ import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import type { ModelInfo } from './types'
+import { PROMPT_TEMPLATES } from './lib/prompts'
 import './App.css'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache'
@@ -26,6 +27,8 @@ export default function App() {
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
   const theme = useTheme()
+
+  const activePersonaId = chat.activeSession?.personaId ?? null
 
   useEffect(() => {
     chat.initSessions()
@@ -100,6 +103,9 @@ export default function App() {
                 chat.updateSessions(updatedSessions)
               }
             }}
+            activePersonaId={activePersonaId ?? null}
+            onApplyPersona={chat.applyPersona}
+            onClearPersona={chat.clearPersona ?? (() => {})}
           />
         </>
       )}
@@ -216,6 +222,10 @@ export default function App() {
             <ChatInput
               onSend={handleSend}
               onStop={chat.stopGenerating}
+              onApplyPersona={(personaId) => {
+                const persona = PROMPT_TEMPLATES.find((p) => p.id === personaId)
+                if (persona) chat.applyPersona(persona)
+              }}
               isGenerating={chat.isGenerating}
               disabled={!isReady}
               tokenStats={chat.tokenStats}

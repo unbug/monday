@@ -9,6 +9,8 @@ import {
   createSession,
 } from '../lib/storage'
 import type { ChatSession, ChatMessage } from '../types'
+import type { PromptTemplate } from '../lib/prompts'
+import { PROMPT_TEMPLATES } from '../lib/prompts'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -17,6 +19,7 @@ function paramsForSession(session: ChatSession | undefined) {
     top_p: params?.top_p ?? 0.9,
     maxTokens: params?.maxTokens ?? 1024,
     systemPrompt: session?.systemPrompt,
+    personaId: session?.personaId,
   }
 }
 
@@ -431,6 +434,59 @@ export function useChat(modelId: string) {
     [],
   )
 
+  /**
+   * Apply a persona to the active session.
+   * The persona's system prompt is merged with the session's custom system prompt.
+   */
+  const applyPersona = useCallback(
+    (persona: PromptTemplate) => {
+      if (!activeSessionId) return
+      const updatedSessions = sessions.map((s) =>
+        s.id === activeSessionId
+          ? {
+              ...s,
+              personaId: persona.id,
+              // Merge persona system prompt with existing custom prompt
+              systemPrompt: [persona.systemPrompt, s.systemPrompt]
+                .filter(Boolean)
+                .join('\n\n'),
+              updatedAt: Date.now(),
+            }
+          : s,
+      )
+      persistSessions(updatedSessions)
+    },
+    [activeSessionId, sessions, persistSessions],
+  )
+
+  /**
+   * Clear the persona from the active session.
+   * Removes the persona system prompt but keeps any custom text the user added.
+   */
+  const clearPersona = useCallback(() => {
+    if (!activeSessionId) return
+    const updatedSessions = sessions.map((s) => {
+      if (s.id !== activeSessionId) return s
+      // Remove persona prefix from system prompt
+      const personaPrompts = [
+        PROMPT_TEMPLATES.find((p) => p.id === s.personaId)?.systemPrompt,
+      ].filter(Boolean)
+      let newSystemPrompt = s.systemPrompt
+      for (const pp of personaPrompts) {
+        if (pp && newSystemPrompt.startsWith(pp)) {
+          newSystemPrompt = newSystemPrompt.slice(pp.length).replace(/^\n\n+/, '')
+        }
+      }
+      return {
+        ...s,
+        personaId: null,
+        systemPrompt: newSystemPrompt,
+        updatedAt: Date.now(),
+      }
+    })
+    persistSessions(updatedSessions)
+  }, [activeSessionId, sessions, persistSessions])
+
   return {
     sessions,
     activeSession,
@@ -447,5 +503,7 @@ export function useChat(modelId: string) {
     deleteSession,
     switchSession,
     updateSessions,
+    applyPersona,
+    clearPersona,
   }
 }

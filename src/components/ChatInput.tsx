@@ -1,9 +1,11 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useState, useRef } from 'react'
 import { BorderBeam } from 'border-beam'
+import { PROMPT_TEMPLATES } from '../lib/prompts'
 
 interface Props {
   onSend: (content: string) => void
   onStop: () => void
+  onApplyPersona: (personaId: string) => void
   isGenerating: boolean
   disabled: boolean
   tokenStats?: {
@@ -18,6 +20,7 @@ interface Props {
 export function ChatInput({
   onSend,
   onStop,
+  onApplyPersona,
   isGenerating,
   disabled,
   tokenStats,
@@ -25,17 +28,45 @@ export function ChatInput({
 }: Props) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
+  const [showSlashHint, setShowSlashHint] = useState(false)
 
   const handleSend = () => {
     if (!input.trim() || disabled) return
+
+    // Check for slash commands
+    const slashMatch = input.trim().match(/^\/(\w+)/)
+    if (slashMatch) {
+      const cmd = slashMatch[1].toLowerCase()
+      const matched = PROMPT_TEMPLATES.find(
+        (p) => p.id === cmd || p.name.toLowerCase().replace(/\s+/g, '-') === cmd,
+      )
+      if (matched) {
+        onApplyPersona(matched.id)
+        setInput('')
+        setShowSlashHint(false)
+        return
+      }
+    }
+
     onSend(input.trim())
     setInput('')
+    setShowSlashHint(false)
   }
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
+    }
+  }
+
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value
+    setInput(val)
+    if (val.endsWith('/')) {
+      setShowSlashHint(true)
+    } else {
+      setShowSlashHint(false)
     }
   }
 
@@ -53,7 +84,7 @@ export function ChatInput({
           <textarea
             className="chat-input"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInput}
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
@@ -65,6 +96,20 @@ export function ChatInput({
             disabled={disabled}
             rows={1}
           />
+          {showSlashHint && (
+            <div className="slash-hint">
+              <span className="slash-hint-label">Quick personas:</span>
+              {PROMPT_TEMPLATES.slice(0, 6).map((p) => (
+                <button
+                  key={p.id}
+                  className="slash-hint-item"
+                  onClick={() => onApplyPersona(p.id)}
+                >
+                  {p.icon} /{p.id.replace(/-/g, ' ')}
+                </button>
+              ))}
+            </div>
+          )}
           {isGenerating ? (
             <button className="chat-btn chat-btn-stop" onClick={onStop}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

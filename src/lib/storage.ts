@@ -63,6 +63,9 @@ function migrateSession(session: ChatSession): ChatSession {
       maxTokens: 1024,
     }
   }
+  if (migrated.personaId === undefined) {
+    migrated.personaId = null
+  }
   return migrated
 }
 
@@ -78,6 +81,7 @@ export function createSession(modelId: string): ChatSession {
       top_p: 0.9,
       maxTokens: 1024,
     },
+    personaId: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
