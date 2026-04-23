@@ -10,6 +10,7 @@ import { ThemeToggle } from './components/ThemeToggle'
 import { Changelog } from './components/Changelog'
 import { CommandPalette } from './components/CommandPalette'
 import { ModelStats } from './components/ModelStats'
+import { ModelComparison } from './components/ModelComparison'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -19,12 +20,13 @@ import { PROMPT_TEMPLATES } from './lib/prompts'
 import { resetModelUsage } from './lib/modelUsage'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
   const [view, setView] = useState<View>('models')
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
+  const [showComparison, setShowComparison] = useState(false)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
@@ -68,7 +70,8 @@ export default function App() {
     onOpenCache: () => setView('cache'),
     onOpenChangelog: () => setView('changelog'),
     onOpenStats: () => setView('stats'),
-    onResetRecommendations: handleResetRecommendations,
+    onOpenComparison: () => setShowComparison(true),
+    onResetRecommendations: () => handleResetRecommendations(),
   })
 
   const isReady = model.status === 'ready'
@@ -107,6 +110,10 @@ export default function App() {
               setView('stats')
               closeSidebarOnMobile()
             }}
+            onOpenComparison={() => {
+              setShowComparison(true)
+              closeSidebarOnMobile()
+            }}
             onUpdateSession={(updated) => {
               const idx = chat.sessions.findIndex((s) => s.id === updated.id)
               if (idx !== -1) {
@@ -117,7 +124,7 @@ export default function App() {
             }}
             activePersonaId={activePersonaId ?? null}
             onApplyPersona={chat.applyPersona}
-            onClearPersona={chat.clearPersona ?? (() => {})}
+            onClearPersona={chat.clearPersona}
           />
         </>
       )}
@@ -219,6 +226,10 @@ export default function App() {
         ) : view === 'stats' ? (
           <div className="main-content main-content--stats">
             <ModelStats onResetRecommendations={handleResetRecommendations} />
+          </div>
+        ) : view === 'comparison' ? (
+          <div className="main-content main-content--comparison">
+            <ModelComparison onBack={() => setView('models')} />
           </div>
         ) : (
           <div className="chat-layout">

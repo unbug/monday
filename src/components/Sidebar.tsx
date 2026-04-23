@@ -16,6 +16,7 @@ interface Props {
   onDelete: (id: string) => void
   onVersionClick?: () => void
   onOpenStats?: () => void
+  onOpenComparison?: () => void
   onUpdateSession?: (session: ChatSession) => void
   activePersonaId: string | null
   onApplyPersona?: (persona: any) => void
@@ -30,6 +31,7 @@ export function Sidebar({
   onDelete,
   onVersionClick,
   onOpenStats,
+  onOpenComparison,
   onUpdateSession,
   activePersonaId,
   onApplyPersona,
@@ -196,6 +198,20 @@ export function Sidebar({
             <path d="M6 20v-6" />
           </svg>
         </button>
+        {onOpenComparison && (
+          <button
+            className="sidebar-nav-btn"
+            onClick={onOpenComparison}
+            title="Model Comparison"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M16 3h5v5" />
+              <path d="M8 3H3v5" />
+              <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.813L3 3" />
+              <path d="M21 3l-7.173 7.173a4 4 0 0 0-2.813 1.172L21 21" />
+            </svg>
+          </button>
+        )}
         <button
           className="sidebar-nav-btn"
           onClick={onVersionClick}
@@ -224,7 +240,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.9.0
+          v0.10.0
         </button>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">

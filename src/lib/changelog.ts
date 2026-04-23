@@ -11,6 +11,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.10.0',
+    date: '2026-04-23',
+    title: 'Model Comparison — Side-by-Side Benchmarking',
+    description:
+      'Compare two models head-to-head: select any pair, enter a prompt, and watch both models generate responses simultaneously with real-time token stats.',
+    changes: [
+      { type: 'added', text: 'Model Comparison view — select two models and compare their responses side by side' },
+      { type: 'added', text: 'Sequential comparison engine — Model A generates first, then Model B, both with the same prompt' },
+      { type: 'added', text: 'Real-time token stats — tokens/sec, total tokens, and elapsed time for each model' },
+      { type: 'added', text: 'Live streaming display — see both models generate in real-time with blinking cursor' },
+      { type: 'added', text: 'Stop button — interrupt comparison mid-generation' },
+      { type: 'added', text: 'Markdown rendering for comparison results — code highlighting, bold, italic via react-markdown' },
+      { type: 'added', text: 'Model Comparison command in Command Palette (⌘K)' },
+      { type: 'added', text: 'Quick nav button in sidebar — one-click access to Model Comparison' },
+      { type: 'added', text: 'Compare Another Pair button — reset and select a new model pair' },
+      { type: 'changed', text: 'Updated version to v0.10.0' },
+    ],
+  },
+  {
     version: '0.9.0',
     date: '2026-04-23',
     title: 'Usage Statistics Dashboard',

@@ -14,6 +14,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenCache?: () => void
   onOpenChangelog?: () => void
   onOpenStats?: () => void
+  onOpenComparison?: () => void
   onResetRecommendations?: () => void
 }
 
@@ -78,6 +79,15 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               id: 'open-stats',
               label: 'Usage Statistics',
               action: options.onOpenStats,
+            },
+          ]
+        : []),
+      ...(options.onOpenComparison
+        ? [
+            {
+              id: 'open-comparison',
+              label: 'Model Comparison',
+              action: options.onOpenComparison,
             },
           ]
         : []),
