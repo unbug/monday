@@ -3159,6 +3159,69 @@
   color: #ef4444;
 }
 
+/* ===== Light-theme: Cmd+K hint button ===== */
+.light-theme .header-shortcut-hint {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
+.light-theme .header-shortcut-hint:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+}
+
+.light-theme .header-shortcut-key {
+  color: var(--color-text-light);
+}
+
+.light-theme .header-shortcut-hint:hover .header-shortcut-key {
+  color: var(--color-text);
+}
+
+/* ===== Light-theme: Command Palette ===== */
+.light-theme .command-palette {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.light-theme .command-palette-input-wrapper {
+  border-bottom-color: var(--color-border);
+}
+
+.light-theme .command-palette-icon {
+  color: var(--color-text-muted);
+}
+
+.light-theme .command-palette-input {
+  color: var(--color-text);
+}
+
+.light-theme .command-palette-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.light-theme .command-palette-esc {
+  background: var(--color-surface-elevated);
+  color: var(--color-text-light);
+}
+
+.light-theme .command-palette-empty {
+  color: var(--color-text-muted);
+}
+
+.light-theme .command-palette-item {
+  color: var(--color-text);
+}
+
+.light-theme .command-palette-item:hover {
+  background: var(--color-surface-elevated);
+}
+
+.light-theme .command-palette-shortcut kbd {
+  background: var(--color-surface-elevated);
+  color: var(--color-text-light);
+}
+
 /* ===== Model Comparison ===== */
 .main-content--comparison {
   max-width: 1200px;
