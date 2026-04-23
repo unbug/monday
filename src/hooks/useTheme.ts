@@ -16,6 +16,7 @@ function getStoredMode(): ThemeMode {
 
 function applyTheme(resolved: 'light' | 'dark') {
   document.documentElement.setAttribute('data-theme', resolved)
+  document.documentElement.classList.toggle('light-theme', resolved === 'light')
 }
 
 export function useTheme() {

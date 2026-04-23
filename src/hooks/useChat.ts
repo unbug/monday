@@ -31,6 +31,11 @@ export function useChat(modelId: string) {
   const sessionsLoaded = useRef(false)
   const tokenStats = useTokenStats()
 
+  // Always keep a ref to the latest sessions so sendUserMessage can read
+  // up-to-date session data (e.g. systemPrompt) without relying on the closure.
+  const sessionsRef = useRef(sessions)
+  sessionsRef.current = sessions
+
   const activeSession = sessions.find((s) => s.id === activeSessionId) ?? null
   const messages = activeSession?.messages ?? []
 
@@ -120,7 +125,10 @@ export function useChat(modelId: string) {
         const history = active.messages
           .filter((m) => !m.isStreaming)
           .map((m) => ({ role: m.role, content: m.content }))
-        const opts = paramsForSession(active)
+        // Read session config (incl. systemPrompt) from the ref so we always
+        // use the most recently saved value, even if the closure is stale.
+        const latestSession = sessionsRef.current.find((s) => s.id === sessionId)
+        const opts = paramsForSession(latestSession ?? active)
 
         // Start token tracking
         tokenStats.startStreaming()

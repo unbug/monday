@@ -2727,7 +2727,15 @@
 }
 
 .light-theme .model-stats-tab-active {
-  background: var(--bg-elevated, rgba(0, 0, 0, 0.06));
+  background: var(--color-surface-elevated);
+}
+
+.light-theme .model-stats-tabs {
+  background: var(--color-bg-subtle);
+}
+
+.light-theme .model-stats-model-bar {
+  background: var(--color-border);
 }
 
 /* Section */
