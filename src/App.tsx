@@ -23,7 +23,7 @@ type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
-  const [view, setView] = useState<View>('stats')
+  const [view, setView] = useState<View>('chat')
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
 
   const model = useModel()

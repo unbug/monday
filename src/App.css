@@ -2905,10 +2905,174 @@
 }
 
 .light-theme .sidebar-nav-btn {
-  color: var(--text-secondary, rgba(0, 0, 0, 0.4));
+  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
 }
 
 .light-theme .sidebar-nav-btn:hover {
   background: var(--bg-hover, rgba(0, 0, 0, 0.06));
   color: var(--text-primary, #1a1a1a);
+}
+
+/* ===== Light-theme sidebar fixes ===== */
+.light-theme .sidebar-new-btn {
+  color: #4a4a4a;
+}
+
+.light-theme .sidebar-new-btn:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .sidebar-session {
+  color: #4a4a4a;
+}
+
+.light-theme .sidebar-session:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .sidebar-session-delete {
+  color: #6b6b70;
+}
+
+.light-theme .sidebar-session-delete:hover {
+  color: #ef4444;
+}
+
+.light-theme .sidebar-link {
+  color: #4a4a4a;
+}
+
+.light-theme .sidebar-link:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .sidebar-footer {
+  color: #6b6b70;
+}
+
+.light-theme .sidebar-version-btn {
+  color: #4a4a4a;
+}
+
+.light-theme .sidebar-version-btn:hover {
+  color: var(--color-primary);
+}
+
+.light-theme .sidebar-export-btn {
+  color: #4a4a4a;
+}
+
+.light-theme .sidebar-export-btn:hover {
+  color: #1a1a1a;
+  background: var(--color-surface-elevated);
+}
+
+.light-theme .sidebar-export-menu {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.light-theme .sidebar-export-menu-item {
+  color: #1c1c1e;
+}
+
+.light-theme .sidebar-export-menu-item:hover:not(:disabled) {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.light-theme .sidebar-settings {
+  border-top-color: var(--color-border);
+}
+
+.light-theme .settings-toggle {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: #4a4a4a;
+}
+
+.light-theme .settings-toggle:hover {
+  background: var(--color-surface-elevated);
+  color: #1a1a1a;
+}
+
+.light-theme .settings-section-title {
+  color: #1c1c1e;
+}
+
+.light-theme .settings-hint {
+  color: #6b6b70;
+}
+
+.light-theme .settings-label {
+  color: #4a4a4a;
+}
+
+.light-theme .settings-value {
+  color: #1c1c1e;
+}
+
+.light-theme .settings-reset-btn {
+  color: #6b6b70;
+}
+
+.light-theme .settings-reset-btn:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .quick-prompts-title {
+  color: #1c1c1e;
+}
+
+.light-theme .quick-prompts-create-btn {
+  color: #6b6b70;
+}
+
+.light-theme .quick-prompts-create-btn:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .quick-prompts-clear {
+  color: #6b6b70;
+}
+
+.light-theme .quick-prompts-clear:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .quick-prompt-name {
+  color: #1c1c1e;
+}
+
+.light-theme .quick-prompt-desc {
+  color: #6b6b70;
+}
+
+.light-theme .quick-prompt-card {
+  border-color: var(--color-border-subtle);
+}
+
+.light-theme .quick-prompt-card:hover {
+  background: var(--color-surface-elevated);
+}
+
+.light-theme .quick-prompt-card.active {
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary-border);
+}
+
+.light-theme .quick-prompt-card.active .quick-prompt-name {
+  color: var(--color-primary);
+}
+
+.light-theme .quick-prompt-action-btn {
+  color: #6b6b70;
+}
+
+.light-theme .quick-prompt-action-btn:hover {
+  color: #1a1a1a;
+}
+
+.light-theme .quick-prompt-action-btn.quick-prompt-delete:hover {
+  color: #ef4444;
 }
