@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.18.0',
+    date: '2026-04-25',
+    title: 'ArtifactsPreview & CodeRunner — Interactive Code Preview',
+    description:
+      'Code blocks can now be run and previewed directly in the chat — JavaScript/TypeScript code runs in a sandboxed iframe with console output capture, and HTML/SVG code renders as an expandable inline preview.',
+    changes: [
+      { type: 'added', text: 'CodeRunner — JS/TS code blocks get a "Run" button with sandboxed iframe execution and console output capture' },
+      { type: 'added', text: 'ArtifactsPreview — HTML/SVG code blocks get expandable inline preview with tabbed code view' },
+      { type: 'added', text: 'codeBlocks.ts utility — isJsLanguage(), isPreviewable(), extractCodeBlocks()' },
+      { type: 'added', text: 'InlineArtifact component — collapsible preview for HTML/SVG code blocks in MarkdownRenderer' },
+      { type: 'changed', text: 'Updated version to v0.18.0' },
+    ],
+  },
+  {
     version: '0.17.0',
     date: '2026-04-25',
     title: 'PWA Offline Support — Full Service Worker Caching',

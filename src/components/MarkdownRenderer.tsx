@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useState, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -7,6 +7,9 @@ import rehypeHighlight from 'rehype-highlight'
 import type { Components } from 'react-markdown'
 import 'highlight.js/styles/github-dark.min.css'
 import 'katex/dist/katex.min.css'
+import { CodeRunner } from './CodeRunner'
+import { ArtifactsPreview } from './ArtifactsPreview'
+import { isJsLanguage, isPreviewable } from '../lib/codeBlocks'
 
 interface Props {
   content: string
@@ -26,6 +29,17 @@ const components: Components = {
       .replace('language-', '')
       .trim() || 'code'
 
+    // JavaScript/TypeScript → CodeRunner
+    if (isJsLanguage(lang)) {
+      return <CodeRunner code={codeString} language={lang} />
+    }
+
+    // HTML/SVG → ArtifactsPreview
+    if (isPreviewable(lang)) {
+      return <InlineArtifact code={codeString} lang={lang} />
+    }
+
+    // Default: code block
     return (
       <div className="code-block">
         <div className="code-block-header">
@@ -120,3 +134,68 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: Prop
     </ReactMarkdown>
   )
 })
+
+/** Inline artifact wrapper — expandable preview for HTML/SVG code blocks */
+function InlineArtifact({ code, lang }: { code: string; lang: string }) {
+  const [expanded, setExpanded] = useState(false)
+
+  if (!expanded) {
+    return (
+      <div className="code-block code-block--artifact">
+        <div className="code-block-header">
+          <span className="code-block-lang">{lang}</span>
+          <button
+            className="code-copy-btn"
+            onClick={() => navigator.clipboard.writeText(code)}
+            title="Copy code"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <span className="code-copy-text">Copy</span>
+          </button>
+          <button
+            className="code-preview-btn"
+            onClick={() => setExpanded(true)}
+            title="Preview"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span className="code-preview-text">Preview</span>
+          </button>
+        </div>
+        <pre className="code-block--artifact-preview">{code}</pre>
+      </div>
+    )
+  }
+
+  return (
+    <ArtifactsPreview
+      content={code}
+      type={lang === 'svg' ? 'svg' : 'html'}
+      onClose={() => setExpanded(false)}
+      title={`${lang.toUpperCase()} Preview`}
+    />
+  )
+}
