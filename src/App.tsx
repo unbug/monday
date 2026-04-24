@@ -13,6 +13,7 @@ import { ModelStats } from './components/ModelStats'
 import { ModelComparison } from './components/ModelComparison'
 import { ModelBenchmark } from './components/ModelBenchmark'
 import { CustomModelImport } from './components/CustomModelImport'
+import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -23,13 +24,14 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
   const [view, setView] = useState<View>('models')
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
   const [showComparison, setShowComparison] = useState(false)
+  const [showPersonaMarketplace, setShowPersonaMarketplace] = useState(false)
   const [transitioning, setTransitioning] = useState(false)
 
   const model = useModel()
@@ -99,6 +101,7 @@ export default function App() {
     onOpenCustomModels: () => setView('custom-models'),
     onResetRecommendations: () => handleResetRecommendations(),
     onResetRecentModels: () => resetRecent(),
+    onOpenPersonaMarketplace: () => setView('persona-marketplace'),
   })
 
   const isReady = model.status === 'ready'
@@ -237,6 +240,7 @@ export default function App() {
               onResetRecentModels={() => resetRecent()}
               onOpenBenchmark={() => setView('benchmark')}
               onOpenCustomModels={() => setView('custom-models')}
+              onOpenPersonaMarketplace={() => setView('persona-marketplace')}
             />
           </div>
         ) : view === 'changelog' ? (
@@ -274,6 +278,16 @@ export default function App() {
         ) : view === 'custom-models' ? (
           <div className="main-content main-content--custom-models">
             <CustomModelImport onLoad={handleCustomModelLoad} />
+          </div>
+        ) : view === 'persona-marketplace' ? (
+          <div className="main-content main-content--persona-marketplace">
+            <PersonaMarketplace
+              onBack={() => setView('chat')}
+              onApplyPersona={(persona) => {
+                chat.applyPersona(persona)
+                setView('chat')
+              }}
+            />
           </div>
         ) : (
           <div className="chat-layout">

@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.16.0',
+    date: '2026-04-25',
+    title: 'Persona Marketplace — Browse & Apply Community Personas',
+    description:
+      'Discover and apply community-shared personas directly from a built-in marketplace — browse by category, search, and one-click apply to shape your AI\'s behavior.',
+    changes: [
+      { type: 'added', text: 'Persona Marketplace view — browse 14 community personas across 4 categories (Coding, Writing, Analysis, Creative)' },
+      { type: 'added', text: 'Category filtering — filter personas by Coding, Writing, Analysis, or Creative' },
+      { type: 'added', text: 'Persona search — search by name, description, or tags' },
+      { type: 'added', text: 'One-click apply — apply any persona to the current session from the marketplace' },
+      { type: 'added', text: 'Persona registry — 14 new personas with detailed system prompts and tags' },
+      { type: 'added', text: 'Persona Marketplace nav button in sidebar — user icon quick access' },
+      { type: 'added', text: 'Persona Marketplace nav buttons in Model Selector — quick access from models page' },
+      { type: 'added', text: 'Persona Marketplace command in Command Palette (⌘K)' },
+      { type: 'changed', text: 'Updated version to v0.16.0' },
+    ],
+  },
+  {
     version: '0.15.0',
     date: '2026-04-25',
     title: 'Context Injection — Attach Code, Docs, and Notes',

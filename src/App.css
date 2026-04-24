@@ -5132,3 +5132,275 @@
   background: color-mix(in srgb, var(--accent-color) 14%, transparent);
   border-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
+
+/* ===== Persona Marketplace ===== */
+.persona-marketplace {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+.persona-marketplace-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.persona-marketplace-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-light);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.persona-marketplace-back:hover {
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.persona-marketplace-title-area {
+  flex: 1;
+}
+
+.persona-marketplace-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+
+.persona-marketplace-subtitle {
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.persona-marketplace-categories {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.persona-marketplace-cat-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-light);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.persona-marketplace-cat-btn:hover {
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.persona-marketplace-cat-btn.active {
+  background: var(--accent-color);
+  color: #fff;
+  border-color: var(--accent-color);
+}
+
+[data-theme="light"] .persona-marketplace-cat-btn.active {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.persona-marketplace-search {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.persona-marketplace-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-light);
+  pointer-events: none;
+}
+
+.persona-marketplace-search-input {
+  width: 100%;
+  padding: 10px 40px 10px 38px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  transition: all var(--transition);
+}
+
+.persona-marketplace-search-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+.persona-marketplace-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.persona-marketplace-search-clear:hover {
+  color: var(--color-text);
+  background: var(--color-surface-elevated);
+}
+
+.persona-marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.persona-marketplace-card {
+  padding: 16px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: all var(--transition);
+}
+
+.persona-marketplace-card:hover {
+  border-color: var(--color-border);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent-color) 10%, transparent);
+  transform: translateY(-1px);
+}
+
+.persona-marketplace-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.persona-marketplace-card-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.persona-marketplace-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.persona-marketplace-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.persona-marketplace-card-category {
+  font-size: 11px;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.persona-marketplace-card-desc {
+  font-size: 13px;
+  color: var(--color-text-light);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.persona-marketplace-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.persona-marketplace-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+  color: var(--accent-color);
+  font-size: 11px;
+}
+
+[data-theme="light"] .persona-marketplace-tag {
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+.persona-marketplace-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.persona-marketplace-apply-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.persona-marketplace-apply-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.persona-marketplace-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--color-text-light);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .persona-marketplace {
+    padding: 0 16px 32px;
+  }
+
+  .persona-marketplace-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .persona-marketplace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .persona-marketplace-title {
+    font-size: 20px;
+  }
+}

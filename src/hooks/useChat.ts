@@ -10,6 +10,7 @@ import {
 } from '../lib/storage'
 import type { ChatSession, ChatMessage } from '../types'
 import type { PromptTemplate } from '../lib/prompts'
+import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
 
 function paramsForSession(session: ChatSession | undefined) {
@@ -332,7 +333,7 @@ export function useChat(modelId: string) {
    * The persona's system prompt is merged with the session's custom system prompt.
    */
   const applyPersona = useCallback(
-    (persona: PromptTemplate) => {
+    (persona: PromptTemplate | MarketplacePersona) => {
       if (!activeSessionId) return
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId

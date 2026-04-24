@@ -19,6 +19,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenCustomModels?: () => void
   onResetRecommendations?: () => void
   onResetRecentModels?: () => void
+  onOpenPersonaMarketplace?: () => void
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -127,6 +128,15 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               id: 'reset-recent-models',
               label: 'Reset Recent Models',
               action: options.onResetRecentModels,
+            },
+          ]
+        : []),
+      ...(options.onOpenPersonaMarketplace
+        ? [
+            {
+              id: 'open-persona-marketplace',
+              label: 'Persona Marketplace',
+              action: options.onOpenPersonaMarketplace,
             },
           ]
         : []),

@@ -21,6 +21,7 @@ interface Props {
   onResetRecentModels?: () => void
   onOpenBenchmark?: () => void
   onOpenCustomModels?: () => void
+  onOpenPersonaMarketplace?: () => void
   onRetryModel?: (modelId: string) => void
 }
 
@@ -35,6 +36,7 @@ export function ModelSelector({
   onResetRecentModels,
   onOpenBenchmark,
   onOpenCustomModels,
+  onOpenPersonaMarketplace,
   onRetryModel,
 }: Props) {
   const downloadResume = useDownloadResume()
@@ -305,6 +307,46 @@ export function ModelSelector({
                 </BorderBeam>
               )
             })}
+          </div>
+
+          {/* Quick Nav */}
+          <div className="model-selector-quick-nav">
+            {onOpenBenchmark && (
+              <button
+                className="model-selector-nav-btn"
+                onClick={onOpenBenchmark}
+                title="Model Benchmark"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </button>
+            )}
+            {onOpenCustomModels && (
+              <button
+                className="model-selector-nav-btn"
+                onClick={onOpenCustomModels}
+                title="Custom Model Import"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+              </button>
+            )}
+            {onOpenPersonaMarketplace && (
+              <button
+                className="model-selector-nav-btn"
+                onClick={onOpenPersonaMarketplace}
+                title="Persona Marketplace"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </button>
+            )}
           </div>
         </>
       )}
