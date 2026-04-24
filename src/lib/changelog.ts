@@ -11,6 +11,23 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.15.0',
+    date: '2026-04-25',
+    title: 'Context Injection — Attach Code, Docs, and Notes',
+    description:
+      'Attach text or code snippets as context before sending messages — context is prepended to the first user message during generation and persisted across page refreshes.',
+    changes: [
+      { type: 'added', text: 'ContextPanel component — collapsible panel above the chat input for attaching context (code, docs, notes)' },
+      { type: 'added', text: 'Context persistence — stored in localStorage per session, survives page refresh' },
+      { type: 'added', text: 'Context auto-expiry — entries older than 7 days are automatically cleared' },
+      { type: 'added', text: 'Character count indicator — live count displayed in the context panel header' },
+      { type: 'added', text: 'Collapsed pill state — compact pill with char count when panel is minimized' },
+      { type: 'changed', text: 'sendMessage now accepts an optional context parameter for prepending to generation' },
+      { type: 'changed', text: 'streamChatWithUsage prepends context as a user message before the system prompt' },
+      { type: 'changed', text: 'Updated version to v0.15.0' },
+    ],
+  },
+  {
     version: '0.14.0',
     date: '2026-04-25',
     title: 'Download Resume — Pick Up Where You Left Off',

@@ -128,6 +128,7 @@ export function streamChatWithUsage(
     top_p?: number
     maxTokens?: number
     systemPrompt?: string
+    context?: string
   } = {},
 ): StreamWithUsage {
   const usageRef = { current: null } as { current: StreamUsage | null }
@@ -138,20 +139,33 @@ export function streamChatWithUsage(
       throw new Error('No model loaded')
     }
 
-    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt } =
+    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt, context } =
       options
 
     let chatMessages: Array<{
       role: 'user' | 'assistant' | 'system'
       content: string
     }>
+
+    // Prepend context if provided
+    let contextMessage: Array<{
+      role: 'user' | 'assistant' | 'system'
+      content: string
+    }> = []
+    if (context?.trim()) {
+      contextMessage = [
+        { role: 'user', content: `Context:\n${context}\n\n---\n\n` },
+      ]
+    }
+
     if (systemPrompt?.trim()) {
       chatMessages = [
         { role: 'system', content: systemPrompt.trim() },
+        ...contextMessage,
         ...messages,
       ]
     } else {
-      chatMessages = messages
+      chatMessages = [...contextMessage, ...messages]
     }
 
     const chunks = await engine.chat.completions.create({

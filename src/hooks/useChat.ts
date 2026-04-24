@@ -27,6 +27,7 @@ export function useChat(modelId: string) {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [context, setContext] = useState('')
   const abortRef = useRef(false)
   const sessionsLoaded = useRef(false)
   const tokenStats = useTokenStats()
@@ -76,6 +77,7 @@ export function useChat(modelId: string) {
       content: string,
       userMsg?: ChatMessage,
       existingAssistantMsg?: ChatMessage,
+      sessionContext?: string,
     ) => {
       let currentSessions = [...sessions]
       let sessionId = activeSessionId
@@ -125,6 +127,18 @@ export function useChat(modelId: string) {
         const history = active.messages
           .filter((m) => !m.isStreaming)
           .map((m) => ({ role: m.role, content: m.content }))
+
+        // Prepend context to the first user message
+        let messagesToSend = history
+        if (sessionContext?.trim()) {
+          const prefix = `Context:\n${sessionContext}\n\n---\n\n`
+          messagesToSend = history.map((m, i) =>
+            i === 0
+              ? { ...m, content: prefix + m.content }
+              : m,
+          )
+        }
+
         // Read session config (incl. systemPrompt) from the ref so we always
         // use the most recently saved value, even if the closure is stale.
         const latestSession = sessionsRef.current.find((s) => s.id === sessionId)
@@ -135,7 +149,7 @@ export function useChat(modelId: string) {
         let fullContent = ''
         let tokenCount = 0
 
-        const { generator, usage } = streamChatWithUsage(history, opts)
+        const { generator, usage } = streamChatWithUsage(messagesToSend, opts)
         for await (const token of generator) {
           if (abortRef.current) break
           fullContent += token
@@ -226,9 +240,9 @@ export function useChat(modelId: string) {
   )
 
   const sendMessage = useCallback(
-    (content: string) => {
+    (content: string, sessionContext?: string) => {
       if (isGenerating || !content.trim()) return
-      sendUserMessage(content)
+      sendUserMessage(content, undefined, undefined, sessionContext)
     },
     [isGenerating, sendUserMessage],
   )
@@ -373,6 +387,8 @@ export function useChat(modelId: string) {
     isGenerating,
     tokenStats: tokenStats.stats,
     isStreaming: tokenStats.isStreaming,
+    context,
+    setContext,
     initSessions,
     newSession,
     sendMessage,

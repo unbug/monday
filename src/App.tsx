@@ -77,7 +77,7 @@ export default function App() {
 
   const handleSend = useCallback(
     (content: string) => {
-      chat.sendMessage(content)
+      chat.sendMessage(content, chat.context)
     },
     [chat],
   )
@@ -292,6 +292,7 @@ export default function App() {
               />
             </div>
             <ChatInput
+              sessionId={chat.activeSession?.id}
               onSend={handleSend}
               onStop={chat.stopGenerating}
               onApplyPersona={(personaId) => {
@@ -302,6 +303,8 @@ export default function App() {
               disabled={!isReady}
               tokenStats={chat.tokenStats}
               isStreaming={chat.isStreaming}
+              context={chat.context}
+              onContextChange={chat.setContext}
             />
           </div>
         )}

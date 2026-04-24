@@ -1,8 +1,10 @@
 import { useState, useRef } from 'react'
 import { BorderBeam } from 'border-beam'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
+import { ContextPanel } from './ContextPanel'
 
 interface Props {
+  sessionId?: string
   onSend: (content: string) => void
   onStop: () => void
   onApplyPersona: (personaId: string) => void
@@ -15,9 +17,12 @@ interface Props {
     elapsedSeconds: number
   }
   isStreaming?: boolean
+  context?: string
+  onContextChange?: (context: string) => void
 }
 
 export function ChatInput({
+  sessionId,
   onSend,
   onStop,
   onApplyPersona,
@@ -25,6 +30,8 @@ export function ChatInput({
   disabled,
   tokenStats,
   isStreaming,
+  context = '',
+  onContextChange,
 }: Props) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
@@ -72,6 +79,12 @@ export function ChatInput({
 
   return (
     <div className="chat-input-wrapper">
+      {sessionId && (
+        <ContextPanel
+          sessionId={sessionId}
+          onContextChange={onContextChange ?? (() => {})}
+        />
+      )}
       <BorderBeam
         size="line"
         theme="auto"
