@@ -15,6 +15,8 @@ interface UseKeyboardShortcutsOptions {
   onOpenChangelog?: () => void
   onOpenStats?: () => void
   onOpenComparison?: () => void
+  onOpenBenchmark?: () => void
+  onOpenCustomModels?: () => void
   onResetRecommendations?: () => void
   onResetRecentModels?: () => void
 }
@@ -89,6 +91,24 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               id: 'open-comparison',
               label: 'Model Comparison',
               action: options.onOpenComparison,
+            },
+          ]
+        : []),
+      ...(options.onOpenBenchmark
+        ? [
+            {
+              id: 'open-benchmark',
+              label: 'Model Benchmark',
+              action: options.onOpenBenchmark,
+            },
+          ]
+        : []),
+      ...(options.onOpenCustomModels
+        ? [
+            {
+              id: 'open-custom-models',
+              label: 'Custom Model Import',
+              action: options.onOpenCustomModels,
             },
           ]
         : []),

@@ -17,6 +17,8 @@ interface Props {
   showCacheManager?: boolean
   onResetRecommendations?: () => void
   onResetRecentModels?: () => void
+  onOpenBenchmark?: () => void
+  onOpenCustomModels?: () => void
 }
 
 export function ModelSelector({
@@ -28,6 +30,8 @@ export function ModelSelector({
   showCacheManager,
   onResetRecommendations,
   onResetRecentModels,
+  onOpenBenchmark,
+  onOpenCustomModels,
 }: Props) {
   const [sortMode, setSortMode] = useState<SortMode>('popular')
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null)

@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.13.0',
+    date: '2026-04-24',
+    title: 'Model Benchmark & Custom Model Import',
+    description:
+      'Measure model performance with a built-in benchmark tool, and load custom MLC-compiled models from any HuggingFace URL.',
+    changes: [
+      { type: 'added', text: 'Model Benchmark view — select a model and run a standardized test prompt to measure tokens/sec, total tokens, and latency' },
+      { type: 'added', text: 'Real-time benchmark progress — see tokens/sec update live as the model generates' },
+      { type: 'added', text: 'Benchmark results display — stats cards (tokens/sec, total tokens, latency) + collapsible generated response' },
+      { type: 'added', text: 'Custom Model Import — paste a HuggingFace model ID/URL to load an MLC-compiled model not in the registry' },
+      { type: 'added', text: 'Custom model import progress bar and status indicators (loading/ready/error)' },
+      { type: 'added', text: 'Benchmark and Custom Model Import commands in Command Palette (⌘K)' },
+      { type: 'added', text: 'Quick nav buttons in sidebar — lightning bolt (Benchmark) and layers icon (Custom Model Import)' },
+      { type: 'added', text: 'Benchmark prompt — standardized test prompt for consistent model comparison' },
+      { type: 'changed', text: 'Updated version to v0.13.0' },
+    ],
+  },
+  {
     version: '0.12.0',
     date: '2026-04-24',
     title: 'Recent Models & Storage Quota Indicator',
@@ -23,7 +41,7 @@ export const CHANGELOG: ChangelogEntry[] = [
       { type: 'added', text: 'Reset Recent Models button — clear recent model history' },
       { type: 'added', text: 'Storage quota indicator in sidebar footer — shows localStorage usage with disk icon' },
       { type: 'added', text: 'Reset Recent Models command in Command Palette (⌘K)' },
-      { type: 'changed', text: 'Updated version to v0.12.0' },
+      { type: 'changed', text: 'Updated version to v0.13.0' },
     ],
   },
   {

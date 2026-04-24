@@ -11,6 +11,8 @@ import { Changelog } from './components/Changelog'
 import { CommandPalette } from './components/CommandPalette'
 import { ModelStats } from './components/ModelStats'
 import { ModelComparison } from './components/ModelComparison'
+import { ModelBenchmark } from './components/ModelBenchmark'
+import { CustomModelImport } from './components/CustomModelImport'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -21,7 +23,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
@@ -60,6 +62,15 @@ export default function App() {
     [model],
   )
 
+  const handleCustomModelLoad = useCallback(
+    async (modelId: string) => {
+      setSelectedModelId(modelId)
+      await model.load(modelId)
+      setView('chat')
+    },
+    [model],
+  )
+
   const handleResetRecommendations = useCallback(() => {
     resetModelUsage()
   }, [])
@@ -84,6 +95,8 @@ export default function App() {
     onOpenChangelog: () => setView('changelog'),
     onOpenStats: () => setView('stats'),
     onOpenComparison: () => setShowComparison(true),
+    onOpenBenchmark: () => setView('benchmark'),
+    onOpenCustomModels: () => setView('custom-models'),
     onResetRecommendations: () => handleResetRecommendations(),
     onResetRecentModels: () => resetRecent(),
   })
@@ -222,6 +235,8 @@ export default function App() {
               onOpenCache={() => setView('cache')}
               onResetRecommendations={handleResetRecommendations}
               onResetRecentModels={() => resetRecent()}
+              onOpenBenchmark={() => setView('benchmark')}
+              onOpenCustomModels={() => setView('custom-models')}
             />
           </div>
         ) : view === 'changelog' ? (
@@ -251,6 +266,14 @@ export default function App() {
         ) : view === 'comparison' ? (
           <div className="main-content main-content--comparison">
             <ModelComparison onBack={() => setView('models')} />
+          </div>
+        ) : view === 'benchmark' ? (
+          <div className="main-content main-content--benchmark">
+            <ModelBenchmark onBack={() => setView('models')} />
+          </div>
+        ) : view === 'custom-models' ? (
+          <div className="main-content main-content--custom-models">
+            <CustomModelImport onLoad={handleCustomModelLoad} />
           </div>
         ) : (
           <div className="chat-layout">
