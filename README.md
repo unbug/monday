@@ -226,7 +226,7 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 - [ ] **Custom model import** — Load custom MLC-compiled models from URL
 - [x] **Model comparison** — Side-by-side generation from two models
 - [ ] **Download resume** — Resume interrupted model downloads
-- [ ] **Storage quota** — Show browser storage used vs available
+- [x] **Storage quota** — Show browser storage used vs available
 
 ### Phase 3 — Prompt Templates & Personas (v0.7.x)
 > Inspired by NextChat masks, GPT-Runner presets, LobeHub agents
@@ -278,7 +278,7 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 - [x] **Session search** — Search conversations by title in the sidebar
 - [x] **Date filtering** — Filter sessions by Today, Yesterday, This Week, This Month
 - [ ] **Model usage stats** — Visual chart of model usage frequency
-- [ ] **Recent models** — Quick access to recently used models
+- [x] **Recent models** — Quick access to recently used models
 
 ### Phase 7 — Collaboration & Sharing (v0.9.x)
 > Social features inspired by LobeHub channels and Open WebUI community
