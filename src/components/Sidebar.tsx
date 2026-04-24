@@ -8,6 +8,7 @@ import { SessionSearch } from './SessionSearch'
 import { DEFAULT_PERSONA, PROMPT_TEMPLATES } from '../lib/prompts'
 import type { DateFilter } from './SessionSearch'
 import { getLocalDataSize } from '../lib/recentModels'
+import { version } from '../../package.json'
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B'
@@ -302,7 +303,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.13.0
+          v{version}
         </button>
         <span className="sidebar-separator">·</span>
         <span className="sidebar-storage-info" title="localStorage usage">
