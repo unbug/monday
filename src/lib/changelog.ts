@@ -11,6 +11,21 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.17.0',
+    date: '2026-04-25',
+    title: 'PWA Offline Support — Full Service Worker Caching',
+    description:
+      'Monday now works fully offline with a service worker that precaches the app shell and intelligently caches model files and fonts for instant loading.',
+    changes: [
+      { type: 'added', text: 'App shell precaching — all HTML, CSS, JS, and assets cached via service worker for offline access' },
+      { type: 'added', text: 'HuggingFace model caching — NetworkFirst strategy with 10s timeout, 7-day expiration for model file downloads' },
+      { type: 'added', text: 'Google Fonts caching — CacheFirst strategy with 1-year expiration for font files' },
+      { type: 'added', text: 'Auto-update registration — service worker auto-registers and updates on page load' },
+      { type: 'changed', text: 'Fixed registerType from invalid autoRegister to autoUpdate' },
+      { type: 'changed', text: 'Updated version to v0.17.0' },
+    ],
+  },
+  {
     version: '0.16.0',
     date: '2026-04-25',
     title: 'Persona Marketplace — Browse & Apply Community Personas',
@@ -90,7 +105,7 @@ export const CHANGELOG: ChangelogEntry[] = [
       { type: 'added', text: 'Reset Recent Models button — clear recent model history' },
       { type: 'added', text: 'Storage quota indicator in sidebar footer — shows localStorage usage with disk icon' },
       { type: 'added', text: 'Reset Recent Models command in Command Palette (⌘K)' },
-      { type: 'changed', text: 'Updated version to v0.13.0' },
+      { type: 'changed', text: 'Updated version to v0.12.0' },
     ],
   },
   {

@@ -18,6 +18,8 @@ import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
+import { useInstallPrompt } from './hooks/useInstallPrompt'
+import { PWAInstallBanner } from './components/PWAInstallBanner'
 import type { ModelInfo } from './types'
 import { PROMPT_TEMPLATES } from './lib/prompts'
 import { resetModelUsage } from './lib/modelUsage'
@@ -105,6 +107,7 @@ export default function App() {
   })
 
   const isReady = model.status === 'ready'
+  const { canInstall, promptInstall, onDismiss } = useInstallPrompt()
 
   const modelBadgeText = selectedModelId
     ? selectedModelId.split('-').slice(0, 2).join(' ')
@@ -223,6 +226,12 @@ export default function App() {
         </header>
 
         <WebGPUCheck supported={model.webgpuSupported} />
+
+        {canInstall && (
+          <div className="install-banner-wrapper">
+            <PWAInstallBanner onInstall={promptInstall} onDismiss={onDismiss} />
+          </div>
+        )}
 
         {view === 'models' ? (
           <div className="main-content">
