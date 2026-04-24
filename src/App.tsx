@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { BorderBeam } from 'border-beam'
 import { Sidebar } from './components/Sidebar'
 import { ModelSelector } from './components/ModelSelector'
@@ -27,10 +27,22 @@ export default function App() {
   const [view, setView] = useState<View>('models')
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
   const [showComparison, setShowComparison] = useState(false)
+  const [transitioning, setTransitioning] = useState(false)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
   const theme = useTheme()
+
+  // Trigger theme transition overlay
+  const prevThemeRef = useRef<string>(theme.resolved)
+  useEffect(() => {
+    if (prevThemeRef.current !== theme.resolved) {
+      setTransitioning(true)
+      const timer = setTimeout(() => setTransitioning(false), 400)
+      prevThemeRef.current = theme.resolved
+      return () => clearTimeout(timer)
+    }
+  }, [theme.resolved])
 
   const activePersonaId = chat.activeSession?.personaId ?? null
 
@@ -86,6 +98,11 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Theme transition overlay */}
+      {transitioning && (
+        <div className={`theme-transition-overlay ${transitioning ? 'active' : ''}`} />
+      )}
+
       {sidebarOpen && (
         <>
           <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />

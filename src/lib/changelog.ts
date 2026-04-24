@@ -11,6 +11,30 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.11.0',
+    date: '2026-04-24',
+    title: 'Theme Optimization — Visual Depth & Polish',
+    description:
+      'Major visual overhaul of both dark and light themes: enhanced color depth, refined shadows, improved message bubble hierarchy, smoother transitions, and polished component-level details for a more immersive experience.',
+    changes: [
+      { type: 'changed', text: 'Dark theme — deeper background (#030308), richer surface layers, enhanced purple glow effects' },
+      { type: 'changed', text: 'Light theme — warmer tones (#f4f4f8), refined shadows, improved contrast and readability' },
+      { type: 'changed', text: 'Enhanced body background with multi-layer radial gradients for both themes' },
+      { type: 'changed', text: 'Sidebar — depth gradient overlay, left indicator for active session, refined border' },
+      { type: 'changed', text: 'Header — subtle top gradient accent line, enhanced backdrop blur' },
+      { type: 'changed', text: 'Model cards — inner glow, hover lift effect (2px), gradient overlay on hover' },
+      { type: 'changed', text: 'Message bubbles — user messages with purple gradient overlay, assistant messages with depth shadows' },
+      { type: 'changed', text: 'Code blocks — enhanced shadows, subtle top accent line, improved dark/light contrast' },
+      { type: 'changed', text: 'Chat input — inner glow gradient, top gradient accent line, enhanced focus state' },
+      { type: 'changed', text: 'Command palette — enhanced backdrop blur, refined shadows with subtle glow' },
+      { type: 'changed', text: 'Model badge — gradient glow behind badge, enhanced in both themes' },
+      { type: 'changed', text: 'Model sort group — inner gradient overlay for depth' },
+      { type: 'changed', text: 'Settings panel — enhanced inset shadows for better depth perception' },
+      { type: 'changed', text: 'Theme transition overlay — smooth crossfade effect when switching themes' },
+      { type: 'changed', text: 'Updated version to v0.11.0' },
+    ],
+  },
+  {
     version: '0.10.0',
     date: '2026-04-23',
     title: 'Model Comparison — Side-by-Side Benchmarking',

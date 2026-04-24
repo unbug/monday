@@ -6,176 +6,206 @@
   padding: 0;
 }
 
+/* ===== Dark Theme (default) ===== */
 :root,
 [data-theme="dark"] {
-  /* Backgrounds */
+  /* ===== Backgrounds — deep, rich, with layered depth ===== */
   --color-bg: #030308;
-  --color-bg-subtle: #080810;
-  --color-sidebar: #060610;
-  --color-surface: #10101a;
-  --color-surface-elevated: #181828;
-  --color-surface-hover: #1e1e32;
+  --color-bg-subtle: #08081a;
+  --color-bg-elevated: #0c0c1e;
+  --color-sidebar: #05050f;
+  --color-surface: #0c0c1e;
+  --color-surface-elevated: #111130;
+  --color-surface-hover: #161640;
+  --color-surface-active: #1a1a4a;
 
-  /* Sidebar */
-  --color-sidebar-hover: rgba(167, 139, 250, 0.04);
-  --color-sidebar-active: rgba(167, 139, 250, 0.08);
+  /* ===== Sidebar — subtle depth ===== */
+  --color-sidebar-hover: rgba(139, 92, 246, 0.06);
+  --color-sidebar-active: rgba(139, 92, 246, 0.12);
+  --color-sidebar-border: rgba(139, 92, 246, 0.06);
 
-  /* Primary / Accent */
+  /* ===== Primary / Accent — vibrant purple ===== */
   --color-primary: #a78bfa;
   --color-primary-hover: #c4b5fd;
   --color-primary-active: #8b5cf6;
-  --color-primary-bg: rgba(167, 139, 250, 0.1);
-  --color-primary-border: rgba(167, 139, 250, 0.2);
-  --color-primary-border-hover: rgba(167, 139, 250, 0.4);
+  --color-primary-bg: rgba(139, 92, 246, 0.1);
+  --color-primary-bg-strong: rgba(139, 92, 246, 0.18);
+  --color-primary-border: rgba(139, 92, 246, 0.25);
+  --color-primary-border-hover: rgba(139, 92, 246, 0.5);
   --color-secondary: #6366f1;
   --color-secondary-bg: rgba(99, 102, 241, 0.1);
+  --color-accent-cyan: #22d3ee;
+  --color-accent-pink: #f472b6;
 
-  /* Text */
-  --color-text: #e4e4ed;
-  --color-text-light: #6b6b85;
-  --color-text-muted: #4a4a60;
-  --color-text-inverse: #0a0a0f;
+  /* ===== Text — high contrast ===== */
+  --color-text: #e8e8f4;
+  --color-text-light: #8888a4;
+  --color-text-muted: #55556a;
+  --color-text-inverse: #0a0a14;
 
-  /* Borders */
-  --color-border: #1a1a28;
-  --color-border-subtle: #12121e;
-  --color-border-focus: rgba(167, 139, 250, 0.4);
+  /* ===== Borders — crisp, subtle ===== */
+  --color-border: #16162a;
+  --color-border-subtle: #101020;
+  --color-border-focus: rgba(139, 92, 246, 0.5);
+  --color-border-glow: rgba(139, 92, 246, 0.3);
 
-  /* Messages */
-  --color-user-msg: rgba(167, 139, 250, 0.1);
-  --color-user-msg-border: rgba(167, 139, 250, 0.15);
-  --color-assistant-msg: #12121e;
+  /* ===== Messages — better depth ===== */
+  --color-user-msg: rgba(139, 92, 246, 0.06);
+  --color-user-msg-border: rgba(139, 92, 246, 0.15);
+  --color-assistant-msg: #0c0c1e;
 
-  /* Status */
+  /* ===== Status — vivid ===== */
   --color-error: #f87171;
   --color-error-bg: rgba(248, 113, 113, 0.08);
+  --color-error-border: rgba(248, 113, 113, 0.2);
   --color-success: #4ade80;
   --color-success-bg: rgba(74, 222, 128, 0.08);
+  --color-success-border: rgba(74, 222, 128, 0.2);
   --color-warning: #fbbf24;
   --color-warning-bg: rgba(251, 191, 36, 0.08);
+  --color-warning-border: rgba(251, 191, 36, 0.2);
 
-  /* Misc */
-  --color-meta-bg: rgba(255, 255, 255, 0.03);
+  /* ===== Misc ===== */
+  --color-meta-bg: rgba(255, 255, 255, 0.025);
   --color-progress-bg: rgba(255, 255, 255, 0.05);
   --color-delete-hover-bg: rgba(248, 113, 113, 0.1);
 
-  /* Scrollbar */
+  /* ===== Scrollbar — refined ===== */
   --color-scrollbar: rgba(255, 255, 255, 0.06);
   --color-scrollbar-hover: rgba(255, 255, 255, 0.12);
 
-  /* Code */
-  --color-code-bg: #0a0a14;
+  /* ===== Code — elevated ===== */
+  --color-code-bg: #060612;
   --color-code-text: #cdd6f4;
-  --color-code-header-bg: #080810;
+  --color-code-header-bg: #040410;
 
-  /* Glass morphism */
-  --glass-bg: rgba(16, 16, 26, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-blur: 16px;
+  /* ===== Glass morphism ===== */
+  --glass-bg: rgba(12, 12, 26, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.04);
+  --glass-blur: 24px;
 
-  /* Layout */
+  /* ===== Layout ===== */
   --sidebar-width: 260px;
   --header-height: 56px;
   --radius: 16px;
   --radius-sm: 10px;
 
-  /* Shadows — dark: deeper, more contrast */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 24px rgba(167, 139, 250, 0.12);
-  --shadow-btn-glow: 0 0 20px rgba(167, 139, 250, 0.35);
-  --shadow-stop-glow: 0 0 20px rgba(248, 113, 113, 0.35);
+  /* ===== Shadows — deep, atmospheric ===== */
+  --shadow-sm: 0 1px 6px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.12);
+  --shadow-glow-strong: 0 0 40px rgba(139, 92, 246, 0.2);
+  --shadow-btn-glow: 0 0 24px rgba(139, 92, 246, 0.35);
+  --shadow-stop-glow: 0 0 24px rgba(248, 113, 113, 0.35);
 
-  /* Transitions */
+  /* ===== Focus ring ===== */
+  --focus-ring: 0 0 0 2px var(--color-primary-border);
+
+  /* ===== Transitions ===== */
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   color-scheme: dark;
 }
 
+/* ===== Light Theme ===== */
 [data-theme="light"] {
-  /* Backgrounds */
-  --color-bg: #f8f8fc;
-  --color-bg-subtle: #f0f0f5;
-  --color-sidebar: #f2f2f7;
+  /* ===== Backgrounds — warm, clean, with layered depth ===== */
+  --color-bg: #f4f4f8;
+  --color-bg-subtle: #eaeaef;
+  --color-bg-elevated: #e2e2e8;
+  --color-sidebar: #eeeee8;
   --color-surface: #ffffff;
-  --color-surface-elevated: #f4f4f8;
-  --color-surface-hover: #eeeef3;
+  --color-surface-elevated: #f6f6fa;
+  --color-surface-hover: #eeeee8;
+  --color-surface-active: #e8e8f0;
 
-  /* Sidebar */
+  /* ===== Sidebar ===== */
   --color-sidebar-hover: rgba(124, 58, 237, 0.04);
   --color-sidebar-active: rgba(124, 58, 237, 0.08);
+  --color-sidebar-border: rgba(0, 0, 0, 0.06);
 
-  /* Primary / Accent */
+  /* ===== Primary / Accent — refined purple ===== */
   --color-primary: #7c3aed;
   --color-primary-hover: #6d28d9;
   --color-primary-active: #5b21b6;
-  --color-primary-bg: rgba(124, 58, 237, 0.08);
-  --color-primary-border: rgba(124, 58, 237, 0.15);
-  --color-primary-border-hover: rgba(124, 58, 237, 0.3);
+  --color-primary-bg: rgba(124, 58, 237, 0.07);
+  --color-primary-bg-strong: rgba(124, 58, 237, 0.12);
+  --color-primary-border: rgba(124, 58, 237, 0.18);
+  --color-primary-border-hover: rgba(124, 58, 237, 0.35);
   --color-secondary: #6366f1;
-  --color-secondary-bg: rgba(99, 102, 241, 0.08);
+  --color-secondary-bg: rgba(99, 102, 241, 0.07);
+  --color-accent-cyan: #0891b2;
+  --color-accent-pink: #db2777;
 
-  /* Text */
-  --color-text: #1c1c1e;
-  --color-text-light: #5a5a6e;
-  --color-text-muted: #8a8a9e;
+  /* ===== Text — high contrast ===== */
+  --color-text: #111115;
+  --color-text-light: #555568;
+  --color-text-muted: #8888a0;
   --color-text-inverse: #ffffff;
   --color-text-on-primary: #ffffff;
 
-  /* Borders */
-  --color-border: #e5e5ea;
-  --color-border-subtle: #eeeeee;
+  /* ===== Borders — clean ===== */
+  --color-border: #e2e2e8;
+  --color-border-subtle: #eeeee8;
   --color-border-focus: rgba(124, 58, 237, 0.4);
+  --color-border-glow: rgba(124, 58, 237, 0.15);
 
-  /* Messages */
-  --color-user-msg: rgba(124, 58, 237, 0.06);
+  /* ===== Messages ===== */
+  --color-user-msg: rgba(124, 58, 237, 0.04);
   --color-user-msg-border: rgba(124, 58, 237, 0.12);
-  --color-assistant-msg: #f5f5fa;
+  --color-assistant-msg: #f8f8fc;
 
-  /* Status */
+  /* ===== Status ===== */
   --color-error: #ef4444;
   --color-error-bg: rgba(239, 68, 68, 0.06);
+  --color-error-border: rgba(239, 68, 68, 0.15);
   --color-success: #16a34a;
   --color-success-bg: rgba(22, 163, 74, 0.06);
+  --color-success-border: rgba(22, 163, 74, 0.15);
   --color-warning: #d97706;
   --color-warning-bg: rgba(217, 119, 6, 0.06);
+  --color-warning-border: rgba(217, 119, 6, 0.15);
 
-  /* Misc */
-  --color-meta-bg: rgba(0, 0, 0, 0.03);
+  /* ===== Misc ===== */
+  --color-meta-bg: rgba(0, 0, 0, 0.025);
   --color-progress-bg: rgba(0, 0, 0, 0.06);
   --color-delete-hover-bg: rgba(239, 68, 68, 0.06);
 
-  /* Scrollbar */
+  /* ===== Scrollbar ===== */
   --color-scrollbar: rgba(0, 0, 0, 0.08);
   --color-scrollbar-hover: rgba(0, 0, 0, 0.15);
 
-  /* Code */
-  --color-code-bg: #f8f8fc;
+  /* ===== Code ===== */
+  --color-code-bg: #f0f0f5;
   --color-code-text: #24292e;
-  --color-code-header-bg: #f0f0f5;
+  --color-code-header-bg: #eaeaf0;
 
-  /* Glass morphism */
-  --glass-bg: rgba(255, 255, 255, 0.9);
+  /* ===== Glass morphism ===== */
+  --glass-bg: rgba(255, 255, 255, 0.92);
   --glass-border: rgba(0, 0, 0, 0.06);
-  --glass-blur: 12px;
+  --glass-blur: 18px;
 
-  /* Layout */
+  /* ===== Layout ===== */
   --sidebar-width: 260px;
   --header-height: 56px;
   --radius: 16px;
   --radius-sm: 10px;
 
-  /* Shadows — light: softer, more subtle */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.06);
-  --shadow-btn-glow: 0 0 16px rgba(124, 58, 237, 0.2);
-  --shadow-stop-glow: 0 0 16px rgba(239, 68, 68, 0.2);
+  /* ===== Shadows — soft, modern ===== */
+  --shadow-sm: 0 1px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.05);
+  --shadow-glow-strong: 0 0 30px rgba(124, 58, 237, 0.1);
+  --shadow-btn-glow: 0 0 16px rgba(124, 58, 237, 0.15);
+  --shadow-stop-glow: 0 0 16px rgba(239, 68, 68, 0.15);
 
-  /* Transitions */
+  /* ===== Focus ring ===== */
+  --focus-ring: 0 0 0 2px var(--color-primary-border);
+
+  /* ===== Transitions ===== */
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -200,6 +230,34 @@ body {
   transition: background var(--transition-slow), color var(--transition-slow);
 }
 
+/* ===== Theme transition overlay — smooth crossfade ===== */
+.theme-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.theme-transition-overlay.active {
+  animation: themeFade 0.4s ease forwards;
+}
+
+@keyframes themeFade {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+[data-theme="dark"] .theme-transition-overlay {
+  background: radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 70%);
+}
+
+[data-theme="light"] .theme-transition-overlay {
+  background: radial-gradient(ellipse at 50% 50%, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -220,4 +278,65 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* ===== Theme transition overlay ===== */
+body.theme-transitioning {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ===== Subtle background patterns — enhanced depth ===== */
+[data-theme="dark"] body {
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 110%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.015) 0%, transparent 70%),
+    var(--color-bg);
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(124, 58, 237, 0.035) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 110%, rgba(99, 102, 241, 0.025) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(124, 58, 237, 0.01) 0%, transparent 70%),
+    var(--color-bg);
+}
+
+/* ===== Refined scrollbar ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar);
+  border-radius: 4px;
+  transition: background var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-hover);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+/* ===== Focus ring — visible ===== */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 4px;
+}
+
+/* ===== Selection color ===== */
+::selection {
+  background: var(--color-primary-border-hover);
+  color: var(--color-text);
 }
