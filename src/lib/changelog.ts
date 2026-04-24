@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.14.0',
+    date: '2026-04-25',
+    title: 'Download Resume — Pick Up Where You Left Off',
+    description:
+      'Model downloads can now be resumed from where they were interrupted, so you never lose progress on large model downloads.',
+    changes: [
+      { type: 'added', text: 'Download Resume feature — when a model download fails or is interrupted, a "Resume Download" button appears with the saved progress percentage' },
+      { type: 'added', text: 'Progress persistence — download progress is saved to localStorage automatically during model download' },
+      { type: 'added', text: 'Auto-expire — saved download state expires after 24 hours to prevent stale entries' },
+      { type: 'added', text: 'Visual progress bar — shows exact download percentage while resuming' },
+      { type: 'changed', text: 'Updated version to v0.14.0' },
+    ],
+  },
+  {
     version: '0.13.0',
     date: '2026-04-24',
     title: 'Model Benchmark & Custom Model Import',

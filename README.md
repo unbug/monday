@@ -13,10 +13,28 @@
 
 - **Zero Install** — Pure browser experience, no downloads needed
 - **Browser-Native Inference** — Models run locally via WebGPU + WASM using [Web-LLM](https://github.com/mlc-ai/web-llm)
-- **7 Pre-configured Models** — Qwen 2.5, SmolLM2, Gemma 2, Phi 3.5, TinyLlama
+- **23 Pre-configured Models** — Qwen 2.5/3/3.5, SmolLM2, Gemma 2/3, Phi 3.5/4, Llama 3.2, DeepSeek R1, and more
 - **Streaming Output** — Token-by-token real-time response
 - **Chat History** — Persistent multi-session conversations via IndexedDB
 - **Changelog** — In-app version history with expandable release details
+- **Usage Statistics** — Dashboard with daily charts, per-model breakdown, and provider analytics
+- **Model Comparison** — Side-by-side generation from two models with real-time token stats
+- **Model Benchmark** — Built-in benchmark tool to measure tokens/sec and latency
+- **Custom Model Import** — Load custom MLC-compiled models from any HuggingFace URL
+- **Download Resume** — Resume interrupted model downloads from where you left off
+- **Session Search** — Search conversations by title with date filtering
+- **Command Palette** — Quick navigation with ⌘K
+- **Prompt Templates & Personas** — 8 built-in personas + custom persona creation
+- **Message Actions** — Edit and regenerate user messages inline
+- **Generation Parameters** — Per-session temperature, top-p, max tokens sliders
+- **System Prompts** — Customizable per-session system prompts
+- **Token Counter** — Real-time tokens/sec and total token usage
+- **Model Cache Manager** — View and delete cached models
+- **Recent Models** — Quick access to recently used models
+- **Recommended Models** — Top models based on your usage history
+- **Storage Quota** — Monitor browser storage usage
+- **Markdown Rendering** — Code highlighting, LaTeX math, GFM tables
+- **Chat Export** — Export conversations as Markdown
 - **BorderBeam UI** — Animated border effects with ocean/colorful/mono variants
 - **Theme Toggle** — Light / Dark / System with auto-detection
 - **Mobile Responsive** — Sidebar overlay, auto-close, safe-area support
@@ -176,13 +194,31 @@ sequenceDiagram
 
 | Model | Parameters | Size | Provider |
 |-------|-----------|------|----------|
+| **Qwen 3 0.6B** ⭐ | 0.6B | ~400 MB | Alibaba |
+| Qwen 3 1.7B | 1.7B | ~1 GB | Alibaba |
+| Qwen 3 4B | 4B | ~2.5 GB | Alibaba |
+| **Qwen 3.5 0.8B** ⭐ | 0.8B | ~500 MB | Alibaba |
+| Qwen 3.5 2B | 2B | ~1.2 GB | Alibaba |
 | **Qwen 2.5 0.5B** ⭐ | 0.5B | ~350 MB | Alibaba |
 | Qwen 2.5 1.5B | 1.5B | ~900 MB | Alibaba |
-| SmolLM2 360M | 360M | ~200 MB | HuggingFace |
+| Qwen 2.5 3B | 3B | ~1.8 GB | Alibaba |
+| Qwen 2.5 Coder 1.5B | 1.5B | ~900 MB | Alibaba |
+| **SmolLM2 360M** | 360M | ~200 MB | HuggingFace |
 | SmolLM2 1.7B | 1.7B | ~1 GB | HuggingFace |
-| Gemma 2 2B | 2B | ~1.3 GB | Google |
-| Phi 3.5 Mini | 3.8B | ~2 GB | Microsoft |
+| **Gemma 2 2B** | 2B | ~1.3 GB | Google |
+| **Gemma 3 4B** | 4B | ~2.5 GB | Google |
+| Gemma 3 1B | 1B | ~700 MB | Google |
+| **Phi 3.5 Mini** | 3.8B | ~2 GB | Microsoft |
+| **Phi 4 Mini** ⭐ | 3.8B | ~2.2 GB | Microsoft |
+| **DeepSeek R1 Distill Qwen 1.5B** ⭐ | 1.5B | ~1 GB | DeepSeek |
+| **Llama 3.2 1B** | 1B | ~700 MB | Meta |
+| **Llama 3.2 3B** | 3B | ~1.8 GB | Meta |
 | TinyLlama 1.1B | 1.1B | ~600 MB | Community |
+| StableLM 2 Zephyr 1.6B | 1.6B | ~950 MB | Stability AI |
+| InternLM 2.5 1.8B | 1.8B | ~1.1 GB | Shanghai AI Lab |
+| OLMo 1B | 1B | ~600 MB | Allen Institute |
+
+⭐ = Recommended for most users
 
 ---
 
@@ -225,7 +261,7 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 - [x] **Model benchmarks** — Auto-run speed benchmark on load, show tokens/sec
 - [x] **Custom model import** — Load custom MLC-compiled models from URL
 - [x] **Model comparison** — Side-by-side generation from two models
-- [ ] **Download resume** — Resume interrupted model downloads
+- [x] **Download resume** — Resume interrupted model downloads with progress persistence
 - [x] **Storage quota** — Show browser storage used vs available
 
 ### Phase 3 — Prompt Templates & Personas (v0.7.x)

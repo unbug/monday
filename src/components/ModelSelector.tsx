@@ -3,8 +3,10 @@ import { useState, useMemo, useCallback } from 'react'
 import type { ModelInfo, ModelState } from '../types'
 import { MODELS } from '../lib/models'
 import { CacheManager } from './CacheManager'
+import { DownloadResumeIndicator } from './DownloadResumeIndicator'
 import { getTopModels } from '../lib/modelUsage'
 import { getRecentModels } from '../lib/recentModels'
+import { useDownloadResume } from '../hooks/useDownloadResume'
 
 type SortMode = 'popular' | 'latest' | 'size'
 
@@ -19,6 +21,7 @@ interface Props {
   onResetRecentModels?: () => void
   onOpenBenchmark?: () => void
   onOpenCustomModels?: () => void
+  onRetryModel?: (modelId: string) => void
 }
 
 export function ModelSelector({
@@ -32,7 +35,9 @@ export function ModelSelector({
   onResetRecentModels,
   onOpenBenchmark,
   onOpenCustomModels,
+  onRetryModel,
 }: Props) {
+  const downloadResume = useDownloadResume()
   const [sortMode, setSortMode] = useState<SortMode>('popular')
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null)
 
@@ -284,7 +289,17 @@ export function ModelSelector({
                       <div className="model-ready">● Ready</div>
                     )}
                     {isActive && modelState.status === 'error' && (
-                      <div className="model-error">{modelState.error}</div>
+                      <div className="model-error">
+                        {modelState.error}
+                        {downloadResume.hasPartialDownload && onRetryModel && (
+                          <DownloadResumeIndicator
+                            key={currentModelId}
+                            modelId={currentModelId}
+                            progress={downloadResume.progress}
+                            onResume={downloadResume.onResume}
+                          />
+                        )}
+                      </div>
                     )}
                   </button>
                 </BorderBeam>
