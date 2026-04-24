@@ -22,6 +22,7 @@ import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
 import type { ModelInfo } from './types'
 import { PROMPT_TEMPLATES } from './lib/prompts'
+import { getModelById } from './lib/models'
 import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
@@ -80,8 +81,8 @@ export default function App() {
   }, [])
 
   const handleSend = useCallback(
-    (content: string) => {
-      chat.sendMessage(content, chat.context)
+    (content: string, images?: Array<{ id: string; data: string; name?: string }>) => {
+      chat.sendMessage(content, chat.context, images)
     },
     [chat],
   )
@@ -324,6 +325,7 @@ export default function App() {
               }}
               isGenerating={chat.isGenerating}
               disabled={!isReady}
+              modelInfo={selectedModelId ? getModelById(selectedModelId) : null}
               tokenStats={chat.tokenStats}
               isStreaming={chat.isStreaming}
               context={chat.context}

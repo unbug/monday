@@ -79,6 +79,7 @@ export function useChat(modelId: string) {
       userMsg?: ChatMessage,
       existingAssistantMsg?: ChatMessage,
       sessionContext?: string,
+      images?: Array<{ id: string; data: string; name?: string }>,
     ) => {
       let currentSessions = [...sessions]
       let sessionId = activeSessionId
@@ -150,7 +151,11 @@ export function useChat(modelId: string) {
         let fullContent = ''
         let tokenCount = 0
 
-        const { generator, usage } = streamChatWithUsage(messagesToSend, opts)
+        const { generator, usage } = streamChatWithUsage(messagesToSend, {
+          ...opts,
+          context: sessionContext,
+          images,
+        })
         for await (const token of generator) {
           if (abortRef.current) break
           fullContent += token
@@ -241,9 +246,9 @@ export function useChat(modelId: string) {
   )
 
   const sendMessage = useCallback(
-    (content: string, sessionContext?: string) => {
-      if (isGenerating || !content.trim()) return
-      sendUserMessage(content, undefined, undefined, sessionContext)
+    (content: string, sessionContext?: string, images?: Array<{ id: string; data: string; name?: string }>) => {
+      if ((isGenerating || (!content.trim() && !images)) && !images) return
+      sendUserMessage(content, undefined, undefined, sessionContext, images)
     },
     [isGenerating, sendUserMessage],
   )

@@ -17,6 +17,7 @@ export interface ChatMessage {
   id: string
   role: 'user' | 'assistant' | 'system'
   content: string
+  images?: ChatMessageImage[]
   isStreaming?: boolean
   timestamp: number
 }
@@ -37,6 +38,12 @@ export interface ChatSession {
   personaId: string | null
   createdAt: number
   updatedAt: number
+}
+
+export interface ChatMessageImage {
+  id: string
+  data: string // base64 data URL
+  name?: string
 }
 
 export type ModelStatus = 'idle' | 'downloading' | 'ready' | 'error'

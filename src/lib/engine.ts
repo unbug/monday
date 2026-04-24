@@ -121,6 +121,37 @@ export interface StreamWithUsage {
   usage: { current: StreamUsage | null }
 }
 
+/**
+ * Convert string-content messages to vision-format messages when images are present.
+ * Web-LLM vision models expect content as an array of text + image_url parts.
+ */
+function toVisionMessages(
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>,
+  images: Array<{ id: string; data: string; name?: string }>,
+): Array<{
+  role: 'user' | 'assistant' | 'system'
+  content: string | Array<{ type: string; text?: string; image_url?: { url: string } }>
+}> {
+  const imageParts = images.map((img) => ({
+    type: 'image_url' as const,
+    image_url: { url: img.data },
+  }))
+
+  return messages.map((msg, i) => {
+    // Only user messages can have images
+    if (msg.role === 'user' && i === messages.length - 1 && images.length > 0) {
+      return {
+        role: msg.role,
+        content: [
+          ...imageParts,
+          { type: 'text' as const, text: msg.content },
+        ],
+      }
+    }
+    return { role: msg.role, content: msg.content }
+  })
+}
+
 export function streamChatWithUsage(
   messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>,
   options: {
@@ -129,6 +160,7 @@ export function streamChatWithUsage(
     maxTokens?: number
     systemPrompt?: string
     context?: string
+    images?: Array<{ id: string; data: string; name?: string }>
   } = {},
 ): StreamWithUsage {
   const usageRef = { current: null } as { current: StreamUsage | null }
@@ -139,7 +171,7 @@ export function streamChatWithUsage(
       throw new Error('No model loaded')
     }
 
-    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt, context } =
+    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt, context, images } =
       options
 
     let chatMessages: Array<{
@@ -168,8 +200,16 @@ export function streamChatWithUsage(
       chatMessages = [...contextMessage, ...messages]
     }
 
+    // Convert to vision format if images are present
+    const visionMessages: Array<{
+      role: 'user' | 'assistant' | 'system'
+      content: string | Array<{ type: string; text?: string; image_url?: { url: string } }>
+    }> = images && images.length > 0
+      ? toVisionMessages(chatMessages, images)
+      : chatMessages
+
     const chunks = await engine.chat.completions.create({
-      messages: chatMessages,
+      messages: visionMessages as any,
       temperature,
       top_p,
       max_tokens: maxTokens,

@@ -269,6 +269,18 @@ export const MODELS: ModelInfo[] = [
     releaseDate: '2024-07-01',
     tags: ['thinking'],
   },
+  // --- Vision Models (v0.19.0) ---
+  {
+    id: 'Llama-3.2-11B-Vision-Instruct-q4f16_1-MLC',
+    name: 'Llama 3.2 11B Vision',
+    description: 'Meta Llama 3.2 Vision — multimodal model that understands images and text',
+    size: '~7 GB',
+    parameters: '11B',
+    provider: 'Meta',
+    paramCount: 11000000000,
+    releaseDate: '2024-12-05',
+    tags: ['vision', 'thinking'],
+  },
 ]
 
 export function getModelById(id: string): ModelInfo | undefined {

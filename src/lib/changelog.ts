@@ -11,6 +11,23 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.19.0',
+    date: '2026-04-25',
+    title: 'Image Input — Paste or Upload Images for Vision Models',
+    description:
+      'Vision models can now accept image input — paste from clipboard, upload from files, or drag-and-drop. Images are compressed and converted to base64 for local inference.',
+    changes: [
+      { type: 'added', text: 'Image input — paste images from clipboard or upload from files in the chat input' },
+      { type: 'added', text: 'ImagePreview component — thumbnail gallery with remove individual / clear all buttons' },
+      { type: 'added', text: 'Image compression — canvas-based resize to 1920px max, webp→jpeg fallback, caps at ~1MB' },
+      { type: 'added', text: 'Vision model detection — image button only shown when model has vision tag' },
+      { type: 'added', text: 'Engine vision support — toVisionMessages() converts last user message to multimodal format for Web-LLM' },
+      { type: 'added', text: 'ChatMessageImage type — base64 image data URL with optional name' },
+      { type: 'added', text: 'Llama 3.2 11B Vision model added to registry — multimodal model with vision tag' },
+      { type: 'changed', text: 'Updated version to v0.19.0' },
+    ],
+  },
+  {
     version: '0.18.0',
     date: '2026-04-25',
     title: 'ArtifactsPreview & CodeRunner — Interactive Code Preview',
