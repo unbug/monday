@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.12.0',
+    date: '2026-04-24',
+    title: 'Recent Models & Storage Quota Indicator',
+    description:
+      'Quickly access recently used models from the Model Selector, plus a storage quota indicator in the sidebar to monitor localStorage usage.',
+    changes: [
+      { type: 'added', text: 'Recent Models section in Model Selector — shows last 5 recently used models as quick-access cards' },
+      { type: 'added', text: 'Recent model tracking — automatically records each model load with timestamp' },
+      { type: 'added', text: 'Recent models expire after 30 days — stale entries are automatically filtered' },
+      { type: 'added', text: 'Reset Recent Models button — clear recent model history' },
+      { type: 'added', text: 'Storage quota indicator in sidebar footer — shows localStorage usage with disk icon' },
+      { type: 'added', text: 'Reset Recent Models command in Command Palette (⌘K)' },
+      { type: 'changed', text: 'Updated version to v0.12.0' },
+    ],
+  },
+  {
     version: '0.11.0',
     date: '2026-04-24',
     title: 'Theme Optimization — Visual Depth & Polish',

@@ -16,6 +16,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenStats?: () => void
   onOpenComparison?: () => void
   onResetRecommendations?: () => void
+  onResetRecentModels?: () => void
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -97,6 +98,15 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               id: 'reset-recommendations',
               label: 'Reset Model Recommendations',
               action: options.onResetRecommendations,
+            },
+          ]
+        : []),
+      ...(options.onResetRecentModels
+        ? [
+            {
+              id: 'reset-recent-models',
+              label: 'Reset Recent Models',
+              action: options.onResetRecentModels,
             },
           ]
         : []),

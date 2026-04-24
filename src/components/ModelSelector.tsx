@@ -4,6 +4,7 @@ import type { ModelInfo, ModelState } from '../types'
 import { MODELS } from '../lib/models'
 import { CacheManager } from './CacheManager'
 import { getTopModels } from '../lib/modelUsage'
+import { getRecentModels } from '../lib/recentModels'
 
 type SortMode = 'popular' | 'latest' | 'size'
 
@@ -15,6 +16,7 @@ interface Props {
   onOpenCache?: () => void
   showCacheManager?: boolean
   onResetRecommendations?: () => void
+  onResetRecentModels?: () => void
 }
 
 export function ModelSelector({
@@ -25,6 +27,7 @@ export function ModelSelector({
   onOpenCache,
   showCacheManager,
   onResetRecommendations,
+  onResetRecentModels,
 }: Props) {
   const [sortMode, setSortMode] = useState<SortMode>('popular')
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null)
@@ -53,6 +56,7 @@ export function ModelSelector({
   }, [sortMode])
 
   const topModelIds = useMemo(() => getTopModels(3), [])
+  const recentModels = useMemo(() => getRecentModels(5), [])
 
   const tagColors: Record<string, string> = {
     thinking: '#a78bfa',
@@ -130,6 +134,47 @@ export function ModelSelector({
               </button>
             </div>
           </div>
+
+          {/* Recent models section */}
+          {recentModels.length > 0 && (
+            <div className="model-recent-section">
+              <div className="model-recent-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span className="model-recent-title">Recently used</span>
+                {onResetRecentModels && (
+                  <button
+                    className="model-recent-reset"
+                    onClick={onResetRecentModels}
+                    title="Reset recent models"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="1 4 1 10 7 10" />
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <div className="model-recent-list">
+                {recentModels.map((id) => {
+                  const model = MODELS.find((m) => m.id === id)
+                  if (!model) return null
+                  return (
+                    <button
+                      key={model.id}
+                      className={`model-recent-item ${currentModelId === model.id ? 'active' : ''}`}
+                      onClick={() => onSelect(model)}
+                    >
+                      <span className="model-recent-name">{model.name}</span>
+                      <span className="model-recent-size">{model.size}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Recommended for you section */}
           {topModelIds.length > 0 && (

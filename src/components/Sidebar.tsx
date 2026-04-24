@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
 import type { ChatSession } from '../types'
 import { downloadSession, downloadAll } from '../lib/export'
@@ -7,6 +7,26 @@ import { QuickPrompts } from './QuickPrompts'
 import { SessionSearch } from './SessionSearch'
 import { DEFAULT_PERSONA, PROMPT_TEMPLATES } from '../lib/prompts'
 import type { DateFilter } from './SessionSearch'
+import { getLocalDataSize } from '../lib/recentModels'
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
+}
+
+function StorageQuota() {
+  const [size, setSize] = useState<number | null>(null)
+
+  useEffect(() => {
+    setSize(getLocalDataSize())
+  }, [])
+
+  if (size === null) return <span className="sidebar-storage-text">—</span>
+  return <span className="sidebar-storage-text">{formatBytes(size)}</span>
+}
 
 interface Props {
   sessions: ChatSession[]
@@ -240,8 +260,17 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v0.11.0
+          v0.12.0
         </button>
+        <span className="sidebar-separator">·</span>
+        <span className="sidebar-storage-info" title="localStorage usage">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+          </svg>
+          <StorageQuota />
+        </span>
         <span className="sidebar-separator">·</span>
         <div className="sidebar-export-wrapper">
           <button

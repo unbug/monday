@@ -7,6 +7,7 @@ import {
 } from '../lib/engine'
 import { getDownloadedModelIds, markModelDownloaded } from '../lib/storage'
 import { recordModelUsage } from '../lib/modelUsage'
+import { recordRecentModel } from '../lib/recentModels'
 import type { ModelState } from '../types'
 import type { InitProgressReport } from '@mlc-ai/web-llm'
 
@@ -49,6 +50,7 @@ export function useModel() {
       if (!abortRef.current) {
         markModelDownloaded(modelId)
         recordModelUsage(modelId)
+        recordRecentModel(modelId)
         setDownloadedModelIds(getDownloadedModelIds())
         setState({ status: 'ready', progress: 100, error: null })
       }

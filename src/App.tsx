@@ -18,6 +18,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import type { ModelInfo } from './types'
 import { PROMPT_TEMPLATES } from './lib/prompts'
 import { resetModelUsage } from './lib/modelUsage'
+import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison'
@@ -84,6 +85,7 @@ export default function App() {
     onOpenStats: () => setView('stats'),
     onOpenComparison: () => setShowComparison(true),
     onResetRecommendations: () => handleResetRecommendations(),
+    onResetRecentModels: () => resetRecent(),
   })
 
   const isReady = model.status === 'ready'
@@ -219,6 +221,7 @@ export default function App() {
               onSelect={handleSelectModel}
               onOpenCache={() => setView('cache')}
               onResetRecommendations={handleResetRecommendations}
+              onResetRecentModels={() => resetRecent()}
             />
           </div>
         ) : view === 'changelog' ? (
@@ -242,7 +245,8 @@ export default function App() {
           </div>
         ) : view === 'stats' ? (
           <div className="main-content main-content--stats">
-            <ModelStats onResetRecommendations={handleResetRecommendations} />
+            <ModelStats onResetRecommendations={handleResetRecommendations}
+              />
           </div>
         ) : view === 'comparison' ? (
           <div className="main-content main-content--comparison">
