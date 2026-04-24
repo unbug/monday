@@ -222,8 +222,8 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 
 - [x] **Model cache manager** — View/delete cached models, show disk usage
 - [x] **More models** — Add Llama 3.2 1B/3B, DeepSeek-R1-Distill, Mistral 7B, Stable Code 3B
-- [ ] **Model benchmarks** — Auto-run speed benchmark on load, show tokens/sec
-- [ ] **Custom model import** — Load custom MLC-compiled models from URL
+- [x] **Model benchmarks** — Auto-run speed benchmark on load, show tokens/sec
+- [x] **Custom model import** — Load custom MLC-compiled models from URL
 - [x] **Model comparison** — Side-by-side generation from two models
 - [ ] **Download resume** — Resume interrupted model downloads
 - [x] **Storage quota** — Show browser storage used vs available
