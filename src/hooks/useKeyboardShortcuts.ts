@@ -3,6 +3,7 @@ import { useEffect, useCallback, useRef, useState } from 'react'
 export interface CommandItem {
   id: string
   label: string
+  icon?: string
   shortcut?: string
   action: () => void
 }
@@ -34,6 +35,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'new-chat',
               label: 'New Chat',
+              icon: '✏️',
               shortcut: '⌘N',
               action: options.onNewChat,
             },
@@ -44,6 +46,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'stop-generation',
               label: 'Stop Generation',
+              icon: '⏹',
               shortcut: '⌘⇧S',
               action: options.onStopGeneration,
             },
@@ -53,7 +56,8 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
         ? [
             {
               id: 'open-models',
-              label: 'Open Models',
+              label: 'Models',
+              icon: '🤖',
               shortcut: '⌘K',
               action: options.onOpenModels,
             },
@@ -64,6 +68,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-cache',
               label: 'Model Cache',
+              icon: '🗄️',
               action: options.onOpenCache,
             },
           ]
@@ -73,6 +78,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-changelog',
               label: 'Changelog',
+              icon: '📋',
               action: options.onOpenChangelog,
             },
           ]
@@ -82,6 +88,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-stats',
               label: 'Usage Statistics',
+              icon: '📊',
               action: options.onOpenStats,
             },
           ]
@@ -91,6 +98,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-comparison',
               label: 'Model Comparison',
+              icon: '⚖️',
               action: options.onOpenComparison,
             },
           ]
@@ -100,6 +108,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-benchmark',
               label: 'Model Benchmark',
+              icon: '⚡',
               action: options.onOpenBenchmark,
             },
           ]
@@ -109,6 +118,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-custom-models',
               label: 'Custom Model Import',
+              icon: '📦',
               action: options.onOpenCustomModels,
             },
           ]
@@ -118,6 +128,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'reset-recommendations',
               label: 'Reset Model Recommendations',
+              icon: '🔄',
               action: options.onResetRecommendations,
             },
           ]
@@ -127,6 +138,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'reset-recent-models',
               label: 'Reset Recent Models',
+              icon: '🔁',
               action: options.onResetRecentModels,
             },
           ]
@@ -136,6 +148,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             {
               id: 'open-persona-marketplace',
               label: 'Persona Marketplace',
+              icon: '🎭',
               action: options.onOpenPersonaMarketplace,
             },
           ]

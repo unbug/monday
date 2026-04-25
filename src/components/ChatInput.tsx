@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
-import { ContextPanel } from './ContextPanel'
 import { ImagePreview } from './ImagePreview'
 import { FileAttachment } from './FileAttachment'
 import { useVoiceInput } from '../hooks/useVoiceInput'
@@ -22,7 +21,6 @@ interface FileItem {
 }
 
 interface Props {
-  sessionId?: string
   onSend: (content: string, images?: ImageItem[], files?: FileItem[]) => void
   onStop: () => void
   onApplyPersona: (personaId: string) => void
@@ -36,12 +34,9 @@ interface Props {
     elapsedSeconds: number
   }
   isStreaming?: boolean
-  context?: string
-  onContextChange?: (context: string) => void
 }
 
 export function ChatInput({
-  sessionId,
   onSend,
   onStop,
   onApplyPersona,
@@ -50,8 +45,6 @@ export function ChatInput({
   modelInfo,
   tokenStats,
   isStreaming,
-  context = '',
-  onContextChange,
 }: Props) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
@@ -264,12 +257,6 @@ export function ChatInput({
 
   return (
     <div className="chat-input-wrapper">
-      {sessionId && (
-        <ContextPanel
-          sessionId={sessionId}
-          onContextChange={onContextChange ?? (() => {})}
-        />
-      )}
       {isVisionModel && images.length > 0 && (
         <ImagePreview
           images={images}

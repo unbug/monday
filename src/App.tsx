@@ -82,7 +82,7 @@ export default function App() {
 
   const handleSend = useCallback(
     (content: string, images?: Array<{ id: string; data: string; name?: string }>) => {
-      chat.sendMessage(content, chat.context, images)
+      chat.sendMessage(content, undefined, images)
     },
     [chat],
   )
@@ -99,7 +99,7 @@ export default function App() {
     onOpenCache: () => setView('cache'),
     onOpenChangelog: () => setView('changelog'),
     onOpenStats: () => setView('stats'),
-    onOpenComparison: () => setShowComparison(true),
+    onOpenComparison: () => setView('comparison'),
     onOpenBenchmark: () => setView('benchmark'),
     onOpenCustomModels: () => setView('custom-models'),
     onResetRecommendations: () => handleResetRecommendations(),
@@ -150,7 +150,19 @@ export default function App() {
               closeSidebarOnMobile()
             }}
             onOpenComparison={() => {
-              setShowComparison(true)
+              setView('comparison')
+              closeSidebarOnMobile()
+            }}
+            onOpenBenchmark={() => {
+              setView('benchmark')
+              closeSidebarOnMobile()
+            }}
+            onOpenCustomModels={() => {
+              setView('custom-models')
+              closeSidebarOnMobile()
+            }}
+            onOpenPersonaMarketplace={() => {
+              setView('persona-marketplace')
               closeSidebarOnMobile()
             }}
             onUpdateSession={(updated) => {
@@ -221,9 +233,13 @@ export default function App() {
             {view === 'models' ? 'Chat' : 'Models'}
           </button>
 
-          <kbd className="header-shortcut-hint">
+          <button
+            className="header-shortcut-hint"
+            onClick={() => keyboard.setShowCommandPalette(true)}
+            title="Command Palette"
+          >
             <span className="header-shortcut-key">⌘</span><span className="header-shortcut-key">K</span>
-          </kbd>
+          </button>
         </header>
 
         <WebGPUCheck supported={model.webgpuSupported} />
@@ -316,7 +332,6 @@ export default function App() {
               />
             </div>
             <ChatInput
-              sessionId={chat.activeSession?.id}
               onSend={handleSend}
               onStop={chat.stopGenerating}
               onApplyPersona={(personaId) => {
@@ -328,8 +343,6 @@ export default function App() {
               modelInfo={selectedModelId ? getModelById(selectedModelId) : null}
               tokenStats={chat.tokenStats}
               isStreaming={chat.isStreaming}
-              context={chat.context}
-              onContextChange={chat.setContext}
             />
           </div>
         )}

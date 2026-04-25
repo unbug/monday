@@ -1,3 +1,4 @@
+import { useState, useCallback, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
 import type { CommandItem } from '../hooks/useKeyboardShortcuts'
 
@@ -18,6 +19,33 @@ export function CommandPalette({
   searchRef,
   commands,
 }: Props) {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
+  // Reset selection when commands list or visibility changes
+  useEffect(() => {
+    setSelectedIndex(0)
+  }, [commands.length, show])
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSelectedIndex((i) => (i + 1) % Math.max(commands.length, 1))
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSelectedIndex((i) => (i - 1 + Math.max(commands.length, 1)) % Math.max(commands.length, 1))
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        const cmd = commands[selectedIndex]
+        if (cmd) {
+          cmd.action()
+          onClose()
+        }
+      }
+    },
+    [commands, selectedIndex, onClose],
+  )
+
   if (!show) return null
 
   return (
@@ -43,7 +71,11 @@ export function CommandPalette({
               className="command-palette-input"
               placeholder="Type a command or search..."
               value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => {
+                onSearchChange(e.target.value)
+                setSelectedIndex(0)
+              }}
+              onKeyDown={handleKeyDown}
               autoFocus
             />
             <kbd className="command-palette-esc">ESC</kbd>
@@ -53,15 +85,19 @@ export function CommandPalette({
             {commands.length === 0 ? (
               <div className="command-palette-empty">No commands found</div>
             ) : (
-              commands.map((cmd) => (
+              commands.map((cmd, index) => (
                 <button
                   key={cmd.id}
-                  className="command-palette-item"
+                  className={`command-palette-item${index === selectedIndex ? ' command-palette-item--selected' : ''}`}
+                  onMouseEnter={() => setSelectedIndex(index)}
                   onClick={() => {
                     cmd.action()
                     onClose()
                   }}
                 >
+                  {cmd.icon && (
+                    <span className="command-palette-item-icon">{cmd.icon}</span>
+                  )}
                   <span className="command-palette-item-label">{cmd.label}</span>
                   {cmd.shortcut && (
                     <div className="command-palette-shortcut">
