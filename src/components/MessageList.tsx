@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react'
 import type { ChatMessage } from '../types'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import { MessageActions } from './MessageActions'
+import { TTSButton } from './TTSButton'
 
 interface Props {
   messages: ChatMessage[]
@@ -85,6 +86,9 @@ export function MessageList({
                   </>
                 ) : (
                   <MarkdownRenderer content={msg.content} />
+                )}
+                {!msg.isStreaming && (
+                  <TTSButton text={msg.content} />
                 )}
               </div>
             ) : (

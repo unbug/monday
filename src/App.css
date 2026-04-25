@@ -979,6 +979,54 @@
   color: var(--color-text);
 }
 
+/* ===== TTS Output ===== */
+.tts-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.tts-wrapper-active {
+  opacity: 1 !important;
+}
+
+.tts-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-light);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.tts-btn:hover {
+  opacity: 1 !important;
+  background: var(--color-surface-elevated);
+  color: var(--color-primary);
+}
+
+.tts-btn-stop {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-light);
+  opacity: 0.5;
+}
+
+.tts-btn-stop:hover {
+  opacity: 1 !important;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
 /* ===== Markdown Rendering ===== */
 .markdown-heading {
   margin: 16px 0 8px;

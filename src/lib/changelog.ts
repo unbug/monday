@@ -11,6 +11,21 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.21.0',
+    date: '2026-04-25',
+    title: 'TTS Output — Read Responses Aloud',
+    description:
+      'Assistant responses can now be read aloud using the Web Speech Synthesis API. Click the speaker icon on any message to hear it — no server, no install, 100% private.',
+    changes: [
+      { type: 'added', text: 'TTSButton component — speaker icon on assistant messages, click to read aloud' },
+      { type: 'added', text: 'useTTSOutput hook — manages Speech Synthesis lifecycle (speak/pause/resume/stop)' },
+      { type: 'added', text: 'Browser support detection — button hidden on unsupported browsers' },
+      { type: 'added', text: 'Playback controls — play/pause/resume toggle + stop button during playback' },
+      { type: 'added', text: 'Visual feedback — active playback state with icon changes and hover styling' },
+      { type: 'changed', text: 'Updated version to v0.21.0' },
+    ],
+  },
+  {
     version: '0.20.0',
     date: '2026-04-25',
     title: 'Voice Input — Speak Your Messages',
