@@ -265,7 +265,7 @@ historical record below.
 Phase 5 of the legacy plan, split for scope safety. RAG is the highest-value
 unmet feature in the product.
 
-- [ ] **Document upload** — Upload PDFs / TXT / MD files into a "Knowledge"
+- [x] **Document upload** — Upload PDFs / TXT / MD files into a "Knowledge"
       panel (PDF parsing via `pdfjs-dist`)
 - [ ] **Client-side chunking** — Split documents into ~500-token chunks
       in-browser (no server)
