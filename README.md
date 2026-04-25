@@ -267,7 +267,7 @@ unmet feature in the product.
 
 - [x] **Document upload** — Upload PDFs / TXT / MD files into a "Knowledge"
       panel (PDF parsing via `pdfjs-dist`)
-- [ ] **Client-side chunking** — Split documents into ~500-token chunks
+- [x] **Client-side chunking** — Split documents into ~500-token chunks
       in-browser (no server)
 - [ ] **Browser vector store** — IndexedDB-backed vector store with
       cosine similarity, schema migration registered in `storage.ts`
