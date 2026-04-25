@@ -9,6 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "engines": {
+    "node": ">=24"
+  },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.82",
     "border-beam": "^1.0.1",
