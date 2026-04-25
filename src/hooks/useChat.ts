@@ -401,6 +401,19 @@ export function useChat(modelId: string) {
     })
   }, [])
 
+  const setKnowledgeBaseId = useCallback(
+    (id: string | null) => {
+      if (!activeSessionId) return
+      const updatedSessions = sessions.map((s) =>
+        s.id === activeSessionId
+          ? { ...s, knowledgeBaseId: id, updatedAt: Date.now() }
+          : s,
+      )
+      persistSessions(updatedSessions)
+    },
+    [activeSessionId, sessions, persistSessions],
+  )
+
   return {
     sessions,
     activeSession,
@@ -423,5 +436,6 @@ export function useChat(modelId: string) {
     clearPersona,
     clearFiles,
     removeFile,
+    setKnowledgeBaseId,
   }
 }

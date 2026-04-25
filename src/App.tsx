@@ -16,6 +16,7 @@ import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { KnowledgePanel } from './components/KnowledgePanel'
 import { useKnowledge } from './hooks/useKnowledge'
+import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
@@ -44,7 +45,19 @@ export default function App() {
   const chat = useChat(selectedModelId ?? '')
   const theme = useTheme()
   const knowledge = useKnowledge()
+  const knowledgeBases = useKnowledgeBases(
+    chat.activeSession?.knowledgeBaseId ?? null,
+    (id) => chat.setKnowledgeBaseId(id),
+  )
+  const activeBaseDocIds = knowledgeBases.activeBaseId
+    ? knowledgeBases.getBaseById(knowledgeBases.activeBaseId)?.docIds ?? []
+    : null
   const vectorStore = useVectorStore()
+
+  // Apply base filter to vector store when active base changes
+  useEffect(() => {
+    vectorStore.setBaseFilter(activeBaseDocIds ?? null)
+  }, [activeBaseDocIds, vectorStore])
 
   // Trigger theme transition overlay
   const prevThemeRef = useRef<string>(theme.resolved)
@@ -343,6 +356,15 @@ export default function App() {
               onIndexDocs={vectorStore.indexDocs}
               onClearIndex={vectorStore.clearIndex}
               hasIndex={vectorStore.hasIndex}
+              baseDocIds={activeBaseDocIds}
+              bases={knowledgeBases.bases}
+              activeBaseId={knowledgeBases.activeBaseId}
+              onCreateBase={knowledgeBases.createBase}
+              onRenameBase={knowledgeBases.renameBase}
+              onDeleteBase={knowledgeBases.deleteBase}
+              onSetActiveBase={knowledgeBases.setActiveBaseId}
+              onAddDocToBase={knowledgeBases.addDocToBase}
+              onRemoveDocFromBase={knowledgeBases.removeDocFromBase}
             />
           </div>
         ) : (

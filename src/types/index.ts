@@ -48,6 +48,7 @@ export interface ChatSession {
   systemPrompt: string
   generationParams: GenerationParams
   personaId: string | null
+  knowledgeBaseId: string | null
   createdAt: number
   updatedAt: number
 }
@@ -56,6 +57,14 @@ export interface ChatMessageImage {
   id: string
   data: string // base64 data URL
   name?: string
+}
+
+export interface KnowledgeBase {
+  id: string
+  name: string
+  docIds: string[]
+  createdAt: number
+  updatedAt: number
 }
 
 export type ModelStatus = 'idle' | 'downloading' | 'ready' | 'error'

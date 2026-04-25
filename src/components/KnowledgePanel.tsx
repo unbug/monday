@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import type { KnowledgeDocument } from '../types'
 import type { SearchScore } from '../lib/vectorStore'
+import type { KnowledgeBase } from '../types'
 
 interface Props {
   docs: KnowledgeDocument[]
@@ -19,6 +20,17 @@ interface Props {
   onIndexDocs: (docs: KnowledgeDocument[]) => Promise<void>
   onClearIndex: () => void
   hasIndex: boolean
+  // Knowledge bases
+  bases: KnowledgeBase[]
+  activeBaseId: string | null
+  onCreateBase: (name: string) => void
+  onRenameBase: (id: string, name: string) => void
+  onDeleteBase: (id: string) => void
+  onSetActiveBase: (id: string | null) => void
+  onAddDocToBase: (baseId: string, docId: string) => void
+  onRemoveDocFromBase: (baseId: string, docId: string) => void
+  // Base filter for search
+  baseDocIds: string[] | null
 }
 
 const DOC_ICONS: Record<string, string> = {
@@ -62,10 +74,37 @@ export function KnowledgePanel({
   onIndexDocs,
   onClearIndex,
   hasIndex,
+  bases,
+  activeBaseId,
+  onCreateBase,
+  onRenameBase,
+  onDeleteBase,
+  onSetActiveBase,
+  onAddDocToBase,
+  onRemoveDocFromBase,
+  baseDocIds,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
+  const [showBases, setShowBases] = useState(false)
+  const [newBaseName, setNewBaseName] = useState('')
+  const [renamingBaseId, setRenamingBaseId] = useState<string | null>(null)
+  const [renameValue, setRenameValue] = useState('')
+
+  // Track which docs belong to which base
+  const getDocBaseIds = useCallback(
+    (docId: string) => {
+      const baseIds: string[] = []
+      for (const base of bases) {
+        if (base.docIds.includes(docId)) {
+          baseIds.push(base.id)
+        }
+      }
+      return baseIds
+    },
+    [bases],
+  )
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -101,6 +140,36 @@ export function KnowledgePanel({
     }
   }, [docs, onIndexDocs])
 
+  const handleCreateBase = useCallback(() => {
+    if (newBaseName.trim()) {
+      onCreateBase(newBaseName.trim())
+      setNewBaseName('')
+    }
+  }, [newBaseName, onCreateBase])
+
+  const handleRenameBase = useCallback(
+    (baseId: string) => {
+      if (renameValue.trim()) {
+        onRenameBase(baseId, renameValue.trim())
+      }
+      setRenamingBaseId(null)
+      setRenameValue('')
+    },
+    [renameValue, onRenameBase],
+  )
+
+  const handleDocBaseToggle = useCallback(
+    (docId: string, baseId: string) => {
+      const current = getDocBaseIds(docId)
+      if (current.includes(baseId)) {
+        onRemoveDocFromBase(baseId, docId)
+      } else {
+        onAddDocToBase(baseId, docId)
+      }
+    },
+    [getDocBaseIds, onAddDocToBase, onRemoveDocFromBase],
+  )
+
   return (
     <div className="main-content main-content--knowledge">
       <div className="knowledge-header">
@@ -122,6 +191,12 @@ export function KnowledgePanel({
               {showSearch ? '✕ Close Search' : '🔎 Search'}
             </button>
           )}
+          <button
+            className="knowledge-bases-toggle"
+            onClick={() => setShowBases(!showBases)}
+          >
+            📚 Bases {showBases ? '▴' : '▾'}
+          </button>
           {docs.length > 0 && (
             <button className="knowledge-clear-btn" onClick={onClear}>
               Clear all
@@ -129,6 +204,120 @@ export function KnowledgePanel({
           )}
         </div>
       </div>
+
+      {/* Knowledge Bases section */}
+      {showBases && (
+        <div className="knowledge-bases-section">
+          <div className="knowledge-bases-header">
+            <span className="knowledge-bases-title">Knowledge Bases</span>
+            <button
+              className="knowledge-create-base-btn"
+              onClick={() => {
+                if (newBaseName.trim()) {
+                  handleCreateBase()
+                }
+              }}
+              title="Create new knowledge base"
+            >
+              + New Base
+            </button>
+          </div>
+
+          {/* New base input */}
+          <div className="knowledge-new-base-input">
+            <input
+              type="text"
+              className="knowledge-new-base-name"
+              placeholder="Base name…"
+              value={newBaseName}
+              onChange={(e) => setNewBaseName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCreateBase()
+              }}
+            />
+          </div>
+
+          {/* Base list */}
+          <div className="knowledge-bases-list">
+            {bases.length === 0 && (
+              <div className="knowledge-bases-empty">
+                No knowledge bases yet. Create one to organize your documents.
+              </div>
+            )}
+            {bases.map((base) => (
+              <div
+                key={base.id}
+                className={`knowledge-base-item ${activeBaseId === base.id ? 'knowledge-base-item-active' : ''}`}
+                onClick={() => onSetActiveBase(activeBaseId === base.id ? null : base.id)}
+              >
+                <div className="knowledge-base-info">
+                  {renamingBaseId === base.id ? (
+                    <input
+                      className="knowledge-base-rename-input"
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleRenameBase(base.id)
+                        if (e.key === 'Escape') {
+                          setRenamingBaseId(null)
+                          setRenameValue('')
+                        }
+                      }}
+                      onBlur={() => {
+                        setRenamingBaseId(null)
+                        setRenameValue('')
+                      }}
+                      autoFocus
+                    />
+                  ) : (
+                    <span
+                      className="knowledge-base-name"
+                      onDoubleClick={() => {
+                        setRenamingBaseId(base.id)
+                        setRenameValue(base.name)
+                      }}
+                      title="Double-click to rename"
+                    >
+                      {base.name}
+                    </span>
+                  )}
+                  <span className="knowledge-base-doc-count">
+                    {base.docIds.length} document{base.docIds.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="knowledge-base-actions">
+                  <button
+                    className="knowledge-base-delete"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDeleteBase(base.id)
+                    }}
+                    title="Delete base"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Active base indicator */}
+          {activeBaseId && (
+            <div className="knowledge-active-base">
+              <span>📌 Active base:</span>
+              <span className="knowledge-active-base-name">
+                {bases.find((b) => b.id === activeBaseId)?.name ?? 'Unknown'}
+              </span>
+              <button
+                className="knowledge-clear-active-base"
+                onClick={() => onSetActiveBase(null)}
+              >
+                Clear
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Index status */}
       {hasIndex && (
@@ -214,27 +403,48 @@ export function KnowledgePanel({
       {/* Document list */}
       {docs.length > 0 && (
         <div className="knowledge-doc-list">
-          {docs.map((doc) => (
-            <div key={doc.id} className="knowledge-doc-item">
-              <span className="knowledge-doc-icon">{DOC_ICONS[doc.type] ?? '📄'}</span>
-              <div className="knowledge-doc-info">
-                <span className="knowledge-doc-name" title={doc.name}>{doc.name}</span>
-                <span className="knowledge-doc-meta">
-                  {formatSize(doc.size)} · {doc.chunks.length} chunks · {formatDate(doc.createdAt)}
-                </span>
+          {docs.map((doc) => {
+            const docBases = getDocBaseIds(doc.id)
+            return (
+              <div key={doc.id} className="knowledge-doc-item">
+                <span className="knowledge-doc-icon">{DOC_ICONS[doc.type] ?? '📄'}</span>
+                <div className="knowledge-doc-info">
+                  <span className="knowledge-doc-name" title={doc.name}>{doc.name}</span>
+                  <span className="knowledge-doc-meta">
+                    {formatSize(doc.size)} · {doc.chunks.length} chunks · {formatDate(doc.createdAt)}
+                  </span>
+                </div>
+                {/* Base assignment pills */}
+                {showBases && bases.length > 0 && (
+                  <div className="knowledge-doc-bases">
+                    {bases.map((base) => {
+                      const assigned = docBases.includes(base.id)
+                      return (
+                        <button
+                          key={base.id}
+                          className={`knowledge-doc-base-pill ${assigned ? 'knowledge-doc-base-pill-active' : ''}`}
+                          onClick={() => handleDocBaseToggle(doc.id, base.id)}
+                          title={assigned ? 'Remove from base' : 'Add to base'}
+                        >
+                          {assigned ? '✓ ' : '+ '}{base.name}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+                <button
+                  className="knowledge-doc-remove"
+                  onClick={() => onRemove(doc.id)}
+                  title="Remove document"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" y2="18" />
+                    <line x1="6" y1="6" y2="18" />
+                  </svg>
+                </button>
               </div>
-              <button
-                className="knowledge-doc-remove"
-                onClick={() => onRemove(doc.id)}
-                title="Remove document"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="18" y1="6" y2="18" />
-                  <line x1="6" y1="6" y2="18" />
-                </svg>
-              </button>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 

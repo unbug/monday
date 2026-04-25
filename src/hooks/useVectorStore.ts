@@ -20,6 +20,8 @@ export interface UseVectorStoreReturn {
   clearIndex: () => Promise<void>
   /** Whether the index has been built */
   hasIndex: boolean
+  /** Filter results to only chunks from these doc IDs (base-aware search) */
+  setBaseFilter: (docIds: string[] | null) => void
 }
 
 /**
@@ -34,6 +36,7 @@ export function useVectorStore(): UseVectorStoreReturn {
   const [results, setResults] = useState<SearchScore[]>([])
   const [query, setQuery] = useState('')
   const [hasIndex, setHasIndex] = useState(false)
+  const [baseDocIds, setBaseDocIds] = useState<string[] | null>(null)
 
   // Load persisted index on mount
   useEffect(() => {
@@ -55,22 +58,30 @@ export function useVectorStore(): UseVectorStoreReturn {
   // Debounced search
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const doSearch = useCallback((q: string) => {
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
-    searchTimerRef.current = setTimeout(async () => {
-      if (!q.trim()) {
-        setResults([])
-        return
-      }
-      const loaded = await loadVectorIndex()
-      if (!loaded || loaded.length === 0) {
-        setResults([])
-        return
-      }
-      const scored = searchIndex(loaded, q, 10)
-      setResults(scored)
-    }, 150)
-  }, [])
+  const doSearch = useCallback(
+    (q: string) => {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+      searchTimerRef.current = setTimeout(async () => {
+        if (!q.trim()) {
+          setResults([])
+          return
+        }
+        const loaded = await loadVectorIndex()
+        if (!loaded || loaded.length === 0) {
+          setResults([])
+          return
+        }
+        let scored = searchIndex(loaded, q, 10)
+        // Filter to active base if set
+        if (baseDocIds && baseDocIds.length > 0) {
+          const docSet = new Set(baseDocIds)
+          scored = scored.filter((r) => docSet.has(r.docName))
+        }
+        setResults(scored)
+      }, 150)
+    },
+    [baseDocIds],
+  )
 
   const setQueryWithSearch = useCallback(
     (q: string) => {
@@ -121,5 +132,6 @@ export function useVectorStore(): UseVectorStoreReturn {
     indexDocs,
     clearIndex,
     hasIndex,
+    setBaseFilter: setBaseDocIds,
   }
 }
