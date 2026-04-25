@@ -6948,3 +6948,160 @@
 .score-embedding {
   color: var(--purple-400);
 }
+
+/* ── Citation display (v0.26) ─────────────────────────────────────────────── */
+
+.citation-display-wrapper {
+  margin-top: 8px;
+}
+
+.citation-display {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.citation-display-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.citation-display-icon {
+  font-size: 13px;
+}
+
+.citation-display-title {
+  flex: 1;
+}
+
+.citation-display-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.citation-display-toggle:hover {
+  background: var(--bg-surface-hover);
+}
+
+.citation-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin: 2px 0;
+  background: var(--bg-surface-hover);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 12px;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+}
+
+.citation-pill:hover {
+  background: var(--bg-surface-active);
+  border-color: var(--purple-500);
+}
+
+.citation-pill-doc {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.citation-pill-chunk {
+  color: var(--text-secondary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.citation-pill-score {
+  margin-left: auto;
+  color: var(--purple-400);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.citation-expand-more {
+  background: none;
+  border: none;
+  color: var(--purple-400);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 0;
+  text-align: center;
+}
+
+.citation-expand-more:hover {
+  color: var(--purple-300);
+}
+
+/* ── Highlighted doc in knowledge panel (v0.26) ───────────────────────────── */
+
+.knowledge-doc-item-highlighted {
+  border-color: var(--purple-500) !important;
+  box-shadow: 0 0 0 1px var(--purple-500), 0 0 12px rgba(167, 139, 250, 0.15);
+}
+
+.knowledge-highlighted-chunk {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--bg-surface-hover);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.knowledge-highlighted-chunk-label {
+  display: block;
+  font-weight: 600;
+  color: var(--purple-400);
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.knowledge-highlighted-chunk-text {
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+[data-theme='light'] .knowledge-highlighted-chunk {
+  background: rgba(167, 139, 250, 0.06);
+}
+
+[data-theme='dark'] .knowledge-highlighted-chunk {
+  background: rgba(167, 139, 250, 0.08);
+}
+
+/* ── Mobile responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .citation-pill {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .citation-pill-score {
+    display: none;
+  }
+}

@@ -1,14 +1,16 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
-import type { ChatMessage } from '../types'
+import type { ChatMessage, CitationEntry } from '../types'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import { MessageActions } from './MessageActions'
 import { TTSButton } from './TTSButton'
+import { CitationDisplay } from './CitationDisplay'
 
 interface Props {
   messages: ChatMessage[]
   isStreaming: boolean
   onRegenerateMessage?: (messageId: string) => void
   onEditMessage?: (messageId: string, content: string) => void
+  onCitationClick?: (citation: CitationEntry) => void
 }
 
 export function MessageList({
@@ -16,6 +18,7 @@ export function MessageList({
   isStreaming,
   onRegenerateMessage,
   onEditMessage,
+  onCitationClick,
 }: Props) {
   const endRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -89,6 +92,14 @@ export function MessageList({
                 )}
                 {!msg.isStreaming && (
                   <TTSButton text={msg.content} />
+                )}
+                {msg.citations && msg.citations.length > 0 && (
+                  <div className="citation-display-wrapper">
+                    <CitationDisplay
+                      citations={msg.citations}
+                      onCitationClick={onCitationClick!}
+                    />
+                  </div>
                 )}
               </div>
             ) : (

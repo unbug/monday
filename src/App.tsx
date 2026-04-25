@@ -25,7 +25,7 @@ import { useTheme } from './hooks/useTheme'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
-import type { ModelInfo } from './types'
+import type { ModelInfo, CitationEntry } from './types'
 import { PROMPT_TEMPLATES } from './lib/prompts'
 import { getModelById } from './lib/models'
 import { resetModelUsage } from './lib/modelUsage'
@@ -41,6 +41,8 @@ export default function App() {
   const [showComparison, setShowComparison] = useState(false)
   const [showPersonaMarketplace, setShowPersonaMarketplace] = useState(false)
   const [transitioning, setTransitioning] = useState(false)
+  // v0.26: track which citation to highlight in knowledge panel
+  const [citationHighlight, setCitationHighlight] = useState<{ docId: string; chunkIndex: number } | null>(null)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
@@ -111,6 +113,15 @@ export default function App() {
     chat.newSession()
     setView('chat')
   }, [chat])
+
+  // v0.26: citation click handler — switch to knowledge panel, highlight the source
+  const handleCitationClick = useCallback(
+    (citation: CitationEntry) => {
+      setCitationHighlight({ docId: citation.docId, chunkIndex: citation.chunkIndex })
+      setView('knowledge')
+    },
+    [],
+  )
 
   const keyboard = useKeyboardShortcuts({
     onNewChat: handleNewChat,
@@ -349,7 +360,10 @@ export default function App() {
               onUpload={knowledge.uploadFiles}
               onRemove={knowledge.removeDoc}
               onClear={knowledge.clearDocs}
-              onBack={() => setView('chat')}
+              onBack={() => {
+                setCitationHighlight(null)
+                setView('chat')
+              }}
               indexing={vectorStore.indexing}
               indexedCount={vectorStore.indexedCount}
               results={vectorStore.results}
@@ -367,6 +381,9 @@ export default function App() {
               onSetActiveBase={knowledgeBases.setActiveBaseId}
               onAddDocToBase={knowledgeBases.addDocToBase}
               onRemoveDocFromBase={knowledgeBases.removeDocFromBase}
+              // v0.26: citation highlight
+              highlightDocId={citationHighlight?.docId ?? null}
+              highlightChunkIndex={citationHighlight?.chunkIndex ?? -1}
               // v0.26.0: embedding model
               embeddingLoaded={embedding.isLoaded}
               embeddingProgress={embedding.progress}
@@ -389,6 +406,7 @@ export default function App() {
                   }
                 }}
                 onEditMessage={(id, content) => chat.editMessage(id, content)}
+                onCitationClick={handleCitationClick}
               />
             </div>
             <ChatInput

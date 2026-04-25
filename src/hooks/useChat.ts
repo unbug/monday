@@ -8,7 +8,7 @@ import {
   loadSessions,
   createSession,
 } from '../lib/storage'
-import type { ChatSession, ChatMessage } from '../types'
+import type { ChatSession, ChatMessage, CitationEntry } from '../types'
 import type { PromptTemplate } from '../lib/prompts'
 import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
@@ -83,6 +83,7 @@ export function useChat(modelId: string) {
       sessionContext?: string,
       images?: Array<{ id: string; data: string; name?: string }>,
       files?: Array<{ id: string; name: string; size: number; type: string; content: string }>,
+      citations?: CitationEntry[],
     ) => {
       let currentSessions = [...sessions]
       let sessionId = activeSessionId
@@ -100,6 +101,7 @@ export function useChat(modelId: string) {
         existingAssistantMsg ?? {
           ...createMessage('assistant', ''),
           isStreaming: true,
+          ...(citations && citations.length > 0 ? { citations } : {}),
         }
 
       // Add user message
@@ -208,6 +210,19 @@ export function useChat(modelId: string) {
           }
         })
 
+        // Attach citations to the assistant message if available
+        if (citations && citations.length > 0) {
+          currentSessions = currentSessions.map((s) => {
+            if (s.id !== sessionId) return s
+            const msgs = s.messages.map((m) =>
+              m.id === assistantMsg.id
+                ? { ...m, citations }
+                : m,
+            )
+            return { ...s, messages: msgs }
+          })
+        }
+
         await persistSessions(currentSessions)
       } catch (err) {
         tokenStats.finishStreaming({
@@ -261,6 +276,7 @@ export function useChat(modelId: string) {
 
       // v0.26.1: semantic search — inject top-K chunks from active knowledge base
       let knowledgeContext = ''
+      let searchResults: Array<{ docName: string; id: string; text: string; score: number }> | null = null
       if (knowledgeBaseId) {
         try {
           const { loadKnowledgeBases } = await import('../lib/storage')
@@ -271,9 +287,9 @@ export function useChat(modelId: string) {
           if (base && docs.length > 0) {
             const { useVectorStore } = await import('./useVectorStore')
             const vs = useVectorStore()
-            const results = await vs.knowledgeSearch(content, knowledgeBaseId, docs, (id) => bases.find((b) => b.id === id))
-            if (results.length > 0) {
-              knowledgeContext = results
+            searchResults = await vs.knowledgeSearch(content, knowledgeBaseId, docs, (id) => bases.find((b) => b.id === id))
+            if (searchResults.length > 0) {
+              knowledgeContext = searchResults
                 .map((r) => `[${r.docName}]\n${r.text}`)
                 .join('\n\n---\n\n')
             }
@@ -290,7 +306,18 @@ export function useChat(modelId: string) {
       // v0.26.1: track how many chunks were injected
       setKnowledgeContextCount(knowledgeContext ? knowledgeContext.split('\n\n---\n\n').length : undefined)
 
-      sendUserMessage(content, undefined, undefined, combinedContext, images, files)
+      // v0.26: convert search results to citations for display
+      const citations: CitationEntry[] | undefined = searchResults && searchResults.length > 0
+        ? searchResults.map((r) => ({
+            docId: r.docName, // docName is the doc identifier
+            docName: r.docName,
+            chunkIndex: parseInt(r.id.split(':')[1], 10) || 0,
+            score: r.score,
+            snippet: r.text.slice(0, 120),
+          }))
+        : undefined
+
+      sendUserMessage(content, undefined, undefined, combinedContext, images, files, citations)
     },
     [isGenerating, sendUserMessage],
   )

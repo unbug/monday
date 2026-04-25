@@ -31,6 +31,9 @@ interface Props {
   onRemoveDocFromBase: (baseId: string, docId: string) => void
   // Base filter for search
   baseDocIds: string[] | null
+  // v0.26: citation highlight
+  highlightDocId: string | null
+  highlightChunkIndex: number
   // v0.26.0: embedding model
   embeddingLoaded: boolean
   embeddingProgress: number
@@ -89,6 +92,9 @@ export function KnowledgePanel({
   onAddDocToBase,
   onRemoveDocFromBase,
   baseDocIds,
+  // v0.26: citation highlight
+  highlightDocId,
+  highlightChunkIndex,
   // v0.26.0
   embeddingLoaded,
   embeddingProgress,
@@ -103,6 +109,14 @@ export function KnowledgePanel({
   const [newBaseName, setNewBaseName] = useState('')
   const [renamingBaseId, setRenamingBaseId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
+
+  // v0.26: find the highlighted document and chunk
+  const highlightedDoc = highlightDocId
+    ? docs.find((d) => d.id === highlightDocId || d.name === highlightDocId)
+    : null
+  const highlightedChunkIndex = highlightedDoc && highlightChunkIndex >= 0
+    ? highlightChunkIndex
+    : -1
 
   // Track which docs belong to which base
   const getDocBaseIds = useCallback(
@@ -466,8 +480,9 @@ export function KnowledgePanel({
         <div className="knowledge-doc-list">
           {docs.map((doc) => {
             const docBases = getDocBaseIds(doc.id)
+            const isHighlighted = highlightedDoc?.id === doc.id
             return (
-              <div key={doc.id} className="knowledge-doc-item">
+              <div key={doc.id} className={`knowledge-doc-item ${isHighlighted ? 'knowledge-doc-item-highlighted' : ''}`}>
                 <span className="knowledge-doc-icon">{DOC_ICONS[doc.type] ?? '📄'}</span>
                 <div className="knowledge-doc-info">
                   <span className="knowledge-doc-name" title={doc.name}>{doc.name}</span>
@@ -475,6 +490,13 @@ export function KnowledgePanel({
                     {formatSize(doc.size)} · {doc.chunks.length} chunks · {formatDate(doc.createdAt)}
                   </span>
                 </div>
+                {/* v0.26: highlighted chunk preview */}
+                {isHighlighted && highlightedChunkIndex >= 0 && highlightedChunkIndex < doc.chunks.length && (
+                  <div className="knowledge-highlighted-chunk">
+                    <span className="knowledge-highlighted-chunk-label">📌 Source chunk</span>
+                    <p className="knowledge-highlighted-chunk-text">{doc.chunks[highlightedChunkIndex]}</p>
+                  </div>
+                )}
                 {/* Base assignment pills */}
                 {showBases && bases.length > 0 && (
                   <div className="knowledge-doc-bases">

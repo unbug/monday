@@ -25,12 +25,27 @@ export interface ModelInfo {
   tags?: ModelTag[]
 }
 
+export interface CitationEntry {
+  /** docId from the knowledge document */
+  docId: string
+  /** document display name */
+  docName: string
+  /** chunk index within the document */
+  chunkIndex: number
+  /** relevance score from the search */
+  score: number
+  /** snippet of the chunk text (truncated for display) */
+  snippet: string
+}
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'assistant' | 'system'
   content: string
   images?: ChatMessageImage[]
   isStreaming?: boolean
+  /** Citations: which knowledge chunks were used to generate this response (v0.26) */
+  citations?: CitationEntry[]
   timestamp: number
 }
 
