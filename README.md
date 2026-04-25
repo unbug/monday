@@ -271,7 +271,7 @@ unmet feature in the product.
       in-browser (no server)
 - [x] **Browser vector store** — IndexedDB-backed vector store with
       cosine similarity, schema migration registered in `storage.ts`
-- [ ] **Knowledge bases** — Organize documents into named collections;
+- [x] **Knowledge bases** — Organize documents into named collections;
       attach a collection to a session
 
 **Release gate**: a user uploads a 5-page PDF, sees chunks indexed, and a

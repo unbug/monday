@@ -11,6 +11,26 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.25.2',
+    date: '2026-04-25',
+    title: 'Knowledge Bases — Organize Documents into Named Collections',
+    description:
+      'Organize your knowledge documents into named collections (bases) and attach a collection to any session. Documents can belong to multiple bases, and search results can be filtered by the active base — all stored locally in IndexedDB.',
+    changes: [
+      { type: 'added', text: 'KnowledgeBase type — id, name, docIds, createdAt, updatedAt' },
+      { type: 'added', text: 'Knowledge bases storage — saveKnowledgeBases / loadKnowledgeBases / deleteKnowledgeBase in IndexedDB' },
+      { type: 'added', text: 'useKnowledgeBases hook — create, rename, delete, add/remove docs to bases' },
+      { type: 'added', text: 'KnowledgePanel base UI — create base via input, rename via double-click, delete, toggle active' },
+      { type: 'added', text: 'Document base assignment pills — per-document toggle to add/remove from any base' },
+      { type: 'added', text: 'Active base indicator — shows which base is attached to the current session' },
+      { type: 'added', text: 'Base-aware search filtering — setBaseFilter in useVectorStore limits results to active base docs' },
+      { type: 'added', text: 'knowledgeBaseId on ChatSession — per-session knowledge base attachment' },
+      { type: 'added', text: 'Full dark/light theme CSS for all knowledge bases UI elements' },
+      { type: 'changed', text: 'DB schema v3 → v4 — added knowledgeBases object store + forward migration for knowledgeBaseId' },
+      { type: 'changed', text: 'Updated version to v0.25.2' },
+    ],
+  },
+  {
     version: '0.25.1',
     date: '2026-04-25',
     title: 'Browser Vector Store — TF-IDF Search for Knowledge Documents',
