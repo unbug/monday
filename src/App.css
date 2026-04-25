@@ -1411,10 +1411,10 @@
 
 @keyframes voice-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 var(--color-error-rgb, rgba(239, 68, 68, 0.4));
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-error) 40%, transparent);
   }
   50% {
-    box-shadow: 0 0 0 8px var(--color-error-rgb, rgba(239, 68, 68, 0));
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-error) 0%, transparent);
   }
 }
 
@@ -3730,6 +3730,22 @@
 
 .light-theme .model-stats-bar-label {
   color: #6b6b70;
+}
+
+.light-theme .model-stats-bar {
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-active) 100%);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.12);
+}
+
+.light-theme .model-stats-model-bar-fill {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  box-shadow: 0 0 6px rgba(124, 58, 237, 0.15);
+}
+
+.light-theme .model-stats-chart {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 12px 4px;
 }
 
 .light-theme .model-stats-model-name {

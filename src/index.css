@@ -106,6 +106,37 @@
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ===== Aliases — v0.16+ components use these legacy names ===== */
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-text-light);
+  --text-muted: var(--color-text-muted);
+  --text-tertiary: var(--color-text-muted);
+  --bg-primary: var(--color-bg);
+  --bg-surface: var(--color-surface);
+  --bg-elevated: var(--color-surface-elevated);
+  --bg-hover: var(--color-surface-hover);
+  --bg-tertiary: var(--color-bg-subtle);
+  --bg-input: var(--color-surface);
+  --border-color: var(--color-border);
+  --border-subtle: var(--color-border-subtle);
+  --color-border-light: var(--color-border-subtle);
+  --accent-color: var(--color-primary);
+  --accent-color-hover: var(--color-primary-hover);
+  --surface-color: var(--color-surface);
+  --color-text-secondary: var(--color-text-light);
+  --color-text-tertiary: var(--color-text-muted);
+  --color-danger: var(--color-error);
+  --color-danger-bg: var(--color-error-bg);
+  --color-surface-raised: var(--color-surface-elevated);
+  --radius-md: var(--radius-sm);
+  --radius-lg: var(--radius);
+  --radius-full: 9999px;
+  --color-radius-full: 9999px;
+  --transition-normal: var(--transition);
+  --color-primary-glow: rgba(139, 92, 246, 0.1);
+  --accent-glow: rgba(139, 92, 246, 0.12);
+  --accent-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color-scheme: dark;
 }
 
@@ -209,6 +240,10 @@
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ===== Aliases — light-theme overrides for v0.16+ components ===== */
+  --color-primary-glow: rgba(124, 58, 237, 0.08);
+  --accent-glow: rgba(124, 58, 237, 0.08);
   color-scheme: light;
 }
 

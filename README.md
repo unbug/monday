@@ -347,6 +347,19 @@ A phased long-term plan derived from competitive analysis. Each phase builds on 
 - [ ] **i18n** — Multi-language interface (English, 中文, 日本語, etc.)
 - [ ] **Accessibility** — Screen reader support, keyboard navigation, high contrast
 
+### Phase 10 — External LLM Providers & Web Search (v1.1.x)
+> Connect to cloud and local AI servers alongside native WebGPU inference
+
+- [ ] **OpenAI-compatible API** — Configure any OpenAI-compatible endpoint (custom base URL + API key)
+- [ ] **Ollama integration** — Connect to a local Ollama server (http://localhost:11434)
+- [ ] **LM Studio** — Connect to LM Studio's built-in OpenAI-compatible local server
+- [ ] **llama.cpp server** — Connect to llama.cpp's HTTP server (`--server` mode)
+- [ ] **vLLM** — Connect to a vLLM inference server endpoint
+- [ ] **DeepSeek API** — First-class DeepSeek cloud API provider (chat + reasoner models)
+- [ ] **Provider switcher** — Toggle between WebGPU local inference and external API providers in-session
+- [ ] **SearXNG integration** — Web search via a self-hosted SearXNG instance URL
+- [ ] **Web search tool** — Inject search results as context before sending to the model
+
 ---
 
 ## Development
