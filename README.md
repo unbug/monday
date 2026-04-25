@@ -293,6 +293,8 @@ Released: 2026-04-25
 **Release gate**: a question answered using a chunk shows a citation that
 opens to the exact span of the source document; reload preserves it.
 
+Released: 2026-04-26
+
 #### v0.27 — Tools, Function calling, MCP
 
 Phase 6 advanced — the **only** sanctioned tools work. Net-new built-in
