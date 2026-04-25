@@ -14,6 +14,8 @@ import { ModelComparison } from './components/ModelComparison'
 import { ModelBenchmark } from './components/ModelBenchmark'
 import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
+import { KnowledgePanel } from './components/KnowledgePanel'
+import { useKnowledge } from './hooks/useKnowledge'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -27,7 +29,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
@@ -40,6 +42,7 @@ export default function App() {
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
   const theme = useTheme()
+  const knowledge = useKnowledge()
 
   // Trigger theme transition overlay
   const prevThemeRef = useRef<string>(theme.resolved)
@@ -105,6 +108,7 @@ export default function App() {
     onResetRecommendations: () => handleResetRecommendations(),
     onResetRecentModels: () => resetRecent(),
     onOpenPersonaMarketplace: () => setView('persona-marketplace'),
+    onOpenKnowledge: () => setView('knowledge'),
   })
 
   const isReady = model.status === 'ready'
@@ -163,6 +167,10 @@ export default function App() {
             }}
             onOpenPersonaMarketplace={() => {
               setView('persona-marketplace')
+              closeSidebarOnMobile()
+            }}
+            onOpenKnowledge={() => {
+              setView('knowledge')
               closeSidebarOnMobile()
             }}
             onUpdateSession={(updated) => {
@@ -313,6 +321,18 @@ export default function App() {
                 chat.applyPersona(persona)
                 setView('chat')
               }}
+            />
+          </div>
+        ) : view === 'knowledge' ? (
+          <div className="main-content main-content--knowledge">
+            <KnowledgePanel
+              docs={knowledge.docs}
+              loading={knowledge.loading}
+              error={knowledge.error}
+              onUpload={knowledge.uploadFiles}
+              onRemove={knowledge.removeDoc}
+              onClear={knowledge.clearDocs}
+              onBack={() => setView('chat')}
             />
           </div>
         ) : (

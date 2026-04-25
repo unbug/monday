@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.25.0',
+    date: '2026-04-25',
+    title: 'Knowledge Panel — Document Upload (PDF / TXT / MD)',
+    description:
+      'Build a local knowledge base by uploading PDF, TXT, and MD files. Documents are parsed in-browser (PDF via pdfjs-dist), split into searchable chunks, and persisted in IndexedDB — no server, no install, 100% private.',
+    changes: [
+      { type: 'added', text: 'KnowledgePanel component — drag-and-drop + click upload for PDF/TXT/MD files' },
+      { type: 'added', text: 'PDF parsing via pdfjs-dist — extracts text from PDF pages in the browser' },
+      { type: 'added', text: 'Document chunking — ~500-token chunks split on sentence boundaries' },
+      { type: 'added', text: 'Knowledge document storage — IndexedDB object store with forward migration (DB v1→v2)' },
+      { type: 'added', text: 'useKnowledge hook — upload, list, remove, and clear knowledge documents' },
+      { type: 'added', text: 'Knowledge nav button in sidebar — quick access to the Knowledge panel' },
+      { type: 'added', text: 'Knowledge command in Command Palette (⌘K)' },
+      { type: 'added', text: 'KnowledgeDocument type — id, name, type, size, content, chunks, createdAt' },
+      { type: 'changed', text: 'Updated version to v0.25.0' },
+    ],
+  },
+  {
     version: '0.21.0',
     date: '2026-04-25',
     title: 'TTS Output — Read Responses Aloud',

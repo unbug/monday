@@ -1,5 +1,17 @@
 export type ModelTag = 'vision' | 'tools' | 'thinking' | 'embedding'
 
+export type KnowledgeDocType = 'pdf' | 'txt' | 'md'
+
+export interface KnowledgeDocument {
+  id: string
+  name: string
+  type: KnowledgeDocType
+  size: number
+  content: string
+  chunks: string[]
+  createdAt: number
+}
+
 export interface ModelInfo {
   id: string
   name: string

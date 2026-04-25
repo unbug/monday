@@ -1,8 +1,9 @@
-import type { ChatSession, ChatMessage, GenerationParams } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 1
+const DB_VERSION = 2
 const SESSIONS_STORE = 'sessions'
+const KNOWLEDGE_STORE = 'knowledge'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -11,6 +12,9 @@ function openDB(): Promise<IDBDatabase> {
       const db = request.result
       if (!db.objectStoreNames.contains(SESSIONS_STORE)) {
         db.createObjectStore(SESSIONS_STORE, { keyPath: 'id' })
+      }
+      if (!db.objectStoreNames.contains(KNOWLEDGE_STORE)) {
+        db.createObjectStore(KNOWLEDGE_STORE, { keyPath: 'id' })
       }
     }
     request.onsuccess = () => resolve(request.result)
@@ -23,7 +27,6 @@ export async function saveSessions(sessions: ChatSession[]): Promise<void> {
   const tx = db.transaction(SESSIONS_STORE, 'readwrite')
   const store = tx.objectStore(SESSIONS_STORE)
 
-  // Clear and rewrite
   store.clear()
   for (const session of sessions) {
     store.put(session)
@@ -53,19 +56,11 @@ export async function loadSessions(): Promise<ChatSession[]> {
 
 function migrateSession(session: ChatSession): ChatSession {
   const migrated = { ...session }
-  if (!migrated.systemPrompt) {
-    migrated.systemPrompt = ''
-  }
+  if (!migrated.systemPrompt) migrated.systemPrompt = ''
   if (!migrated.generationParams) {
-    migrated.generationParams = {
-      temperature: 0.7,
-      top_p: 0.9,
-      maxTokens: 1024,
-    }
+    migrated.generationParams = { temperature: 0.7, top_p: 0.9, maxTokens: 1024 }
   }
-  if (migrated.personaId === undefined) {
-    migrated.personaId = null
-  }
+  if (migrated.personaId === undefined) migrated.personaId = null
   return migrated
 }
 
@@ -76,27 +71,15 @@ export function createSession(modelId: string): ChatSession {
     modelId,
     messages: [],
     systemPrompt: '',
-    generationParams: {
-      temperature: 0.7,
-      top_p: 0.9,
-      maxTokens: 1024,
-    },
+    generationParams: { temperature: 0.7, top_p: 0.9, maxTokens: 1024 },
     personaId: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
 }
 
-export function createMessage(
-  role: ChatMessage['role'],
-  content: string,
-): ChatMessage {
-  return {
-    id: crypto.randomUUID(),
-    role,
-    content,
-    timestamp: Date.now(),
-  }
+export function createMessage(role: ChatMessage['role'], content: string): ChatMessage {
+  return { id: crypto.randomUUID(), role, content, timestamp: Date.now() }
 }
 
 export function generateTitle(messages: ChatMessage[]): string {
@@ -122,4 +105,46 @@ export function markModelDownloaded(modelId: string): void {
   const ids = getDownloadedModelIds()
   ids.add(modelId)
   localStorage.setItem(DOWNLOADED_MODELS_KEY, JSON.stringify([...ids]))
+}
+
+// ── Knowledge document storage ──
+
+export async function saveKnowledgeDocs(docs: KnowledgeDocument[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(KNOWLEDGE_STORE, 'readwrite')
+  const store = tx.objectStore(KNOWLEDGE_STORE)
+  store.clear()
+  for (const doc of docs) {
+    store.put(doc)
+  }
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadKnowledgeDocs(): Promise<KnowledgeDocument[]> {
+  const db = await openDB()
+  const tx = db.transaction(KNOWLEDGE_STORE, 'readonly')
+  const store = tx.objectStore(KNOWLEDGE_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.getAll()
+    request.onsuccess = () => {
+      const docs = request.result as KnowledgeDocument[]
+      docs.sort((a, b) => b.createdAt - a.createdAt)
+      resolve(docs)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteKnowledgeDoc(id: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(KNOWLEDGE_STORE, 'readwrite')
+  const store = tx.objectStore(KNOWLEDGE_STORE)
+  store.delete(id)
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
 }
