@@ -161,6 +161,7 @@ export function streamChatWithUsage(
     systemPrompt?: string
     context?: string
     images?: Array<{ id: string; data: string; name?: string }>
+    files?: Array<{ id: string; name: string; size: number; type: string; content: string }>
   } = {},
 ): StreamWithUsage {
   const usageRef = { current: null } as { current: StreamUsage | null }
@@ -171,7 +172,7 @@ export function streamChatWithUsage(
       throw new Error('No model loaded')
     }
 
-    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt, context, images } =
+    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt, context, images, files } =
       options
 
     let chatMessages: Array<{
@@ -185,9 +186,22 @@ export function streamChatWithUsage(
       content: string
     }> = []
     if (context?.trim()) {
-      contextMessage = [
+      contextMessage.push(
         { role: 'user', content: `Context:\n${context}\n\n---\n\n` },
-      ]
+      )
+    }
+
+    // Prepend file content if files are provided
+    if (files?.length) {
+      for (const file of files) {
+        contextMessage.push({
+          role: 'user',
+          content: `File: ${file.name} (${file.type})\n${file.content}`,
+        })
+      }
+      if (contextMessage.length > 0) {
+        contextMessage.push({ role: 'user', content: '\n---\n' })
+      }
     }
 
     if (systemPrompt?.trim()) {

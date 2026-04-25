@@ -3,6 +3,7 @@ import { BorderBeam } from 'border-beam'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
 import { ContextPanel } from './ContextPanel'
 import { ImagePreview } from './ImagePreview'
+import { FileAttachment } from './FileAttachment'
 import { useVoiceInput } from '../hooks/useVoiceInput'
 import type { ModelInfo } from '../types'
 
@@ -12,9 +13,17 @@ interface ImageItem {
   name?: string
 }
 
+interface FileItem {
+  id: string
+  name: string
+  size: number
+  type: string
+  content: string
+}
+
 interface Props {
   sessionId?: string
-  onSend: (content: string, images?: ImageItem[]) => void
+  onSend: (content: string, images?: ImageItem[], files?: FileItem[]) => void
   onStop: () => void
   onApplyPersona: (personaId: string) => void
   isGenerating: boolean
@@ -48,8 +57,11 @@ export function ChatInput({
   const [focused, setFocused] = useState(false)
   const [showSlashHint, setShowSlashHint] = useState(false)
   const [images, setImages] = useState<ImageItem[]>([])
+  const [files, setFiles] = useState<FileItem[]>([])
+  const [isDragOver, setIsDragOver] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
 
   // Voice input
   const voiceInput = useVoiceInput(
@@ -111,21 +123,66 @@ export function ChatInput({
     [],
   )
 
+  const TEXT_TYPES = new Set([
+    'text/plain',
+    'text/markdown',
+    'text/html',
+    'text/css',
+    'text/javascript',
+    'text/x-typescript',
+    'application/json',
+    'application/xml',
+    'application/x-httpd-eruby',
+    'application/x-sh',
+    'application/x-python',
+    'application/x-perl',
+    'application/x-ruby',
+    'application/x-shellscript',
+    'application/x-www-form-urlencoded',
+  ])
+
+  function canReadAsText(type: string): boolean {
+    if (TEXT_TYPES.has(type)) return true
+    if (type.startsWith('text/') || type.startsWith('application/json') || type.startsWith('application/xml')) return true
+    return false
+  }
+
+  function readFileAsText(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = () => reject(reader.error)
+      reader.readAsText(file)
+    })
+  }
+
   const handleFileSelect = useCallback(
     async (files: FileList | null) => {
       if (!files || files.length === 0) return
 
       const newImages: ImageItem[] = []
+      const newFiles: FileItem[] = []
       for (const file of Array.from(files)) {
-        if (!file.type.startsWith('image/')) continue
-        const data = await compressImage(file)
-        newImages.push({
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          data,
-          name: file.name,
-        })
+        if (file.type.startsWith('image/')) {
+          const data = await compressImage(file)
+          newImages.push({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            data,
+            name: file.name,
+          })
+        } else if (file.size <= 500_000 && canReadAsText(file.type)) {
+          const content = await readFileAsText(file)
+          newFiles.push({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            content,
+          })
+        }
       }
       setImages((prev) => [...prev, ...newImages])
+      setFiles((prev) => [...prev, ...newFiles])
     },
     [compressImage],
   )
@@ -164,14 +221,23 @@ export function ChatInput({
     setImages([])
   }, [])
 
-  const handleSend = useCallback(() => {
-    if ((!input.trim() && images.length === 0) || disabled) return
+  const handleRemoveFile = useCallback((id: string) => {
+    setFiles((prev) => prev.filter((f) => f.id !== id))
+  }, [])
 
-    onSend(input.trim(), images.length > 0 ? images : undefined)
+  const handleClearFiles = useCallback(() => {
+    setFiles([])
+  }, [])
+
+  const handleSend = useCallback(() => {
+    if ((!input.trim() && images.length === 0 && files.length === 0) || disabled) return
+
+    onSend(input.trim(), images.length > 0 ? images : undefined, files.length > 0 ? files : undefined)
     setInput('')
     setImages([])
+    setFiles([])
     setShowSlashHint(false)
-  }, [input, images, disabled, onSend])
+  }, [input, images, files, disabled, onSend])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -211,6 +277,13 @@ export function ChatInput({
           onClear={handleClearImages}
         />
       )}
+      {files.length > 0 && (
+        <FileAttachment
+          files={files}
+          onRemove={handleRemoveFile}
+          onClear={handleClearFiles}
+        />
+      )}
       <BorderBeam
         size="line"
         theme="auto"
@@ -219,35 +292,43 @@ export function ChatInput({
         active={focused || isGenerating}
         duration={1.96}
       >
-        <div className="chat-input-container">
-          {isVisionModel && (
-            <button
-              className="chat-input-image-btn"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={disabled}
-              title="Add image"
-              type="button"
+        <div
+          className="chat-input-container"
+          onDragOver={(e) => {
+            e.preventDefault()
+            setIsDragOver(true)
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault()
+            setIsDragOver(false)
+            handleFileSelect(e.dataTransfer.files)
+          }}
+        >
+          <button
+            className="chat-input-file-btn"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled}
+            title="Attach file"
+            type="button"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-            </button>
-          )}
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,.txt,.md,.json,.xml,.html,.css,.js,.ts,.py,.rb,.sh,.yaml,.yml,.toml,.csv,.log"
             multiple
             className="chat-input-file-input"
             onChange={(e) => handleFileSelect(e.target.files)}
@@ -328,7 +409,7 @@ export function ChatInput({
             <button
               className="chat-btn chat-btn-send"
               onClick={handleSend}
-              disabled={disabled || (!input.trim() && images.length === 0)}
+              disabled={disabled || (!input.trim() && images.length === 0 && files.length === 0)}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="22" y1="2" x2="11" y2="13" />
