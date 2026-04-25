@@ -269,7 +269,7 @@ unmet feature in the product.
       panel (PDF parsing via `pdfjs-dist`)
 - [x] **Client-side chunking** — Split documents into ~500-token chunks
       in-browser (no server)
-- [ ] **Browser vector store** — IndexedDB-backed vector store with
+- [x] **Browser vector store** — IndexedDB-backed vector store with
       cosine similarity, schema migration registered in `storage.ts`
 - [ ] **Knowledge bases** — Organize documents into named collections;
       attach a collection to a session
