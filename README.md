@@ -281,7 +281,7 @@ Released: 2026-04-25
 
 #### v0.26 — RAG (retrieval + citation)
 
-- [ ] **Embedding model** — Run a small embedding model via Web-LLM
+- [x] **Embedding model** — Run a small embedding model via Web-LLM
       (e.g. `gte-small` MLC build) and persist embeddings
 - [ ] **Semantic search** — On send, query the active knowledge base and
       inject top-K chunks into the system prompt

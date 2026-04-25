@@ -11,6 +11,26 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.26.0',
+    date: '2026-04-26',
+    title: 'Embedding Model — Browser-Native Semantic Search',
+    description:
+      'Run a small embedding model (Xenova/all-MiniLM-L6-v2, ~90 MB) entirely in the browser to power semantic search over your knowledge documents. Load the model from the Knowledge panel, and search results now include both TF-IDF keyword matches and embedding-based semantic matches — all 100% private, no server.',
+    changes: [
+      { type: 'added', text: 'Embedding model registry entry — Xenova/all-MiniLM-L6-v2 (384-dim, ~90 MB)' },
+      { type: 'added', text: 'embedding.ts — WebLLM WebEmbeddingEngine wrapper with load/unload/generate APIs' },
+      { type: 'added', text: 'useEmbeddingModel hook — manages embedding model lifecycle (load/unload/state) with localStorage persistence' },
+      { type: 'added', text: 'semanticSearch() — embedding-based semantic search with cosine similarity ranking' },
+      { type: 'added', text: 'embeddingSimilarity() — Float32Array cosine similarity for embedding vectors' },
+      { type: 'added', text: 'Embedding storage — saveEmbeddings / loadEmbeddings / clearEmbeddings in IndexedDB (DB v5)' },
+      { type: 'added', text: 'KnowledgePanel embedding status indicator — shows loaded/unloaded state with load/unload buttons' },
+      { type: 'added', text: 'Semantic search results section — distinct visual styling for embedding-based results (🧠 badge)' },
+      { type: 'added', text: 'SearchScore.source field — marks each result as tfidf or embedding origin' },
+      { type: 'changed', text: 'DB schema v4 → v5 — added embeddings object store with forward migration' },
+      { type: 'changed', text: 'Updated version to v0.26.0' },
+    ],
+  },
+  {
     version: '0.25.2',
     date: '2026-04-25',
     title: 'Knowledge Bases — Organize Documents into Named Collections',

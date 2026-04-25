@@ -27,6 +27,8 @@ export interface SearchScore {
   text: string
   docName: string
   score: number
+  /** Source of this score: 'tfidf' or 'embedding'. Default 'tfidf' for backward compat. */
+  source?: 'tfidf' | 'embedding'
 }
 
 // ── Tokenizer ──────────────────────────────────────────────────────────────
@@ -212,7 +214,7 @@ export function searchIndex(
 
   // Sort by score descending, return top-K
   scores.sort((a, b) => b.score - a.score)
-  return scores.slice(0, topK)
+  return scores.slice(0, topK).map((s) => ({ ...s, source: 'tfidf' as const })) as SearchScore[]
 }
 
 // ── IndexedDB persistence ──────────────────────────────────────────────────
@@ -278,7 +280,7 @@ export async function clearVectorIndex(): Promise<void> {
 
 function openVectorDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 3)
+    const request = indexedDB.open(DB_NAME, 5)
     request.onupgradeneeded = () => {
       const db = request.result
       if (!db.objectStoreNames.contains(VECTOR_STORE_NAME)) {
@@ -288,4 +290,59 @@ function openVectorDB(): Promise<IDBDatabase> {
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
+}
+
+// ── Embedding-based semantic search (v0.26.0) ──────────────────────────────
+
+/**
+ * Compute cosine similarity between two Float32Array vectors.
+ */
+export function embeddingSimilarity(a: Float32Array, b: Float32Array): number {
+  let dotProduct = 0
+  let normA = 0
+  let normB = 0
+
+  for (let i = 0; i < a.length; i++) {
+    dotProduct += a[i] * b[i]
+    normA += a[i] * a[i]
+    normB += b[i] * b[i]
+  }
+
+  const denominator = Math.sqrt(normA) * Math.sqrt(normB)
+  if (denominator === 0) return 0
+  return dotProduct / denominator
+}
+
+/**
+ * Semantic search: generate embeddings for the query and each chunk,
+ * then rank by cosine similarity.
+ *
+ * Returns results with source='embedding' so callers can distinguish
+ * them from TF-IDF results.
+ */
+export async function semanticSearch(
+  chunks: Array<{ id: string; text: string; docName: string }>,
+  query: string,
+  generateEmbedding: (text: string) => Promise<{ data: Float32Array }>,
+  topK: number = 10,
+): Promise<SearchScore[]> {
+  if (chunks.length === 0 || !query.trim()) return []
+
+  // Generate query embedding
+  const queryResult = await generateEmbedding(query)
+  const queryEmbedding = queryResult.data
+
+  const scores: Array<{ id: string; text: string; docName: string; score: number; source: 'embedding' }> = []
+  for (const chunk of chunks) {
+    const chunkResult = await generateEmbedding(chunk.text)
+    const chunkEmbedding = chunkResult.data
+    const sim = embeddingSimilarity(queryEmbedding, chunkEmbedding)
+    if (sim > 0) {
+      scores.push({ id: chunk.id, text: chunk.text, docName: chunk.docName, score: sim, source: 'embedding' })
+    }
+  }
+
+  // Sort by score descending, return top-K
+  scores.sort((a, b) => b.score - a.score)
+  return scores.slice(0, topK) as SearchScore[]
 }

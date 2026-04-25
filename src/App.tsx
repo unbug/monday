@@ -18,6 +18,7 @@ import { KnowledgePanel } from './components/KnowledgePanel'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
+import { useEmbeddingModel } from './hooks/useEmbeddingModel'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -53,6 +54,7 @@ export default function App() {
     ? knowledgeBases.getBaseById(knowledgeBases.activeBaseId)?.docIds ?? []
     : null
   const vectorStore = useVectorStore()
+  const embedding = useEmbeddingModel()
 
   // Apply base filter to vector store when active base changes
   useEffect(() => {
@@ -365,6 +367,12 @@ export default function App() {
               onSetActiveBase={knowledgeBases.setActiveBaseId}
               onAddDocToBase={knowledgeBases.addDocToBase}
               onRemoveDocFromBase={knowledgeBases.removeDocFromBase}
+              // v0.26.0: embedding model
+              embeddingLoaded={embedding.isLoaded}
+              embeddingProgress={embedding.progress}
+              embeddingError={embedding.error}
+              onEmbeddingLoad={embedding.load}
+              onEmbeddingUnload={embedding.unload}
             />
           </div>
         ) : (

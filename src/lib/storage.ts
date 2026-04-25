@@ -1,11 +1,12 @@
 import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 4
+const DB_VERSION = 5
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
 const BASES_STORE = 'knowledgeBases'
+const EMBEDDINGS_STORE = 'embeddings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -24,6 +25,10 @@ function openDB(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(BASES_STORE)) {
         db.createObjectStore(BASES_STORE, { keyPath: 'id' })
+      }
+      // Migration v4→v5: add embeddings object store for v0.26 RAG
+      if (!db.objectStoreNames.contains(EMBEDDINGS_STORE)) {
+        db.createObjectStore(EMBEDDINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion < 4) {
@@ -212,6 +217,60 @@ export async function deleteKnowledgeBase(id: string): Promise<void> {
   const tx = db.transaction(BASES_STORE, 'readwrite')
   const store = tx.objectStore(BASES_STORE)
   store.delete(id)
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── Embedding storage (v0.26.0) ────────────────────────────────────────────
+
+export interface EmbeddingEntry {
+  id: string
+  /** Chunk text this embedding represents */
+  text: string
+  /** Source document name */
+  docName: string
+  /** Embedding vector (384-dim for all-MiniLM-L6-v2) */
+  vector: number[]
+  /** Timestamp of when this embedding was created */
+  createdAt: number
+}
+
+export async function saveEmbeddings(embeddings: EmbeddingEntry[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(EMBEDDINGS_STORE, 'readwrite')
+  const store = tx.objectStore(EMBEDDINGS_STORE)
+  store.clear()
+  for (const emb of embeddings) {
+    store.put(emb)
+  }
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadEmbeddings(): Promise<EmbeddingEntry[]> {
+  const db = await openDB()
+  const tx = db.transaction(EMBEDDINGS_STORE, 'readonly')
+  const store = tx.objectStore(EMBEDDINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.getAll()
+    request.onsuccess = () => {
+      const embeddings = request.result as EmbeddingEntry[]
+      embeddings.sort((a, b) => b.createdAt - a.createdAt)
+      resolve(embeddings)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function clearEmbeddings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(EMBEDDINGS_STORE, 'readwrite')
+  const store = tx.objectStore(EMBEDDINGS_STORE)
+  store.clear()
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

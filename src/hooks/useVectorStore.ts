@@ -22,6 +22,8 @@ export interface UseVectorStoreReturn {
   hasIndex: boolean
   /** Filter results to only chunks from these doc IDs (base-aware search) */
   setBaseFilter: (docIds: string[] | null) => void
+  /** Search using the embedding model (semantic search) */
+  search: (query: string, topK?: number) => Promise<SearchScore[]>
 }
 
 /**
@@ -29,6 +31,8 @@ export interface UseVectorStoreReturn {
  *
  * Index is persisted in IndexedDB (vectorIndex object store) so it survives
  * page reloads. Re-indexing is triggered when documents change.
+ *
+ * v0.26+: also exposes `search()` for embedding-based semantic search.
  */
 export function useVectorStore(): UseVectorStoreReturn {
   const [indexing, setIndexing] = useState(false)
@@ -123,6 +127,39 @@ export function useVectorStore(): UseVectorStoreReturn {
     setQuery('')
   }, [])
 
+  // Embedding-based semantic search (v0.26.0)
+  const search = useCallback(async (q: string, topK: number = 10): Promise<SearchScore[]> => {
+    if (!q.trim()) return []
+
+    // Try to load embedding model if not loaded
+    const { loadEmbeddingModel, generateEmbedding } = await import('../lib/embedding')
+    try {
+      await loadEmbeddingModel()
+    } catch {
+      // Model load failed or already loaded — fallback to empty
+      return []
+    }
+
+    const loaded = await loadVectorIndex()
+    if (!loaded || loaded.length === 0) return []
+
+    const chunks = loaded.map((entry) => ({
+      id: entry.id,
+      text: entry.text,
+      docName: entry.docName,
+    }))
+
+    // Filter to active base if set
+    let filtered = chunks
+    if (baseDocIds && baseDocIds.length > 0) {
+      const docSet = new Set(baseDocIds)
+      filtered = chunks.filter((c) => docSet.has(c.docName))
+    }
+
+    const { semanticSearch } = await import('../lib/vectorStore')
+    return semanticSearch(filtered, q, generateEmbedding, topK)
+  }, [baseDocIds])
+
   return {
     indexing,
     indexedCount,
@@ -133,5 +170,6 @@ export function useVectorStore(): UseVectorStoreReturn {
     clearIndex,
     hasIndex,
     setBaseFilter: setBaseDocIds,
+    search,
   }
 }

@@ -6814,3 +6814,87 @@
     gap: 4px;
   }
 }
+
+/* ── Embedding model status (v0.26.0) ─────────────────────────────────────── */
+
+.knowledge-embedding-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.knowledge-embedding-unload {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.knowledge-embedding-unload:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color-hover);
+}
+
+.knowledge-embedding-load {
+  background: linear-gradient(135deg, var(--purple-600), var(--purple-700));
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.knowledge-embedding-load:hover {
+  background: linear-gradient(135deg, var(--purple-500), var(--purple-600));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.knowledge-embedding-error {
+  color: var(--red-500);
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.knowledge-status-separator {
+  color: var(--text-tertiary);
+  margin: 0 4px;
+  opacity: 0.5;
+}
+
+/* ── Semantic search results (v0.26.0) ────────────────────────────────────── */
+
+.knowledge-embedding-results-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.knowledge-embedding-results-icon {
+  font-size: 14px;
+}
+
+.knowledge-embedding-results-text {
+  font-weight: 500;
+}
+
+.score-embedding {
+  color: var(--purple-400);
+}

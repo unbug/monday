@@ -269,6 +269,19 @@ export const MODELS: ModelInfo[] = [
     releaseDate: '2024-07-01',
     tags: ['thinking'],
   },
+  // --- Embedding Models (v0.26.0) ---
+  {
+    id: 'Xenova/all-MiniLM-L6-v2',
+    name: 'all-MiniLM-L6-v2',
+    description: 'Sentence-transformers embedding model — 384-dim, great for semantic search',
+    size: '~90 MB',
+    parameters: '384-dim',
+    provider: 'Xenova',
+    paramCount: 0,
+    releaseDate: '2023-04-01',
+    recommended: true,
+    tags: ['embedding'],
+  },
   // --- Vision Models (v0.19.0) ---
   {
     id: 'Llama-3.2-11B-Vision-Instruct-q4f16_1-MLC',

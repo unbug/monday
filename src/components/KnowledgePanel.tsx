@@ -31,6 +31,12 @@ interface Props {
   onRemoveDocFromBase: (baseId: string, docId: string) => void
   // Base filter for search
   baseDocIds: string[] | null
+  // v0.26.0: embedding model
+  embeddingLoaded: boolean
+  embeddingProgress: number
+  embeddingError: string | null
+  onEmbeddingLoad: () => Promise<void>
+  onEmbeddingUnload: () => Promise<void>
 }
 
 const DOC_ICONS: Record<string, string> = {
@@ -83,6 +89,12 @@ export function KnowledgePanel({
   onAddDocToBase,
   onRemoveDocFromBase,
   baseDocIds,
+  // v0.26.0
+  embeddingLoaded,
+  embeddingProgress,
+  embeddingError,
+  onEmbeddingLoad,
+  onEmbeddingUnload,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
@@ -319,13 +331,53 @@ export function KnowledgePanel({
         </div>
       )}
 
-      {/* Index status */}
-      {hasIndex && (
+      {/* Index status + embedding model status */}
+      {(hasIndex || embeddingLoaded) && (
         <div className="knowledge-index-status">
-          <span>📊 Indexed {indexedCount} chunks</span>
-          <button className="knowledge-reindex-btn" onClick={onClearIndex}>
-            Re-index
-          </button>
+          {hasIndex && (
+            <span>📊 Indexed {indexedCount} chunks</span>
+          )}
+          {hasIndex && embeddingLoaded && (
+            <span className="knowledge-status-separator">·</span>
+          )}
+          {embeddingLoaded && (
+            <span className="knowledge-embedding-status">
+              🧠 Embedding model loaded
+              <button
+                className="knowledge-embedding-unload"
+                onClick={onEmbeddingUnload}
+                title="Unload embedding model to free memory"
+              >
+                Unload
+              </button>
+            </span>
+          )}
+          {!embeddingLoaded && hasIndex && (
+            <button
+              className="knowledge-embedding-load"
+              onClick={onEmbeddingLoad}
+              title="Load embedding model for semantic search"
+            >
+              🧠 Load Embedding Model (~90 MB)
+            </button>
+          )}
+          {embeddingError && (
+            <span className="knowledge-embedding-error">{embeddingError}</span>
+          )}
+          {!embeddingLoaded && !hasIndex && (
+            <button
+              className="knowledge-embedding-load"
+              onClick={onEmbeddingLoad}
+              title="Load embedding model for semantic search"
+            >
+              🧠 Load Embedding Model (~90 MB)
+            </button>
+          )}
+          {hasIndex && (
+            <button className="knowledge-reindex-btn" onClick={onClearIndex}>
+              Re-index
+            </button>
+          )}
         </div>
       )}
 
@@ -349,12 +401,21 @@ export function KnowledgePanel({
       {/* Search results */}
       {showSearch && results.length > 0 && (
         <div className="knowledge-search-results">
+          {/* Embedding-based results header */}
+          {results.some((r) => r.source === 'embedding') && (
+            <div className="knowledge-embedding-results-header">
+              <span className="knowledge-embedding-results-icon">🧠</span>
+              <span className="knowledge-embedding-results-text">
+                Semantic search (embedding model)
+              </span>
+            </div>
+          )}
           {results.map((r) => (
             <div key={r.id} className="knowledge-search-result">
               <div className="knowledge-search-result-header">
                 <span className="knowledge-search-result-doc">{r.docName}</span>
-                <span className="knowledge-search-result-score">
-                  score {formatScore(r.score)}
+                <span className={`knowledge-search-result-score ${r.source === 'embedding' ? 'score-embedding' : ''}`}>
+                  {r.source === 'embedding' ? '🧠 ' : '📊 '}{formatScore(r.score)}
                 </span>
               </div>
               <p className="knowledge-search-result-text">{r.text}</p>
