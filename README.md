@@ -277,6 +277,8 @@ unmet feature in the product.
 **Release gate**: a user uploads a 5-page PDF, sees chunks indexed, and a
 search box returns the top-K matching chunks (no LLM yet — that's v0.26).
 
+Released: 2026-04-25
+
 #### v0.26 — RAG (retrieval + citation)
 
 - [ ] **Embedding model** — Run a small embedding model via Web-LLM
