@@ -367,6 +367,40 @@ tools functionality; offline mode degrades gracefully.
 **Release gate**: a documented agent-mode demo solves a 3-step task
 (search → summarize → save) end-to-end with zero manual intervention.
 
+#### v0.31 — Code Arena / Showdown Mode
+
+A richer evolution of the existing **Model Comparison** view, inspired by
+[WebDev Arena](https://web.lmarena.ai), [Design Arena](https://designarena.ai)
+and the indie "Grass Field challenge" rigs that show up in Twitter dual-pane
+screenshots: same prompt → two models → live HTML/canvas preview → shareable
+recording. Net-new vs. v0.2's plain text-only comparison.
+
+- [ ] **Dual artifact panes** — Side-by-side terminal-style cards with
+      provider badge, model name, status (`pending / streaming / done`)
+      and generation duration in seconds
+- [ ] **Sandboxed iframe preview** — Each pane mounts the streamed
+      HTML/CSS/JS into a `sandbox="allow-scripts"` iframe, refreshed on
+      every chunk (debounced) and on a manual **↻ Run** button
+- [ ] **Code ↔ Preview tabs** — Per-pane toggle between rendered preview
+      and source view, with a **Copy** button on each
+- [ ] **Synchronized scroll** — Code view in both panes scrolls in
+      lockstep (line-aligned) to make diffs obvious
+- [ ] **Challenge prompt library** — Curated presets (Grass Field, Solar
+      System, Pelican on a Bicycle, Tetris, Snake, Bouncing Balls,
+      Particle System, CSS Loader Gallery), one-click load into the arena
+- [ ] **Recording & video export** — `MediaRecorder` captures both
+      iframes as a synchronized timelapse `.webm` (default 30 fps,
+      configurable), with a small "@username" watermark from settings
+- [ ] **PNG share card** — Export a single PNG with both final previews,
+      model names, durations and watermark — sized for Twitter (16:9)
+- [ ] **Verdict & local leaderboard** — `Team A / Tie / Team B` voting UI;
+      results persisted in IndexedDB and aggregated into a per-model
+      win/tie/loss table (purely local, no upload)
+
+**Release gate**: a user picks two models, loads the "Grass Field"
+preset, hits Send, sees both iframes animate side-by-side, exports a
+`.webm` with watermark, votes a winner, and the leaderboard updates.
+
 #### v1.0 — External LLM Providers & Web Search _(stable)_
 
 The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
