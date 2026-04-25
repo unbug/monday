@@ -238,9 +238,192 @@ Roadmap informed by deep analysis of these leading AI chat platforms:
 
 ## Roadmap
 
-A phased long-term plan derived from competitive analysis. Each phase builds on the previous.
+> **North Star (immutable)**: _A local-first, browser-native AI workstation._
+> WebGPU inference + optional remote providers, with first-class memory,
+> tools and offline capability — all running entirely in the user's browser.
+>
+> **Three non-negotiable axes** every release must satisfy:
+>
+> 1. **Local-first** — every feature works with WebGPU + IndexedDB only;
+>    cloud providers are an option, never a requirement.
+> 2. **Phase progression** — releases ship the **earliest unreleased
+>    version** in `### Versioned task breakdown` end-to-end. No skipping
+>    versions, no scope outside the listed checkboxes.
+> 3. **Release gate** — a version is "done" only when its release gate is
+>    green. Trivial built-ins or polish do **not** unlock the next version.
 
-### Phase 1 — Core Chat Enhancement (v0.2.x)
+### Versioned task breakdown
+
+The autonomous Cron picks the **first unchecked, unblocked** item in the
+**earliest unreleased version** and ships it end-to-end (code + build green
++ visible in UI + entry in CHANGELOG). It never invents scope outside this
+list, and never skips a version. Past versions remain documented as a
+historical record below.
+
+#### v0.25 — Knowledge & RAG (storage layer) _(current target)_
+
+Phase 5 of the legacy plan, split for scope safety. RAG is the highest-value
+unmet feature in the product.
+
+- [ ] **Document upload** — Upload PDFs / TXT / MD files into a "Knowledge"
+      panel (PDF parsing via `pdfjs-dist`)
+- [ ] **Client-side chunking** — Split documents into ~500-token chunks
+      in-browser (no server)
+- [ ] **Browser vector store** — IndexedDB-backed vector store with
+      cosine similarity, schema migration registered in `storage.ts`
+- [ ] **Knowledge bases** — Organize documents into named collections;
+      attach a collection to a session
+
+**Release gate**: a user uploads a 5-page PDF, sees chunks indexed, and a
+search box returns the top-K matching chunks (no LLM yet — that's v0.26).
+
+#### v0.26 — RAG (retrieval + citation)
+
+- [ ] **Embedding model** — Run a small embedding model via Web-LLM
+      (e.g. `gte-small` MLC build) and persist embeddings
+- [ ] **Semantic search** — On send, query the active knowledge base and
+      inject top-K chunks into the system prompt
+- [ ] **Citation display** — Show which chunks were used per assistant
+      message, with click-to-open
+- [ ] **Citation persistence** — Citations survive page reload (stored
+      alongside message in IndexedDB)
+
+**Release gate**: a question answered using a chunk shows a citation that
+opens to the exact span of the source document; reload preserves it.
+
+#### v0.27 — Tools, Function calling, MCP
+
+Phase 6 advanced — the **only** sanctioned tools work. Net-new built-in
+mini-tools (calculator / clock / unit converter / JSON formatter / one-shot
+web-search button / standalone formatter) are **out of scope**: they
+distract from the function-calling / plugin / MCP work that actually
+lets users plug in *any* tool. Mini-tools, if at all, ship later **as
+plugins** through the system below.
+
+- [ ] **Function calling** — Parse model tool-call outputs (OpenAI-style
+      `tool_calls` JSON) and dispatch to in-browser functions
+- [ ] **Plugin system** — Load third-party tool plugins from URL
+      (JSON manifest declaring `name / description / inputSchema /
+      handlerUrl`)
+- [ ] **MCP client** — Connect to an MCP server (WebSocket transport) and
+      expose its tools to the model
+- [ ] **Tool call inspector** — A panel that shows the request / response
+      / latency of every tool call in a session
+
+**Release gate**: a user installs one external plugin from URL or connects
+to one MCP server, the model invokes a tool from it, and the inspector
+shows the full request / response.
+
+#### v0.28 — Collaboration & Sharing
+
+- [ ] **Share conversations** — Generate a shareable static HTML export
+      (no server)
+- [ ] **Import/export** — Full data import / export (sessions, personas,
+      settings, knowledge bases) as a single `.monday` zip
+- [ ] **WebDAV sync** — Cross-device sync via user-supplied WebDAV server
+- [ ] **Shared personas** — Publish a persona to a static community
+      registry (curated JSON file in the repo)
+- [ ] **Conversation forking** — Branch a session at any message;
+      branches are siblings, navigable in the sidebar
+
+**Release gate**: round-trip import → export → re-import preserves every
+session, persona and knowledge base byte-for-byte.
+
+#### v0.29 — Desktop, PWA polish & shortcuts
+
+- [ ] **Update prompt** — Banner when a new service worker is installed
+- [ ] **Offline indicator** — Header chip when offline; gracefully
+      disable cloud-only features
+- [ ] **Background notifications** — Notify when a long generation
+      completes while the tab is hidden (uses existing
+      `useNotifications`)
+- [ ] **Desktop app** — Tauri wrapper that targets macOS / Windows / Linux
+- [ ] **Keyboard shortcuts overlay** — `?` opens a list of every shortcut
+      (Cmd+K / Cmd+N / Cmd+⇧S / Cmd+E …); shortcuts also documented in
+      the README
+- [ ] **Multi-window** — Open a conversation in a separate browser
+      window / Tauri window with shared IndexedDB
+
+**Release gate**: a Tauri build runs on macOS with full chat + RAG +
+tools functionality; offline mode degrades gracefully.
+
+#### v0.30 — Agent mode & analytics
+
+- [ ] **Multi-turn memory** — Auto-summarize early turns when the context
+      window is exceeded; summaries are visible and editable
+- [ ] **Agent mode** — Multi-step task execution with tool use (an outer
+      planner loop on top of v0.27 function calling)
+- [ ] **Model chaining** — Pipeline: fast model drafts → large model
+      refines, configurable per persona
+- [ ] **Batch generation** — Generate N responses in parallel and pick
+      the best
+- [ ] **Usage analytics** — Local-only dashboard: model usage, tokens
+      consumed, average tps, sessions per day
+- [ ] **i18n** — Multi-language interface (English, 中文, 日本語) with
+      language picker in settings
+- [ ] **Accessibility** — Screen-reader landmarks, keyboard-only
+      navigation, high-contrast theme
+
+**Release gate**: a documented agent-mode demo solves a 3-step task
+(search → summarize → save) end-to-end with zero manual intervention.
+
+#### v1.0 — External LLM Providers & Web Search _(stable)_
+
+The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
+
+- [ ] **OpenAI-compatible API** — Configure any OpenAI-compatible endpoint
+      (custom base URL + API key, stored encrypted in IndexedDB)
+- [ ] **Ollama integration** — Connect to a local Ollama server
+      (`http://localhost:11434`) with model auto-discovery
+- [ ] **LM Studio** — Connect to LM Studio's local OpenAI-compatible
+      server
+- [ ] **llama.cpp server** — Connect to `llama.cpp --server` HTTP mode
+- [ ] **vLLM** — Connect to a vLLM inference endpoint
+- [ ] **DeepSeek API** — First-class DeepSeek cloud provider (chat +
+      reasoner models)
+- [ ] **Provider switcher** — Per-session toggle between WebGPU local
+      inference and external API providers
+- [ ] **SearXNG integration** — Web search via a user-supplied SearXNG URL
+- [ ] **Stable storage schema v1** — Migration registry frozen; future
+      migrations must add, not break, fields
+
+**Release gate**: a 24-hour soak test (1 hour with each provider) passes;
+the storage migration test from v0.25 → v1.0 round-trips without loss.
+
+### Cross-cutting standing rules
+
+These apply to **every** version and are enforced by the cron:
+
+1. **No "miscellaneous mini-tool" releases.** A built-in tool that takes
+   <1 day to implement (calculator, clock, formatter, converter,
+   one-shot web-search button) does **not** count as a version and
+   **must not** be added directly. Such utilities ship later as
+   first-class plugins via the v0.27 plugin / MCP system, not as
+   bespoke React components.
+2. **HEARTBEAT.md cites the current target version + the exact
+   checkbox(es) in flight.** The Next Steps list is taken verbatim from
+   this file, not invented.
+3. **Local-first invariant** — every new feature must work with the
+   default WebGPU + IndexedDB stack; remote providers are additive.
+4. **Storage schema is versioned** — any IndexedDB schema change ships
+   with a forward migration in `src/lib/storage.ts`.
+5. **No skipping versions** — if v0.25 is unfinished, work on v0.25 only.
+   If every checkbox in the current version is blocked, the cron must
+   spend the slot on tests, docs, refactors or accessibility for that
+   version, **not** on a later version or on net-new mini-tools.
+
+### Historical phases (for reference)
+
+Phases 1–3, Phase 0.8 and parts of Phases 4 / 6 shipped in v0.2 → v0.21.
+They remain documented below as a record but are **not authoritative**
+for future work — the `### Versioned task breakdown` above is.
+
+> Note: v0.22–v0.24 (Calculator / Web Search / Unit Converter / JSON
+> Formatter / Current Time) were rolled back on 2026-04-25 because they
+> bypassed this Roadmap. Those features will return only as plugins via
+> v0.27.
+
+#### Phase 1 — Core Chat Enhancement (v0.2.x)
 > Bring chat to feature parity with basic ChatGPT UX
 
 - [x] **Markdown rendering** — Render assistant responses with proper Markdown, code blocks, syntax highlighting
