@@ -287,7 +287,7 @@ Released: 2026-04-25
       inject top-K chunks into the system prompt
 - [x] **Citation display** — Show which chunks were used per assistant
       message, with click-to-open
-- [ ] **Citation persistence** — Citations survive page reload (stored
+- [x] **Citation persistence** — Citations survive page reload (stored
       alongside message in IndexedDB)
 
 **Release gate**: a question answered using a chunk shows a citation that

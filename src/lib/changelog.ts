@@ -11,6 +11,18 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.26.3',
+    date: '2026-04-26',
+    title: 'Citation Persistence — Citations Survive Page Reload',
+    description:
+      'Citations attached to assistant messages now survive page reloads — they are persisted alongside the full session in IndexedDB and restored when you switch back to a conversation. No data loss across navigation, refresh, or browser restart.',
+    changes: [
+      { type: 'added', text: 'Citation persistence — citations stored alongside message in IndexedDB, survive page reload' },
+      { type: 'added', text: 'Backward compatible — existing sessions without citations load normally, new citations auto-attached on next generation' },
+      { type: 'changed', text: 'Updated version to v0.26.3' },
+    ],
+  },
+  {
     version: '0.26.2',
     date: '2026-04-26',
     title: 'Citation Display — Source Chunks for RAG Responses',
