@@ -84,6 +84,46 @@ export interface KnowledgeBase {
 
 export type ModelStatus = 'idle' | 'downloading' | 'ready' | 'error'
 
+// v0.27: Function calling types
+export interface ToolDefinition {
+  /** Unique name of the tool (a-z, A-Z, 0-9, underscore, dash; max 64 chars) */
+  name: string
+  /** Description of what the tool does, used by the model to decide when to call it */
+  description: string
+  /** JSON Schema describing the parameters the tool accepts */
+  parameters: Record<string, unknown>
+}
+
+export interface ToolCall {
+  /** Unique call ID */
+  id: string
+  /** Name of the tool being called */
+  name: string
+  /** Arguments as a parsed object (if valid JSON), or raw string */
+  args: Record<string, unknown>
+  /** Raw argument string from the model */
+  rawArgs: string
+}
+
+export interface ToolCallResult {
+  /** The tool call this result corresponds to */
+  call: ToolCall
+  /** Whether the tool executed successfully */
+  success: boolean
+  /** Result data (for display in tool call inspector) */
+  result: string
+  /** Error message if the tool failed */
+  error?: string
+  /** Time in ms to execute the tool */
+  latency: number
+}
+
+export interface ToolCallEvent {
+  type: 'tool_call' | 'tool_result'
+  call: ToolCall
+  result?: ToolCallResult
+}
+
 export interface ModelState {
   status: ModelStatus
   progress: number

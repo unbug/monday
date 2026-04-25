@@ -304,7 +304,7 @@ distract from the function-calling / plugin / MCP work that actually
 lets users plug in *any* tool. Mini-tools, if at all, ship later **as
 plugins** through the system below.
 
-- [ ] **Function calling** — Parse model tool-call outputs (OpenAI-style
+- [x] **Function calling** — Parse model tool-call outputs (OpenAI-style
       `tool_calls` JSON) and dispatch to in-browser functions
 - [ ] **Plugin system** — Load third-party tool plugins from URL
       (JSON manifest declaring `name / description / inputSchema /

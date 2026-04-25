@@ -11,6 +11,23 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.27.0',
+    date: '2026-04-26',
+    title: 'Function Calling — Browser-Side Tool Use',
+    description:
+      'Models that support function calling (Qwen 3.5 0.8B/2B, Qwen 2.5 Coder 1.5B, InternLM 2.5 1.8B) can now invoke tools directly in the browser. Monday ships four built-in tools — current time, web search, clipboard copy, and open URL — all running client-side with zero server overhead. A collapsible tool call inspector panel shows each call\'s arguments, result, and latency in real time.',
+    changes: [
+      { type: 'added', text: 'Function calling — models with tools tag auto-detect and dispatch tool calls in-browser' },
+      { type: 'added', text: 'Tool registry — singleton registry for tool definitions, execution, and result formatting' },
+      { type: 'added', text: 'Built-in tools — current_time, web_search, clipboard_copy, open_url (all browser-side)' },
+      { type: 'added', text: 'Multi-turn tool calling — up to 5 iterations for complex tool-use chains' },
+      { type: 'added', text: 'ToolCallPanel component — collapsible panel showing tool calls with args, results, and latency' },
+      { type: 'added', text: 'Tool call events — typed events (tool_call / tool_result) for display and extensibility' },
+      { type: 'added', text: 'ToolCallInfo / ToolDefinition / ToolCall / ToolCallResult types' },
+      { type: 'changed', text: 'Updated version to v0.27.0' },
+    ],
+  },
+  {
     version: '0.26.3',
     date: '2026-04-26',
     title: 'Citation Persistence — Citations Survive Page Reload',

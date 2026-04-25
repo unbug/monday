@@ -15,6 +15,7 @@ import { ModelBenchmark } from './components/ModelBenchmark'
 import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { KnowledgePanel } from './components/KnowledgePanel'
+import { ToolCallPanel } from './components/ToolCallPanel'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
@@ -407,6 +408,11 @@ export default function App() {
                 }}
                 onEditMessage={(id, content) => chat.editMessage(id, content)}
                 onCitationClick={handleCitationClick}
+              />
+              <ToolCallPanel
+                events={chat.toolCallEvents ?? []}
+                isProcessing={chat.isGenerating}
+                onCollapse={() => {}}
               />
             </div>
             <ChatInput

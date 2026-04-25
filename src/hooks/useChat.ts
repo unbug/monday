@@ -8,10 +8,13 @@ import {
   loadSessions,
   createSession,
 } from '../lib/storage'
-import type { ChatSession, ChatMessage, CitationEntry } from '../types'
+import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent } from '../types'
 import type { PromptTemplate } from '../lib/prompts'
 import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
+import { getModelById } from '../lib/models'
+import { toolRegistry } from '../lib/toolRegistry'
+import { streamChatWithTools, getToolCalls } from '../lib/engine'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -31,6 +34,8 @@ export function useChat(modelId: string) {
   const [context, setContext] = useState('')
   // v0.26.1: tracks how many knowledge chunks were injected on last send
   const [knowledgeContextCount, setKnowledgeContextCount] = useState<number | undefined>(undefined)
+  // v0.27: tool call events for display
+  const [toolCallEvents, setToolCallEvents] = useState<ToolCallEvent[]>([])
   const abortRef = useRef(false)
   const sessionsLoaded = useRef(false)
   const tokenStats = useTokenStats()
@@ -151,41 +156,136 @@ export function useChat(modelId: string) {
         const latestSession = sessionsRef.current.find((s) => s.id === sessionId)
         const opts = paramsForSession(latestSession ?? active)
 
+        // Check if the current model supports tools
+        const modelInfo = getModelById(modelId)
+        const supportsTools = modelInfo?.tags?.includes('tools') ?? false
+        const toolDefs = supportsTools ? toolRegistry.getDefinitions() : []
+
         // Start token tracking
         tokenStats.startStreaming()
         let fullContent = ''
         let tokenCount = 0
+        let finalUsage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
 
-        const { generator, usage } = streamChatWithUsage(messagesToSend, {
-          ...opts,
-          context: sessionContext,
-          images,
-          files,
-        })
-        for await (const token of generator) {
-          if (abortRef.current) break
-          fullContent += token
-          tokenCount++
-          tokenStats.addTokens(1)
-          const captured = fullContent
-          currentSessions = currentSessions.map((s) =>
-            s.id === sessionId
-              ? {
-                  ...s,
-                  messages: s.messages.map((m) =>
-                    m.id === assistantMsg.id
-                      ? { ...m, content: captured }
-                      : m,
-                  ),
-                }
-              : s,
-          )
-          setSessions([...currentSessions])
+        if (supportsTools && toolDefs.length > 0) {
+          // --- Function calling path (v0.27) ---
+          const events: ToolCallEvent[] = []
+          let conversationMessages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }> = [...messagesToSend]
+          let maxTurns = 5
+
+          while (maxTurns > 0 && !abortRef.current) {
+            const tools = toolDefs.map((t) => ({
+              function: {
+                name: t.name,
+                description: t.description,
+                parameters: t.parameters,
+              },
+              type: 'function' as const,
+            }))
+
+            const result = streamChatWithTools(conversationMessages, {
+              ...opts,
+              context: sessionContext,
+              images,
+              files,
+              tools,
+            })
+
+            // Stream tokens
+            for await (const token of result.generator) {
+              if (abortRef.current) break
+              fullContent += token
+              tokenCount++
+              tokenStats.addTokens(1)
+              const captured = fullContent
+              currentSessions = currentSessions.map((s) =>
+                s.id === sessionId
+                  ? {
+                      ...s,
+                      messages: s.messages.map((m) =>
+                        m.id === assistantMsg.id
+                          ? { ...m, content: captured }
+                          : m,
+                      ),
+                    }
+                  : s,
+              )
+              setSessions([...currentSessions])
+            }
+
+            // Capture usage from stream
+            if (result.usage.current) {
+              finalUsage = result.usage.current
+            }
+
+            // Check for tool calls
+            const toolCalls = getToolCalls(result.generator)
+
+            if (!toolCalls || toolCalls.length === 0) {
+              // No tool calls — done
+              break
+            }
+
+            // Execute each tool call
+            for (const tc of toolCalls) {
+              if (abortRef.current) break
+
+              const call = {
+                id: tc.id,
+                name: tc.name,
+                args: tc.args,
+                rawArgs: tc.rawArgs,
+              }
+
+              events.push({ type: 'tool_call', call })
+              setToolCallEvents([...events])
+
+              const toolResult = await toolRegistry.execute(call)
+              events.push({ type: 'tool_result', call, result: toolResult })
+              setToolCallEvents([...events])
+
+              // Append tool message to conversation
+              const toolMessage = toolRegistry.resultToToolMessage(call, toolResult)
+              conversationMessages.push(toolMessage)
+            }
+
+            maxTurns--
+          }
+
+          setToolCallEvents(events)
+        } else {
+          // --- Standard streaming path ---
+          const { generator } = streamChatWithUsage(messagesToSend, {
+            ...opts,
+            context: sessionContext,
+            images,
+            files,
+          })
+          for await (const token of generator) {
+            if (abortRef.current) break
+            fullContent += token
+            tokenCount++
+            tokenStats.addTokens(1)
+            const captured = fullContent
+            currentSessions = currentSessions.map((s) =>
+              s.id === sessionId
+                ? {
+                    ...s,
+                    messages: s.messages.map((m) =>
+                      m.id === assistantMsg.id
+                        ? { ...m, content: captured }
+                        : m,
+                    ),
+                  }
+                : s,
+            )
+            setSessions([...currentSessions])
+          }
         }
 
         // Finalize with usage stats
         tokenStats.finishStreaming(
-          usage.current ?? {
+          finalUsage ?? {
             promptTokens: 0,
             completionTokens: tokenCount,
             totalTokens: tokenCount,
@@ -506,5 +606,7 @@ export function useChat(modelId: string) {
     setKnowledgeBaseId,
     // v0.26.1: knowledge context
     knowledgeContextCount,
+    // v0.27: tool call events for display
+    toolCallEvents,
   }
 }
