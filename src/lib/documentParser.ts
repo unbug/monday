@@ -16,28 +16,108 @@ export interface ParsedDocument {
   chunks: string[]
 }
 
-const CHUNK_SIZE = 500 // tokens (approx chars)
+const CHUNK_SIZE = 500 // approximate token size
 
 /**
- * Split text into ~500-token chunks.
- * Splits on sentence boundaries when possible.
+ * Split text into ~500-token chunks with paragraph-aware quality.
+ *
+ * Strategy:
+ * 1. Split on paragraph boundaries (double newline) first — best semantic unit
+ * 2. If a paragraph exceeds CHUNK_SIZE, split on sentence boundaries
+ * 3. If a sentence still exceeds CHUNK_SIZE, split on word boundaries
+ * 4. Empty / whitespace-only text returns []
  */
 export function chunkText(text: string): string[] {
   if (!text.trim()) return []
-  const sentences = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text]
+
   const chunks: string[] = []
   let current = ''
 
+  // Step 1: split on paragraph boundaries
+  const paragraphs = text.split(/\n\s*\n/)
+
+  for (const paragraph of paragraphs) {
+    const trimmed = paragraph.trim()
+    if (!trimmed) continue
+
+    // If paragraph fits in current chunk, add it
+    if (current && (current.length + 1 + trimmed.length) <= CHUNK_SIZE * 1.5) {
+      current += '\n\n' + trimmed
+      continue
+    }
+
+    // If paragraph is too long for a single chunk, split it
+    if (trimmed.length > CHUNK_SIZE * 1.5) {
+      // Flush current chunk first
+      if (current.trim()) {
+        chunks.push(current.trim())
+        current = ''
+      }
+      // Split paragraph into smaller pieces
+      const subChunks = splitLongText(trimmed, CHUNK_SIZE)
+      for (const sub of subChunks) {
+        chunks.push(sub)
+      }
+    } else {
+      // Flush current chunk and start fresh with this paragraph
+      if (current.trim()) {
+        chunks.push(current.trim())
+      }
+      current = trimmed
+    }
+  }
+
+  // Flush remaining
+  if (current.trim()) {
+    chunks.push(current.trim())
+  }
+
+  return chunks
+}
+
+/**
+ * Split long text into chunks of approximately maxChars, respecting
+ * sentence boundaries first, then word boundaries.
+ */
+function splitLongText(text: string, maxChars: number): string[] {
+  const result: string[] = []
+
+  // Try sentence boundaries first
+  const sentences = text.match(/[^.!?\n]+[.!?]+[\s]*/g) || [text]
+  let current = ''
+
   for (const sentence of sentences) {
-    if ((current + sentence).length > CHUNK_SIZE * 4) {
-      if (current.trim()) chunks.push(current.trim())
-      current = sentence
+    if ((current + sentence).length > maxChars) {
+      if (current.trim()) {
+        result.push(current.trim())
+        current = ''
+      }
+      // If single sentence exceeds maxChars, split on word boundaries
+      if (sentence.length > maxChars) {
+        const words = sentence.split(/\s+/)
+        let wordChunk = ''
+        for (const word of words) {
+          if ((wordChunk + word).length > maxChars) {
+            if (wordChunk.trim()) result.push(wordChunk.trim())
+            wordChunk = word
+          } else {
+            wordChunk += (wordChunk ? ' ' : '') + word
+          }
+        }
+        if (wordChunk.trim()) current = wordChunk.trim()
+      } else {
+        current = sentence
+      }
     } else {
       current += sentence
     }
   }
-  if (current.trim()) chunks.push(current.trim())
-  return chunks
+
+  if (current.trim()) {
+    result.push(current.trim())
+  }
+
+  return result.length > 0 ? result : [text]
 }
 
 /**
