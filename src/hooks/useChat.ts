@@ -80,6 +80,7 @@ export function useChat(modelId: string) {
       existingAssistantMsg?: ChatMessage,
       sessionContext?: string,
       images?: Array<{ id: string; data: string; name?: string }>,
+      files?: Array<{ id: string; name: string; size: number; type: string; content: string }>,
     ) => {
       let currentSessions = [...sessions]
       let sessionId = activeSessionId
@@ -155,6 +156,7 @@ export function useChat(modelId: string) {
           ...opts,
           context: sessionContext,
           images,
+          files,
         })
         for await (const token of generator) {
           if (abortRef.current) break
@@ -246,9 +248,9 @@ export function useChat(modelId: string) {
   )
 
   const sendMessage = useCallback(
-    (content: string, sessionContext?: string, images?: Array<{ id: string; data: string; name?: string }>) => {
-      if ((isGenerating || (!content.trim() && !images)) && !images) return
-      sendUserMessage(content, undefined, undefined, sessionContext, images)
+    (content: string, sessionContext?: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
+      if ((isGenerating || (!content.trim() && !images && !files)) && !images && !files) return
+      sendUserMessage(content, undefined, undefined, sessionContext, images, files)
     },
     [isGenerating, sendUserMessage],
   )
@@ -386,6 +388,19 @@ export function useChat(modelId: string) {
     persistSessions(updatedSessions)
   }, [activeSessionId, sessions, persistSessions])
 
+  const clearFiles = useCallback(() => {
+    setContext('')
+  }, [])
+
+  const removeFile = useCallback((id: string) => {
+    // Remove file content from context
+    setContext((prev) => {
+      const lines = prev?.split('\n') ?? []
+      const filtered = lines.filter((line) => !line.includes(`[file:${id}]`))
+      return filtered.join('\n')
+    })
+  }, [])
+
   return {
     sessions,
     activeSession,
@@ -406,5 +421,7 @@ export function useChat(modelId: string) {
     updateSessions,
     applyPersona,
     clearPersona,
+    clearFiles,
+    removeFile,
   }
 }
