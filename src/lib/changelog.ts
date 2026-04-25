@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.20.0',
+    date: '2026-04-25',
+    title: 'Voice Input — Speak Your Messages',
+    description:
+      'Type less, speak more. Voice input lets you dictate messages directly in the browser using the Web Speech Recognition API — no server, no install, 100% private.',
+    changes: [
+      { type: 'added', text: 'Voice input button in ChatInput — microphone icon toggles speech recognition' },
+      { type: 'added', text: 'useVoiceInput hook — manages Speech Recognition lifecycle (start/stop/error handling)' },
+      { type: 'added', text: 'Real-time transcription — interim results shown while speaking, final results appended to input' },
+      { type: 'added', text: 'Interim transcript preview — live text shown below input while listening' },
+      { type: 'added', text: 'Listening animation — pulsing red glow when actively recording' },
+      { type: 'added', text: 'Browser language detection — uses navigator.language instead of hardcoded en-US' },
+      { type: 'added', text: 'Browser support detection — button hidden on unsupported browsers (Firefox, Safari)' },
+      { type: 'added', text: 'Error handling — microphone permission denied, no speech detected, unsupported browser' },
+      { type: 'changed', text: 'Updated version to v0.20.0' },
+    ],
+  },
+  {
     version: '0.19.0',
     date: '2026-04-25',
     title: 'Image Input — Paste or Upload Images for Vision Models',
