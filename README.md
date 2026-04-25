@@ -285,7 +285,7 @@ Released: 2026-04-25
       (e.g. `gte-small` MLC build) and persist embeddings
 - [x] **Semantic search** — On send, query the active knowledge base and
       inject top-K chunks into the system prompt
-- [ ] **Citation display** — Show which chunks were used per assistant
+- [x] **Citation display** — Show which chunks were used per assistant
       message, with click-to-open
 - [ ] **Citation persistence** — Citations survive page reload (stored
       alongside message in IndexedDB)

@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.26.2',
+    date: '2026-04-26',
+    title: 'Citation Display — Source Chunks for RAG Responses',
+    description:
+      'When a response is generated using knowledge base chunks, a citation card appears below the message showing which documents and chunks were used. Click any citation to jump to the source document in the Knowledge panel with the exact chunk highlighted — closing the loop between answer and evidence.',
+    changes: [
+      { type: 'added', text: 'CitationEntry type — docId, docName, chunkIndex, score, snippet' },
+      { type: 'added', text: 'citations field on ChatMessage — persists source chunks alongside the response' },
+      { type: 'added', text: 'CitationDisplay component — collapsible list of citation pills with doc name, chunk #, and score' },
+      { type: 'added', text: 'Citation click-to-open — clicking a pill switches to Knowledge panel and highlights the source chunk' },
+      { type: 'added', text: 'Highlighted doc in Knowledge panel — purple border + chunk preview for the cited document' },
+      { type: 'added', text: 'CSS styles — full dark/light theme support for citation pills and highlighted chunks' },
+      { type: 'changed', text: 'Updated version to v0.26.2' },
+    ],
+  },
+  {
     version: '0.26.1',
     date: '2026-04-26',
     title: 'Semantic Search — Inject Knowledge Chunks on Send',
