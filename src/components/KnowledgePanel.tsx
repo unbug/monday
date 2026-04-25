@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import type { KnowledgeDocument } from '../types'
+import type { SearchScore } from '../lib/vectorStore'
 
 interface Props {
   docs: KnowledgeDocument[]
@@ -9,6 +10,15 @@ interface Props {
   onRemove: (id: string) => void
   onClear: () => void
   onBack: () => void
+  // Vector store
+  indexing: boolean
+  indexedCount: number
+  results: SearchScore[]
+  query: string
+  onQueryChange: (q: string) => void
+  onIndexDocs: (docs: KnowledgeDocument[]) => Promise<void>
+  onClearIndex: () => void
+  hasIndex: boolean
 }
 
 const DOC_ICONS: Record<string, string> = {
@@ -32,6 +42,10 @@ function formatDate(ts: number): string {
   })
 }
 
+function formatScore(score: number): string {
+  return score.toFixed(3)
+}
+
 export function KnowledgePanel({
   docs,
   loading,
@@ -40,9 +54,18 @@ export function KnowledgePanel({
   onRemove,
   onClear,
   onBack,
+  indexing,
+  indexedCount,
+  results,
+  query,
+  onQueryChange,
+  onIndexDocs,
+  onClearIndex,
+  hasIndex,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -72,6 +95,12 @@ export function KnowledgePanel({
     [onUpload],
   )
 
+  const handleIndex = useCallback(() => {
+    if (docs.length > 0) {
+      onIndexDocs(docs)
+    }
+  }, [docs, onIndexDocs])
+
   return (
     <div className="main-content main-content--knowledge">
       <div className="knowledge-header">
@@ -82,12 +111,68 @@ export function KnowledgePanel({
           Knowledge
         </button>
         <span className="knowledge-count">{docs.length} document{docs.length !== 1 ? 's' : ''}</span>
-        {docs.length > 0 && (
-          <button className="knowledge-clear-btn" onClick={onClear}>
-            Clear all
-          </button>
-        )}
+        <div className="knowledge-header-actions">
+          {docs.length > 0 && (
+            <button className="knowledge-index-btn" onClick={handleIndex} disabled={indexing}>
+              {indexing ? '⏳ Indexing…' : '🔍 Index'}
+            </button>
+          )}
+          {hasIndex && (
+            <button className="knowledge-search-toggle" onClick={() => setShowSearch(!showSearch)}>
+              {showSearch ? '✕ Close Search' : '🔎 Search'}
+            </button>
+          )}
+          {docs.length > 0 && (
+            <button className="knowledge-clear-btn" onClick={onClear}>
+              Clear all
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Index status */}
+      {hasIndex && (
+        <div className="knowledge-index-status">
+          <span>📊 Indexed {indexedCount} chunks</span>
+          <button className="knowledge-reindex-btn" onClick={onClearIndex}>
+            Re-index
+          </button>
+        </div>
+      )}
+
+      {/* Search bar */}
+      {showSearch && hasIndex && (
+        <div className="knowledge-search-bar">
+          <input
+            type="text"
+            className="knowledge-search-input"
+            placeholder="Search indexed chunks…"
+            value={query}
+            onChange={(e) => onQueryChange(e.target.value)}
+            autoFocus
+          />
+          {results.length > 0 && (
+            <span className="knowledge-search-count">{results.length} results</span>
+          )}
+        </div>
+      )}
+
+      {/* Search results */}
+      {showSearch && results.length > 0 && (
+        <div className="knowledge-search-results">
+          {results.map((r) => (
+            <div key={r.id} className="knowledge-search-result">
+              <div className="knowledge-search-result-header">
+                <span className="knowledge-search-result-doc">{r.docName}</span>
+                <span className="knowledge-search-result-score">
+                  score {formatScore(r.score)}
+                </span>
+              </div>
+              <p className="knowledge-search-result-text">{r.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Upload area */}
       <div

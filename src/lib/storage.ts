@@ -1,9 +1,10 @@
 import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 2
+const DB_VERSION = 3
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
+const VECTOR_STORE = 'vectorIndex'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -15,6 +16,9 @@ function openDB(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(KNOWLEDGE_STORE)) {
         db.createObjectStore(KNOWLEDGE_STORE, { keyPath: 'id' })
+      }
+      if (!db.objectStoreNames.contains(VECTOR_STORE)) {
+        db.createObjectStore(VECTOR_STORE, { keyPath: 'id' })
       }
     }
     request.onsuccess = () => resolve(request.result)

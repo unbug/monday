@@ -16,6 +16,7 @@ import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { KnowledgePanel } from './components/KnowledgePanel'
 import { useKnowledge } from './hooks/useKnowledge'
+import { useVectorStore } from './hooks/useVectorStore'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
@@ -43,6 +44,7 @@ export default function App() {
   const chat = useChat(selectedModelId ?? '')
   const theme = useTheme()
   const knowledge = useKnowledge()
+  const vectorStore = useVectorStore()
 
   // Trigger theme transition overlay
   const prevThemeRef = useRef<string>(theme.resolved)
@@ -333,6 +335,14 @@ export default function App() {
               onRemove={knowledge.removeDoc}
               onClear={knowledge.clearDocs}
               onBack={() => setView('chat')}
+              indexing={vectorStore.indexing}
+              indexedCount={vectorStore.indexedCount}
+              results={vectorStore.results}
+              query={vectorStore.query}
+              onQueryChange={vectorStore.setQuery}
+              onIndexDocs={vectorStore.indexDocs}
+              onClearIndex={vectorStore.clearIndex}
+              hasIndex={vectorStore.hasIndex}
             />
           </div>
         ) : (

@@ -11,6 +11,27 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.25.1',
+    date: '2026-04-25',
+    title: 'Browser Vector Store — TF-IDF Search for Knowledge Documents',
+    description:
+      'Indexed documents are now searchable via a browser-native TF-IDF vector store with cosine similarity ranking. Upload PDFs, index them, and search across all chunks — no server, no external ML dependencies, 100% private.',
+    changes: [
+      { type: 'added', text: 'vectorStore.ts — TF-IDF vectorization, cosine similarity, and IndexedDB persistence' },
+      { type: 'added', text: 'tokenize() — CJK + English-aware tokenizer (per-char for CJK, word-boundary for Latin)' },
+      { type: 'added', text: 'computeIDF() — smoothed inverse document frequency across all indexed chunks' },
+      { type: 'added', text: 'cosineSimilarity() — sparse vector cosine similarity for ranking' },
+      { type: 'added', text: 'buildIndex() / searchIndex() — index building and top-K search API' },
+      { type: 'added', text: 'IndexedDB persistence — saveVectorIndex / loadVectorIndex / clearVectorIndex' },
+      { type: 'added', text: 'useVectorStore hook — manages indexing lifecycle and debounced search' },
+      { type: 'added', text: 'KnowledgePanel search UI — toggle search bar, query input, result cards with score' },
+      { type: 'added', text: 'Index status bar — shows indexed chunk count + re-index button' },
+      { type: 'added', text: 'KnowledgePanel CSS — full dark/light theme support for search UI components' },
+      { type: 'changed', text: 'DB schema v2 → v3 — added vectorIndex object store with forward migration' },
+      { type: 'changed', text: 'Updated version to v0.25.1' },
+    ],
+  },
+  {
     version: '0.25.0',
     date: '2026-04-25',
     title: 'Knowledge Panel — Document Upload (PDF / TXT / MD)',
