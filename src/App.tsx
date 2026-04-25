@@ -101,10 +101,10 @@ export default function App() {
   }, [])
 
   const handleSend = useCallback(
-    (content: string, images?: Array<{ id: string; data: string; name?: string }>) => {
-      chat.sendMessage(content, undefined, images)
+    (content: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
+      chat.sendMessage(content, undefined, images, files, knowledgeBases.activeBaseId ?? undefined)
     },
-    [chat],
+    [chat, knowledgeBases.activeBaseId],
   )
 
   const handleNewChat = useCallback(() => {
@@ -403,6 +403,11 @@ export default function App() {
               modelInfo={selectedModelId ? getModelById(selectedModelId) : null}
               tokenStats={chat.tokenStats}
               isStreaming={chat.isStreaming}
+              // v0.26.1: knowledge base context
+              knowledgeBaseName={knowledgeBases.activeBaseId
+                ? knowledgeBases.getBaseById(knowledgeBases.activeBaseId)?.name ?? null
+                : null}
+              knowledgeContextCount={chat.knowledgeContextCount}
             />
           </div>
         )}

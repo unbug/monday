@@ -34,6 +34,9 @@ interface Props {
     elapsedSeconds: number
   }
   isStreaming?: boolean
+  // v0.26.1: knowledge base context
+  knowledgeBaseName?: string | null
+  knowledgeContextCount?: number
 }
 
 export function ChatInput({
@@ -45,6 +48,8 @@ export function ChatInput({
   modelInfo,
   tokenStats,
   isStreaming,
+  knowledgeBaseName,
+  knowledgeContextCount,
 }: Props) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
@@ -385,6 +390,19 @@ export function ChatInput({
               ))}
             </div>
           )}
+          {/* v0.26.1: knowledge base badge */}
+          {knowledgeBaseName && (
+            <div
+              className="knowledge-badge"
+              title={knowledgeContextCount ? `Knowledge base: ${knowledgeBaseName} (${knowledgeContextCount} chunks injected)` : `Knowledge base: ${knowledgeBaseName}`}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+              {knowledgeBaseName}
+            </div>
+          )}
           {isGenerating ? (
             <button className="chat-btn chat-btn-stop" onClick={onStop}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -434,6 +452,16 @@ export function ChatInput({
             </svg>
             {tokenStats.sessionTokens} tokens
           </span>
+          {/* v0.26.1: knowledge context count */}
+          {knowledgeContextCount != null && knowledgeContextCount > 0 && (
+            <span className="token-stats-item knowledge-context-count">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+              {knowledgeContextCount} chunks
+            </span>
+          )}
         </div>
       )}
     </div>

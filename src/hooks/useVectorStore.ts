@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import type { KnowledgeDocument } from '../types'
+import type { KnowledgeDocument, KnowledgeBase } from '../types'
 import type { VectorIndexEntry, SearchScore } from '../lib/vectorStore'
 import { buildIndex, searchIndex, saveVectorIndex, loadVectorIndex, clearVectorIndex } from '../lib/vectorStore'
 
@@ -24,6 +24,10 @@ export interface UseVectorStoreReturn {
   setBaseFilter: (docIds: string[] | null) => void
   /** Search using the embedding model (semantic search) */
   search: (query: string, topK?: number) => Promise<SearchScore[]>
+  /** Search a knowledge base by ID and return top-K chunks (v0.26.1) */
+  knowledgeSearch: (query: string, baseId: string, docs: KnowledgeDocument[], getBaseById: (id: string) => KnowledgeBase | undefined) => Promise<SearchScore[]>
+  /** Load the embedding model if not already loaded (v0.26.1) */
+  loadEmbedding: () => Promise<void>
 }
 
 /**
@@ -160,6 +164,64 @@ export function useVectorStore(): UseVectorStoreReturn {
     return semanticSearch(filtered, q, generateEmbedding, topK)
   }, [baseDocIds])
 
+  /**
+   * Search a knowledge base by ID and return top-K chunks.
+   * Loads the embedding model if needed.
+   */
+  const knowledgeSearch = useCallback(
+    async (
+      query: string,
+      baseId: string,
+      docs: KnowledgeDocument[],
+      getBaseById: (id: string) => KnowledgeBase | undefined,
+    ): Promise<SearchScore[]> => {
+      if (!query.trim() || !baseId || docs.length === 0) return []
+
+      // Load embedding model if not loaded
+      const { loadEmbeddingModel } = await import('../lib/embedding')
+      try {
+        await loadEmbeddingModel()
+      } catch {
+        return []
+      }
+
+      // Get base documents
+      const base = getBaseById(baseId)
+      if (!base || base.docIds.length === 0) return []
+
+      const baseDocs = docs.filter((d) => base.docIds.includes(d.id))
+
+      if (baseDocs.length === 0) return []
+
+      // Extract chunks
+      const chunks = baseDocs.flatMap((doc) =>
+        doc.chunks.map((text, i) => ({
+          id: `${doc.id}:${i}`,
+          text,
+          docName: doc.name,
+        })),
+      )
+
+      if (chunks.length === 0) return []
+
+      // Run semantic search
+      const { semanticSearch } = await import('../lib/vectorStore')
+      return semanticSearch(chunks, query, async (t) => {
+        const { generateEmbedding } = await import('../lib/embedding')
+        return generateEmbedding(t)
+      }, 10)
+    },
+    [],
+  )
+
+  /**
+   * Load the embedding model if not already loaded.
+   */
+  const loadEmbedding = useCallback(async () => {
+    const { loadEmbeddingModel } = await import('../lib/embedding')
+    await loadEmbeddingModel()
+  }, [])
+
   return {
     indexing,
     indexedCount,
@@ -171,5 +233,7 @@ export function useVectorStore(): UseVectorStoreReturn {
     hasIndex,
     setBaseFilter: setBaseDocIds,
     search,
+    knowledgeSearch,
+    loadEmbedding,
   }
 }

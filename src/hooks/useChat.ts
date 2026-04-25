@@ -29,6 +29,8 @@ export function useChat(modelId: string) {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [context, setContext] = useState('')
+  // v0.26.1: tracks how many knowledge chunks were injected on last send
+  const [knowledgeContextCount, setKnowledgeContextCount] = useState<number | undefined>(undefined)
   const abortRef = useRef(false)
   const sessionsLoaded = useRef(false)
   const tokenStats = useTokenStats()
@@ -248,9 +250,47 @@ export function useChat(modelId: string) {
   )
 
   const sendMessage = useCallback(
-    (content: string, sessionContext?: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
+    async (
+      content: string,
+      sessionContext?: string,
+      images?: Array<{ id: string; data: string; name?: string }>,
+      files?: Array<{ id: string; name: string; size: number; type: string; content: string }>,
+      knowledgeBaseId?: string,
+    ) => {
       if ((isGenerating || (!content.trim() && !images && !files)) && !images && !files) return
-      sendUserMessage(content, undefined, undefined, sessionContext, images, files)
+
+      // v0.26.1: semantic search — inject top-K chunks from active knowledge base
+      let knowledgeContext = ''
+      if (knowledgeBaseId) {
+        try {
+          const { loadKnowledgeBases } = await import('../lib/storage')
+          const { loadKnowledgeDocs } = await import('../lib/storage')
+          const bases = await loadKnowledgeBases()
+          const docs = await loadKnowledgeDocs()
+          const base = bases.find((b) => b.id === knowledgeBaseId)
+          if (base && docs.length > 0) {
+            const { useVectorStore } = await import('./useVectorStore')
+            const vs = useVectorStore()
+            const results = await vs.knowledgeSearch(content, knowledgeBaseId, docs, (id) => bases.find((b) => b.id === id))
+            if (results.length > 0) {
+              knowledgeContext = results
+                .map((r) => `[${r.docName}]\n${r.text}`)
+                .join('\n\n---\n\n')
+            }
+          }
+        } catch {
+          // Semantic search failed — continue without knowledge context
+        }
+      }
+
+      const combinedContext = [knowledgeContext, sessionContext]
+        .filter(Boolean)
+        .join('\n\n')
+
+      // v0.26.1: track how many chunks were injected
+      setKnowledgeContextCount(knowledgeContext ? knowledgeContext.split('\n\n---\n\n').length : undefined)
+
+      sendUserMessage(content, undefined, undefined, combinedContext, images, files)
     },
     [isGenerating, sendUserMessage],
   )
@@ -437,5 +477,7 @@ export function useChat(modelId: string) {
     clearFiles,
     removeFile,
     setKnowledgeBaseId,
+    // v0.26.1: knowledge context
+    knowledgeContextCount,
   }
 }

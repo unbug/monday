@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.26.1',
+    date: '2026-04-26',
+    title: 'Semantic Search — Inject Knowledge Chunks on Send',
+    description:
+      'When you send a message with an active knowledge base attached, Monday now runs semantic search on your documents and injects the top-K matching chunks as context — so the model answers using your documents, not just its training data. A knowledge badge shows which base is attached, and the chunk count appears in the token stats.',
+    changes: [
+      { type: 'added', text: 'Semantic search on send — active knowledge base is queried via embedding model before each message' },
+      { type: 'added', text: 'Top-K chunk injection — matching chunks prepended as context to the generation prompt' },
+      { type: 'added', text: 'knowledgeSearch() — new method on useVectorStore for base-aware semantic search' },
+      { type: 'added', text: 'Knowledge base badge in ChatInput — shows active base name with hover tooltip' },
+      { type: 'added', text: 'Knowledge context count in token stats — shows how many chunks were injected' },
+      { type: 'changed', text: 'sendMessage now accepts optional knowledgeBaseId parameter' },
+      { type: 'changed', text: 'Updated version to v0.26.1' },
+    ],
+  },
+  {
     version: '0.26.0',
     date: '2026-04-26',
     title: 'Embedding Model — Browser-Native Semantic Search',

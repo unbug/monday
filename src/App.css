@@ -1356,6 +1356,43 @@
   transform: translateY(-1px);
 }
 
+/* v0.26.1: knowledge base badge */
+.knowledge-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: default;
+  transition: all var(--transition);
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.knowledge-badge:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.knowledge-badge svg {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .knowledge-badge {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .knowledge-badge:hover {
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.2);
+}
+
 /* Voice button */
 .chat-btn-voice {
   background: var(--color-surface);
@@ -1460,6 +1497,19 @@
 .token-stats-item svg {
   opacity: 0.6;
   flex-shrink: 0;
+}
+
+/* v0.26.1: knowledge context count in token stats */
+.knowledge-context-count {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(167, 139, 250, 0.08));
+  border-color: rgba(139, 92, 246, 0.3);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+[data-theme="dark"] .knowledge-context-count {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(167, 139, 250, 0.12));
+  border-color: rgba(139, 92, 246, 0.4);
 }
 
 /* ===== Scrollbar — refined ===== */
