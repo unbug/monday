@@ -659,9 +659,10 @@
 
 /* ===== Messages ===== */
 .messages {
-  max-width: 768px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 24px 24px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .messages-empty {
@@ -1284,8 +1285,6 @@
 }
 
 .chat-input-container {
-  max-width: 768px;
-  margin: 0 auto;
   display: flex;
   align-items: flex-end;
   gap: 8px;
@@ -1296,6 +1295,11 @@
   transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
   box-shadow: var(--shadow-sm);
   position: relative;
+}
+
+.chat-input-container:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .chat-input {
@@ -1311,6 +1315,13 @@
   line-height: 1.5;
   color: var(--color-text);
   transition: color var(--transition);
+}
+
+.chat-input:focus,
+.chat-input:focus-visible {
+  outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .chat-input::placeholder {
@@ -1461,9 +1472,6 @@
   font-size: 11px;
   color: var(--color-text-light);
   margin-top: 8px;
-  max-width: 768px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* ===== Token Stats ===== */
