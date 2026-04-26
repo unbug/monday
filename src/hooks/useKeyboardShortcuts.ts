@@ -25,6 +25,8 @@ interface UseKeyboardShortcutsOptions {
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
   onShare?: () => void
+  onExportData?: () => Promise<void>
+  onImportData?: (file: File) => Promise<void>
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -194,6 +196,35 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Share Conversation',
               icon: '🔗',
               action: options.onShare,
+            },
+          ]
+        : []),
+      ...(options.onExportData
+        ? [
+            {
+              id: 'export-data',
+              label: 'Export All Data',
+              icon: '📦',
+              action: async () => { if (options.onExportData) await options.onExportData(); },
+            },
+          ]
+        : []),
+      ...(options.onImportData
+        ? [
+            {
+              id: 'import-data',
+              label: 'Import Data',
+              icon: '📥',
+              action: () => {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.accept = '.monday'
+                input.onchange = async (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0]
+                  if (file && options.onImportData) await options.onImportData(file)
+                }
+                input.click()
+              },
             },
           ]
         : []),

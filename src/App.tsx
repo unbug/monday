@@ -30,9 +30,12 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
 import type { ModelInfo, CitationEntry } from './types'
+import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
 import { getModelById } from './lib/models'
 import { shareSession } from './lib/shareExport'
+import { exportMondayData } from './lib/dataExport'
+import { importMondayData } from './lib/dataImport'
 import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
@@ -48,6 +51,8 @@ export default function App() {
   const [transitioning, setTransitioning] = useState(false)
   // v0.26: track which citation to highlight in knowledge panel
   const [citationHighlight, setCitationHighlight] = useState<{ docId: string; chunkIndex: number } | null>(null)
+  // v0.28.1: import confirmation dialog
+  const [importConfirm, setImportConfirm] = useState<{ file: File; stats: ImportResult } | null>(null)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
@@ -115,6 +120,21 @@ export default function App() {
     }
   }, [chat.activeSession])
 
+  // v0.28.1: export all data as .monday file
+  const handleExportData = useCallback(async () => {
+    await exportMondayData('0.28.1')
+  }, [])
+
+  // v0.28.1: import data from .monday file
+  const handleImportData = useCallback(async (file: File) => {
+    const result = await importMondayData(file, false)
+    if (result.success) {
+      window.location.reload()
+    } else {
+      alert(result.message)
+    }
+  }, [])
+
   const handleSend = useCallback(
     (content: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
       chat.sendMessage(content, undefined, images, files, knowledgeBases.activeBaseId ?? undefined)
@@ -152,6 +172,8 @@ export default function App() {
     onOpenKnowledge: () => setView('knowledge'),
     onOpenMcpServers: () => setView('mcp-servers'),
     onShare: handleShare,
+    onExportData: handleExportData,
+    onImportData: handleImportData,
   })
 
   const isReady = model.status === 'ready'
@@ -240,6 +262,8 @@ export default function App() {
             activePersonaId={activePersonaId ?? null}
             onApplyPersona={chat.applyPersona}
             onClearPersona={chat.clearPersona}
+            onImport={handleImportData}
+            onExport={handleExportData}
           />
         </>
       )}

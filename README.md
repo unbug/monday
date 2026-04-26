@@ -324,7 +324,7 @@ Released: 2026-04-26
 
 - [x] **Share conversations** — Generate a shareable static HTML export
       (no server)
-- [ ] **Import/export** — Full data import / export (sessions, personas,
+- [x] **Import/export** — Full data import / export (sessions, personas,
       settings, knowledge bases) as a single `.monday` zip
 - [ ] **WebDAV sync** — Cross-device sync via user-supplied WebDAV server
 - [ ] **Shared personas** — Publish a persona to a static community

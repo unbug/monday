@@ -50,6 +50,8 @@ interface Props {
   onApplyPersona?: (persona: any) => void
   onClearPersona: () => void
   shareSession?: (session: ChatSession) => void
+  onImport?: (file: File) => Promise<void>
+  onExport?: () => Promise<void>
 }
 
 export function Sidebar({
@@ -68,6 +70,8 @@ export function Sidebar({
   onOpenPlugins,
   onOpenMcpServers,
   onShare,
+  onImport,
+  onExport,
   onUpdateSession,
   activePersonaId,
   onApplyPersona,
@@ -420,6 +424,33 @@ export function Sidebar({
                   Share as HTML
                 </button>
               )}
+              <button
+                className="sidebar-export-menu-item"
+                onClick={() => {
+                  if (onExport) onExport()
+                  setShowExport(false)
+                }}
+              >
+                Export all data
+              </button>
+              <button
+                className="sidebar-export-menu-item"
+                onClick={() => {
+                  if (onImport) {
+                    const input = document.createElement('input')
+                    input.type = 'file'
+                    input.accept = '.monday'
+                    input.onchange = async (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0]
+                      if (file) await onImport(file)
+                    }
+                    input.click()
+                  }
+                  setShowExport(false)
+                }}
+              >
+                Import data
+              </button>
             </div>
           )}
         </div>

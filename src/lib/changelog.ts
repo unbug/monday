@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.28.1',
+    date: '2026-04-26',
+    title: 'Full Data Import / Export — .monday Zip Files',
+    description:
+      'Export all Monday data — sessions, knowledge documents, knowledge bases, embeddings, custom personas, plugins, MCP servers, settings — as a single compressed `.monday` file. Import it back to restore everything on another device or after a browser reset. Accessible from the sidebar export menu ("Export all data" / "Import data") and the Command Palette (⌘K → Export All Data / Import Data).',
+    changes: [
+      { type: 'added', text: 'dataExport.ts — exportMondayData() collects all IndexedDB data + localStorage state, compresses with native CompressionStream (deflateRaw), downloads as .monday file' },
+      { type: 'added', text: 'dataImport.ts — importMondayData() reads .monday file, validates magic header + format version, decompresses, restores all data to IndexedDB + localStorage' },
+      { type: 'added', text: 'Export all data button in sidebar export menu — 📦 Export all data' },
+      { type: 'added', text: 'Import data button in sidebar export menu — 📥 Import data (file picker, .monday only)' },
+      { type: 'added', text: 'Export All Data command in Command Palette (⌘K) — 📦 Export All Data' },
+      { type: 'added', text: 'Import Data command in Command Palette (⌘K) — 📥 Import Data' },
+      { type: 'changed', text: 'Updated version to v0.28.1' },
+    ],
+  },
+  {
     version: '0.28.0',
     date: '2026-04-26',
     title: 'Share Conversations — Static HTML Export',
