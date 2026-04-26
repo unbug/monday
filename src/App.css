@@ -4106,26 +4106,6 @@
   margin-bottom: 32px;
 }
 
-.model-comparison-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-text-light);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all var(--transition);
-  margin-bottom: 16px;
-}
-
-.model-comparison-back-btn:hover {
-  background: var(--color-surface-elevated);
-  color: var(--color-text);
-}
-
 .model-comparison-title {
   font-size: 28px;
   font-weight: 700;
@@ -5321,28 +5301,6 @@
   margin-bottom: 24px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--color-border-subtle);
-}
-
-.persona-marketplace-back {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text-light);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all var(--transition);
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.persona-marketplace-back:hover {
-  background: var(--color-surface-elevated);
-  color: var(--color-text);
-  border-color: var(--color-border);
 }
 
 .persona-marketplace-title-area {

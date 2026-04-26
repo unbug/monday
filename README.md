@@ -349,7 +349,7 @@ Released: 2026-04-26
 - [x] **Keyboard shortcuts overlay** — `?` opens a list of every shortcut
       (Cmd+K / Cmd+N / Cmd+⇧S / Cmd+E …); shortcuts also documented in
       the README
-- [ ] **Multi-window** — Open a conversation in a separate browser
+- [x] **Multi-window** — Open a conversation in a separate browser
       window / Tauri window with shared IndexedDB
 
 **Release gate**: a Tauri build runs on macOS with full chat + RAG +
