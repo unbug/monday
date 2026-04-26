@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import type { KnowledgeDocument, KnowledgeBase } from '../types'
 import type { VectorIndexEntry, SearchScore } from '../lib/vectorStore'
-import { buildIndex, searchIndex, saveVectorIndex, loadVectorIndex, clearVectorIndex } from '../lib/vectorStore'
+import { buildIndex, searchIndex, saveVectorIndex, loadVectorIndex, clearVectorIndex, semanticSearch } from '../lib/vectorStore'
+import { loadEmbeddingModel, generateEmbedding } from '../lib/embedding'
 
 export interface UseVectorStoreReturn {
   /** Whether the index is being built */
@@ -136,7 +137,6 @@ export function useVectorStore(): UseVectorStoreReturn {
     if (!q.trim()) return []
 
     // Try to load embedding model if not loaded
-    const { loadEmbeddingModel, generateEmbedding } = await import('../lib/embedding')
     try {
       await loadEmbeddingModel()
     } catch {
@@ -160,7 +160,6 @@ export function useVectorStore(): UseVectorStoreReturn {
       filtered = chunks.filter((c) => docSet.has(c.docName))
     }
 
-    const { semanticSearch } = await import('../lib/vectorStore')
     return semanticSearch(filtered, q, generateEmbedding, topK)
   }, [baseDocIds])
 
@@ -178,7 +177,6 @@ export function useVectorStore(): UseVectorStoreReturn {
       if (!query.trim() || !baseId || docs.length === 0) return []
 
       // Load embedding model if not loaded
-      const { loadEmbeddingModel } = await import('../lib/embedding')
       try {
         await loadEmbeddingModel()
       } catch {
@@ -205,11 +203,7 @@ export function useVectorStore(): UseVectorStoreReturn {
       if (chunks.length === 0) return []
 
       // Run semantic search
-      const { semanticSearch } = await import('../lib/vectorStore')
-      return semanticSearch(chunks, query, async (t) => {
-        const { generateEmbedding } = await import('../lib/embedding')
-        return generateEmbedding(t)
-      }, 10)
+      return semanticSearch(chunks, query, generateEmbedding, 10)
     },
     [],
   )
@@ -218,7 +212,6 @@ export function useVectorStore(): UseVectorStoreReturn {
    * Load the embedding model if not already loaded.
    */
   const loadEmbedding = useCallback(async () => {
-    const { loadEmbeddingModel } = await import('../lib/embedding')
     await loadEmbeddingModel()
   }, [])
 

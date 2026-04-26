@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { BorderBeam } from 'border-beam'
-import { listModelCaches, deleteModelCache, formatBytes } from '../lib/cache'
+import { listModelCaches, deleteModelCache, deleteAllModelCaches, formatBytes } from '../lib/cache'
 import type { ModelInfo } from '../types'
 
 interface Props {
@@ -44,7 +44,6 @@ export function CacheManager({ downloadedModelIds, onCacheChanged }: Props) {
 
   const handleDeleteAll = useCallback(async () => {
     if (!window.confirm('Delete all model caches? This cannot be undone.')) return
-    const { deleteAllModelCaches } = await import('../lib/cache')
     await deleteAllModelCaches()
     await loadCaches()
     onCacheChanged()

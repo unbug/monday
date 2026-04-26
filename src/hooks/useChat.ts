@@ -7,6 +7,8 @@ import {
   saveSessions,
   loadSessions,
   createSession,
+  loadKnowledgeBases,
+  loadKnowledgeDocs,
 } from '../lib/storage'
 import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent } from '../types'
 import type { PromptTemplate } from '../lib/prompts'
@@ -15,6 +17,7 @@ import { PROMPT_TEMPLATES } from '../lib/prompts'
 import { getModelById } from '../lib/models'
 import { toolRegistry } from '../lib/toolRegistry'
 import { streamChatWithTools, getToolCalls } from '../lib/engine'
+import { useVectorStore } from './useVectorStore'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -379,13 +382,10 @@ export function useChat(modelId: string) {
       let searchResults: Array<{ docName: string; id: string; text: string; score: number }> | null = null
       if (knowledgeBaseId) {
         try {
-          const { loadKnowledgeBases } = await import('../lib/storage')
-          const { loadKnowledgeDocs } = await import('../lib/storage')
           const bases = await loadKnowledgeBases()
           const docs = await loadKnowledgeDocs()
           const base = bases.find((b) => b.id === knowledgeBaseId)
           if (base && docs.length > 0) {
-            const { useVectorStore } = await import('./useVectorStore')
             const vs = useVectorStore()
             searchResults = await vs.knowledgeSearch(content, knowledgeBaseId, docs, (id) => bases.find((b) => b.id === id))
             if (searchResults.length > 0) {

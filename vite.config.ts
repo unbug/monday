@@ -95,5 +95,19 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     target: 'esnext',
+    chunkSizeWarningLimit: 8192,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined
+          if (id.includes('@mlc-ai/web-llm')) return 'web-llm'
+          if (id.includes('@xenova/transformers') || id.includes('onnxruntime-web')) return 'transformers'
+          if (id.includes('pdfjs-dist')) return 'pdfjs'
+          if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-') || id.includes('katex') || id.includes('highlight.js')) return 'markdown'
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/')) return 'react-vendor'
+          return undefined
+        },
+      },
+    },
   },
 })

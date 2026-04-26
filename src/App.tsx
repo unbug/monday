@@ -15,7 +15,7 @@ import { ModelBenchmark } from './components/ModelBenchmark'
 import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { KnowledgePanel } from './components/KnowledgePanel'
-import { ToolCallPanel } from './components/ToolCallPanel'
+import { ToolCallInspector } from './components/ToolCallInspector'
 import { PluginManager } from './components/PluginManager'
 import { McpServerManager } from './components/McpServerManager'
 import { useKnowledge } from './hooks/useKnowledge'
@@ -430,7 +430,7 @@ export default function App() {
                 onEditMessage={(id, content) => chat.editMessage(id, content)}
                 onCitationClick={handleCitationClick}
               />
-              <ToolCallPanel
+              <ToolCallInspector
                 events={chat.toolCallEvents ?? []}
                 isProcessing={chat.isGenerating}
                 onCollapse={() => {}}
