@@ -329,7 +329,7 @@ Released: 2026-04-26
 - [x] **WebDAV sync** — Cross-device sync via user-supplied WebDAV server
 - [x] **Shared personas** — Publish a persona to a static community
       registry (curated JSON file in the repo)
-- [ ] **Conversation forking** — Branch a session at any message;
+- [x] **Conversation forking** — Branch a session at any message;
       branches are siblings, navigable in the sidebar
 
 **Release gate**: round-trip import → export → re-import preserves every

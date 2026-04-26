@@ -11,6 +11,21 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.28.4',
+    date: '2026-04-26',
+    title: 'Conversation Forking — Branch Sessions at Any Message',
+    description:
+      'Branch any conversation at any message to create a sibling session — perfect for exploring alternative answers or diverging from a shared discussion. Hover over any message to see a fork button; the forked session appears in the sidebar with a branch indicator. The fork preserves messages, persona, knowledge base, and generation params up to the fork point.',
+    changes: [
+      { type: 'added', text: 'forkSession() — creates a new session with messages up to a given index, forkId pointing to the source session' },
+      { type: 'added', text: 'Fork button on hover — appears on both user and assistant messages; click to branch at that message' },
+      { type: 'added', text: 'ChatSession.forkId field — tracks parent session for forked conversations' },
+      { type: 'added', text: 'Branch indicator in sidebar — forked sessions show a fork icon prefix' },
+      { type: 'added', text: 'DB schema v5 → v6 — forward migration adds forkId to existing sessions' },
+      { type: 'changed', text: 'Updated version to v0.28.4' },
+    ],
+  },
+  {
     version: '0.28.3',
     date: '2026-04-26',
     title: 'Shared Personas — Publish to Community Registry',
