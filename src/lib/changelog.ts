@@ -11,6 +11,21 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.29.1',
+    date: '2026-04-26',
+    title: 'Offline Indicator — Header Chip + Graceful Cloud Feature Degradation',
+    description:
+      'When the browser goes offline, a yellow warning chip appears in the header. WebDAV sync, MCP server connections, and plugin installation are gracefully disabled with inline notices — no errors, no crashes. Just a clear signal that cloud features need a connection.',
+    changes: [
+      { type: 'added', text: 'useOfflineStatus hook — detects online/offline state via navigator.onLine + online/offline events' },
+      { type: 'added', text: 'OfflineIndicator component — small yellow warning chip in the header when offline' },
+      { type: 'added', text: 'WebDAVSettings offline mode — shows notice and disables all sync buttons when offline' },
+      { type: 'added', text: 'McpServerManager offline mode — shows notice and disables add server input when offline' },
+      { type: 'added', text: 'PluginManager offline mode — shows notice and disables install button when offline' },
+      { type: 'changed', text: 'Updated version to v0.29.1' },
+    ],
+  },
+  {
     version: '0.29.0',
     date: '2026-04-26',
     title: 'Update Prompt — Banner When New Service Worker Is Ready',

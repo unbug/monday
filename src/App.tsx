@@ -30,7 +30,9 @@ import { useTheme } from './hooks/useTheme'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { useServiceWorkerUpdate } from './hooks/useServiceWorkerUpdate'
+import { useOfflineStatus } from './hooks/useOfflineStatus'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
+import { OfflineIndicator } from './components/OfflineIndicator'
 import { UpdateBanner } from './components/UpdateBanner'
 import type { ModelInfo, CitationEntry } from './types'
 import type { ImportResult } from './lib/dataImport'
@@ -187,6 +189,7 @@ export default function App() {
   const { canInstall, promptInstall, onDismiss } = useInstallPrompt()
   // v0.29: detect new service worker and prompt reload
   const { hasUpdate, onActivate } = useServiceWorkerUpdate()
+  const { online } = useOfflineStatus()
   const [updateDismissed, setUpdateDismissed] = useState(false)
   const updateVisible = hasUpdate && !updateDismissed
   const handleUpdateDismiss = useCallback(() => setUpdateDismissed(true), [])
@@ -344,6 +347,7 @@ export default function App() {
                 </span>
               </BorderBeam>
             )}
+            {!online && <OfflineIndicator online={online} />}
           </div>
 
           <ThemeToggle mode={theme.mode} onChange={theme.setMode} />
@@ -480,17 +484,18 @@ export default function App() {
           </div>
         ) : view === 'plugins' ? (
           <div className="main-content main-content--plugins">
-            <PluginManager onBack={() => setView('chat')} />
+            <PluginManager onBack={() => setView('chat')} offline={!online} />
           </div>
         ) : view === 'mcp-servers' ? (
           <div className="main-content main-content--mcp-servers">
-            <McpServerManager onBack={() => setView('chat')} />
+            <McpServerManager onBack={() => setView('chat')} offline={!online} />
           </div>
         ) : view === 'webdav' ? (
           <div className="main-content main-content--webdav">
             <WebDAVSettings
               onBack={() => setView('chat')}
               onSyncComplete={(success, message) => setWebdavToast({ success, message })}
+              offline={!online}
             />
           </div>
         ) : (

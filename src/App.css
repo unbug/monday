@@ -9155,3 +9155,115 @@
     justify-content: center;
   }
 }
+
+/* ===== Offline Indicator ===== */
+.offline-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--offline-bg);
+  border: 1px solid var(--offline-border);
+  color: var(--offline-text);
+  font-size: 12px;
+  font-weight: 500;
+  animation: offline-slide-in 0.3s ease-out;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.offline-indicator-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.offline-indicator-dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--offline-text);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.offline-indicator-dismiss:hover {
+  opacity: 1;
+  background: var(--offline-dismiss-hover);
+}
+
+@keyframes offline-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dark theme */
+[data-theme="dark"] .offline-indicator {
+  --offline-bg: rgba(234, 179, 8, 0.1);
+  --offline-border: rgba(234, 179, 8, 0.3);
+  --offline-text: #facc15;
+  --offline-dismiss-hover: rgba(234, 179, 8, 0.15);
+}
+
+/* Light theme */
+[data-theme="light"] .offline-indicator {
+  --offline-bg: rgba(234, 179, 8, 0.08);
+  --offline-border: rgba(234, 179, 8, 0.25);
+  --offline-text: #a16207;
+  --offline-dismiss-hover: rgba(234, 179, 8, 0.12);
+}
+
+@media (max-width: 640px) {
+  .offline-indicator-text {
+    display: none;
+  }
+
+  .offline-indicator {
+    padding: 4px 8px;
+  }
+}
+
+/* Offline notices for cloud-only feature panels */
+.webdav-settings-offline-notice,
+.mcp-server-manager-offline-notice,
+.plugin-manager-offline-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .webdav-settings-offline-notice,
+[data-theme="dark"] .mcp-server-manager-offline-notice,
+[data-theme="dark"] .plugin-manager-offline-notice {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  color: #facc15;
+}
+
+[data-theme="light"] .webdav-settings-offline-notice,
+[data-theme="light"] .mcp-server-manager-offline-notice,
+[data-theme="light"] .plugin-manager-offline-notice {
+  background: rgba(234, 179, 8, 0.07);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  color: #a16207;
+}

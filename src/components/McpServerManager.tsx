@@ -10,9 +10,10 @@ import { useMcpServers } from '../hooks/useMcpServers'
 
 interface Props {
   onBack: () => void
+  offline: boolean
 }
 
-export function McpServerManager({ onBack }: Props) {
+export function McpServerManager({ onBack, offline }: Props) {
   const { state, addServer, removeServer, reconnectServer } = useMcpServers()
   const [url, setUrl] = useState('')
   const [connecting, setConnecting] = useState(false)
@@ -62,6 +63,18 @@ export function McpServerManager({ onBack }: Props) {
         <span className="mcp-server-manager-count">{state.servers.length} server{state.servers.length !== 1 ? 's' : ''}</span>
       </div>
 
+      {/* Offline notice */}
+      {offline && (
+        <div className="mcp-server-manager-offline-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>MCP server connections require an internet connection.</span>
+        </div>
+      )}
+
       {/* Add server form */}
       <div className="mcp-server-manager-add">
         <h3 className="mcp-server-manager-section-title">Add MCP Server</h3>
@@ -79,12 +92,12 @@ export function McpServerManager({ onBack }: Props) {
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleAdd()
             }}
-            disabled={connecting}
+            disabled={connecting || offline}
           />
           <button
             className="mcp-server-manager-add-btn"
             onClick={handleAdd}
-            disabled={connecting || !url.trim()}
+            disabled={connecting || !url.trim() || offline}
           >
             {connecting ? (
               <>

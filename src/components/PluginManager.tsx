@@ -10,9 +10,10 @@ import { usePluginManager } from '../hooks/usePluginManager'
 
 interface Props {
   onBack: () => void
+  offline: boolean
 }
 
-export function PluginManager({ onBack }: Props) {
+export function PluginManager({ onBack, offline }: Props) {
   const { state, install, remove } = usePluginManager()
   const [url, setUrl] = useState('')
   const [installing, setInstalling] = useState(false)
@@ -53,6 +54,18 @@ export function PluginManager({ onBack }: Props) {
         <span className="plugin-manager-count">{state.plugins.length} plugin{state.plugins.length !== 1 ? 's' : ''}</span>
       </div>
 
+      {/* Offline notice */}
+      {offline && (
+        <div className="plugin-manager-offline-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>Plugin installation requires an internet connection.</span>
+        </div>
+      )}
+
       {/* Install form */}
       <div className="plugin-manager-install">
         <h3 className="plugin-manager-section-title">Install Plugin</h3>
@@ -75,7 +88,7 @@ export function PluginManager({ onBack }: Props) {
           <button
             className="plugin-manager-install-btn"
             onClick={handleInstall}
-            disabled={installing || !url.trim()}
+            disabled={installing || !url.trim() || offline}
           >
             {installing ? (
               <>

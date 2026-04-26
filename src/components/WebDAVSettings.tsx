@@ -15,9 +15,10 @@ import type { WebDAVConfig } from '../lib/webdav'
 interface Props {
   onBack: () => void
   onSyncComplete: (success: boolean, message: string) => void
+  offline: boolean
 }
 
-export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
+export function WebDAVSettings({ onBack, onSyncComplete, offline }: Props) {
   const {
     config,
     hasConfig,
@@ -118,6 +119,18 @@ export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
         </button>
       </div>
 
+      {/* Offline notice */}
+      {offline && (
+        <div className="webdav-settings-offline-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>WebDAV sync requires an internet connection.</span>
+        </div>
+      )}
+
       {/* Connection status */}
       {hasConfig && connectionStatus && (
         <div className={`webdav-settings-status ${connectionStatus.connected ? 'webdav-status-ok' : 'webdav-status-error'}`}>
@@ -217,7 +230,7 @@ export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
           <button
             className="webdav-settings-test-btn"
             onClick={handleTest}
-            disabled={testing || loading}
+            disabled={testing || loading || offline}
           >
             {testing ? (
               <>
@@ -232,7 +245,7 @@ export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
             <button
               className="webdav-settings-save-btn"
               onClick={handleSave}
-              disabled={loading}
+              disabled={loading || offline}
             >
               Save Config
             </button>
@@ -240,7 +253,7 @@ export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
             <button
               className="webdav-settings-remove-btn"
               onClick={handleRemove}
-              disabled={loading}
+              disabled={loading || offline}
             >
               Remove Config
             </button>
@@ -282,7 +295,7 @@ export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
             <button
               className="webdav-settings-sync-btn webdav-settings-upload-btn"
               onClick={handleUpload}
-              disabled={syncing || loading}
+              disabled={syncing || loading || offline}
             >
               {syncing ? (
                 <>
@@ -296,7 +309,7 @@ export function WebDAVSettings({ onBack, onSyncComplete }: Props) {
             <button
               className="webdav-settings-sync-btn webdav-settings-download-btn"
               onClick={handleDownload}
-              disabled={syncing || loading}
+              disabled={syncing || loading || offline}
             >
               {syncing ? (
                 <>
