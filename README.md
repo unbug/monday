@@ -311,12 +311,14 @@ plugins** through the system below.
       handlerUrl`)
 - [x] **MCP client** — Connect to an MCP server (WebSocket transport) and
       expose its tools to the model
-- [ ] **Tool call inspector** — A panel that shows the request / response
+- [x] **Tool call inspector** — A panel that shows the request / response
       / latency of every tool call in a session
 
 **Release gate**: a user installs one external plugin from URL or connects
 to one MCP server, the model invokes a tool from it, and the inspector
 shows the full request / response.
+
+Released: 2026-04-26
 
 #### v0.28 — Collaboration & Sharing
 

@@ -11,6 +11,23 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.27.3',
+    date: '2026-04-26',
+    title: 'Tool Call Inspector — Full Request / Response / Latency Tracking',
+    description:
+      'A collapsible panel that shows every tool call in a session with full request/response details and latency — args in formatted preview + raw JSON, results with success/fail status, and timing. Click to expand raw JSON for debugging. The inspector is visible inline during generation and stays open for review after completion.',
+    changes: [
+      { type: 'added', text: 'ToolCallInspector component — collapsible panel showing tool call name, status, args, result, latency' },
+      { type: 'added', text: 'Formatted args preview — key-value display with type-aware formatting (strings, numbers, booleans, objects)' },
+      { type: 'added', text: 'Raw JSON viewer — collapsible raw JSON for args and response with copy button' },
+      { type: 'added', text: 'Success/error status — green checkmark for successful calls, red X for failures' },
+      { type: 'added', text: 'Latency display — milliseconds for each tool call' },
+      { type: 'added', text: 'Wired into App.tsx — receives events from useChat toolCallEvents' },
+      { type: 'added', text: 'CSS styles — full dark/light theme support for inspector panel' },
+      { type: 'changed', text: 'Updated version to v0.27.3' },
+    ],
+  },
+  {
     version: '0.27.2',
     date: '2026-04-26',
     title: 'MCP Client — Connect to External MCP Servers',
