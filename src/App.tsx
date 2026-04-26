@@ -40,6 +40,7 @@ import { PWAInstallBanner } from './components/PWAInstallBanner'
 import { OfflineIndicator } from './components/OfflineIndicator'
 import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay'
 import { UpdateBanner } from './components/UpdateBanner'
+import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import type { ModelInfo, CitationEntry } from './types'
 import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
@@ -117,6 +118,9 @@ export default function App() {
   const [showShortcuts, setShowShortcuts] = useState(false)
   // v0.30: agent mode panel
   const [showAgent, setShowAgent] = useState(false)
+  // v0.30.3: batch generation overlay
+  const [showBatch, setShowBatch] = useState(false)
+  const [batchPrompt, setBatchPrompt] = useState('')
   const model = useModel()
   const chat = useChat(selectedModelId ?? '', {
     onGenerationComplete: (title, body) => {
@@ -265,6 +269,36 @@ export default function App() {
     },
     [chat, knowledgeBases.activeBaseId],
   )
+
+  // v0.30.3: batch generation
+  const handleOpenBatch = useCallback((content: string) => {
+    setBatchPrompt(content)
+    setShowBatch(true)
+  }, [])
+
+  const handleBatchPick = useCallback((content: string, modelId: string) => {
+    if (!chat.activeSession) return
+    const assistantMsg = {
+      id: crypto.randomUUID(),
+      role: 'assistant' as const,
+      content,
+      isStreaming: false,
+      timestamp: Date.now(),
+    }
+    const updatedSessions = chat.sessions.map((s) =>
+      s.id === chat.activeSession!.id
+        ? { ...s, messages: [...s.messages, assistantMsg], updatedAt: Date.now() }
+        : s,
+    )
+    chat.updateSessions(updatedSessions)
+    setShowBatch(false)
+    setBatchPrompt('')
+  }, [chat])
+
+  const handleBatchDiscard = useCallback(() => {
+    setShowBatch(false)
+    setBatchPrompt('')
+  }, [])
 
   const handleNewChat = useCallback(() => {
     chat.newSession()
@@ -663,6 +697,51 @@ export default function App() {
               onClose={() => setShowAgent(false)}
             />
           </div>
+        ) : showBatch ? (
+          <div className="chat-layout">
+            <div className="chat-messages">
+              <MessageList
+                messages={chat.messages}
+                isStreaming={chat.isGenerating}
+                modelStatus={model.status}
+                hasCachedModels={model.downloadedModelIds.size > 0}
+                onGoToModels={() => setView('models')}
+                onRegenerateMessage={(id) => {
+                  const session = chat.activeSession
+                  if (session) {
+                    const msg = session.messages.find((m) => m.id === id)
+                    if (msg) chat.regenerateMessage(msg.id)
+                  }
+                }}
+                onEditMessage={(id, content) => chat.editMessage(id, content)}
+                onCitationClick={handleCitationClick}
+                onFork={(msgIndex) => {
+                  const session = chat.activeSession
+                  if (session && session.messages[msgIndex]) {
+                    chat.forkSession(session.id, msgIndex)
+                  }
+                }}
+              />
+            </div>
+            <div className="batch-generation-overlay">
+              <BatchGenerationPanel
+                prompt={batchPrompt}
+                modelId={selectedModelId ?? ''}
+                modelInfo={getModelById(selectedModelId ?? '') ?? null}
+                generationParams={chat.activeSession?.generationParams ?? { temperature: 0.7, top_p: 0.9, maxTokens: 1024 }}
+                systemPrompt={chat.activeSession?.systemPrompt ?? ''}
+                onPickResponse={handleBatchPick}
+                onDiscardAll={handleBatchDiscard}
+                onBack={handleBatchDiscard}
+                tokenStats={chat.tokenStats}
+                isStreaming={chat.isStreaming}
+                knowledgeBaseName={knowledgeBases.activeBaseId
+                  ? knowledgeBases.getBaseById(knowledgeBases.activeBaseId)?.name ?? null
+                  : null}
+                knowledgeContextCount={chat.knowledgeContextCount}
+              />
+            </div>
+          </div>
         ) : (
           <div className="chat-layout">
             <div className="chat-messages">
@@ -694,6 +773,7 @@ export default function App() {
             </div>
             <ChatInput
               onSend={handleSend}
+              onBatchSend={handleOpenBatch}
               onStop={chat.stopGenerating}
               onApplyPersona={(personaId) => {
                 const persona = PROMPT_TEMPLATES.find((p) => p.id === personaId)

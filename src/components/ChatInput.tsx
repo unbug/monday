@@ -23,6 +23,7 @@ interface FileItem {
 
 interface Props {
   onSend: (content: string, images?: ImageItem[], files?: FileItem[]) => void
+  onBatchSend?: (content: string) => void
   onAgentSend?: (goal: string) => void
   onStop: () => void
   onApplyPersona: (personaId: string) => void
@@ -49,6 +50,7 @@ interface Props {
 
 export function ChatInput({
   onSend,
+  onBatchSend,
   onAgentSend,
   onStop,
   onApplyPersona,
@@ -446,6 +448,23 @@ export function ChatInput({
                     <line x1="4" y1="20" x2="20" y2="20" />
                   </svg>
                   Agent
+                </button>
+              )}
+              {onBatchSend && (
+                <button
+                  className="chat-btn chat-btn-batch"
+                  onClick={() => onBatchSend(input.trim())}
+                  disabled={disabled || !input.trim()}
+                  title="Generate multiple responses"
+                  type="button"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                  </svg>
+                  Batch
                 </button>
               )}
               <button

@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.30.3',
+    date: '2026-04-27',
+    title: 'Batch Generation — Generate N Responses in Parallel',
+    description:
+      'Select any message and generate multiple responses in parallel — up to 4 at once. Each response streams independently with its own token stats. Pick the best one to append to your session, or discard all and try again. Available from the new Batch button in the ChatInput.',
+    changes: [
+      { type: 'added', text: 'useBatchGeneration hook — orchestrates N parallel streaming generations (2-4) with per-response progress tracking, elapsed timers, and abort support' },
+      { type: 'added', text: 'BatchGenerationPanel component — side-by-side response display with model badges, token stats, markdown rendering, pick/discard actions' },
+      { type: 'added', text: 'Batch button in ChatInput — generates N responses in parallel for the current prompt' },
+      { type: 'added', text: 'Count selector — choose 2, 3, or 4 responses to generate' },
+      { type: 'added', text: 'Response cards — model badge, status indicator (streaming/done/error), elapsed timer, token count, pick button' },
+      { type: 'added', text: 'Pick response — appends the selected response as an assistant message to the current session' },
+      { type: 'added', text: 'Discard All — closes the batch panel and returns to normal chat' },
+      { type: 'added', text: 'Batch CSS — responsive grid layout (2 cols desktop, 1 col mobile), dark/light theme support, animated cursors' },
+      { type: 'changed', text: 'Updated version to v0.30.3' },
+    ],
+  },
+  {
     version: '0.30.1',
     date: '2026-04-27',
     title: 'Agent Mode — Multi-Step Task Execution',
