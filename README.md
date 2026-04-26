@@ -75,27 +75,102 @@ graph TB
     style Engine fill:#7c3aed,stroke:#a78bfa,color:#fff
 ```
 
+### Routing Architecture
+
+Monday uses a **zero-dependency URL routing** system built on the HTML5 History API — no React Router, no hash fragments.
+
+**All 14 named views and their paths** (defined in `src/App.tsx`):
+
+| View key | URL path |
+|---|---|
+| `chat` | `/monday/` |
+| `models` | `/monday/models` |
+| `changelog` | `/monday/changelog` |
+| `cache` | `/monday/cache` |
+| `stats` | `/monday/stats` |
+| `comparison` | `/monday/comparison` |
+| `benchmark` | `/monday/benchmark` |
+| `custom-models` | `/monday/custom-models` |
+| `persona-marketplace` | `/monday/persona-marketplace` |
+| `knowledge` | `/monday/knowledge` |
+| `plugins` | `/monday/plugins` |
+| `mcp-servers` | `/monday/mcp-servers` |
+| `webdav` | `/monday/webdav` |
+| `memory` | `/monday/memory` |
+
+**How it works:**
+
+```mermaid
+flowchart LR
+    URL["URL\n/monday/…"] -->|popstate| VFP["viewFromPath()\nURL → View enum"]
+    VFP --> State["view state\nReact useState"]
+    State -->|useEffect| PS["history.pushState"]
+    PS --> URL
+
+    subgraph GH["GitHub Pages compat"]
+        F["public/404.html\nsaves path → sessionStorage"]
+        R["Redirect → /monday/"]
+        A["App init reads sessionStorage\nhistory.replaceState"]
+        F --> R --> A
+    end
+
+    style State fill:#7c3aed,stroke:#a78bfa,color:#fff
+    style GH fill:#0d1117,stroke:#444,color:#999
+```
+
+**Key behaviours:**
+
+- Calling `setView(v)` triggers a `useEffect` that does `history.pushState` to the mapped URL — the URL bar updates instantly without a page reload.
+- `popstate` events (browser back / forward) call `viewFromPath(pathname)` to resolve the URL back into a `View` and update React state.
+- **GitHub Pages 404 compatibility**: `public/404.html` captures the requested path in `sessionStorage` and redirects to `/monday/`. On first render `App.tsx` reads it back and calls `history.replaceState` to restore the original URL before the SPA mounts.
+
+> **Rule for adding a new view:**
+> 1. Add the key + path to `VIEW_PATH` in `App.tsx`.
+> 2. Add a `view === 'new-view'` render branch in the JSX return.
+> 3. Add a navigation callback to `useKeyboardShortcuts` and a menu item in `Sidebar`.
+
+---
+
 ### Component Architecture
 
 ```mermaid
 graph TD
-    App["App.tsx<br/>View Router + State"]
-    App --> Sidebar["Sidebar<br/>Session List + Version"]
+    App["App.tsx<br/>URL Router + Global State"]
+    App --> Sidebar["Sidebar<br/>Session List + Nav"]
     App --> Header["Header<br/>Model Badge + Theme"]
-    App --> MS["ModelSelector<br/>7 Model Cards"]
-    App --> CL["ChatLayout"]
-    App --> CG["Changelog<br/>Release History"]
+
+    subgraph Views["Routed Views (view state)"]
+        V_chat["chat\n ChatLayout"]
+        V_models["models\n ModelSelector"]
+        V_knowledge["knowledge\n KnowledgePanel"]
+        V_plugins["plugins\n PluginManager"]
+        V_mcp["mcp-servers\n McpServerManager"]
+        V_memory["memory\n MemoryPanel"]
+        V_webdav["webdav\n WebDAVSettings"]
+        V_stats["stats\n ModelStats"]
+        V_cmp["comparison\n ModelComparison"]
+        V_bench["benchmark\n ModelBenchmark"]
+        V_persona["persona-marketplace\n PersonaMarketplace"]
+        V_custom["custom-models\n CustomModelImport"]
+        V_cache["cache\n (cache manager)"]
+        V_cl["changelog\n Changelog"]
+    end
+
+    App --> Views
 
     Header --> TT["ThemeToggle<br/>Light/Dark/System"]
     Header --> WG["WebGPUCheck"]
-
-    CL --> ML["MessageList<br/>User + Assistant msgs"]
-    CL --> CI["ChatInput<br/>BorderBeam textarea"]
+    V_chat --> ML["MessageList"]
+    V_chat --> CI["ChatInput<br/>BorderBeam textarea"]
 
     subgraph Hooks["Custom Hooks"]
         useModel["useModel<br/>Load/Unload/Progress"]
         useChat["useChat<br/>Sessions/Messages/Stream"]
         useTheme["useTheme<br/>Light/Dark/System"]
+        useKnowledge["useKnowledge / useKnowledgeBases"]
+        useVectorStore["useVectorStore<br/>IndexedDB vectors"]
+        useEmbedding["useEmbeddingModel<br/>GTE-small MLC"]
+        useMcp["useMcpServers"]
     end
 
     subgraph Lib["Core Library"]
@@ -110,6 +185,7 @@ graph TD
     engine -->|"CreateMLCEngine"| WEBLLM["@mlc-ai/web-llm"]
 
     style App fill:#7c3aed,stroke:#a78bfa,color:#fff
+    style Views fill:#1a1a2e,stroke:#a78bfa,color:#e5e5e5
     style Hooks fill:#1e3a5f,stroke:#3b82f6,color:#e5e5e5
     style Lib fill:#1a3328,stroke:#22c55e,color:#e5e5e5
 ```
