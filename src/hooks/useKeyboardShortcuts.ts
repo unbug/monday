@@ -25,6 +25,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
   onOpenWebDAV?: () => void
+  onPublishPersona?: () => void
   onShare?: () => void
   onExportData?: () => Promise<void>
   onImportData?: (file: File) => Promise<void>
@@ -197,6 +198,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'WebDAV Sync',
               icon: '🔄',
               action: options.onOpenWebDAV,
+            },
+          ]
+        : []),
+      ...(options.onPublishPersona
+        ? [
+            {
+              id: 'publish-persona',
+              label: 'Publish Persona',
+              icon: '✏️',
+              action: options.onPublishPersona,
             },
           ]
         : []),

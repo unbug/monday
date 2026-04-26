@@ -5,13 +5,18 @@ import {
   MARKETPLACE_CATEGORY_LABELS,
 } from '../data/personaRegistry'
 import type { MarketplacePersona } from '../data/personaRegistry'
+import { PersonaPublish } from './PersonaPublish'
 
 interface Props {
   onBack: () => void
   onApplyPersona: (persona: MarketplacePersona) => void
 }
 
+const TABS = ['browse', 'publish'] as const
+type Tab = (typeof TABS)[number]
+
 export function PersonaMarketplace({ onBack, onApplyPersona }: Props) {
+  const [activeTab, setActiveTab] = useState<Tab>('browse')
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -49,9 +54,24 @@ export function PersonaMarketplace({ onBack, onApplyPersona }: Props) {
         <div className="persona-marketplace-title-area">
           <h2 className="persona-marketplace-title">Persona Marketplace</h2>
           <p className="persona-marketplace-subtitle">
-            Browse community personas and apply them to your current session
+            {activeTab === 'browse'
+              ? 'Browse community personas and apply them to your current session'
+              : 'Create and share your own persona with the community'}
           </p>
         </div>
+      </div>
+
+      {/* Tab navigation */}
+      <div className="persona-marketplace-tabs">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            className={`persona-marketplace-tab ${activeTab === tab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab === 'browse' ? '🌟 Browse' : '✏️ Publish'}
+          </button>
+        ))}
       </div>
 
       {/* Category filter */}
@@ -102,45 +122,49 @@ export function PersonaMarketplace({ onBack, onApplyPersona }: Props) {
         )}
       </div>
 
-      {/* Results */}
-      <div className="persona-marketplace-grid">
-        {filtered.length === 0 ? (
-          <div className="persona-marketplace-empty">
-            No personas found{" "}
-            {searchQuery ? `for "${searchQuery}"` : 'in this category'}
-          </div>
-        ) : (
-          filtered.map((persona) => (
-            <div key={persona.id} className="persona-marketplace-card">
-              <div className="persona-marketplace-card-header">
-                <span className="persona-marketplace-card-icon">{persona.icon}</span>
-                <div className="persona-marketplace-card-info">
-                  <h3 className="persona-marketplace-card-name">{persona.name}</h3>
-                  <span className="persona-marketplace-card-category">
-                    {MARKETPLACE_CATEGORY_LABELS[persona.category]?.replace(/^.\s*/, '')}
-                  </span>
+      {/* Results or Publish */}
+      {activeTab === 'browse' ? (
+        <div className="persona-marketplace-grid">
+          {filtered.length === 0 ? (
+            <div className="persona-marketplace-empty">
+              No personas found{" "}
+              {searchQuery ? `for "${searchQuery}"` : 'in this category'}
+            </div>
+          ) : (
+            filtered.map((persona) => (
+              <div key={persona.id} className="persona-marketplace-card">
+                <div className="persona-marketplace-card-header">
+                  <span className="persona-marketplace-card-icon">{persona.icon}</span>
+                  <div className="persona-marketplace-card-info">
+                    <h3 className="persona-marketplace-card-name">{persona.name}</h3>
+                    <span className="persona-marketplace-card-category">
+                      {MARKETPLACE_CATEGORY_LABELS[persona.category]?.replace(/^.\s*/, '')}
+                    </span>
+                  </div>
+                </div>
+                <p className="persona-marketplace-card-desc">{persona.description}</p>
+                <div className="persona-marketplace-card-tags">
+                  {persona.tags.map((tag) => (
+                    <span key={tag} className="persona-marketplace-tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="persona-marketplace-card-actions">
+                  <button
+                    className="persona-marketplace-apply-btn"
+                    onClick={() => handleApply(persona)}
+                  >
+                    Apply
+                  </button>
                 </div>
               </div>
-              <p className="persona-marketplace-card-desc">{persona.description}</p>
-              <div className="persona-marketplace-card-tags">
-                {persona.tags.map((tag) => (
-                  <span key={tag} className="persona-marketplace-tag">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="persona-marketplace-card-actions">
-                <button
-                  className="persona-marketplace-apply-btn"
-                  onClick={() => handleApply(persona)}
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      ) : (
+        <PersonaPublish />
+      )}
     </div>
   )
 }

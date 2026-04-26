@@ -175,6 +175,7 @@ export default function App() {
     onOpenKnowledge: () => setView('knowledge'),
     onOpenMcpServers: () => setView('mcp-servers'),
     onOpenWebDAV: () => setView('webdav'),
+    onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
     onImportData: handleImportData,
