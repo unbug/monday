@@ -18,6 +18,7 @@ import { KnowledgePanel } from './components/KnowledgePanel'
 import { ToolCallInspector } from './components/ToolCallInspector'
 import { PluginManager } from './components/PluginManager'
 import { McpServerManager } from './components/McpServerManager'
+import { WebDAVSettings } from './components/WebDAVSettings'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
@@ -40,7 +41,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
@@ -53,6 +54,8 @@ export default function App() {
   const [citationHighlight, setCitationHighlight] = useState<{ docId: string; chunkIndex: number } | null>(null)
   // v0.28.1: import confirmation dialog
   const [importConfirm, setImportConfirm] = useState<{ file: File; stats: ImportResult } | null>(null)
+  // v0.28.2: WebDAV sync toast
+  const [webdavToast, setWebdavToast] = useState<{ success: boolean; message: string } | null>(null)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '')
@@ -171,6 +174,7 @@ export default function App() {
     onOpenPersonaMarketplace: () => setView('persona-marketplace'),
     onOpenKnowledge: () => setView('knowledge'),
     onOpenMcpServers: () => setView('mcp-servers'),
+    onOpenWebDAV: () => setView('webdav'),
     onShare: handleShare,
     onExportData: handleExportData,
     onImportData: handleImportData,
@@ -246,6 +250,10 @@ export default function App() {
               setView('mcp-servers')
               closeSidebarOnMobile()
             }}
+            onOpenWebDAV={() => {
+              setView('webdav')
+              closeSidebarOnMobile()
+            }}
             onShare={() => {
               handleShare()
               closeSidebarOnMobile()
@@ -266,6 +274,19 @@ export default function App() {
             onExport={handleExportData}
           />
         </>
+      )}
+
+      {/* WebDAV sync toast */}
+      {webdavToast && (
+        <div className={`webdav-toast ${webdavToast.success ? 'webdav-toast-ok' : 'webdav-toast-error'}`}>
+          <span>{webdavToast.message}</span>
+          <button className="webdav-toast-close" onClick={() => setWebdavToast(null)}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
       )}
 
       <CommandPalette
@@ -451,6 +472,13 @@ export default function App() {
         ) : view === 'mcp-servers' ? (
           <div className="main-content main-content--mcp-servers">
             <McpServerManager onBack={() => setView('chat')} />
+          </div>
+        ) : view === 'webdav' ? (
+          <div className="main-content main-content--webdav">
+            <WebDAVSettings
+              onBack={() => setView('chat')}
+              onSyncComplete={(success, message) => setWebdavToast({ success, message })}
+            />
           </div>
         ) : (
           <div className="chat-layout">

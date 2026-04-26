@@ -326,7 +326,7 @@ Released: 2026-04-26
       (no server)
 - [x] **Import/export** — Full data import / export (sessions, personas,
       settings, knowledge bases) as a single `.monday` zip
-- [ ] **WebDAV sync** — Cross-device sync via user-supplied WebDAV server
+- [x] **WebDAV sync** — Cross-device sync via user-supplied WebDAV server
 - [ ] **Shared personas** — Publish a persona to a static community
       registry (curated JSON file in the repo)
 - [ ] **Conversation forking** — Branch a session at any message;
@@ -546,7 +546,7 @@ for future work — the `### Versioned task breakdown` above is.
 
 - [ ] **Share conversations** — Generate shareable link (static HTML export)
 - [ ] **Import/export** — Full data import/export (sessions, personas, settings)
-- [ ] **WebDAV sync** — Sync data across devices via WebDAV (like NextChat)
+- [x] **WebDAV sync** — Sync data across devices via WebDAV (like NextChat)
 - [ ] **Shared personas** — Publish personas to community registry
 - [ ] **Conversation forking** — Branch a conversation at any message
 

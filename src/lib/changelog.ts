@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.28.2',
+    date: '2026-04-26',
+    title: 'WebDAV Sync — Cross-Device Data Synchronization',
+    description:
+      'Sync your Monday data across devices via a user-supplied WebDAV server. Configure your WebDAV URL, username, and password in the built-in settings panel, then upload or download your data as a compressed .monday file. Access the WebDAV settings from the sidebar nav (⭮ icon) or the Command Palette (⌘K → WebDAV Sync). Supports one-way upload, one-way download, and bidirectional sync.',
+    changes: [
+      { type: 'added', text: 'webdav.ts — WebDAV client library with PROPFIND connection test, PUT upload, GET download, and sync orchestration' },
+      { type: 'added', text: 'useWebDAV hook — manages WebDAV config (save/load/remove from localStorage), connection testing, and sync operations' },
+      { type: 'added', text: 'WebDAVSettings component — server URL, username, password inputs; test connection button; save/remove config; sync direction selector; upload/download buttons; connection status indicator; CORS notice' },
+      { type: 'added', text: 'WebDAV nav button in Sidebar — ↻ icon for quick access' },
+      { type: 'added', text: 'WebDAV Sync command in Command Palette (⌘K) — 🔄 WebDAV Sync' },
+      { type: 'added', text: 'WebDAV CSS — full dark/light theme support for settings panel, sync actions, and toast notifications' },
+      { type: 'changed', text: 'Updated version to v0.28.2' },
+    ],
+  },
+  {
     version: '0.28.1',
     date: '2026-04-26',
     title: 'Full Data Import / Export — .monday Zip Files',

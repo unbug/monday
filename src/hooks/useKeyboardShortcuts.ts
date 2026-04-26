@@ -24,6 +24,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenKnowledge?: () => void
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
+  onOpenWebDAV?: () => void
   onShare?: () => void
   onExportData?: () => Promise<void>
   onImportData?: (file: File) => Promise<void>
@@ -186,6 +187,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'MCP Servers',
               icon: '🌐',
               action: options.onOpenMcpServers,
+            },
+          ]
+        : []),
+      ...(options.onOpenWebDAV
+        ? [
+            {
+              id: 'open-webdav',
+              label: 'WebDAV Sync',
+              icon: '🔄',
+              action: options.onOpenWebDAV,
             },
           ]
         : []),
