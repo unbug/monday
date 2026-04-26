@@ -29,7 +29,9 @@ import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
+import { useServiceWorkerUpdate } from './hooks/useServiceWorkerUpdate'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
+import { UpdateBanner } from './components/UpdateBanner'
 import type { ModelInfo, CitationEntry } from './types'
 import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
@@ -183,6 +185,11 @@ export default function App() {
 
   const isReady = model.status === 'ready'
   const { canInstall, promptInstall, onDismiss } = useInstallPrompt()
+  // v0.29: detect new service worker and prompt reload
+  const { hasUpdate, onActivate } = useServiceWorkerUpdate()
+  const [updateDismissed, setUpdateDismissed] = useState(false)
+  const updateVisible = hasUpdate && !updateDismissed
+  const handleUpdateDismiss = useCallback(() => setUpdateDismissed(true), [])
 
   const modelBadgeText = selectedModelId
     ? selectedModelId.split('-').slice(0, 2).join(' ')
@@ -301,6 +308,11 @@ export default function App() {
         searchRef={keyboard.searchRef}
         commands={keyboard.filteredCommands}
       />
+
+      {/* v0.29: update prompt banner */}
+      {updateVisible && (
+        <UpdateBanner onReload={onActivate} onDismiss={handleUpdateDismiss} />
+      )}
 
       <main className="main">
         <header className="header">

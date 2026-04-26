@@ -339,7 +339,7 @@ Released: 2026-04-26
 
 #### v0.29 — Desktop, PWA polish & shortcuts
 
-- [ ] **Update prompt** — Banner when a new service worker is installed
+- [x] **Update prompt** — Banner when a new service worker is installed
 - [ ] **Offline indicator** — Header chip when offline; gracefully
       disable cloud-only features
 - [ ] **Background notifications** — Notify when a long generation

@@ -9036,3 +9036,122 @@
 [data-theme='light'] .message-action-btn-fork:hover {
   color: #7c3aed;
 }
+
+/* ============================================
+   Update Banner (v0.29)
+   ============================================ */
+
+.update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  color: #fff;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.35);
+  animation: update-banner-slide 0.3s ease-out;
+}
+
+@keyframes update-banner-slide {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.update-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.update-banner-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.update-banner-text {
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.update-banner-text strong {
+  font-weight: 600;
+}
+
+.update-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.update-banner-btn {
+  border: none;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.update-banner-btn:active {
+  transform: scale(0.97);
+}
+
+.update-banner-btn-reload {
+  background: #fff;
+  color: #7c3aed;
+}
+
+.update-banner-btn-reload:hover {
+  background: #f0e6ff;
+}
+
+.update-banner-btn-dismiss {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.update-banner-btn-dismiss:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .update-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .update-banner-content {
+    justify-content: center;
+    white-space: normal;
+  }
+
+  .update-banner-text {
+    text-align: center;
+    white-space: normal;
+  }
+
+  .update-banner-actions {
+    justify-content: center;
+  }
+}

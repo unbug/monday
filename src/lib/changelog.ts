@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.29.0',
+    date: '2026-04-26',
+    title: 'Update Prompt — Banner When New Service Worker Is Ready',
+    description:
+      'When the app updates in the background, a purple banner slides in from the top prompting you to reload. Dismisses for 24 hours. No more wondering why your changes aren\'t showing up.',
+    changes: [
+      { type: 'added', text: 'useServiceWorkerUpdate hook — detects new service worker installations via updatefound + statechange events' },
+      { type: 'added', text: 'UpdateBanner component — animated purple banner with Reload and Later buttons' },
+      { type: 'added', text: '24-hour dismissal — "Later" button persists dismissal in localStorage for 24 hours' },
+      { type: 'added', text: 'Immediate activation — "Reload" sends SKIP_WAITING message and reloads the page' },
+      { type: 'changed', text: 'Updated version to v0.29.0' },
+    ],
+  },
+  {
     version: '0.28.4',
     date: '2026-04-26',
     title: 'Conversation Forking — Branch Sessions at Any Message',
