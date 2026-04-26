@@ -358,7 +358,7 @@ tools functionality; offline mode degrades gracefully.
 
 #### v0.30 — Agent mode & analytics
 
-- [ ] **Multi-turn memory** — Auto-summarize early turns when the context
+- [x] **Multi-turn memory** — Auto-summarize early turns when the context
       window is exceeded; summaries are visible and editable
 - [ ] **Agent mode** — Multi-step task execution with tool use (an outer
       planner loop on top of v0.27 function calling)
