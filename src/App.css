@@ -6176,23 +6176,15 @@
   flex-wrap: wrap;
 }
 
-.knowledge-back-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px solid var(--border-color, rgba(139, 92, 246, 0.3));
-  border-radius: 8px;
-  padding: 8px 14px;
-  color: var(--text-color, #e5e5e5);
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
+.knowledge-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
 }
 
 .knowledge-back-btn:hover {
-  background: rgba(139, 92, 246, 0.1);
-  border-color: var(--accent-color, #8b5cf6);
+  color: var(--color-primary);
 }
 
 .knowledge-count {
@@ -7504,21 +7496,11 @@
   margin-bottom: 24px;
 }
 
-.plugin-manager-back-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.plugin-manager-title {
   font-size: 20px;
   font-weight: 600;
-  background: none;
-  border: none;
   color: var(--text-primary);
-  cursor: pointer;
-  padding: 0;
-}
-
-.plugin-manager-back-btn:hover {
-  color: var(--text-accent);
+  margin: 0;
 }
 
 .plugin-manager-count {
@@ -7810,22 +7792,11 @@
   padding-top: 8px;
 }
 
-.mcp-server-manager-back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  color: var(--text-primary);
+.mcp-server-manager-title {
   font-size: 18px;
   font-weight: 600;
-  cursor: pointer;
-  padding: 8px 0;
-  transition: color 0.15s ease;
-}
-
-.mcp-server-manager-back-btn:hover {
-  color: var(--accent);
+  color: var(--text-primary);
+  margin: 0;
 }
 
 .mcp-server-manager-count {
@@ -8144,22 +8115,11 @@
   margin-bottom: 20px;
 }
 
-.webdav-settings-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: none;
-  background: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 6px;
-  transition: color 0.15s;
-}
-
-.webdav-settings-back-btn:hover {
-  color: var(--text-primary);
+.webdav-settings-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
 }
 
 .webdav-settings-status {
@@ -9497,4 +9457,41 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* v0.29.3: Multi-window — Open in New Window button */
+.sidebar-session-new-window {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--session-newwindow);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.sidebar-session-wrapper:hover .sidebar-session-new-window {
+  display: flex;
+}
+
+.sidebar-session-new-window:hover {
+  opacity: 1;
+  background: var(--session-newwindow-hover);
+}
+
+[data-theme="dark"] .sidebar-session-new-window {
+  --session-newwindow: #a78bfa;
+  --session-newwindow-hover: rgba(167, 139, 250, 0.15);
+}
+
+[data-theme="light"] .sidebar-session-new-window {
+  --session-newwindow: #7c3aed;
+  --session-newwindow-hover: rgba(124, 58, 237, 0.1);
 }

@@ -45,12 +45,7 @@ export function PluginManager({ onBack, offline }: Props) {
   return (
     <div className="plugin-manager">
       <div className="plugin-manager-header">
-        <button className="plugin-manager-back-btn" onClick={onBack}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          Plugins
-        </button>
+        <h2 className="plugin-manager-title">Plugins</h2>
         <span className="plugin-manager-count">{state.plugins.length} plugin{state.plugins.length !== 1 ? 's' : ''}</span>
       </div>
 

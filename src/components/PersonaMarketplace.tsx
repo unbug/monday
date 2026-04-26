@@ -44,13 +44,6 @@ export function PersonaMarketplace({ onBack, onApplyPersona }: Props) {
   return (
     <div className="persona-marketplace">
       <div className="persona-marketplace-header">
-        <button className="persona-marketplace-back" onClick={onBack}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5" />
-            <path d="M12 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
         <div className="persona-marketplace-title-area">
           <h2 className="persona-marketplace-title">Persona Marketplace</h2>
           <p className="persona-marketplace-subtitle">

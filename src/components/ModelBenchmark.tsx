@@ -34,11 +34,7 @@ export function ModelBenchmark({ onBack }: { onBack?: () => void }) {
         <p className="model-benchmark-desc">
           Run a standardized test prompt to measure model performance. Results are not scientifically rigorous — just a quick sanity check.
         </p>
-        {onBack && (
-          <button className="model-benchmark-back" onClick={onBack}>
-            ← Back
-          </button>
-        )}
+
       </div>
 
       {/* Prompt display */}

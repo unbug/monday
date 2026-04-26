@@ -54,12 +54,7 @@ export function McpServerManager({ onBack, offline }: Props) {
   return (
     <div className="mcp-server-manager">
       <div className="mcp-server-manager-header">
-        <button className="mcp-server-manager-back-btn" onClick={onBack}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          MCP Servers
-        </button>
+        <h2 className="mcp-server-manager-title">MCP Servers</h2>
         <span className="mcp-server-manager-count">{state.servers.length} server{state.servers.length !== 1 ? 's' : ''}</span>
       </div>
 

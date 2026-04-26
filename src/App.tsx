@@ -32,6 +32,7 @@ import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { useServiceWorkerUpdate } from './hooks/useServiceWorkerUpdate'
 import { useOfflineStatus } from './hooks/useOfflineStatus'
 import { useNotifications } from './hooks/useNotifications'
+import { useMultiWindow } from './hooks/useMultiWindow'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
 import { OfflineIndicator } from './components/OfflineIndicator'
 import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay'
@@ -49,9 +50,44 @@ import './App.css'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav'
 
+const VIEW_HASH: Record<View, string> = {
+  chat: '/',
+  models: '/models',
+  changelog: '/changelog',
+  cache: '/cache',
+  stats: '/stats',
+  comparison: '/comparison',
+  benchmark: '/benchmark',
+  'custom-models': '/custom-models',
+  'persona-marketplace': '/persona-marketplace',
+  knowledge: '/knowledge',
+  plugins: '/plugins',
+  'mcp-servers': '/mcp-servers',
+  webdav: '/webdav',
+}
+
+function viewFromHash(hash: string): View {
+  const path = hash.replace(/^#/, '') || '/'
+  const entry = Object.entries(VIEW_HASH).find(([, h]) => h === path)
+  return (entry?.[0] as View) ?? 'chat'
+}
+
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
-  const [view, setView] = useState<View>('models')
+  const [view, setView] = useState<View>(() => viewFromHash(window.location.hash))
+
+  // Sync view state → URL hash (pushes a history entry so browser back/forward works)
+  useEffect(() => {
+    const target = '#' + VIEW_HASH[view]
+    if (window.location.hash !== target) window.location.hash = VIEW_HASH[view]
+  }, [view])
+
+  // Sync browser back/forward → view state
+  useEffect(() => {
+    const handler = () => setView(viewFromHash(window.location.hash))
+    window.addEventListener('popstate', handler)
+    return () => window.removeEventListener('popstate', handler)
+  }, [])
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
   const [showComparison, setShowComparison] = useState(false)
   const [showPersonaMarketplace, setShowPersonaMarketplace] = useState(false)
@@ -103,10 +139,19 @@ export default function App() {
   }, [theme.resolved])
 
   const activePersonaId = chat.activeSession?.personaId ?? null
+  // v0.29.3: multi-window support
+  const multiWindow = useMultiWindow()
 
   useEffect(() => {
     chat.initSessions()
   }, [chat.initSessions])
+
+  // v0.29.3: handle child window — auto-select the target session
+  useEffect(() => {
+    if (multiWindow.isChildWindow && multiWindow.childSessionId) {
+      chat.switchSession(multiWindow.childSessionId)
+    }
+  }, [multiWindow.isChildWindow, multiWindow.childSessionId, chat])
 
   // v0.29.3: `?` to open keyboard shortcuts overlay
   useEffect(() => {
@@ -294,6 +339,7 @@ export default function App() {
               setShowShortcuts(true)
               closeSidebarOnMobile()
             }}
+            onOpenInNewWindow={multiWindow.openInNewWindow}
             onShare={() => {
               handleShare()
               closeSidebarOnMobile()

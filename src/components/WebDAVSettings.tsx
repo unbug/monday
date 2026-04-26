@@ -111,12 +111,7 @@ export function WebDAVSettings({ onBack, onSyncComplete, offline }: Props) {
   return (
     <div className="webdav-settings">
       <div className="webdav-settings-header">
-        <button className="webdav-settings-back-btn" onClick={onBack}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          WebDAV Sync
-        </button>
+        <h2 className="webdav-settings-title">WebDAV Sync</h2>
       </div>
 
       {/* Offline notice */}

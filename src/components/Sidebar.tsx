@@ -46,6 +46,7 @@ interface Props {
   onOpenMcpServers?: () => void
   onOpenWebDAV?: () => void
   onOpenShortcuts?: () => void
+  onOpenInNewWindow?: (sessionId: string) => void
   onShare?: () => void
   onUpdateSession?: (session: ChatSession) => void
   activePersonaId: string | null
@@ -73,6 +74,7 @@ export function Sidebar({
   onOpenMcpServers,
   onOpenWebDAV,
   onOpenShortcuts,
+  onOpenInNewWindow,
   onShare,
   onImport,
   onExport,
@@ -180,6 +182,22 @@ export function Sidebar({
                         <line x1="6" y1="6" x2="18" y2="18" />
                       </svg>
                     </button>
+                    {onOpenInNewWindow && (
+                      <button
+                        className="sidebar-session-new-window"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onOpenInNewWindow(session.id)
+                        }}
+                        title="Open in New Window"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 </BorderBeam>
               ) : (
@@ -204,6 +222,22 @@ export function Sidebar({
                         <line x1="6" y1="6" x2="18" y2="18" />
                       </svg>
                     </button>
+                    {onOpenInNewWindow && (
+                      <button
+                        className="sidebar-session-new-window"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onOpenInNewWindow(session.id)
+                        }}
+                        title="Open in New Window"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 </BorderBeam>
               )}

@@ -199,12 +199,7 @@ export function KnowledgePanel({
   return (
     <div className="main-content main-content--knowledge">
       <div className="knowledge-header">
-        <button className="knowledge-back-btn" onClick={onBack} title="Back to chat">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          Knowledge
-        </button>
+        <h2 className="knowledge-title">Knowledge</h2>
         <span className="knowledge-count">{docs.length} document{docs.length !== 1 ? 's' : ''}</span>
         <div className="knowledge-header-actions">
           {docs.length > 0 && (
