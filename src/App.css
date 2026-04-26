@@ -701,6 +701,24 @@
   max-width: 360px;
 }
 
+.messages-empty-cta {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.messages-empty-cta:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
 .message {
   display: flex;
   gap: 12px;

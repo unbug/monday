@@ -46,7 +46,7 @@ import { shareSession } from './lib/shareExport'
 import { exportMondayData } from './lib/dataExport'
 import { importMondayData } from './lib/dataImport'
 import { resetModelUsage } from './lib/modelUsage'
-import { resetRecentModels as resetRecent } from './lib/recentModels'
+import { getRecentModels, resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory'
@@ -156,6 +156,18 @@ export default function App() {
   useEffect(() => {
     chat.initSessions()
   }, [chat.initSessions])
+
+  // Auto-load the most recently used model that is already cached
+  useEffect(() => {
+    if (model.status !== 'idle' || selectedModelId) return
+    const recents = getRecentModels(10)
+    const cached = recents.find((id) => model.downloadedModelIds.has(id))
+    if (cached) {
+      setSelectedModelId(cached)
+      model.load(cached)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [model.downloadedModelIds])
 
   // v0.29.3: handle child window — auto-select the target session
   useEffect(() => {
@@ -616,8 +628,9 @@ export default function App() {
             <div className="chat-messages">
               <MessageList
                 messages={chat.messages}
-                isStreaming={chat.isGenerating}
-                onRegenerateMessage={(id) => {
+                isStreaming={chat.isGenerating}                modelStatus={model.status}
+                hasCachedModels={model.downloadedModelIds.size > 0}
+                onGoToModels={() => setView('models')}                onRegenerateMessage={(id) => {
                   const session = chat.activeSession
                   if (session) {
                     const msg = session.messages.find((m) => m.id === id)

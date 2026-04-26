@@ -8,6 +8,9 @@ import { CitationDisplay } from './CitationDisplay'
 interface Props {
   messages: ChatMessage[]
   isStreaming: boolean
+  modelStatus?: 'idle' | 'downloading' | 'ready' | 'error'
+  hasCachedModels?: boolean
+  onGoToModels?: () => void
   onRegenerateMessage?: (messageId: string) => void
   onEditMessage?: (messageId: string, content: string) => void
   onCitationClick?: (citation: CitationEntry) => void
@@ -17,6 +20,9 @@ interface Props {
 export function MessageList({
   messages,
   isStreaming,
+  modelStatus,
+  hasCachedModels,
+  onGoToModels,
   onRegenerateMessage,
   onEditMessage,
   onCitationClick,
@@ -50,6 +56,42 @@ export function MessageList({
   }, [messages, shouldAutoScroll, isStreaming])
 
   if (messages.length === 0) {
+    // No model loaded and no cached models — prompt user to pick one
+    if (modelStatus === 'idle' && !hasCachedModels) {
+      return (
+        <div className="messages-empty">
+          <div className="messages-empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
+          <h3>No model loaded</h3>
+          <p>Download a model to start chatting — everything runs locally in your browser.</p>
+          {onGoToModels && (
+            <button className="messages-empty-cta" onClick={onGoToModels}>
+              Browse models
+            </button>
+          )}
+        </div>
+      )
+    }
+    // Model is downloading / loading
+    if (modelStatus === 'downloading') {
+      return (
+        <div className="messages-empty">
+          <div className="messages-empty-icon" style={{ opacity: 0.5 }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2" strokeDasharray="40" strokeDashoffset="10" />
+            </svg>
+          </div>
+          <h3>Loading model…</h3>
+          <p>The model is being prepared. Chat will be available shortly.</p>
+        </div>
+      )
+    }
+    // Model ready or idle-with-cache — standard empty state
     return (
       <div className="messages-empty">
         <div className="messages-empty-icon">
