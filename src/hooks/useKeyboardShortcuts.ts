@@ -22,6 +22,7 @@ interface UseKeyboardShortcutsOptions {
   onResetRecentModels?: () => void
   onOpenPersonaMarketplace?: () => void
   onOpenKnowledge?: () => void
+  onOpenPlugins?: () => void
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -161,6 +162,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Knowledge',
               icon: '📚',
               action: options.onOpenKnowledge,
+            },
+          ]
+        : []),
+      ...(options.onOpenPlugins
+        ? [
+            {
+              id: 'open-plugins',
+              label: 'Plugins',
+              icon: '🔌',
+              action: options.onOpenPlugins,
             },
           ]
         : []),

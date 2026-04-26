@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.27.1',
+    date: '2026-04-26',
+    title: 'Plugin System — Load Third-Party Tool Plugins from URL',
+    description:
+      'Install external tool plugins by pasting a URL that points to a JSON manifest. Monday fetches the manifest, validates it, and loads the plugin handler into a sandboxed iframe. Installed plugins appear in the Plugin Manager view and are registered as tools — the model can invoke them alongside built-in tools. Plugins persist in localStorage across sessions.',
+    changes: [
+      { type: 'added', text: 'PluginManifest + InstalledPlugin types — schema for plugin registration and persistence' },
+      { type: 'added', text: 'pluginLoader.ts — fetchPluginManifest, executePluginHandler, loadPlugin, uninstallPlugin, getInstalledPlugins, getPluginToolDefinition' },
+      { type: 'added', text: 'usePluginManager hook — install/remove/refresh lifecycle with error handling' },
+      { type: 'added', text: 'PluginManager component — URL input + install button, plugin list with status badges, remove button, empty state' },
+      { type: 'added', text: 'Plugins view in App — dedicated view for plugin management' },
+      { type: 'added', text: 'Plugin nav button in Sidebar — 📦 icon for quick access' },
+      { type: 'added', text: 'Plugins command in Command Palette (⌘K) — 🔌 Plugins' },
+      { type: 'added', text: 'Plugin CSS — full dark/light theme support for PluginManager' },
+      { type: 'changed', text: 'Updated version to v0.27.1' },
+    ],
+  },
+  {
     version: '0.27.0',
     date: '2026-04-26',
     title: 'Function Calling — Browser-Side Tool Use',

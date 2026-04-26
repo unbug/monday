@@ -7260,3 +7260,306 @@
     display: none;
   }
 }
+
+/* ── Plugin Manager ───────────────────────────────────────────────────────── */
+
+.plugin-manager {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.plugin-manager-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.plugin-manager-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.plugin-manager-back-btn:hover {
+  color: var(--text-accent);
+}
+
+.plugin-manager-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+/* Install section */
+.plugin-manager-install {
+  background: var(--surface-2);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.plugin-manager-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+}
+
+.plugin-manager-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.plugin-manager-hint code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--surface-3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-accent);
+}
+
+.plugin-manager-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.plugin-manager-url-input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: var(--font-mono);
+  background: var(--surface-3);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.plugin-manager-url-input:focus {
+  border-color: var(--text-accent);
+}
+
+.plugin-manager-url-input::placeholder {
+  color: var(--text-muted);
+}
+
+.plugin-manager-install-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--text-accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.plugin-manager-install-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.plugin-manager-install-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.plugin-manager-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.plugin-manager-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-error);
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.15);
+  border-radius: 8px;
+}
+
+/* Plugin list */
+.plugin-manager-list {
+  margin-bottom: 24px;
+}
+
+.plugin-manager-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+}
+
+.plugin-manager-card:hover {
+  border-color: var(--text-accent);
+}
+
+.plugin-manager-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.plugin-manager-card-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.plugin-manager-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.plugin-manager-card-version {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.plugin-manager-status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.status-loaded {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.status-error {
+  color: var(--text-error);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.plugin-manager-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.plugin-manager-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.plugin-manager-card-url {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
+.plugin-manager-card-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.plugin-manager-card-error {
+  font-size: 12px;
+  color: var(--text-error);
+  background: rgba(248, 113, 113, 0.06);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.plugin-manager-remove-btn {
+  font-size: 13px;
+  color: var(--text-error);
+  background: none;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.plugin-manager-remove-btn:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: var(--text-error);
+}
+
+/* Empty state */
+.plugin-manager-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+
+.plugin-manager-empty-icon {
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.plugin-manager-empty-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+}
+
+.plugin-manager-empty-hint {
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Dark theme */
+[data-theme='dark'] .plugin-manager-install {
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .plugin-manager-card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Light theme */
+[data-theme='light'] .plugin-manager-install {
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .plugin-manager-card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}

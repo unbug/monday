@@ -134,3 +134,46 @@ export interface EngineStats {
   tokensPerSecond: number
   totalTokens: number
 }
+
+// v0.27.1: Plugin system types
+export interface PluginManifest {
+  /** Unique plugin identifier (a-z, 0-9, dash; max 64 chars) */
+  id: string
+  /** Plugin display name */
+  name: string
+  /** What the plugin does, shown to the user */
+  description: string
+  /** Version string (semver) */
+  version: string
+  /** JSON Schema describing the plugin's input */
+  inputSchema: Record<string, unknown>
+  /** URL to the JavaScript handler (exported as ES module) */
+  handlerUrl: string
+  /** Optional author / publisher info */
+  author?: string
+  /** Optional URL to plugin source or docs */
+  sourceUrl?: string
+}
+
+export interface InstalledPlugin {
+  /** Unique plugin identifier */
+  id: string
+  /** Plugin display name */
+  name: string
+  /** Description */
+  description: string
+  /** Version */
+  version: string
+  /** URL where the manifest was loaded from */
+  manifestUrl: string
+  /** URL to the handler JS */
+  handlerUrl: string
+  /** When it was installed (timestamp) */
+  installedAt: number
+  /** Last time it was loaded (timestamp) */
+  lastLoadedAt: number
+  /** Whether the handler was successfully loaded */
+  loaded: boolean
+  /** Error message if loading failed */
+  error: string | null
+}

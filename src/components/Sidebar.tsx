@@ -42,6 +42,7 @@ interface Props {
   onOpenCustomModels?: () => void
   onOpenPersonaMarketplace?: () => void
   onOpenKnowledge?: () => void
+  onOpenPlugins?: () => void
   onUpdateSession?: (session: ChatSession) => void
   activePersonaId: string | null
   onApplyPersona?: (persona: any) => void
@@ -61,6 +62,7 @@ export function Sidebar({
   onOpenCustomModels,
   onOpenPersonaMarketplace,
   onOpenKnowledge,
+  onOpenPlugins,
   onUpdateSession,
   activePersonaId,
   onApplyPersona,
@@ -286,6 +288,19 @@ export function Sidebar({
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </button>
+        )}
+        {onOpenPlugins && (
+          <button
+            className="sidebar-nav-btn"
+            onClick={onOpenPlugins}
+            title="Plugins"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
             </svg>
           </button>
         )}

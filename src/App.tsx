@@ -16,6 +16,7 @@ import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { KnowledgePanel } from './components/KnowledgePanel'
 import { ToolCallPanel } from './components/ToolCallPanel'
+import { PluginManager } from './components/PluginManager'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
@@ -33,7 +34,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
@@ -200,6 +201,10 @@ export default function App() {
             }}
             onOpenKnowledge={() => {
               setView('knowledge')
+              closeSidebarOnMobile()
+            }}
+            onOpenPlugins={() => {
+              setView('plugins')
               closeSidebarOnMobile()
             }}
             onUpdateSession={(updated) => {
@@ -392,6 +397,10 @@ export default function App() {
               onEmbeddingLoad={embedding.load}
               onEmbeddingUnload={embedding.unload}
             />
+          </div>
+        ) : view === 'plugins' ? (
+          <div className="main-content main-content--plugins">
+            <PluginManager onBack={() => setView('chat')} />
           </div>
         ) : (
           <div className="chat-layout">

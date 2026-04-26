@@ -306,7 +306,7 @@ plugins** through the system below.
 
 - [x] **Function calling** — Parse model tool-call outputs (OpenAI-style
       `tool_calls` JSON) and dispatch to in-browser functions
-- [ ] **Plugin system** — Load third-party tool plugins from URL
+- [x] **Plugin system** — Load third-party tool plugins from URL
       (JSON manifest declaring `name / description / inputSchema /
       handlerUrl`)
 - [ ] **MCP client** — Connect to an MCP server (WebSocket transport) and
