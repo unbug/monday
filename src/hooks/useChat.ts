@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useMemo } from 'react'
 import { streamChatWithUsage } from '../lib/engine'
 import { useTokenStats } from './useTokenStats'
 import {
@@ -11,14 +11,16 @@ import {
   loadKnowledgeDocs,
 } from '../lib/storage'
 import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent, MemorySummary } from '../types'
-import type { PromptTemplate } from '../lib/prompts'
+import type { PromptTemplate, CustomPersona } from '../lib/prompts'
 import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
-import { getModelById } from '../lib/models'
+import { getModelById, MODELS } from '../lib/models'
 import { toolRegistry } from '../lib/toolRegistry'
 import { streamChatWithTools, getToolCalls } from '../lib/engine'
 import { useVectorStore } from './useVectorStore'
 import { useMultiTurnMemory } from './useMultiTurnMemory'
+import { hasModelChaining, getModelChainConfig } from '../lib/modelChaining'
+import type { ModelChainConfig, ChainProgress } from '../lib/modelChaining'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -29,6 +31,28 @@ function paramsForSession(session: ChatSession | undefined) {
     systemPrompt: session?.systemPrompt,
     personaId: session?.personaId,
   }
+}
+
+/**
+ * Get the persona (built-in, custom, or marketplace) for a session.
+ */
+function getActivePersona(session: ChatSession | null): { draftModelId?: string; refineModelId?: string } | null {
+  if (!session?.personaId) return null
+  // Check built-in personas
+  const builtin = PROMPT_TEMPLATES.find((p) => p.id === session.personaId)
+  if (builtin) return { draftModelId: builtin.draftModelId, refineModelId: builtin.refineModelId }
+  // Check custom personas
+  try {
+    const raw = localStorage.getItem('monday-custom-personas')
+    if (raw) {
+      const custom: CustomPersona[] = JSON.parse(raw)
+      const found = custom.find((p) => p.id === session.personaId)
+      if (found) return { draftModelId: found.draftModelId, refineModelId: found.refineModelId }
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return null
 }
 
 export function useChat(
@@ -43,6 +67,9 @@ export function useChat(
   const [knowledgeContextCount, setKnowledgeContextCount] = useState<number | undefined>(undefined)
   // v0.27: tool call events for display
   const [toolCallEvents, setToolCallEvents] = useState<ToolCallEvent[]>([])
+  // v0.30: model chaining state
+  const [chainProgress, setChainProgress] = useState<ChainProgress | null>(null)
+  const [draftContent, setDraftContent] = useState<string | null>(null)
   const abortRef = useRef(false)
   const sessionsLoaded = useRef(false)
   const tokenStats = useTokenStats()
@@ -202,8 +229,39 @@ export function useChat(
         // v0.30: build system prompt with summaries injected
         const summarizedPrompt = memory.getSummarizedSystemPrompt(opts.systemPrompt ?? '')
 
+        // v0.30: check if active persona has model chaining configured
+        const activePersona = getActivePersona(latestSession ?? active)
+        const chainConfig = getModelChainConfig(activePersona)
+        let effectiveModelId = modelId
+        let draftForRefine: string | null = null
+
+        if (chainConfig) {
+          // Run draft generation first
+          setChainProgress({ status: 'loading_draft' })
+          try {
+            const { runModelChain } = await import('../lib/modelChaining').then(m => m)
+            const draft = await runModelChain(
+              content,
+              chainConfig,
+              messagesToSend.map(m => ({ role: m.role, content: m.content })),
+              summarizedPrompt,
+              {
+                onProgress: (progress) => setChainProgress(progress),
+                onDraftComplete: (draftText) => setDraftContent(draftText),
+              },
+            )
+            draftForRefine = draft
+            // Switch to refine model — runModelChain already unloaded both engines
+            effectiveModelId = chainConfig.refineModelId
+            setChainProgress({ status: 'done', refinedContent: draft })
+          } catch {
+            // Model chaining failed — fall back to normal generation
+            setChainProgress(null)
+          }
+        }
+
         // Check if the current model supports tools
-        const modelInfo = getModelById(modelId)
+        const modelInfo = getModelById(effectiveModelId)
         const supportsTools = modelInfo?.tags?.includes('tools') ?? false
         const toolDefs = supportsTools ? toolRegistry.getDefinitions() : []
 
@@ -213,10 +271,20 @@ export function useChat(
         let tokenCount = 0
         let finalUsage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
 
+        // v0.30: append draft as context if model chaining produced one
+        let refineMessages = messagesToSend
+        if (draftForRefine) {
+          refineMessages = messagesToSend.map((m, i) =>
+            i === messagesToSend.length - 1
+              ? { ...m, content: m.content + `\n\n[Draft]\n${draftForRefine}\n\n[Refine this draft — improve accuracy, clarity, and completeness.]\n` }
+              : m,
+          )
+        }
+
         if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---
           const events: ToolCallEvent[] = []
-          let conversationMessages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }> = [...messagesToSend]
+          let conversationMessages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }> = [...refineMessages]
           let maxTurns = 5
 
           while (maxTurns > 0 && !abortRef.current) {
@@ -236,6 +304,7 @@ export function useChat(
               images,
               files,
               tools,
+              modelId: effectiveModelId,
             })
 
             // Stream tokens
@@ -302,12 +371,13 @@ export function useChat(
           setToolCallEvents(events)
         } else {
           // --- Standard streaming path ---
-          const { generator } = streamChatWithUsage(messagesToSend, {
+          const { generator } = streamChatWithUsage(refineMessages, {
             ...opts,
             systemPrompt: summarizedPrompt,
             context: sessionContext,
             images,
             files,
+            modelId: effectiveModelId,
           })
           for await (const token of generator) {
             if (abortRef.current) break
@@ -668,6 +738,13 @@ export function useChat(
     [sessions, persistSessions],
   )
 
+  // v0.30: derive chain config from active persona
+  const chainConfig = useMemo(() => {
+    if (!activeSession?.personaId) return null
+    const persona = getActivePersona(activeSession)
+    return getModelChainConfig(persona)
+  }, [activeSession?.personaId, activeSession?.id])
+
   return {
     sessions,
     activeSession,
@@ -699,5 +776,9 @@ export function useChat(
     toolCallEvents,
     // v0.30: multi-turn memory
     memory,
+    // v0.30: model chaining
+    chainConfig,
+    chainProgress,
+    draftContent,
   }
 }

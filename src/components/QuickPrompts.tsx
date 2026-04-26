@@ -7,6 +7,7 @@ import {
   DEFAULT_PERSONA,
 } from '../lib/prompts'
 import { getCustomPersonas, deleteCustomPersona } from '../lib/personas'
+import { MODELS } from '../lib/models'
 
 interface Props {
   activePersonaId: string | null
@@ -207,6 +208,7 @@ export function QuickPrompts({
             setShowCreate(false)
             setEditingPersona(null)
           }}
+          models={MODELS.map((m) => ({ id: m.id, name: m.name, size: m.size }))}
         />
       )}
     </div>
@@ -217,14 +219,20 @@ interface PersonaFormProps {
   persona: CustomPersona | null
   onSave: (persona: CustomPersona) => void
   onClose: () => void
+  /** Available models for chaining config */
+  models?: Array<{ id: string; name: string; size: string }>
 }
 
-function PersonaForm({ persona, onSave, onClose }: PersonaFormProps) {
+function PersonaForm({ persona, onSave, onClose, models }: PersonaFormProps) {
   const [name, setName] = useState(persona?.name ?? '')
   const [description, setDescription] = useState(persona?.description ?? '')
   const [icon, setIcon] = useState(persona?.icon ?? '⭐')
   const [systemPrompt, setSystemPrompt] = useState(persona?.systemPrompt ?? '')
   const [category, setCategory] = useState<'coding' | 'writing' | 'translation' | 'education' | 'general'>('general')
+  // v0.30: model chaining config
+  const [draftModelId, setDraftModelId] = useState(persona?.draftModelId ?? '')
+  const [refineModelId, setRefineModelId] = useState(persona?.refineModelId ?? '')
+  const [showChaining, setShowChaining] = useState(!!(persona?.draftModelId || persona?.refineModelId))
 
   const icons = ['🤖', '💻', '🔍', '🌐', '📚', '✍️', '💡', '⚔️', '📋', '⭐', '🎯', '🧪', '🎨', '📊']
 
@@ -239,6 +247,8 @@ function PersonaForm({ persona, onSave, onClose }: PersonaFormProps) {
       category: 'custom',
       builtin: false,
       createdAt: persona?.createdAt ?? Date.now(),
+      draftModelId: draftModelId || undefined,
+      refineModelId: refineModelId || undefined,
     })
   }
 
@@ -295,6 +305,53 @@ function PersonaForm({ persona, onSave, onClose }: PersonaFormProps) {
             rows={6}
           />
         </div>
+
+        {/* v0.30: Model Chaining Config */}
+        {models && (
+          <div className="persona-form-row">
+            <button
+              className="persona-form-toggle"
+              type="button"
+              onClick={() => setShowChaining(!showChaining)}
+            >
+              {showChaining ? '▾' : '▸'} Model Chaining (draft → refine)
+            </button>
+            {showChaining && (
+              <div className="persona-form-chaining">
+                <div className="persona-form-chaining-row">
+                  <label>Fast Draft Model</label>
+                  <select
+                    className="persona-form-select"
+                    value={draftModelId}
+                    onChange={(e) => setDraftModelId(e.target.value)}
+                  >
+                    <option value="">None</option>
+                    {models.map((m) => (
+                      <option key={m.id} value={m.id}>{m.name} ({m.size})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="persona-form-chaining-row">
+                  <label>Quality Refine Model</label>
+                  <select
+                    className="persona-form-select"
+                    value={refineModelId}
+                    onChange={(e) => setRefineModelId(e.target.value)}
+                  >
+                    <option value="">None</option>
+                    {models.map((m) => (
+                      <option key={m.id} value={m.id}>{m.name} ({m.size})</option>
+                    ))}
+                  </select>
+                </div>
+                <p className="persona-form-chaining-hint">
+                  The fast model generates a draft, then the quality model refines it.
+                  Both models must be downloaded.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="persona-form-actions">
           <button className="persona-form-btn persona-form-cancel" onClick={onClose}>

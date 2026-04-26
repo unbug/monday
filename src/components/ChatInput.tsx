@@ -5,6 +5,7 @@ import { ImagePreview } from './ImagePreview'
 import { FileAttachment } from './FileAttachment'
 import { useVoiceInput } from '../hooks/useVoiceInput'
 import type { ModelInfo } from '../types'
+import type { ModelChainConfig, ChainProgress } from '../lib/modelChaining'
 
 interface ImageItem {
   id: string
@@ -41,6 +42,9 @@ interface Props {
   // v0.30: agent mode
   agentMode?: boolean
   onToggleAgentMode?: () => void
+  // v0.30: model chaining
+  chainConfig?: ModelChainConfig | null
+  chainProgress?: ChainProgress | null
 }
 
 export function ChatInput({
@@ -57,6 +61,8 @@ export function ChatInput({
   knowledgeContextCount,
   agentMode,
   onToggleAgentMode,
+  chainConfig,
+  chainProgress,
 }: Props) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
@@ -460,6 +466,26 @@ export function ChatInput({
       <p className="chat-input-hint">
         Running 100% locally in your browser via WebGPU
       </p>
+      {/* v0.30: model chaining indicator */}
+      {chainConfig && (
+        <div className="model-chain-indicator">
+          <span className="model-chain-icon">⛓️</span>
+          <span className="model-chain-label">
+            {chainProgress?.status === 'drafting'
+              ? 'Drafting…'
+              : chainProgress?.status === 'refining'
+                ? 'Refining…'
+                : chainProgress?.status === 'switching'
+                  ? 'Switching models…'
+                  : chainProgress?.status === 'loading_draft'
+                    ? 'Loading draft model…'
+                    : chainProgress?.status === 'done'
+                      ? 'Done'
+                      : 'Model Chaining'}
+          </span>
+        </div>
+      )}
+
       {isGenerating && tokenStats && (
         <div className="token-stats">
           <span className="token-stats-item">

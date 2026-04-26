@@ -208,11 +208,23 @@ export function streamChatWithUsage(
     context?: string
     images?: Array<{ id: string; data: string; name?: string }>
     files?: Array<{ id: string; name: string; size: number; type: string; content: string }>
+    /** Explicit model ID to load (for model chaining) */
+    modelId?: string
   } = {},
 ): StreamWithUsage {
   const usageRef = { current: null } as { current: StreamUsage | null }
 
   const generator = (async function* () {
+    // v0.30: load explicit model if provided (model chaining)
+    const targetModelId = options.modelId ?? currentModelId
+    if (targetModelId && currentModelId !== targetModelId) {
+      try {
+        await loadModel(targetModelId)
+      } catch {
+        // Model load failed — fall back to whatever is loaded
+      }
+    }
+
     const engine = engineInstance
     if (!engine) {
       throw new Error('No model loaded')
@@ -328,6 +340,8 @@ export function streamChatWithTools(
       }
       type: 'function'
     }>
+    /** Explicit model ID to load (for model chaining) */
+    modelId?: string
   } = {},
 ): {
   generator: AsyncGenerator<string>
@@ -344,6 +358,16 @@ export function streamChatWithTools(
   let _toolCalls: ToolCallInfo[] | null = null
 
   const generator = (async function* () {
+    // v0.30: load explicit model if provided (model chaining)
+    const targetModelId = options.modelId ?? currentModelId
+    if (targetModelId && currentModelId !== targetModelId) {
+      try {
+        await loadModel(targetModelId)
+      } catch {
+        // Model load failed — fall back to whatever is loaded
+      }
+    }
+
     const engine = engineInstance
     if (!engine) {
       throw new Error('No model loaded')

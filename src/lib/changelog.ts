@@ -30,6 +30,22 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.30.2',
+    date: '2026-04-27',
+    title: 'Model Chaining — Draft → Refine Pipeline',
+    description:
+      'Personas can now configure a two-stage generation pipeline: a fast, lightweight model generates a quick draft, then a larger quality model refines it. The Coding Assistant persona ships with this config (Qwen 2.5 0.5B draft → Qwen 3.5 2B refine). Configure chaining per persona in the persona editor. A live indicator shows chaining progress (drafting → switching → refining) in the chat input.',
+    changes: [
+      { type: 'added', text: 'modelChaining.ts — runModelChain() orchestrates draft → refine pipeline with model loading, switching, and cleanup' },
+      { type: 'added', text: 'Model chaining config on personas — draftModelId + refineModelId fields on PromptTemplate, CustomPersona, and MarketplacePersona' },
+      { type: 'added', text: 'PersonaForm — draft/refine model selectors with collapsible UI in the persona editor' },
+      { type: 'added', text: 'Model chaining indicator in ChatInput — live status (drafting / switching / refining) with animated pulse' },
+      { type: 'added', text: 'Engine modelId parameter — streamChatWithUsage and streamChatWithTools accept explicit modelId for model chaining' },
+      { type: 'added', text: 'Coding Assistant persona — configured with Qwen 2.5 0.5B draft + Qwen 3.5 2B refine' },
+      { type: 'changed', text: 'Updated version to v0.30.2' },
+    ],
+  },
+  {
     version: '0.30.0',
     date: '2026-04-26',
     title: 'Multi-Turn Memory — Auto-Compress Long Conversations',

@@ -12,6 +12,10 @@ export interface PromptTemplate {
   category: 'coding' | 'writing' | 'translation' | 'education' | 'general'
   /** If true, shown in the default list */
   builtin: true
+  /** Model ID used for fast draft generation (v0.30) */
+  draftModelId?: string
+  /** Model ID used for final refinement (v0.30) */
+  refineModelId?: string
 }
 
 export interface CustomPersona {
@@ -23,6 +27,10 @@ export interface CustomPersona {
   category: 'custom'
   builtin: false
   createdAt: number
+  /** Model ID used for fast draft generation (v0.30) */
+  draftModelId?: string
+  /** Model ID used for final refinement (v0.30) */
+  refineModelId?: string
 }
 
 export const PROMPT_TEMPLATES: PromptTemplate[] = [
@@ -33,6 +41,8 @@ export const PROMPT_TEMPLATES: PromptTemplate[] = [
     icon: '💻',
     category: 'coding',
     builtin: true,
+    draftModelId: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',
+    refineModelId: 'Qwen3.5-2B-q4f16_1-MLC',
     systemPrompt:
       'You are a helpful coding assistant. You write clean, well-commented code and explain your reasoning. You prefer modern best practices and always consider security, performance, and maintainability. When asked to write code, provide complete, runnable examples with explanations.',
   },

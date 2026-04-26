@@ -11,6 +11,10 @@ export interface MarketplacePersona {
   description: string
   systemPrompt: string
   tags: string[]
+  /** Model ID used for fast draft generation (v0.30) */
+  draftModelId?: string
+  /** Model ID used for final refinement (v0.30) */
+  refineModelId?: string
 }
 
 export const PERSONA_REGISTRY: MarketplacePersona[] = [

@@ -723,6 +723,9 @@ export default function App() {
                       agentMode.start(goal)
                     }
               }
+              // v0.30: model chaining
+              chainConfig={chat.chainConfig}
+              chainProgress={chat.chainProgress}
             />
           </div>
         )}
