@@ -112,9 +112,6 @@ export default function App() {
   const [webdavToast, setWebdavToast] = useState<{ success: boolean; message: string } | null>(null)
   // v0.29.3: keyboard shortcuts overlay
   const [showShortcuts, setShowShortcuts] = useState(false)
-  // v0.30: memory panel
-  const [showMemory, setShowMemory] = useState(false)
-
   const model = useModel()
   const chat = useChat(selectedModelId ?? '', {
     onGenerationComplete: (title, body) => {
@@ -261,7 +258,7 @@ export default function App() {
     onOpenPlugins: () => setView('plugins'),
     onOpenMcpServers: () => setView('mcp-servers'),
     onOpenWebDAV: () => setView('webdav'),
-    onOpenMemory: () => setShowMemory(true),
+    onOpenMemory: () => setView('memory'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -351,7 +348,7 @@ export default function App() {
               closeSidebarOnMobile()
             }}
             onOpenMemory={() => {
-              setShowMemory(true)
+              setView('memory')
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -597,7 +594,7 @@ export default function App() {
               offline={!online}
             />
           </div>
-        ) : showMemory ? (
+        ) : view === 'memory' ? (
           <div className="main-content main-content--memory">
             <MemoryPanel
               summaries={chat.activeSession?.summaries ?? []}
@@ -611,7 +608,7 @@ export default function App() {
               onCancelCompress={chat.memory.cancelSummarization}
               onEditSummary={chat.memory.editSummary}
               onDeleteSummary={chat.memory.deleteSummary}
-              onClose={() => setShowMemory(false)}
+              onClose={() => setView('chat')}
             />
           </div>
         ) : (
