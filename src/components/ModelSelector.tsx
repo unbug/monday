@@ -187,45 +187,7 @@ export function ModelSelector({
             </div>
           )}
 
-          {/* Recommended for you section */}
-          {topModelIds.length > 0 && (
-            <div className="model-recommendation">
-              <div className="model-recommendation-header">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                <span className="model-recommendation-title">Recommended for you</span>
-                {onResetRecommendations && (
-                  <button
-                    className="model-recommendation-reset"
-                    onClick={onResetRecommendations}
-                    title="Reset recommendations"
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="1 4 1 10 7 10" />
-                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              <div className="model-recommendation-list">
-                {topModelIds.map((id) => {
-                  const model = MODELS.find((m) => m.id === id)
-                  if (!model) return null
-                  return (
-                    <button
-                      key={model.id}
-                      className={`model-recommendation-item ${currentModelId === model.id ? 'active' : ''}`}
-                      onClick={() => onSelect(model)}
-                    >
-                      <span className="model-recommendation-name">{model.name}</span>
-                      <span className="model-recommendation-size">{model.size}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+
 
           <div className="model-grid">
             {sortedModels.map((model) => {

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
 import { listModelCaches, deleteModelCache, deleteAllModelCaches, formatBytes } from '../lib/cache'
 import type { ModelInfo } from '../types'
@@ -27,6 +27,11 @@ export function CacheManager({ downloadedModelIds, onCacheChanged }: Props) {
       setLoading(false)
     }
   }, [])
+
+  // Auto-load on mount
+  useEffect(() => {
+    loadCaches()
+  }, [loadCaches])
 
   const handleDelete = useCallback(
     async (modelId: string) => {

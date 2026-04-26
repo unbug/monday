@@ -9340,3 +9340,161 @@
 [data-theme="light"] .settings-notify-blocked {
   --settings-notify-blocked: #dc2626;
 }
+
+/* v0.29.3: Keyboard Shortcuts Overlay */
+.shortcut-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  animation: shortcut-fade-in 0.15s ease-out;
+}
+
+.shortcut-overlay-content {
+  background: var(--shortcut-bg);
+  border: 1px solid var(--shortcut-border);
+  border-radius: 16px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  animation: shortcut-slide-up 0.2s ease-out;
+}
+
+.shortcut-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--shortcut-border);
+}
+
+.shortcut-overlay-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--shortcut-text);
+}
+
+.shortcut-overlay-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--shortcut-text);
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.shortcut-overlay-close:hover {
+  opacity: 1;
+  background: var(--shortcut-hover);
+}
+
+.shortcut-overlay-body {
+  padding: 16px 20px 20px;
+}
+
+.shortcut-group {
+  margin-bottom: 16px;
+}
+
+.shortcut-group:last-child {
+  margin-bottom: 0;
+}
+
+.shortcut-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--shortcut-category);
+  margin: 0 0 8px 0;
+}
+
+.shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+
+.shortcut-item:hover {
+  background: var(--shortcut-hover);
+}
+
+.shortcut-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--shortcut-key);
+  background: var(--shortcut-key-bg);
+  border: 1px solid var(--shortcut-key-border);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.shortcut-label {
+  font-size: 13px;
+  color: var(--shortcut-text);
+}
+
+[data-theme="dark"] .shortcut-overlay-content {
+  --shortcut-bg: #1a1a2e;
+  --shortcut-border: rgba(167, 139, 250, 0.2);
+  --shortcut-text: #e5e5e5;
+  --shortcut-hover: rgba(167, 139, 250, 0.1);
+  --shortcut-category: #a78bfa;
+  --shortcut-key: #c4b5fd;
+  --shortcut-key-bg: rgba(167, 139, 250, 0.1);
+  --shortcut-key-border: rgba(167, 139, 250, 0.25);
+}
+
+[data-theme="light"] .shortcut-overlay-content {
+  --shortcut-bg: #ffffff;
+  --shortcut-border: rgba(109, 40, 217, 0.15);
+  --shortcut-text: #1a1a2e;
+  --shortcut-hover: rgba(109, 40, 217, 0.06);
+  --shortcut-category: #7c3aed;
+  --shortcut-key: #6d28d9;
+  --shortcut-key-bg: rgba(109, 40, 217, 0.06);
+  --shortcut-key-border: rgba(109, 40, 217, 0.2);
+}
+
+@keyframes shortcut-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shortcut-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
