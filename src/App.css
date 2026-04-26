@@ -8956,3 +8956,83 @@
     padding: 12px;
   }
 }
+
+/* ── Conversation forking (v0.28) ─────────────────────────────────────────── */
+
+.message-fork-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 8px;
+  margin-left: 4px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary, #888);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.message-fork-btn:hover {
+  background: var(--surface-2, #2a2a3e);
+  color: var(--text-primary, #e5e5e5);
+}
+
+.message-fork-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.message-action-btn-fork {
+  border-left: 1px solid var(--border, #333);
+  padding-left: 10px;
+  margin-left: 4px;
+  color: var(--text-secondary, #888);
+}
+
+.message-action-btn-fork:hover {
+  color: var(--text-primary, #e5e5e5);
+}
+
+/* Sidebar branch indicator for forked sessions */
+.sidebar-session.forked .sidebar-session-title::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a78bfa' stroke-width='2'%3E%3Ccircle cx='12' cy='18' r='3'/%3E%3Ccircle cx='6' cy='6' r='3'/%3E%3Cpath d='M6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9'/%3E%3Cpath d='M12 15V3'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+
+.sidebar-session.forked:hover .sidebar-session-title::before {
+  opacity: 1;
+}
+
+/* Dark theme fork button */
+[data-theme='dark'] .message-fork-btn:hover {
+  background: rgba(167, 139, 250, 0.1);
+}
+
+/* Light theme fork button */
+[data-theme='light'] .message-fork-btn {
+  color: #666;
+}
+
+[data-theme='light'] .message-fork-btn:hover {
+  background: rgba(167, 139, 250, 0.1);
+  color: #7c3aed;
+}
+
+[data-theme='light'] .message-action-btn-fork {
+  color: #666;
+}
+
+[data-theme='light'] .message-action-btn-fork:hover {
+  color: #7c3aed;
+}

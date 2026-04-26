@@ -1,7 +1,7 @@
 import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 5
+const DB_VERSION = 6
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -29,6 +29,22 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v4→v5: add embeddings object store for v0.26 RAG
       if (!db.objectStoreNames.contains(EMBEDDINGS_STORE)) {
         db.createObjectStore(EMBEDDINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v5→v6: add forkId to existing sessions for v0.28 conversation forking
+      if (oldVersion < 6) {
+        if (db.objectStoreNames.contains(SESSIONS_STORE)) {
+          const tx = db.transaction(SESSIONS_STORE, 'readwrite')
+          const sessionsStore = tx.objectStore(SESSIONS_STORE)
+          const req = sessionsStore.getAll()
+          req.onsuccess = () => {
+            for (const session of req.result as ChatSession[]) {
+              if (session.forkId === undefined) {
+                session.forkId = null
+                sessionsStore.put(session)
+              }
+            }
+          }
+        }
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion < 4) {
@@ -92,6 +108,7 @@ function migrateSession(session: ChatSession): ChatSession {
   }
   if (migrated.personaId === undefined) migrated.personaId = null
   if (migrated.knowledgeBaseId === undefined) migrated.knowledgeBaseId = null
+  if (migrated.forkId === undefined) migrated.forkId = null
   return migrated
 }
 
@@ -105,6 +122,7 @@ export function createSession(modelId: string): ChatSession {
     generationParams: { temperature: 0.7, top_p: 0.9, maxTokens: 1024 },
     personaId: null,
     knowledgeBaseId: null,
+    forkId: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }

@@ -155,12 +155,13 @@ export function Sidebar({
         )}
         {filteredSessions.map((session) => {
           const isActive = session.id === activeSessionId
+          const isFork = session.forkId !== null
           return (
             <div key={session.id} className="sidebar-session-wrapper">
               {isActive ? (
                 <BorderBeam size="sm" theme="auto" colorVariant="ocean" strength={0.5} duration={3}>
                   <div
-                    className={`sidebar-session sidebar-session-active`}
+                    className={`sidebar-session sidebar-session-active${isFork ? ' forked' : ''}`}
                     onClick={() => onSelect(session.id)}
                   >
                     <span className="sidebar-session-title">{session.title}</span>
@@ -182,7 +183,7 @@ export function Sidebar({
               ) : (
                 <BorderBeam size="sm" theme="auto" colorVariant="mono" strength={0.4} active={hoveredSessionId === session.id} duration={2.4}>
                   <div
-                    className="sidebar-session"
+                    className={`sidebar-session${isFork ? ' forked' : ''}`}
                     onClick={() => onSelect(session.id)}
                     onMouseEnter={() => setHoveredSessionId(session.id)}
                     onMouseLeave={() => setHoveredSessionId(null)}

@@ -581,6 +581,40 @@ export function useChat(modelId: string) {
     [activeSessionId, sessions, persistSessions],
   )
 
+  /**
+   * Fork a session at a specific message index.
+   * Creates a new session with all messages up to and including messageIndex.
+   * The new session's forkId points to the original session.
+   */
+  const forkSession = useCallback(
+    (sourceSessionId: string, messageIndex: number) => {
+      const source = sessions.find((s) => s.id === sourceSessionId)
+      if (!source) return
+
+      // Copy messages up to and including messageIndex
+      const forkedMessages = source.messages.slice(0, messageIndex + 1)
+
+      const forkedSession: ChatSession = {
+        id: crypto.randomUUID(),
+        title: `Fork of ${source.title}`,
+        modelId: source.modelId,
+        messages: forkedMessages,
+        systemPrompt: source.systemPrompt,
+        generationParams: { ...source.generationParams },
+        personaId: source.personaId,
+        knowledgeBaseId: source.knowledgeBaseId,
+        forkId: source.id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      }
+
+      const updated = [forkedSession, ...sessions]
+      setActiveSessionId(forkedSession.id)
+      persistSessions(updated)
+    },
+    [sessions, persistSessions],
+  )
+
   return {
     sessions,
     activeSession,
@@ -604,6 +638,8 @@ export function useChat(modelId: string) {
     clearFiles,
     removeFile,
     setKnowledgeBaseId,
+    // v0.28: conversation forking
+    forkSession,
     // v0.26.1: knowledge context
     knowledgeContextCount,
     // v0.27: tool call events for display

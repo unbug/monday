@@ -11,6 +11,7 @@ interface Props {
   onRegenerateMessage?: (messageId: string) => void
   onEditMessage?: (messageId: string, content: string) => void
   onCitationClick?: (citation: CitationEntry) => void
+  onFork?: (messageIndex: number) => void
 }
 
 export function MessageList({
@@ -19,6 +20,7 @@ export function MessageList({
   onRegenerateMessage,
   onEditMessage,
   onCitationClick,
+  onFork,
 }: Props) {
   const endRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -63,7 +65,7 @@ export function MessageList({
 
   return (
     <div className="messages">
-      {messages.map((msg) => (
+      {messages.map((msg, msgIndex) => (
         <div
           key={msg.id}
           className={`message ${msg.role === 'user' ? 'message-user' : 'message-assistant'}`}
@@ -101,6 +103,20 @@ export function MessageList({
                     />
                   </div>
                 )}
+                {onFork && !msg.isStreaming && (
+                  <button
+                    className="message-fork-btn"
+                    onClick={() => onFork(msgIndex)}
+                    title="Fork conversation at this message"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="18" r="3" />
+                      <circle cx="6" cy="6" r="3" />
+                      <path d="M6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9" />
+                      <path d="M12 15V3" />
+                    </svg>
+                  </button>
+                )}
               </div>
             ) : (
               <div className="message-text message-text-user">
@@ -131,6 +147,7 @@ export function MessageList({
                     isStreaming={isStreaming}
                     onEdit={(content) => onEditMessage(msg.id, content)}
                     onRegenerate={() => onRegenerateMessage(msg.id)}
+                    onFork={() => onFork && onFork(msgIndex)}
                   />
                 )}
               </div>

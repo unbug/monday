@@ -6,6 +6,7 @@ interface Props {
   isStreaming: boolean
   onEdit: (content: string) => void
   onRegenerate: () => void
+  onFork?: () => void
 }
 
 export function MessageActions({
@@ -14,6 +15,7 @@ export function MessageActions({
   isStreaming,
   onEdit,
   onRegenerate,
+  onFork,
 }: Props) {
   const [showActions, setShowActions] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -118,6 +120,21 @@ export function MessageActions({
             </svg>
             {isStreaming ? 'Generating...' : 'Regenerate'}
           </button>
+          {onFork && (
+            <button
+              className="message-action-btn message-action-btn-fork"
+              onClick={onFork}
+              title="Fork conversation at this message"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="18" r="3" />
+                <circle cx="6" cy="6" r="3" />
+                <path d="M6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9" />
+                <path d="M12 15V3" />
+              </svg>
+              Fork
+            </button>
+          )}
         </div>
       )}
     </div>

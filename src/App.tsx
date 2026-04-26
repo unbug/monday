@@ -496,6 +496,12 @@ export default function App() {
                 }}
                 onEditMessage={(id, content) => chat.editMessage(id, content)}
                 onCitationClick={handleCitationClick}
+                onFork={(msgIndex) => {
+                  const session = chat.activeSession
+                  if (session && session.messages[msgIndex]) {
+                    chat.forkSession(session.id, msgIndex)
+                  }
+                }}
               />
               <ToolCallInspector
                 events={chat.toolCallEvents ?? []}
