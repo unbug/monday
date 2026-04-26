@@ -443,7 +443,7 @@ tools functionality; offline mode degrades gracefully.
       planner loop on top of v0.27 function calling)
 - [x] **Model chaining** — Pipeline: fast model drafts → large model
       refines, configurable per persona
-- [ ] **Batch generation** — Generate N responses in parallel and pick
+- [x] **Batch generation** — Generate N responses in parallel and pick
       the best
 - [ ] **Usage analytics** — Local-only dashboard: model usage, tokens
       consumed, average tps, sessions per day
