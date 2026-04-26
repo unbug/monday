@@ -19,6 +19,7 @@ import { ToolCallInspector } from './components/ToolCallInspector'
 import { PluginManager } from './components/PluginManager'
 import { McpServerManager } from './components/McpServerManager'
 import { WebDAVSettings } from './components/WebDAVSettings'
+import { MemoryPanel } from './components/MemoryPanel'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
@@ -48,7 +49,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory'
 
 const BASE = '/monday'
 
@@ -66,6 +67,7 @@ const VIEW_PATH: Record<View, string> = {
   plugins: BASE + '/plugins',
   'mcp-servers': BASE + '/mcp-servers',
   webdav: BASE + '/webdav',
+  memory: BASE + '/memory',
 }
 
 function viewFromPath(pathname: string): View {
@@ -110,6 +112,8 @@ export default function App() {
   const [webdavToast, setWebdavToast] = useState<{ success: boolean; message: string } | null>(null)
   // v0.29.3: keyboard shortcuts overlay
   const [showShortcuts, setShowShortcuts] = useState(false)
+  // v0.30: memory panel
+  const [showMemory, setShowMemory] = useState(false)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '', {
@@ -257,6 +261,7 @@ export default function App() {
     onOpenPlugins: () => setView('plugins'),
     onOpenMcpServers: () => setView('mcp-servers'),
     onOpenWebDAV: () => setView('webdav'),
+    onOpenMemory: () => setShowMemory(true),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -343,6 +348,10 @@ export default function App() {
             }}
             onOpenWebDAV={() => {
               setView('webdav')
+              closeSidebarOnMobile()
+            }}
+            onOpenMemory={() => {
+              setShowMemory(true)
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -586,6 +595,23 @@ export default function App() {
               onBack={() => setView('chat')}
               onSyncComplete={(success, message) => setWebdavToast({ success, message })}
               offline={!online}
+            />
+          </div>
+        ) : showMemory ? (
+          <div className="main-content main-content--memory">
+            <MemoryPanel
+              summaries={chat.activeSession?.summaries ?? []}
+              isSummarizing={chat.memory.isSummarizing}
+              summarizeProgress={chat.memory.summarizeProgress}
+              needsSummarization={chat.memory.needsSummarization}
+              estimatedTokens={chat.memory.estimatedTokens}
+              onCompress={async () => {
+                await chat.memory.compressEarlyTurns(chat.messages)
+              }}
+              onCancelCompress={chat.memory.cancelSummarization}
+              onEditSummary={chat.memory.editSummary}
+              onDeleteSummary={chat.memory.deleteSummary}
+              onClose={() => setShowMemory(false)}
             />
           </div>
         ) : (

@@ -66,6 +66,8 @@ export interface ChatSession {
   knowledgeBaseId: string | null
   /** Parent session ID — set when this session was forked from another */
   forkId: string | null
+  /** Auto-generated conversation summaries for context compression (v0.30) */
+  summaries: MemorySummary[]
   createdAt: number
   updatedAt: number
 }
@@ -207,4 +209,20 @@ export interface McpTool {
   description: string
   /** JSON Schema describing the tool's input parameters */
   inputSchema: Record<string, unknown>
+}
+
+// v0.30: Multi-turn memory types
+export interface MemorySummary {
+  /** Unique summary ID */
+  id: string
+  /** Index of the first message included in this summary */
+  startMsgIndex: number
+  /** Index of the last message included in this summary (exclusive) */
+  endMsgIndex: number
+  /** Condensed summary text */
+  summary: string
+  /** When the summary was generated (timestamp) */
+  generatedAt: number
+  /** When the summary was last edited (timestamp) */
+  editedAt: number | null
 }

@@ -10,7 +10,7 @@ import {
   loadKnowledgeBases,
   loadKnowledgeDocs,
 } from '../lib/storage'
-import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent } from '../types'
+import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent, MemorySummary } from '../types'
 import type { PromptTemplate } from '../lib/prompts'
 import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
@@ -18,6 +18,7 @@ import { getModelById } from '../lib/models'
 import { toolRegistry } from '../lib/toolRegistry'
 import { streamChatWithTools, getToolCalls } from '../lib/engine'
 import { useVectorStore } from './useVectorStore'
+import { useMultiTurnMemory } from './useMultiTurnMemory'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -46,13 +47,31 @@ export function useChat(
   const sessionsLoaded = useRef(false)
   const tokenStats = useTokenStats()
 
+  const activeSession = sessions.find((s) => s.id === activeSessionId) ?? null
+  const messages = activeSession?.messages ?? []
+
+  // v0.30: multi-turn memory
+  const memory = useMultiTurnMemory(
+    activeSessionId,
+    messages,
+    {
+      onSummaryGenerated: async (sessionId, summary) => {
+        // Persist the new summary to the session
+        const current = [...sessionsRef.current]
+        const updated = current.map((s) =>
+          s.id === sessionId
+            ? { ...s, summaries: [...s.summaries, summary], updatedAt: Date.now() }
+            : s,
+        )
+        await persistSessions(updated)
+      },
+    },
+  )
+
   // Always keep a ref to the latest sessions so sendUserMessage can read
   // up-to-date session data (e.g. systemPrompt) without relying on the closure.
   const sessionsRef = useRef(sessions)
   sessionsRef.current = sessions
-
-  const activeSession = sessions.find((s) => s.id === activeSessionId) ?? null
-  const messages = activeSession?.messages ?? []
 
   const persistSessions = useCallback(async (updated: ChatSession[]) => {
     setSessions(updated)
@@ -166,6 +185,23 @@ export function useChat(
         const latestSession = sessionsRef.current.find((s) => s.id === sessionId)
         const opts = paramsForSession(latestSession ?? active)
 
+        // v0.30: auto-compress early turns if context is getting full
+        let sessionSummaries: MemorySummary[] = []
+        if (memory.needsSummarization && !memory.isSummarizing) {
+          try {
+            await memory.compressEarlyTurns(active.messages)
+            // Read updated session to get new summaries
+            const refreshed = sessionsRef.current.find((s) => s.id === sessionId)
+            sessionSummaries = refreshed?.summaries ?? []
+          } catch {
+            // Summarization failed — continue without it
+          }
+        }
+        sessionSummaries = latestSession?.summaries ?? []
+
+        // v0.30: build system prompt with summaries injected
+        const summarizedPrompt = memory.getSummarizedSystemPrompt(opts.systemPrompt ?? '')
+
         // Check if the current model supports tools
         const modelInfo = getModelById(modelId)
         const supportsTools = modelInfo?.tags?.includes('tools') ?? false
@@ -195,6 +231,7 @@ export function useChat(
 
             const result = streamChatWithTools(conversationMessages, {
               ...opts,
+              systemPrompt: summarizedPrompt,
               context: sessionContext,
               images,
               files,
@@ -267,6 +304,7 @@ export function useChat(
           // --- Standard streaming path ---
           const { generator } = streamChatWithUsage(messagesToSend, {
             ...opts,
+            systemPrompt: summarizedPrompt,
             context: sessionContext,
             images,
             files,
@@ -618,6 +656,7 @@ export function useChat(
         personaId: source.personaId,
         knowledgeBaseId: source.knowledgeBaseId,
         forkId: source.id,
+        summaries: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
       }
@@ -658,5 +697,7 @@ export function useChat(
     knowledgeContextCount,
     // v0.27: tool call events for display
     toolCallEvents,
+    // v0.30: multi-turn memory
+    memory,
   }
 }

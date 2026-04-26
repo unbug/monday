@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.30.0',
+    date: '2026-04-26',
+    title: 'Multi-Turn Memory — Auto-Compress Long Conversations',
+    description:
+      'When a conversation grows too long, Monday automatically compresses early turns into summaries that are injected as system prompt context — freeing up token space for the active discussion. A Memory panel lets you view, edit, and manage these summaries. The system runs entirely in-browser using the loaded model for summarization, keeping everything 100% private.',
+    changes: [
+      { type: 'added', text: 'summarizer.ts — in-browser conversation summarization using the loaded Web-LLM model (both streaming and non-streaming paths)' },
+      { type: 'added', text: 'useMultiTurnMemory hook — detects context overflow, triggers auto-compression, manages summary lifecycle (edit/delete), builds summarized system prompt' },
+      { type: 'added', text: 'MemoryPanel component — view/edit summaries, compress button with progress indicator, token count display, attention badge when context is full' },
+      { type: 'added', text: 'Auto-compression on send — when context exceeds ~3000 estimated tokens or 10+ messages, early turns are compressed before the next generation' },
+      { type: 'added', text: 'Summary injection — compressed summaries are prepended to the session system prompt during generation' },
+      { type: 'added', text: 'Memory nav button in Sidebar — brain icon for quick access to the Memory panel' },
+      { type: 'added', text: 'Memory command in Command Palette (⌘K) — 🧠 Memory' },
+      { type: 'added', text: 'DB schema v6 → v7 — adds summaries array to existing sessions with forward migration' },
+      { type: 'changed', text: 'Updated version to v0.30.0' },
+    ],
+  },
+  {
     version: '0.29.2',
     date: '2026-04-26',
     title: 'Background Notifications — Generation Complete While Tab Is Hidden',

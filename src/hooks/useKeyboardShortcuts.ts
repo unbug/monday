@@ -25,6 +25,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
   onOpenWebDAV?: () => void
+  onOpenMemory?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -199,6 +200,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'WebDAV Sync',
               icon: '🔄',
               action: options.onOpenWebDAV,
+            },
+          ]
+        : []),
+      ...(options.onOpenMemory
+        ? [
+            {
+              id: 'open-memory',
+              label: 'Memory',
+              icon: '🧠',
+              action: options.onOpenMemory,
             },
           ]
         : []),

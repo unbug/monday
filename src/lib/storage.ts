@@ -1,7 +1,7 @@
 import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 6
+const DB_VERSION = 7
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -42,6 +42,19 @@ function openDB(): Promise<IDBDatabase> {
           for (const session of req.result as ChatSession[]) {
             if (session.forkId === undefined) {
               session.forkId = null
+              sessionsStore.put(session)
+            }
+          }
+        }
+      }
+      // Migration v6→v7: add summaries to existing sessions for v0.30 multi-turn memory
+      if (oldVersion > 0 && oldVersion < 7) {
+        const sessionsStore = upgradeTx.objectStore(SESSIONS_STORE)
+        const req = sessionsStore.getAll()
+        req.onsuccess = () => {
+          for (const session of req.result as ChatSession[]) {
+            if (session.summaries === undefined) {
+              session.summaries = []
               sessionsStore.put(session)
             }
           }
@@ -117,6 +130,7 @@ function migrateSession(session: ChatSession): ChatSession {
   if (migrated.personaId === undefined) migrated.personaId = null
   if (migrated.knowledgeBaseId === undefined) migrated.knowledgeBaseId = null
   if (migrated.forkId === undefined) migrated.forkId = null
+  if (migrated.summaries === undefined) migrated.summaries = []
   return migrated
 }
 
@@ -131,6 +145,7 @@ export function createSession(modelId: string): ChatSession {
     personaId: null,
     knowledgeBaseId: null,
     forkId: null,
+    summaries: [],
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
