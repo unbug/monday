@@ -27,15 +27,19 @@ export const CHANGELOG: ChangelogEntry[] = [
   {
     version: '0.29.3',
     date: '2026-04-26',
-    title: 'Desktop App — Tauri Wrapper for macOS / Windows / Linux',
+    title: 'Desktop App + Keyboard Shortcuts Overlay',
     description:
-      'Monday now ships as a native desktop app via Tauri. Install it on macOS, Windows, or Linux for a windowed experience with full chat, RAG, and tools functionality. The app uses the same IndexedDB persistence as the browser version — your data stays local. Offline mode degrades gracefully with the prebuilt app shell.',
+      'Monday now ships as a native desktop app via Tauri (macOS / Windows / Linux) and includes a keyboard shortcuts overlay — press `?` to see every shortcut at a glance. The overlay is also accessible from the sidebar nav (⌨️ icon). All shortcuts are documented in the README.',
     changes: [
       { type: 'added', text: 'Tauri project scaffold — tauri/ directory with v2 config, Cargo.toml, bundle config, and capabilities' },
       { type: 'added', text: 'macOS / Windows / Linux targets — configured via tauri.conf.json bundle settings' },
       { type: 'added', text: 'Window state persistence — tauri-plugin-window-state saves/restores window position and size' },
       { type: 'added', text: 'WebView CSP — allows local assets, external model downloads, and WebSocket connections' },
       { type: 'added', text: 'Desktop README — build instructions for all platforms' },
+      { type: 'added', text: 'KeyboardShortcutsOverlay component — modal listing all shortcuts grouped by category (Navigation, Views, Tools, Data)' },
+      { type: 'added', text: '`?` key handler — opens the shortcuts overlay; Escape closes it' },
+      { type: 'added', text: 'Sidebar nav button (⌨️ icon) for quick access to shortcuts overlay' },
+      { type: 'added', text: 'Shortcut documentation in README — table of all shortcuts with macOS and Windows/Linux notes' },
       { type: 'changed', text: 'Updated version to v0.29.3' },
     ],
   },

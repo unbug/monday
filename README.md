@@ -346,7 +346,7 @@ Released: 2026-04-26
       completes while the tab is hidden (uses existing
       `useNotifications`)
 - [x] **Desktop app** — Tauri wrapper that targets macOS / Windows / Linux
-- [ ] **Keyboard shortcuts overlay** — `?` opens a list of every shortcut
+- [x] **Keyboard shortcuts overlay** — `?` opens a list of every shortcut
       (Cmd+K / Cmd+N / Cmd+⇧S / Cmd+E …); shortcuts also documented in
       the README
 - [ ] **Multi-window** — Open a conversation in a separate browser
@@ -584,6 +584,31 @@ for future work — the `### Versioned task breakdown` above is.
 - [ ] **Provider switcher** — Toggle between WebGPU local inference and external API providers in-session
 - [ ] **SearXNG integration** — Web search via a self-hosted SearXNG instance URL
 - [ ] **Web search tool** — Inject search results as context before sending to the model
+
+---
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `⌘K` | Toggle Command Palette |
+| `⌘N` | New Chat |
+| `⌘⇧S` | Stop Generation |
+| `⌘1` | Models |
+| `⌘2` | Model Cache |
+| `⌘3` | Usage Statistics |
+| `⌘4` | Persona Marketplace |
+| `⌘5` | Knowledge |
+| `⌘6` | Model Comparison |
+| `⌘7` | Model Benchmark |
+| `⌘8` | Custom Model Import |
+| `⌘9` | Plugins |
+| `⌘0` | MCP Servers |
+| `⌘⇧E` | Export All Data |
+| `⌘⇧I` | Import Data |
+| `?` | Keyboard Shortcuts Overlay |
+
+On Windows/Linux, replace `⌘` with `Ctrl`.
 
 ---
 

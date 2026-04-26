@@ -25,6 +25,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
   onOpenWebDAV?: () => void
+  onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
   onExportData?: () => Promise<void>

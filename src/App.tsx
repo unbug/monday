@@ -34,6 +34,7 @@ import { useOfflineStatus } from './hooks/useOfflineStatus'
 import { useNotifications } from './hooks/useNotifications'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
 import { OfflineIndicator } from './components/OfflineIndicator'
+import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay'
 import { UpdateBanner } from './components/UpdateBanner'
 import type { ModelInfo, CitationEntry } from './types'
 import type { ImportResult } from './lib/dataImport'
@@ -61,6 +62,8 @@ export default function App() {
   const [importConfirm, setImportConfirm] = useState<{ file: File; stats: ImportResult } | null>(null)
   // v0.28.2: WebDAV sync toast
   const [webdavToast, setWebdavToast] = useState<{ success: boolean; message: string } | null>(null)
+  // v0.29.3: keyboard shortcuts overlay
+  const [showShortcuts, setShowShortcuts] = useState(false)
 
   const model = useModel()
   const chat = useChat(selectedModelId ?? '', {
@@ -104,6 +107,18 @@ export default function App() {
   useEffect(() => {
     chat.initSessions()
   }, [chat.initSessions])
+
+  // v0.29.3: `?` to open keyboard shortcuts overlay
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        e.preventDefault()
+        setShowShortcuts((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
 
   const handleSelectModel = useCallback(
     async (info: ModelInfo) => {
@@ -184,12 +199,14 @@ export default function App() {
     onResetRecentModels: () => resetRecent(),
     onOpenPersonaMarketplace: () => setView('persona-marketplace'),
     onOpenKnowledge: () => setView('knowledge'),
+    onOpenPlugins: () => setView('plugins'),
     onOpenMcpServers: () => setView('mcp-servers'),
     onOpenWebDAV: () => setView('webdav'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
     onImportData: handleImportData,
+    onOpenShortcuts: () => setShowShortcuts(true),
   })
 
   const isReady = model.status === 'ready'
@@ -273,6 +290,10 @@ export default function App() {
               setView('webdav')
               closeSidebarOnMobile()
             }}
+            onOpenShortcuts={() => {
+              setShowShortcuts(true)
+              closeSidebarOnMobile()
+            }}
             onShare={() => {
               handleShare()
               closeSidebarOnMobile()
@@ -323,6 +344,11 @@ export default function App() {
       {/* v0.29: update prompt banner */}
       {updateVisible && (
         <UpdateBanner onReload={onActivate} onDismiss={handleUpdateDismiss} />
+      )}
+
+      {/* v0.29.3: keyboard shortcuts overlay */}
+      {showShortcuts && (
+        <KeyboardShortcutsOverlay onClose={() => setShowShortcuts(false)} />
       )}
 
       <main className="main">
