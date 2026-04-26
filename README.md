@@ -439,7 +439,7 @@ tools functionality; offline mode degrades gracefully.
 
 - [x] **Multi-turn memory** — Auto-summarize early turns when the context
       window is exceeded; summaries are visible and editable
-- [ ] **Agent mode** — Multi-step task execution with tool use (an outer
+- [x] **Agent mode** — Multi-step task execution with tool use (an outer
       planner loop on top of v0.27 function calling)
 - [ ] **Model chaining** — Pipeline: fast model drafts → large model
       refines, configurable per persona
