@@ -9914,3 +9914,411 @@
     font-size: 12px;
   }
 }
+
+/* ============================================
+   v0.30: Agent Panel
+   ============================================ */
+
+.agent-view {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.agent-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--agent-panel-bg, var(--surface-primary));
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--agent-panel-border, var(--border-color));
+}
+
+.agent-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--agent-panel-header-bg, var(--surface-secondary));
+  border-bottom: 1px solid var(--border-color);
+}
+
+.agent-panel-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.agent-panel-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.agent-panel-status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--agent-status-bg, rgba(124, 58, 237, 0.1));
+  color: var(--agent-status-text, var(--text-secondary));
+}
+
+.agent-panel-status-running {
+  --agent-status-bg: rgba(34, 197, 94, 0.1);
+  --agent-status-text: #16a34a;
+  animation: agent-pulse 2s ease-in-out infinite;
+}
+
+.agent-panel-status-done {
+  --agent-status-bg: rgba(34, 197, 94, 0.1);
+  --agent-status-text: #16a34a;
+}
+
+.agent-panel-status-error {
+  --agent-status-bg: rgba(239, 68, 68, 0.1);
+  --agent-status-text: #dc2626;
+}
+
+.agent-panel-status-cancelled {
+  --agent-status-bg: rgba(156, 163, 175, 0.1);
+  --agent-status-text: #6b7280;
+}
+
+@keyframes agent-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.agent-panel-close {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.agent-panel-close:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.agent-panel-goal {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.agent-panel-goal-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.agent-panel-goal-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.agent-panel-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.agent-panel-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--progress-bg, var(--surface-tertiary));
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.agent-panel-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.agent-panel-progress-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.agent-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.agent-panel-btn {
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  transition: all 0.15s;
+}
+
+.agent-panel-btn:hover {
+  background: var(--surface-hover);
+}
+
+.agent-panel-btn-stop {
+  border-color: var(--agent-stop-border, #ef4444);
+  color: var(--agent-stop-text, #ef4444);
+  background: var(--agent-stop-bg, rgba(239, 68, 68, 0.05));
+}
+
+.agent-panel-btn-stop:hover {
+  background: var(--agent-stop-hover-bg, rgba(239, 68, 68, 0.1));
+}
+
+.agent-panel-complete {
+  font-size: 13px;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.agent-panel-error {
+  font-size: 13px;
+  color: #dc2626;
+}
+
+.agent-panel-steps {
+  max-height: 400px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.agent-panel-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.agent-panel-step {
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.agent-panel-step:last-child {
+  border-bottom: none;
+}
+
+.agent-panel-step:hover {
+  background: var(--surface-hover);
+}
+
+.agent-panel-step-active {
+  background: var(--agent-step-active-bg, rgba(124, 58, 237, 0.03));
+}
+
+.agent-panel-step-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+}
+
+.agent-panel-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-panel-step-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.agent-panel-step-status {
+  font-size: 14px;
+}
+
+.agent-panel-step-time {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-left: auto;
+  font-family: var(--font-mono);
+}
+
+.agent-panel-step-chevron {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.agent-panel-step-body {
+  padding: 0 18px 12px;
+}
+
+.agent-panel-step-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.agent-panel-step-thought p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.agent-panel-step-tool {
+  margin-bottom: 8px;
+}
+
+.agent-panel-step-tool-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: 4px;
+}
+
+.agent-panel-step-tool-args {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.agent-panel-step-result {
+  margin-bottom: 8px;
+}
+
+.agent-panel-step-result-text {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.agent-panel-step-error {
+  margin-top: 8px;
+}
+
+.agent-panel-step-error span:last-child {
+  font-size: 13px;
+  color: #dc2626;
+  background: var(--agent-error-bg, rgba(239, 68, 68, 0.05));
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: block;
+  border: 1px solid var(--agent-error-border, rgba(239, 68, 68, 0.2));
+}
+
+.agent-panel-result {
+  padding: 14px 18px;
+}
+
+.agent-panel-result-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.agent-panel-result-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Dark theme */
+[data-theme="dark"] .agent-panel {
+  --agent-panel-bg: var(--surface-primary);
+  --agent-panel-border: rgba(124, 58, 237, 0.15);
+  --agent-panel-header-bg: var(--surface-secondary);
+  --agent-status-bg: rgba(124, 58, 237, 0.15);
+  --agent-status-text: #a78bfa;
+  --agent-stop-border: rgba(239, 68, 68, 0.4);
+  --agent-stop-text: #f87171;
+  --agent-stop-bg: rgba(239, 68, 68, 0.08);
+  --agent-stop-hover-bg: rgba(239, 68, 68, 0.15);
+  --agent-step-active-bg: rgba(124, 58, 237, 0.05);
+  --agent-error-bg: rgba(239, 68, 68, 0.08);
+  --agent-error-border: rgba(239, 68, 68, 0.3);
+  --progress-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .agent-view {
+    padding: 8px;
+  }
+
+  .agent-panel {
+    border-radius: 12px;
+  }
+
+  .agent-panel-header {
+    padding: 12px 14px;
+  }
+
+  .agent-panel-goal,
+  .agent-panel-progress,
+  .agent-panel-actions,
+  .agent-panel-steps,
+  .agent-panel-result {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .agent-panel-step-header {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .agent-panel-step-body {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}

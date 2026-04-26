@@ -26,6 +26,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenMcpServers?: () => void
   onOpenWebDAV?: () => void
   onOpenMemory?: () => void
+  onOpenAgent?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -210,6 +211,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Memory',
               icon: '🧠',
               action: options.onOpenMemory,
+            },
+          ]
+        : []),
+      ...(options.onOpenAgent
+        ? [
+            {
+              id: 'open-agent',
+              label: 'Agent Mode',
+              icon: '🤖',
+              action: options.onOpenAgent,
             },
           ]
         : []),

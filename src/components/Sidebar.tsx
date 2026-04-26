@@ -46,6 +46,7 @@ interface Props {
   onOpenMcpServers?: () => void
   onOpenWebDAV?: () => void
   onOpenMemory?: () => void
+  onOpenAgent?: () => void
   onOpenShortcuts?: () => void
   onOpenInNewWindow?: (sessionId: string) => void
   onShare?: () => void
@@ -75,6 +76,7 @@ export function Sidebar({
   onOpenMcpServers,
   onOpenWebDAV,
   onOpenMemory,
+  onOpenAgent,
   onOpenShortcuts,
   onOpenInNewWindow,
   onShare,
@@ -400,6 +402,21 @@ export function Sidebar({
               <path d="M12 6v6l4 2" />
             </svg>
             <span className="sidebar-nav-label">Memory</span>
+          </button>
+        )}
+        {onOpenAgent && (
+          <button
+            className="sidebar-nav-btn"
+            onClick={onOpenAgent}
+            title="Agent Mode"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.9 2-2 2h-4a2 2 0 0 1-2-2 4 4 0 0 1 4-4z" />
+              <path d="M8 8v2a4 4 0 0 0 8 0V8" />
+              <path d="M12 14a3 3 0 0 0-3 3v1h6v-1a3 3 0 0 0-3-3z" />
+              <line x1="4" y1="20" x2="20" y2="20" />
+            </svg>
+            <span className="sidebar-nav-label">Agent</span>
           </button>
         )}
         {onOpenShortcuts && (

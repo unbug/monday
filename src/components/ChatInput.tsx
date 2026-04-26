@@ -22,6 +22,7 @@ interface FileItem {
 
 interface Props {
   onSend: (content: string, images?: ImageItem[], files?: FileItem[]) => void
+  onAgentSend?: (goal: string) => void
   onStop: () => void
   onApplyPersona: (personaId: string) => void
   isGenerating: boolean
@@ -37,10 +38,14 @@ interface Props {
   // v0.26.1: knowledge base context
   knowledgeBaseName?: string | null
   knowledgeContextCount?: number
+  // v0.30: agent mode
+  agentMode?: boolean
+  onToggleAgentMode?: () => void
 }
 
 export function ChatInput({
   onSend,
+  onAgentSend,
   onStop,
   onApplyPersona,
   isGenerating,
@@ -50,6 +55,8 @@ export function ChatInput({
   isStreaming,
   knowledgeBaseName,
   knowledgeContextCount,
+  agentMode,
+  onToggleAgentMode,
 }: Props) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
@@ -230,12 +237,16 @@ export function ChatInput({
   const handleSend = useCallback(() => {
     if ((!input.trim() && images.length === 0 && files.length === 0) || disabled) return
 
-    onSend(input.trim(), images.length > 0 ? images : undefined, files.length > 0 ? files : undefined)
+    if (onAgentSend && agentMode) {
+      onAgentSend(input.trim())
+    } else {
+      onSend(input.trim(), images.length > 0 ? images : undefined, files.length > 0 ? files : undefined)
+    }
     setInput('')
     setImages([])
     setFiles([])
     setShowSlashHint(false)
-  }, [input, images, files, disabled, onSend])
+  }, [input, images, files, disabled, onSend, onAgentSend, agentMode])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -339,7 +350,9 @@ export function ChatInput({
                 ? 'Select and load a model to start chatting...'
                 : images.length > 0
                   ? 'Add a message or remove images above...'
-                  : 'Type a message... (Enter to send, Shift+Enter for new line)'
+                  : agentMode
+                    ? 'Describe a task for the agent to accomplish...'
+                    : 'Type a message... (Enter to send, Shift+Enter for new line)'
             }
             disabled={disabled}
             rows={1}
@@ -411,17 +424,36 @@ export function ChatInput({
               Stop
             </button>
           ) : (
-            <button
-              className="chat-btn chat-btn-send"
-              onClick={handleSend}
-              disabled={disabled || (!input.trim() && images.length === 0 && files.length === 0)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
-              Send
-            </button>
+            <>
+              {onAgentSend && (
+                <button
+                  className={`chat-btn chat-btn-agent ${agentMode ? 'agent-active' : ''}`}
+                  onClick={onToggleAgentMode}
+                  disabled={disabled}
+                  title={agentMode ? 'Agent mode on' : 'Enable agent mode'}
+                  type="button"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.9 2-2 2h-4a2 2 0 0 1-2-2 4 4 0 0 1 4-4z" />
+                    <path d="M8 8v2a4 4 0 0 0 8 0V8" />
+                    <path d="M12 14a3 3 0 0 0-3 3v1h6v-1a3 3 0 0 0-3-3z" />
+                    <line x1="4" y1="20" x2="20" y2="20" />
+                  </svg>
+                  Agent
+                </button>
+              )}
+              <button
+                className="chat-btn chat-btn-send"
+                onClick={handleSend}
+                disabled={disabled || (!input.trim() && images.length === 0 && files.length === 0)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+                Send
+              </button>
+            </>
           )}
         </div>
       </BorderBeam>

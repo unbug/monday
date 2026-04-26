@@ -11,6 +11,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.30.1',
+    date: '2026-04-27',
+    title: 'Agent Mode — Multi-Step Task Execution',
+    description:
+      'Monday now includes an autonomous agent mode. Enable it from the ChatInput or the sidebar nav (🤖 Agent), enter a task goal, and the model executes tools in a loop to accomplish it — search, summarize, save, repeat. A dedicated Agent panel shows each step, tool call, and result in real time. The final answer is appended to the current session as an assistant message. Powered by the existing v0.27 function-calling layer with a task-driven outer planner loop.',
+    changes: [
+      { type: 'added', text: 'Agent engine (agent.ts) — multi-step execution loop with configurable max steps, tool call execution, and result tracking' },
+      { type: 'added', text: 'AgentTask + AgentStep types — structured task lifecycle with goal, status, steps, result, and error fields' },
+      { type: 'added', text: 'useAgentMode hook — manages agent lifecycle (start/stop/clear) with step callbacks and result handling' },
+      { type: 'added', text: 'AgentPanel component — task goal display, progress bar, step-by-step execution log with expandable details (thoughts, tool calls, results), final answer display' },
+      { type: 'added', text: 'Agent mode toggle in ChatInput — 🤖 Agent button switches input placeholder and send behavior' },
+      { type: 'added', text: 'Agent nav button in Sidebar — quick access to the Agent panel' },
+      { type: 'added', text: 'Agent command in Command Palette (⌘K) — 🤖 Agent Mode' },
+      { type: 'added', text: 'Agent result appended to session — final answer saved as assistant message with 🤖 Agent Result prefix' },
+      { type: 'added', text: 'Agent CSS — full dark/light theme support with progress animation and step indicators' },
+      { type: 'changed', text: 'Updated version to v0.30.1' },
+    ],
+  },
+  {
     version: '0.30.0',
     date: '2026-04-26',
     title: 'Multi-Turn Memory — Auto-Compress Long Conversations',

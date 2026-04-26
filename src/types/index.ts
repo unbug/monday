@@ -226,3 +226,46 @@ export interface MemorySummary {
   /** When the summary was last edited (timestamp) */
   editedAt: number | null
 }
+
+// v0.30: Agent mode types
+export interface AgentStep {
+  /** Unique step ID */
+  id: string
+  /** Step number (1-based) */
+  step: number
+  /** What the agent is doing */
+  status: 'planning' | 'executing' | 'tool_call' | 'tool_result' | 'done' | 'error'
+  /** Tool name if this is a tool call step */
+  toolName?: string
+  /** Tool arguments if this is a tool call step */
+  toolArgs?: Record<string, unknown>
+  /** Tool result if this is a tool result step */
+  toolResult?: string
+  /** Error message if this step errored */
+  error?: string
+  /** Agent's internal thought for this step */
+  thought?: string
+  /** When this step started (timestamp) */
+  startedAt: number
+  /** When this step ended (timestamp) */
+  finishedAt: number | null
+}
+
+export interface AgentTask {
+  /** Unique task ID */
+  id: string
+  /** The user's task goal */
+  goal: string
+  /** Current execution status */
+  status: 'idle' | 'running' | 'done' | 'error' | 'cancelled'
+  /** Steps taken by the agent */
+  steps: AgentStep[]
+  /** Final answer/result */
+  result: string
+  /** Error message if failed */
+  error: string | null
+  /** When the task was created (timestamp) */
+  createdAt: number
+  /** When the task completed (timestamp) */
+  finishedAt: number | null
+}

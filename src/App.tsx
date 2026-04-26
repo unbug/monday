@@ -19,6 +19,8 @@ import { ToolCallInspector } from './components/ToolCallInspector'
 import { PluginManager } from './components/PluginManager'
 import { McpServerManager } from './components/McpServerManager'
 import { WebDAVSettings } from './components/WebDAVSettings'
+import { AgentPanel } from './components/AgentPanel'
+import { useAgentMode } from './hooks/useAgentMode'
 import { MemoryPanel } from './components/MemoryPanel'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
@@ -49,7 +51,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { getRecentModels, resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent'
 
 const BASE = '/monday'
 
@@ -68,6 +70,7 @@ const VIEW_PATH: Record<View, string> = {
   'mcp-servers': BASE + '/mcp-servers',
   webdav: BASE + '/webdav',
   memory: BASE + '/memory',
+  agent: BASE + '/agent',
 }
 
 function viewFromPath(pathname: string): View {
@@ -112,6 +115,8 @@ export default function App() {
   const [webdavToast, setWebdavToast] = useState<{ success: boolean; message: string } | null>(null)
   // v0.29.3: keyboard shortcuts overlay
   const [showShortcuts, setShowShortcuts] = useState(false)
+  // v0.30: agent mode panel
+  const [showAgent, setShowAgent] = useState(false)
   const model = useModel()
   const chat = useChat(selectedModelId ?? '', {
     onGenerationComplete: (title, body) => {
@@ -152,6 +157,28 @@ export default function App() {
   const activePersonaId = chat.activeSession?.personaId ?? null
   // v0.29.3: multi-window support
   const multiWindow = useMultiWindow()
+  // v0.30: agent mode
+  const agentMode = useAgentMode({
+    onAgentResult: (result) => {
+      // Append agent result as assistant message in current session
+      const sid = chat.activeSession?.id
+      if (sid && result.trim()) {
+        const agentMsg = {
+          id: crypto.randomUUID(),
+          role: 'assistant' as const,
+          content: `🤖 **Agent Result**\n\n${result.trim()}`,
+          isStreaming: false,
+          timestamp: Date.now(),
+        }
+        const updatedSessions = chat.sessions.map((s) =>
+          s.id === sid
+            ? { ...s, messages: [...s.messages, agentMsg], updatedAt: Date.now() }
+            : s,
+        )
+        chat.updateSessions(updatedSessions)
+      }
+    },
+  })
 
   useEffect(() => {
     chat.initSessions()
@@ -271,6 +298,7 @@ export default function App() {
     onOpenMcpServers: () => setView('mcp-servers'),
     onOpenWebDAV: () => setView('webdav'),
     onOpenMemory: () => setView('memory'),
+    onOpenAgent: () => setShowAgent(true),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -361,6 +389,10 @@ export default function App() {
             }}
             onOpenMemory={() => {
               setView('memory')
+              closeSidebarOnMobile()
+            }}
+            onOpenAgent={() => {
+              setShowAgent(true)
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -623,6 +655,14 @@ export default function App() {
               onClose={() => setView('chat')}
             />
           </div>
+        ) : showAgent && agentMode.state.task ? (
+          <div className="agent-view">
+            <AgentPanel
+              task={agentMode.state.task}
+              onStop={agentMode.stop}
+              onClose={() => setShowAgent(false)}
+            />
+          </div>
         ) : (
           <div className="chat-layout">
             <div className="chat-messages">
@@ -669,6 +709,20 @@ export default function App() {
                 ? knowledgeBases.getBaseById(knowledgeBases.activeBaseId)?.name ?? null
                 : null}
               knowledgeContextCount={chat.knowledgeContextCount}
+              // v0.30: agent mode
+              agentMode={agentMode.state.isRunning}
+              onToggleAgentMode={() => {
+                if (!agentMode.state.isRunning) {
+                  setShowAgent(true)
+                }
+              }}
+              onAgentSend={
+                agentMode.state.isRunning
+                  ? undefined
+                  : (goal: string) => {
+                      agentMode.start(goal)
+                    }
+              }
             />
           </div>
         )}
