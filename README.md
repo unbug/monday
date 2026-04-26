@@ -441,7 +441,7 @@ tools functionality; offline mode degrades gracefully.
       window is exceeded; summaries are visible and editable
 - [x] **Agent mode** — Multi-step task execution with tool use (an outer
       planner loop on top of v0.27 function calling)
-- [ ] **Model chaining** — Pipeline: fast model drafts → large model
+- [x] **Model chaining** — Pipeline: fast model drafts → large model
       refines, configurable per persona
 - [ ] **Batch generation** — Generate N responses in parallel and pick
       the best
