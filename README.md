@@ -310,6 +310,9 @@ Roadmap informed by deep analysis of these leading AI chat platforms:
 | [LobeHub](https://github.com/lobehub/lobe-chat) | 75k | Agent-as-unit-of-work platform: 10k+ plugins, agent groups, personal memory, TTS/STT | Agent system, plugin ecosystem, memory architecture |
 | [Jan](https://github.com/janhq/jan) | 42k | Offline desktop ChatGPT: local LLMs via llama.cpp, custom assistants, OpenAI-compatible API | Offline-first philosophy, model management, MCP integration |
 | [GPT-Runner](https://github.com/nicepkg/gpt-runner) | 379 | AI presets for code: conversations with code files, IDE integration, version-controlled prompts | Preset system, project-scoped AI configuration |
+| [Claude Code](https://github.com/anthropics/claude-code) | 118k | Terminal coding agent: deep codebase understanding, multi-step agentic task execution, bash/git/test tools, CLAUDE.md project config, plugins directory, `@claude` GitHub tagging, `computer_use` tool (screenshot→observe→action loop in sandboxed VM) | **Agent mode** (v0.30), **plugin system** (v0.27), **task brief** (CLAUDE.md equivalent), **computer-use loop** (v1.3) |
+| [browser-use](https://github.com/browser-use/browser-use) | 90.4k | LLM-controlled browser automation: Playwright-backed agent, click/type/scroll/navigate/screenshot/extract-text primitives, skills directory, AGENTS.md + CLAUDE.md conventions, CLI, cloud hosting, 100-task real-world benchmark | **Browser-use agent** (v1.3): action primitives, sandboxed iframe execution loop, DOM-state context, screenshot observation |
+| [Playwright MCP](https://github.com/microsoft/playwright-mcp) | 31.4k | MCP server for browser automation: navigate/click/fill/screenshot/DOM tools via accessibility tree (no vision model needed); vision + coordinate-based modes opt-in; used by VS Code, Cursor, Claude Desktop, Codex, Copilot | **Playwright MCP bridge** (v1.3): connect Monday's v0.27 MCP client to `@playwright/mcp` for full external-browser control |
 
 ---
 
@@ -580,6 +583,67 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 **Release gate**: after 3 sessions with a persona, the memory panel shows ≥5
 automatically captured preferences; a Skill Workshop proposal is generated, approved,
 and the next session reflects the updated skill instructions.
+
+#### v1.3 — Browser-Use & Computer-Use (In-Browser Agent Loop)
+
+Inspired by [Claude Code's `computer_use` tool](https://github.com/anthropics/claude-code)
+(screenshot → observe → action loop in a sandboxed VM), [browser-use](https://github.com/browser-use/browser-use)
+(90.4k ⭐ — LLM-controlled Playwright agent with skills directory and action primitives),
+[Playwright MCP](https://github.com/microsoft/playwright-mcp) (31.4k ⭐ — accessibility-tree
+MCP server used by VS Code / Cursor / Codex), and
+[Codex CLI's](https://github.com/openai/codex) sandboxed bash/file/edit execution model.
+Extends the v0.30 agent loop and v0.27 MCP client into a full browser-use and
+in-browser computer-use system.
+
+**Three execution tiers** of increasing capability:
+
+- **Tier 1 — Sandboxed iframe agent**: model generates HTML/CSS/JS → renders in a
+  `sandbox="allow-scripts"` iframe → `html2canvas` screenshot → model observes →
+  next action. 100% in-browser, zero external dependencies.
+- **Tier 2 — DOM-state computer-use**: serialize the active iframe's accessibility
+  tree to compact JSON and inject as a context block; model issues action commands
+  (click, type, scroll, navigate); dispatcher translates to DOM events. Inspired by
+  Playwright MCP's accessibility-tree approach — no vision model required.
+- **Tier 3 — Playwright MCP bridge**: connect Monday's v0.27 MCP client to a
+  locally-running `@playwright/mcp` server; full external-browser control
+  (navigate real URLs, fill forms, run tests) with model in the loop; every
+  action logged in the existing tool-call inspector.
+
+- [ ] **Agent action primitives** — `navigate`, `click`, `type`, `scroll`,
+      `extract-text`, `take-screenshot`, `read-dom`; each is a named MCP-style
+      tool callable by the model via the v0.27 function-calling layer
+- [ ] **Sandboxed iframe execution loop (Tier 1)** — generate → render in
+      `sandbox="allow-scripts"` iframe → `html2canvas` screenshot → attach as
+      image to next LLM call → iterate; debounced auto-refresh + manual ↻ Run;
+      reuses the iframe infra planned for v0.31 Code Arena
+- [ ] **DOM-state capture (Tier 2)** — serialize active iframe's accessibility
+      tree (ARIA roles, labels, input states) to compact JSON injected into context
+      before each model turn; depth + node-count budget to stay token-safe
+- [ ] **Vision mode (Tier 1/2)** — `OffscreenCanvas` / `html2canvas` screenshot
+      attached as base64 image in the next LLM call; requires a multimodal model
+      (e.g. Qwen-VL); falls back to DOM-state mode for non-vision models automatically
+- [ ] **Playwright MCP bridge (Tier 3)** — one-click connect in the MCP panel;
+      Monday auto-discovers `@playwright/mcp` if already configured;
+      domain allowlist + blocked-origins enforced per task brief
+- [ ] **Task brief (AGENTS.md / CLAUDE.md equivalent)** — per-task markdown config
+      declaring goal, allowed domains, step budget, and stop criteria;
+      stored in IndexedDB; shown as a collapsible header above the agent thread
+- [ ] **Agent audit trail** — chronological log of every action + observation +
+      screenshot thumbnail; collapsible per step inside the chat thread; inspired by
+      Codex CLI's terminal-log citation model and Codex Web's task-delegation audit view
+- [ ] **Async task queue** — "delegate and come back" UI inspired by Codex Web:
+      submit a browser task, minimize the panel, get notified via the v0.29
+      background notification system when the agent finishes or needs human input
+- [ ] **Sandbox security model** — Tier 1: `sandbox="allow-scripts"` only (no
+      `allow-same-origin`); Tier 3: domain allowlist + `--blocked-origins` forwarded
+      to Playwright MCP; credentials redacted in audit trail logs (mirrors
+      browser-use's `fill()` debug-log redaction practice)
+
+**Release gate**: a user opens the agent panel, gives the task "fill in the sandboxed
+form and click Submit", the agent executes ≥5 actions (screenshot → click → type →
+submit → screenshot), the audit trail shows every step with thumbnails, the async
+task queue marks it done and triggers a notification, and the final iframe state
+is visible in the panel.
 
 ### Cross-cutting standing rules
 
