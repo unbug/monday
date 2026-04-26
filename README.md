@@ -309,7 +309,7 @@ plugins** through the system below.
 - [x] **Plugin system** — Load third-party tool plugins from URL
       (JSON manifest declaring `name / description / inputSchema /
       handlerUrl`)
-- [ ] **MCP client** — Connect to an MCP server (WebSocket transport) and
+- [x] **MCP client** — Connect to an MCP server (WebSocket transport) and
       expose its tools to the model
 - [ ] **Tool call inspector** — A panel that shows the request / response
       / latency of every tool call in a session
