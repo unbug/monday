@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>monday</title>
+  <script>
+    // SPA redirect trick for GitHub Pages:
+    // When GitHub Pages can't find a path it serves this 404.html.
+    // We store the intended path in sessionStorage, then redirect to the
+    // base URL so the main app can load and restore the path.
+    sessionStorage.setItem('redirect', location.pathname + location.search)
+    location.replace('/monday/')
+  </script>
+</head>
+</html>

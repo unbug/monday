@@ -277,6 +277,7 @@ export function Sidebar({
             <path d="M12 20V4" />
             <path d="M6 20v-6" />
           </svg>
+          <span className="sidebar-nav-label">Stats</span>
         </button>
         {onOpenComparison && (
           <button
@@ -290,6 +291,7 @@ export function Sidebar({
               <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.813L3 3" />
               <path d="M21 3l-7.173 7.173a4 4 0 0 0-2.813 1.172L21 21" />
             </svg>
+            <span className="sidebar-nav-label">Compare</span>
           </button>
         )}
         {onOpenBenchmark && (
@@ -301,6 +303,7 @@ export function Sidebar({
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
+            <span className="sidebar-nav-label">Bench</span>
           </button>
         )}
         {onOpenCustomModels && (
@@ -314,6 +317,7 @@ export function Sidebar({
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>
+            <span className="sidebar-nav-label">Models</span>
           </button>
         )}
         {onOpenPersonaMarketplace && (
@@ -326,6 +330,7 @@ export function Sidebar({
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
+            <span className="sidebar-nav-label">Personas</span>
           </button>
         )}
         {onOpenKnowledge && (
@@ -338,6 +343,7 @@ export function Sidebar({
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
+            <span className="sidebar-nav-label">Docs</span>
           </button>
         )}
         {onOpenPlugins && (
@@ -347,10 +353,11 @@ export function Sidebar({
             title="Plugins"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
+              <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+              <line x1="16" y1="8" x2="2" y2="22" />
+              <line x1="17.5" y1="15" x2="9" y2="15" />
             </svg>
+            <span className="sidebar-nav-label">Plugins</span>
           </button>
         )}
         {onOpenMcpServers && (
@@ -364,6 +371,7 @@ export function Sidebar({
               <path d="M2 12h20" />
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
+            <span className="sidebar-nav-label">MCP</span>
           </button>
         )}
         {onOpenWebDAV && (
@@ -376,6 +384,7 @@ export function Sidebar({
               <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9" />
               <path d="M12 3v9l6-3" />
             </svg>
+            <span className="sidebar-nav-label">WebDAV</span>
           </button>
         )}
         {onOpenShortcuts && (
@@ -388,6 +397,7 @@ export function Sidebar({
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h12" />
             </svg>
+            <span className="sidebar-nav-label">Hotkeys</span>
           </button>
         )}
         {onShare && (
@@ -401,6 +411,7 @@ export function Sidebar({
               <polyline points="16 6 12 2 8 6" />
               <line x1="12" y1="2" x2="12" y2="15" />
             </svg>
+            <span className="sidebar-nav-label">Share</span>
           </button>
         )}
         <button
@@ -413,6 +424,7 @@ export function Sidebar({
             <line x1="12" y1="16" x2="12" y2="12" />
             <line x1="12" y1="8" x2="12.01" y2="8" />
           </svg>
+          <span className="sidebar-nav-label">What's New</span>
         </button>
       </div>
 

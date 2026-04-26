@@ -50,41 +50,51 @@ import './App.css'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav'
 
-const VIEW_HASH: Record<View, string> = {
-  chat: '/',
-  models: '/models',
-  changelog: '/changelog',
-  cache: '/cache',
-  stats: '/stats',
-  comparison: '/comparison',
-  benchmark: '/benchmark',
-  'custom-models': '/custom-models',
-  'persona-marketplace': '/persona-marketplace',
-  knowledge: '/knowledge',
-  plugins: '/plugins',
-  'mcp-servers': '/mcp-servers',
-  webdav: '/webdav',
+const BASE = '/monday'
+
+const VIEW_PATH: Record<View, string> = {
+  chat: BASE + '/',
+  models: BASE + '/models',
+  changelog: BASE + '/changelog',
+  cache: BASE + '/cache',
+  stats: BASE + '/stats',
+  comparison: BASE + '/comparison',
+  benchmark: BASE + '/benchmark',
+  'custom-models': BASE + '/custom-models',
+  'persona-marketplace': BASE + '/persona-marketplace',
+  knowledge: BASE + '/knowledge',
+  plugins: BASE + '/plugins',
+  'mcp-servers': BASE + '/mcp-servers',
+  webdav: BASE + '/webdav',
 }
 
-function viewFromHash(hash: string): View {
-  const path = hash.replace(/^#/, '') || '/'
-  const entry = Object.entries(VIEW_HASH).find(([, h]) => h === path)
+function viewFromPath(pathname: string): View {
+  const norm = (p: string) => (p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p)
+  const entry = Object.entries(VIEW_PATH).find(([, p]) => norm(p) === norm(pathname))
   return (entry?.[0] as View) ?? 'chat'
 }
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
-  const [view, setView] = useState<View>(() => viewFromHash(window.location.hash))
+  const [view, setView] = useState<View>(() => {
+    // Handle redirect encoded by 404.html on GitHub Pages
+    const redirect = sessionStorage.getItem('redirect')
+    if (redirect) {
+      sessionStorage.removeItem('redirect')
+      history.replaceState(null, '', redirect)
+    }
+    return viewFromPath(window.location.pathname)
+  })
 
-  // Sync view state → URL hash (pushes a history entry so browser back/forward works)
+  // Sync view state → URL path (pushes a history entry so browser back/forward works)
   useEffect(() => {
-    const target = '#' + VIEW_HASH[view]
-    if (window.location.hash !== target) window.location.hash = VIEW_HASH[view]
+    const target = VIEW_PATH[view]
+    if (window.location.pathname !== target) history.pushState(null, '', target)
   }, [view])
 
   // Sync browser back/forward → view state
   useEffect(() => {
-    const handler = () => setView(viewFromHash(window.location.hash))
+    const handler = () => setView(viewFromPath(window.location.pathname))
     window.addEventListener('popstate', handler)
     return () => window.removeEventListener('popstate', handler)
   }, [])
