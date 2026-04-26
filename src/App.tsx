@@ -32,6 +32,7 @@ import { PWAInstallBanner } from './components/PWAInstallBanner'
 import type { ModelInfo, CitationEntry } from './types'
 import { PROMPT_TEMPLATES } from './lib/prompts'
 import { getModelById } from './lib/models'
+import { shareSession } from './lib/shareExport'
 import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
@@ -107,6 +108,13 @@ export default function App() {
     resetModelUsage()
   }, [])
 
+  // v0.28: share current conversation as static HTML
+  const handleShare = useCallback(() => {
+    if (chat.activeSession) {
+      shareSession(chat.activeSession)
+    }
+  }, [chat.activeSession])
+
   const handleSend = useCallback(
     (content: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
       chat.sendMessage(content, undefined, images, files, knowledgeBases.activeBaseId ?? undefined)
@@ -143,6 +151,7 @@ export default function App() {
     onOpenPersonaMarketplace: () => setView('persona-marketplace'),
     onOpenKnowledge: () => setView('knowledge'),
     onOpenMcpServers: () => setView('mcp-servers'),
+    onShare: handleShare,
   })
 
   const isReady = model.status === 'ready'
@@ -215,6 +224,11 @@ export default function App() {
               setView('mcp-servers')
               closeSidebarOnMobile()
             }}
+            onShare={() => {
+              handleShare()
+              closeSidebarOnMobile()
+            }}
+            shareSession={shareSession}
             onUpdateSession={(updated) => {
               const idx = chat.sessions.findIndex((s) => s.id === updated.id)
               if (idx !== -1) {

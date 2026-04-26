@@ -322,7 +322,7 @@ Released: 2026-04-26
 
 #### v0.28 — Collaboration & Sharing
 
-- [ ] **Share conversations** — Generate a shareable static HTML export
+- [x] **Share conversations** — Generate a shareable static HTML export
       (no server)
 - [ ] **Import/export** — Full data import / export (sessions, personas,
       settings, knowledge bases) as a single `.monday` zip
@@ -334,6 +334,8 @@ Released: 2026-04-26
 
 **Release gate**: round-trip import → export → re-import preserves every
 session, persona and knowledge base byte-for-byte.
+
+Released: 2026-04-26
 
 #### v0.29 — Desktop, PWA polish & shortcuts
 

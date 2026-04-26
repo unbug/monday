@@ -24,6 +24,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenKnowledge?: () => void
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
+  onShare?: () => void
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -183,6 +184,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'MCP Servers',
               icon: '🌐',
               action: options.onOpenMcpServers,
+            },
+          ]
+        : []),
+      ...(options.onShare
+        ? [
+            {
+              id: 'share',
+              label: 'Share Conversation',
+              icon: '🔗',
+              action: options.onShare,
             },
           ]
         : []),

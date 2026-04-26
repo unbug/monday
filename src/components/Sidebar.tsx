@@ -44,10 +44,12 @@ interface Props {
   onOpenKnowledge?: () => void
   onOpenPlugins?: () => void
   onOpenMcpServers?: () => void
+  onShare?: () => void
   onUpdateSession?: (session: ChatSession) => void
   activePersonaId: string | null
   onApplyPersona?: (persona: any) => void
   onClearPersona: () => void
+  shareSession?: (session: ChatSession) => void
 }
 
 export function Sidebar({
@@ -65,10 +67,12 @@ export function Sidebar({
   onOpenKnowledge,
   onOpenPlugins,
   onOpenMcpServers,
+  onShare,
   onUpdateSession,
   activePersonaId,
   onApplyPersona,
   onClearPersona,
+  shareSession,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -319,6 +323,19 @@ export function Sidebar({
             </svg>
           </button>
         )}
+        {onShare && (
+          <button
+            className="sidebar-nav-btn"
+            onClick={onShare}
+            title="Share conversation"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+          </button>
+        )}
         <button
           className="sidebar-nav-btn"
           onClick={onVersionClick}
@@ -392,6 +409,17 @@ export function Sidebar({
               >
                 Export all conversations
               </button>
+              {activeSession && (
+                <button
+                  className="sidebar-export-menu-item"
+                  onClick={() => {
+                    if (shareSession) shareSession(activeSession)
+                    setShowExport(false)
+                  }}
+                >
+                  Share as HTML
+                </button>
+              )}
             </div>
           )}
         </div>

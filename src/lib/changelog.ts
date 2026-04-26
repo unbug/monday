@@ -11,6 +11,23 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.28.0',
+    date: '2026-04-26',
+    title: 'Share Conversations — Static HTML Export',
+    description:
+      'Share any conversation as a self-contained HTML file that renders the full chat with markdown, code highlighting, and a Monday-like UI — no server required. Open the file in any browser to view the conversation, toggle between dark and light themes, and download the raw JSON data. Accessible from the sidebar export menu ("Share as HTML"), the new Share nav button (🔗), and the Command Palette (⌘K → Share Conversation).',
+    changes: [
+      { type: 'added', text: 'shareExport.ts — generateShareHtml() builds a self-contained HTML file with embedded conversation JSON, a lightweight markdown renderer, code highlighting, and a Monday-like UI' },
+      { type: 'added', text: 'shareSession() — generates and downloads an HTML file for a single session' },
+      { type: 'added', text: 'shareAllSessions() — generates and downloads an HTML file for multiple sessions' },
+      { type: 'added', text: 'Share nav button in Sidebar — 🔗 icon for quick access' },
+      { type: 'added', text: '"Share as HTML" option in export menu — next to Export current/all conversations' },
+      { type: 'added', text: 'Share Conversation command in Command Palette (⌘K) — 🔗 Share Conversation' },
+      { type: 'added', text: 'Shared HTML viewer — dark/light theme toggle, code copy buttons, JSON download, responsive layout' },
+      { type: 'changed', text: 'Updated version to v0.28.0' },
+    ],
+  },
+  {
     version: '0.27.3',
     date: '2026-04-26',
     title: 'Tool Call Inspector — Full Request / Response / Latency Tracking',
