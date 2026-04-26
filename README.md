@@ -228,6 +228,7 @@ Roadmap informed by deep analysis of these leading AI chat platforms:
 
 | Product | Stars | Key Differentiator | Monday Relevance |
 |---------|-------|-------------------|-----------------|
+| [OpenClaw](https://github.com/openclaw/openclaw) | 364k | Personal always-on AI assistant: multi-channel (WhatsApp/Telegram/Slack/Discord/…), SOUL.md identity, **AgentSkills/SKILL.md ecosystem**, ClawHub registry (52.7k skills, 12M installs), Skill Workshop AI, per-agent allowlists | **Skills system** (SKILL.md spec), skill marketplace, SOUL.md persona persistence, self-improving agent memory |
 | [Open WebUI](https://github.com/open-webui/open-webui) | 132k | Full-featured self-hosted AI platform: RAG, pipelines, MCP, RBAC, voice/video, image gen | Feature-complete reference for chat UX, RAG, tools |
 | [NextChat](https://github.com/ChatGPTNextWeb/NextChat) | 88k | Lightweight cross-platform AI client: Vercel deploy, MCP, masks, artifacts, Tauri desktop | Lightweight UX, prompt templates, artifacts rendering |
 | [LobeHub](https://github.com/lobehub/lobe-chat) | 75k | Agent-as-unit-of-work platform: 10k+ plugins, agent groups, personal memory, TTS/STT | Agent system, plugin ecosystem, memory architecture |
@@ -431,6 +432,78 @@ The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
 
 **Release gate**: a 24-hour soak test (1 hour with each provider) passes;
 the storage migration test from v0.25 → v1.0 round-trips without loss.
+
+#### v1.1 — Skills System
+
+Inspired by [OpenClaw's AgentSkills/SKILL.md ecosystem](https://docs.openclaw.ai/tools/skills) and
+[ClawHub](https://clawhub.ai/) (52.7k tools, 12M downloads). Skills sit between personas
+(identity) and plugins (tools): a skill is a **structured capability pack** that teaches
+the model *how* to behave in a specialized domain — e.g. "Python Debugger",
+"Technical Writer", "SQL Analyst". Multiple skills can be stacked in one session.
+
+Persona = who the AI *is*. Plugin = what tools the AI has. Skill = what the AI *knows
+how to do* (domain instructions, workflow steps, required-plugin declarations).
+
+- [ ] **Skill format** — Skill spec stored in IndexedDB: `name`, `description`,
+      `instructions` (markdown injected into system prompt), `requiredPlugins` (list
+      of plugin URLs/IDs), `version`, `tags`, `icon`
+- [ ] **Skill composer** — Per-session skill panel: attach 1–N skills alongside a
+      persona; active skills shown as chips in the session header; skill instructions
+      appended to the system prompt before each turn
+- [ ] **Skill registry** — Community skill registry (curated JSON file in the repo,
+      like persona registry) with 20+ launch skills across categories: Coding,
+      Writing, Research, Data, Language, Creative
+- [ ] **Skill builder UI** — In-app skill editor: name, description, tag picker,
+      markdown instructions with live token-count estimate, required-plugin picker,
+      export as `.monday-skill` JSON
+- [ ] **Skill + plugin binding** — A skill can declare required plugins by URL/ID;
+      installing a skill from the registry auto-prompts to install any missing
+      plugins (same flow as v0.27 plugin install)
+- [ ] **SOUL.md equivalent** — "Soul" tab in the persona editor: a persistent
+      cross-session identity prompt that survives `/new` and session resets; stored
+      in IndexedDB alongside the persona; separate from the per-session system prompt
+- [ ] **Skill marketplace UI** — Browse/search/install from the community registry;
+      show tags, install count (local-only counter), author; one-click install
+- [ ] **Skill hot-reload** — Changes to an active skill take effect on the next
+      message send (no session restart required)
+
+**Release gate**: a user installs a "Python Debugger" skill from the registry, attaches
+it to a new session alongside a persona, sends a debugging question, and the model
+follows the skill's specialized workflow; the skill persists on page reload; the session
+header shows the active skill chip.
+
+#### v1.2 — Self-Improving Agent & Persistent Memory
+
+Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downloads),
+`ontology` typed memory graph (171k downloads), and `self-improving + proactive agent`
+(174k downloads). All state is local-only — nothing leaves IndexedDB.
+
+- [ ] **Persistent memory store** — Cross-session key-value memory backed by IndexedDB;
+      the model can read memories at session start and write new ones during the
+      conversation; memories panel shows all entries with edit/delete
+- [ ] **Memory namespaces** — Memories scoped to three levels: global (all sessions),
+      per-persona, per-skill; the active session inherits the union of applicable
+      namespaces
+- [ ] **Correction capture** — When a user edits or regenerates a message, optionally
+      record the correction as a named memory entry ("Prefer concise answers",
+      "Always use TypeScript strict mode"); visible in the memories panel
+- [ ] **Ontology store** — Typed entity graph: Person, Project, Task, Event, Document;
+      entities have properties + relationships; browsable/editable in a side panel;
+      injected as a compact context block when relevant entities are mentioned
+- [ ] **Session compaction with learning** — When compacting long sessions (v0.30
+      multi-turn memory), extract preference signals and entity mentions into the
+      memory store, not just a plain summary; user reviews before committing
+- [ ] **Skill Workshop (browser edition)** — After a session ends, the model proposes
+      skill refinements based on corrections, regenerations, and user edits;
+      proposals shown in a diff view; user approves → saved to the relevant skill
+      in IndexedDB
+- [ ] **Memory-aware personas** — A persona can declare which memory namespaces it
+      reads on activation (e.g. "global" + "per:this-persona"); persona editor shows
+      a memory preview panel
+
+**Release gate**: after 3 sessions with a persona, the memory panel shows ≥5
+automatically captured preferences; a Skill Workshop proposal is generated, approved,
+and the next session reflects the updated skill instructions.
 
 ### Cross-cutting standing rules
 
