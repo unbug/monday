@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.28.3',
+    date: '2026-04-26',
+    title: 'Shared Personas — Publish to Community Registry',
+    description:
+      'Publish your custom personas to the community registry with a guided 3-step wizard: fill in name, icon, description, system prompt, category and tags; preview the persona card; then copy the JSON to submit as a pull request to the repo. The persona marketplace now has Browse and Publish tabs for easy navigation.',
+    changes: [
+      { type: 'added', text: 'PersonaPublish component — 3-step publish wizard (Details → Preview → JSON) for creating persona submissions' },
+      { type: 'added', text: 'PersonaMarketplace Browse/Publish tab navigation — toggle between browsing community personas and publishing new ones' },
+      { type: 'added', text: 'Publish Persona command in Command Palette (⌘K) — ✏️ Publish Persona' },
+      { type: 'added', text: 'CSS styles — full dark/light theme support for persona publish wizard and marketplace tabs' },
+      { type: 'changed', text: 'Updated version to v0.28.3' },
+    ],
+  },
+  {
     version: '0.28.2',
     date: '2026-04-26',
     title: 'WebDAV Sync — Cross-Device Data Synchronization',
