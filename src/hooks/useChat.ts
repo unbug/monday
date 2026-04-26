@@ -59,10 +59,14 @@ export function useChat(modelId: string) {
   const initSessions = useCallback(async () => {
     if (sessionsLoaded.current) return
     sessionsLoaded.current = true
-    const loaded = await loadSessions()
-    if (loaded.length > 0) {
-      setSessions(loaded)
-      setActiveSessionId(loaded[0].id)
+    try {
+      const loaded = await loadSessions()
+      if (loaded.length > 0) {
+        setSessions(loaded)
+        setActiveSessionId(loaded[0].id)
+      }
+    } catch (err) {
+      console.error('[monday] Failed to load sessions from IndexedDB:', err)
     }
   }, [])
 
