@@ -18,6 +18,7 @@ import { KnowledgePanel } from './components/KnowledgePanel'
 import { ToolCallInspector } from './components/ToolCallInspector'
 import { PluginManager } from './components/PluginManager'
 import { McpServerManager } from './components/McpServerManager'
+import { UsageAnalytics } from './components/UsageAnalytics'
 import { WebDAVSettings } from './components/WebDAVSettings'
 import { AgentPanel } from './components/AgentPanel'
 import { useAgentMode } from './hooks/useAgentMode'
@@ -52,7 +53,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { getRecentModels, resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics'
 
 const BASE = '/monday'
 
@@ -72,6 +73,7 @@ const VIEW_PATH: Record<View, string> = {
   webdav: BASE + '/webdav',
   memory: BASE + '/memory',
   agent: BASE + '/agent',
+  'usage-analytics': BASE + '/usage-analytics',
 }
 
 function viewFromPath(pathname: string): View {
@@ -333,6 +335,7 @@ export default function App() {
     onOpenWebDAV: () => setView('webdav'),
     onOpenMemory: () => setView('memory'),
     onOpenAgent: () => setShowAgent(true),
+    onOpenUsageAnalytics: () => setView('usage-analytics'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -427,6 +430,10 @@ export default function App() {
             }}
             onOpenAgent={() => {
               setShowAgent(true)
+              closeSidebarOnMobile()
+            }}
+            onOpenUsageAnalytics={() => {
+              setView('usage-analytics')
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -688,6 +695,10 @@ export default function App() {
               onDeleteSummary={chat.memory.deleteSummary}
               onClose={() => setView('chat')}
             />
+          </div>
+        ) : view === 'usage-analytics' ? (
+          <div className="main-content main-content--usage-analytics">
+            <UsageAnalytics />
           </div>
         ) : showAgent && agentMode.state.task ? (
           <div className="agent-view">

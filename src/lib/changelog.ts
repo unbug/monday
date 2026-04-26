@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.30.4',
+    date: '2026-04-27',
+    title: 'Usage Analytics — Local-Only Dashboard',
+    description:
+      'A privacy-first analytics dashboard tracks your token usage, average tokens/sec, and session activity — all stored locally in IndexedDB, never leaving your browser. View per-model token breakdowns, daily usage charts, session trends, and a recent generations table. Access from the sidebar nav (📊 Analytics) or the Command Palette (⌘K → Usage Analytics).',
+    changes: [
+      { type: 'added', text: 'usageAnalytics.ts — IndexedDB-backed analytics store (DB: monday-usage-analytics, 3 stores: tokens, sessions, tps) with recordTokenUsage, recordSessionCreated, getTokenUsageByModel, getTokenUsageByDay, getSessionCountByDay, getAvgTps, getRecentGenerations, getTotalTokensConsumed, getTotalSessionCount, getAvgSessionsPerDay' },
+      { type: 'added', text: 'useUsageAnalytics hook — aggregates all analytics data with loading state and reload method' },
+      { type: 'added', text: 'UsageAnalytics component — 4 summary cards (Total Tokens, Avg TPS, Total Sessions, Sessions/Day), token usage by model (horizontal bars), daily token usage chart (7-day bar chart), sessions per day chart, per-model avg TPS grid, recent generations table' },
+      { type: 'added', text: 'Token usage recording — recordTokenUsage called after each generation completes, captures prompt/completion/total tokens and TPS' },
+      { type: 'added', text: 'Usage Analytics nav button in Sidebar — 🔍 Analytics icon for quick access' },
+      { type: 'added', text: 'Usage Analytics command in Command Palette (⌘K) — 📊 Usage Analytics' },
+      { type: 'added', text: 'Usage Analytics view route (/monday/usage-analytics) with URL routing' },
+      { type: 'added', text: 'Usage Analytics CSS — full dark/light theme support with responsive layout' },
+      { type: 'changed', text: 'Updated version to v0.30.4' },
+    ],
+  },
+  {
     version: '0.30.3',
     date: '2026-04-27',
     title: 'Batch Generation — Generate N Responses in Parallel',

@@ -47,6 +47,7 @@ interface Props {
   onOpenWebDAV?: () => void
   onOpenMemory?: () => void
   onOpenAgent?: () => void
+  onOpenUsageAnalytics?: () => void
   onOpenShortcuts?: () => void
   onOpenInNewWindow?: (sessionId: string) => void
   onShare?: () => void
@@ -77,6 +78,7 @@ export function Sidebar({
   onOpenWebDAV,
   onOpenMemory,
   onOpenAgent,
+  onOpenUsageAnalytics,
   onOpenShortcuts,
   onOpenInNewWindow,
   onShare,
@@ -417,6 +419,18 @@ export function Sidebar({
               <line x1="4" y1="20" x2="20" y2="20" />
             </svg>
             <span className="sidebar-nav-label">Agent</span>
+          </button>
+        )}
+        {onOpenUsageAnalytics && (
+          <button
+            className="sidebar-nav-btn"
+            onClick={onOpenUsageAnalytics}
+            title="Usage Analytics"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span className="sidebar-nav-label">Analytics</span>
           </button>
         )}
         {onOpenShortcuts && (

@@ -27,6 +27,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenWebDAV?: () => void
   onOpenMemory?: () => void
   onOpenAgent?: () => void
+  onOpenUsageAnalytics?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -221,6 +222,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Agent Mode',
               icon: '🤖',
               action: options.onOpenAgent,
+            },
+          ]
+        : []),
+      ...(options.onOpenUsageAnalytics
+        ? [
+            {
+              id: 'open-usage-analytics',
+              label: 'Usage Analytics',
+              icon: '📊',
+              action: options.onOpenUsageAnalytics,
             },
           ]
         : []),

@@ -21,6 +21,7 @@ import { useVectorStore } from './useVectorStore'
 import { useMultiTurnMemory } from './useMultiTurnMemory'
 import { hasModelChaining, getModelChainConfig } from '../lib/modelChaining'
 import type { ModelChainConfig, ChainProgress } from '../lib/modelChaining'
+import { recordTokenUsage } from '../lib/usageAnalytics'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -408,12 +409,21 @@ export function useChat(
         }
 
         // Finalize with usage stats
-        tokenStats.finishStreaming(
-          finalUsage ?? {
-            promptTokens: 0,
-            completionTokens: tokenCount,
-            totalTokens: tokenCount,
-          },
+        const finalUsageData = finalUsage ?? {
+          promptTokens: 0,
+          completionTokens: tokenCount,
+          totalTokens: tokenCount,
+        }
+        tokenStats.finishStreaming(finalUsageData)
+
+        // v0.30: record token usage for analytics
+        const avgTps = tokenStats.stats.tokensPerSecond
+        recordTokenUsage(
+          effectiveModelId,
+          finalUsageData.promptTokens,
+          finalUsageData.completionTokens,
+          finalUsageData.totalTokens,
+          avgTps,
         )
 
         currentSessions = currentSessions.map((s) => {

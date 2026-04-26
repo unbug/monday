@@ -445,7 +445,7 @@ tools functionality; offline mode degrades gracefully.
       refines, configurable per persona
 - [x] **Batch generation** — Generate N responses in parallel and pick
       the best
-- [ ] **Usage analytics** — Local-only dashboard: model usage, tokens
+- [x] **Usage analytics** — Local-only dashboard: model usage, tokens
       consumed, average tps, sessions per day
 - [ ] **i18n** — Multi-language interface (English, 中文, 日本語) with
       language picker in settings
