@@ -31,6 +31,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { useServiceWorkerUpdate } from './hooks/useServiceWorkerUpdate'
 import { useOfflineStatus } from './hooks/useOfflineStatus'
+import { useNotifications } from './hooks/useNotifications'
 import { PWAInstallBanner } from './components/PWAInstallBanner'
 import { OfflineIndicator } from './components/OfflineIndicator'
 import { UpdateBanner } from './components/UpdateBanner'
@@ -62,7 +63,13 @@ export default function App() {
   const [webdavToast, setWebdavToast] = useState<{ success: boolean; message: string } | null>(null)
 
   const model = useModel()
-  const chat = useChat(selectedModelId ?? '')
+  const chat = useChat(selectedModelId ?? '', {
+    onGenerationComplete: (title, body) => {
+      if (notifications.isTabHidden) {
+        notifications.sendNotification(title, body)
+      }
+    },
+  })
   const theme = useTheme()
   const knowledge = useKnowledge()
   const knowledgeBases = useKnowledgeBases(
@@ -190,6 +197,7 @@ export default function App() {
   // v0.29: detect new service worker and prompt reload
   const { hasUpdate, onActivate } = useServiceWorkerUpdate()
   const { online } = useOfflineStatus()
+  const notifications = useNotifications()
   const [updateDismissed, setUpdateDismissed] = useState(false)
   const updateVisible = hasUpdate && !updateDismissed
   const handleUpdateDismiss = useCallback(() => setUpdateDismissed(true), [])

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import type { ChatSession, GenerationParams } from '../types'
+import { useNotifications } from '../hooks/useNotifications'
 
 interface Props {
   session: ChatSession
@@ -12,6 +13,7 @@ const DEFAULT_MAX_TOKENS = 1024
 
 export function SettingsPanel({ session, onUpdate }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const notifications = useNotifications()
 
   const params = session.generationParams ?? {
     temperature: DEFAULT_TEMPERATURE,
@@ -174,6 +176,34 @@ export function SettingsPanel({ session, onUpdate }: Props) {
               This prompt will be sent as the system message for each conversation.
               Leave empty to use the model's default behavior.
             </p>
+          </div>
+
+          {/* Notifications */}
+          <div className="settings-section">
+            <div className="settings-section-header">
+              <span className="settings-section-title">Notifications</span>
+            </div>
+            <p className="settings-hint">
+              Get a browser notification when a long generation finishes while you're away.
+            </p>
+            {notifications.permission === 'default' && (
+              <button
+                className="settings-notify-btn"
+                onClick={() => notifications.requestPermission()}
+              >
+                Allow notifications
+              </button>
+            )}
+            {notifications.permission === 'granted' && (
+              <span className="settings-notify-status settings-notify-ok">
+                ✓ Notifications enabled
+              </span>
+            )}
+            {notifications.permission === 'denied' && (
+              <span className="settings-notify-status settings-notify-blocked">
+                Notifications blocked — check browser settings
+              </span>
+            )}
           </div>
         </div>
       )}

@@ -9267,3 +9267,68 @@
   border: 1px solid rgba(234, 179, 8, 0.2);
   color: #a16207;
 }
+
+/* v0.29.2: Notification settings in SettingsPanel */
+.settings-notify-btn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--settings-notify-border);
+  background: var(--settings-notify-bg);
+  color: var(--settings-notify-text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.settings-notify-btn:hover {
+  background: var(--settings-notify-hover);
+  border-color: var(--settings-notify-hover-border);
+}
+
+.settings-notify-status {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.settings-notify-ok {
+  color: var(--settings-notify-ok);
+}
+
+.settings-notify-blocked {
+  color: var(--settings-notify-blocked);
+}
+
+[data-theme="dark"] .settings-notify-btn {
+  --settings-notify-border: rgba(167, 139, 250, 0.3);
+  --settings-notify-bg: rgba(167, 139, 250, 0.08);
+  --settings-notify-text: #a78bfa;
+  --settings-notify-hover: rgba(167, 139, 250, 0.15);
+  --settings-notify-hover-border: rgba(167, 139, 250, 0.5);
+}
+
+[data-theme="dark"] .settings-notify-ok {
+  --settings-notify-ok: #34d399;
+}
+
+[data-theme="dark"] .settings-notify-blocked {
+  --settings-notify-blocked: #f87171;
+}
+
+[data-theme="light"] .settings-notify-btn {
+  --settings-notify-border: rgba(109, 40, 217, 0.3);
+  --settings-notify-bg: rgba(109, 40, 217, 0.06);
+  --settings-notify-text: #6d28d9;
+  --settings-notify-hover: rgba(109, 40, 217, 0.12);
+  --settings-notify-hover-border: rgba(109, 40, 217, 0.5);
+}
+
+[data-theme="light"] .settings-notify-ok {
+  --settings-notify-ok: #059669;
+}
+
+[data-theme="light"] .settings-notify-blocked {
+  --settings-notify-blocked: #dc2626;
+}

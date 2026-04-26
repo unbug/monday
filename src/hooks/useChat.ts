@@ -30,7 +30,10 @@ function paramsForSession(session: ChatSession | undefined) {
   }
 }
 
-export function useChat(modelId: string) {
+export function useChat(
+  modelId: string,
+  options?: { onGenerationComplete?: (title: string, body: string) => void },
+) {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -290,6 +293,12 @@ export function useChat(modelId: string) {
           }
         }
 
+        // v0.29.2: notify user if tab was hidden during generation
+        if (options?.onGenerationComplete && fullContent.trim()) {
+          const preview = fullContent.trim().slice(0, 120)
+          options.onGenerationComplete('Generation complete', preview)
+        }
+
         // Finalize with usage stats
         tokenStats.finishStreaming(
           finalUsage ?? {
@@ -368,6 +377,7 @@ export function useChat(modelId: string) {
       modelId,
       persistSessions,
       tokenStats,
+      options?.onGenerationComplete,
     ],
   )
 

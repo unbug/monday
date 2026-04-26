@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.29.2',
+    date: '2026-04-26',
+    title: 'Background Notifications — Generation Complete While Tab Is Hidden',
+    description:
+      'When you leave Monday open in a hidden tab and a long generation finishes, a browser notification pops up with a preview of the response. No more staring at a loading spinner wondering if the model is still working. Request permission from the Settings panel under "Notifications".',
+    changes: [
+      { type: 'added', text: 'useNotifications hook — requests notification permission, tracks tab visibility via Page Visibility API, provides sendNotification helper' },
+      { type: 'added', text: 'Background notification — when generation completes while the tab is hidden, a browser notification shows with the response preview (first 120 chars)' },
+      { type: 'added', text: 'Notification settings in SettingsPanel — request permission, view status (enabled/blocked), with dark/light theme support' },
+      { type: 'added', text: 'Tab visibility tracking — uses document.visibilityState to detect hidden tabs' },
+      { type: 'changed', text: 'Updated version to v0.29.2' },
+    ],
+  },
+  {
     version: '0.29.1',
     date: '2026-04-26',
     title: 'Offline Indicator — Header Chip + Graceful Cloud Feature Degradation',
