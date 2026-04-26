@@ -345,7 +345,7 @@ Released: 2026-04-26
 - [x] **Background notifications** — Notify when a long generation
       completes while the tab is hidden (uses existing
       `useNotifications`)
-- [ ] **Desktop app** — Tauri wrapper that targets macOS / Windows / Linux
+- [x] **Desktop app** — Tauri wrapper that targets macOS / Windows / Linux
 - [ ] **Keyboard shortcuts overlay** — `?` opens a list of every shortcut
       (Cmd+K / Cmd+N / Cmd+⇧S / Cmd+E …); shortcuts also documented in
       the README

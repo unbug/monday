@@ -1,0 +1,9 @@
+{
+  "identifier": "com.monday.app",
+  "description": "Default Tauri capabilities",
+  "windows": ["main"],
+  "permissions": {
+    "core:default": true,
+    "window-state:default": true
+  }
+}

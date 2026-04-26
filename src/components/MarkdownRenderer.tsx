@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -122,16 +122,133 @@ const components: Components = {
   em: ({ children }: any) => <em className="markdown-em">{children}</em>,
 }
 
-export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: Props) {
+// ── Think block parser ──
+
+interface ContentSegment {
+  type: 'text' | 'think'
+  content: string
+  /** false when <think> is open but </think> not yet received (streaming) */
+  complete: boolean
+}
+
+function parseThinkBlocks(raw: string): ContentSegment[] {
+  const segments: ContentSegment[] = []
+  let rest = raw
+
+  while (rest.length > 0) {
+    const start = rest.indexOf('<think>')
+    if (start === -1) {
+      if (rest) segments.push({ type: 'text', content: rest, complete: true })
+      break
+    }
+    if (start > 0) {
+      segments.push({ type: 'text', content: rest.slice(0, start), complete: true })
+    }
+    const afterOpen = rest.slice(start + 7)
+    const end = afterOpen.indexOf('</think>')
+    if (end === -1) {
+      segments.push({ type: 'think', content: afterOpen, complete: false })
+      break
+    } else {
+      segments.push({ type: 'think', content: afterOpen.slice(0, end), complete: true })
+      rest = afterOpen.slice(end + 8)
+    }
+  }
+
+  return segments
+}
+
+// ── ThinkBlock component ──
+
+function ThinkBlock({ content, complete }: { content: string; complete: boolean }) {
+  const [open, setOpen] = useState(!complete)
+
+  const wordCount = useMemo(
+    () => content.trim().split(/\s+/).filter(Boolean).length,
+    [content],
+  )
+
   return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkMath]}
-      rehypePlugins={[rehypeKatex, rehypeHighlight]}
-      components={components}
-      skipHtml={false}
-    >
-      {content}
-    </ReactMarkdown>
+    <div className={`think-block ${complete ? 'think-block--done' : 'think-block--streaming'}`}>
+      <button
+        className="think-block-header"
+        onClick={() => setOpen((v) => !v)}
+        type="button"
+        aria-expanded={open}
+      >
+        <span className="think-block-icon" aria-hidden>💭</span>
+        <span className="think-block-title">
+          {complete ? `Thought process` : 'Thinking…'}
+        </span>
+        {complete && (
+          <span className="think-block-meta">{wordCount} words</span>
+        )}
+        <svg
+          className={`think-block-chevron ${open ? 'think-block-chevron--open' : ''}`}
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      {open && (
+        <div className="think-block-body">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex, rehypeHighlight]}
+            components={components}
+            skipHtml={false}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: Props) {
+  const segments = useMemo(() => parseThinkBlocks(content), [content])
+
+  // Fast path: no think blocks
+  if (segments.length === 1 && segments[0].type === 'text') {
+    return (
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex, rehypeHighlight]}
+        components={components}
+        skipHtml={false}
+      >
+        {content}
+      </ReactMarkdown>
+    )
+  }
+
+  return (
+    <>
+      {segments.map((seg, i) =>
+        seg.type === 'think' ? (
+          <ThinkBlock key={i} content={seg.content} complete={seg.complete} />
+        ) : seg.content ? (
+          <ReactMarkdown
+            key={i}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex, rehypeHighlight]}
+            components={components}
+            skipHtml={false}
+          >
+            {seg.content}
+          </ReactMarkdown>
+        ) : null,
+      )}
+    </>
   )
 })
 

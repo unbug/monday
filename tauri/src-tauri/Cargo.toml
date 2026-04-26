@@ -1,0 +1,11 @@
+[package]
+name = "monday-app"
+version = "0.29.3"
+edition = "2021"
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-window-state = "2"
+
+[build]
+build-scripts = ["./build.rs"]

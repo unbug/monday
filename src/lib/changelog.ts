@@ -25,6 +25,21 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.29.3',
+    date: '2026-04-26',
+    title: 'Desktop App — Tauri Wrapper for macOS / Windows / Linux',
+    description:
+      'Monday now ships as a native desktop app via Tauri. Install it on macOS, Windows, or Linux for a windowed experience with full chat, RAG, and tools functionality. The app uses the same IndexedDB persistence as the browser version — your data stays local. Offline mode degrades gracefully with the prebuilt app shell.',
+    changes: [
+      { type: 'added', text: 'Tauri project scaffold — tauri/ directory with v2 config, Cargo.toml, bundle config, and capabilities' },
+      { type: 'added', text: 'macOS / Windows / Linux targets — configured via tauri.conf.json bundle settings' },
+      { type: 'added', text: 'Window state persistence — tauri-plugin-window-state saves/restores window position and size' },
+      { type: 'added', text: 'WebView CSP — allows local assets, external model downloads, and WebSocket connections' },
+      { type: 'added', text: 'Desktop README — build instructions for all platforms' },
+      { type: 'changed', text: 'Updated version to v0.29.3' },
+    ],
+  },
+  {
     version: '0.29.1',
     date: '2026-04-26',
     title: 'Offline Indicator — Header Chip + Graceful Cloud Feature Degradation',

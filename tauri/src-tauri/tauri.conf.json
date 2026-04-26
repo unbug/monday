@@ -1,0 +1,26 @@
+{
+  "identifier": "com.monday.app",
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "shortDescription": "Browser-native AI chat — run models locally",
+    "longDescription": "Monday is a browser-native AI chat platform. Run open-source models directly in your browser with WebGPU, or connect to external providers. No server, no install, 100% private.",
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "12.0",
+      "entitlements": null,
+      "exceptionDomain": "",
+      "signingIdentity": null,
+      "providerShortName": null,
+      "applicationCategory": "public.app-category.productivity"
+    },
+    "windows": {
+      "wix": null,
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "languages": ["en-US"]
+      }
+    }
+  }
+}
