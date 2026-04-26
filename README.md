@@ -342,7 +342,7 @@ Released: 2026-04-26
 - [x] **Update prompt** — Banner when a new service worker is installed
 - [x] **Offline indicator** — Header chip when offline; gracefully
       disable cloud-only features
-- [ ] **Background notifications** — Notify when a long generation
+- [x] **Background notifications** — Notify when a long generation
       completes while the tab is hidden (uses existing
       `useNotifications`)
 - [ ] **Desktop app** — Tauri wrapper that targets macOS / Windows / Linux
