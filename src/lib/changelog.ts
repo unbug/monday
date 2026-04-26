@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.27.2',
+    date: '2026-04-26',
+    title: 'MCP Client — Connect to External MCP Servers',
+    description:
+      'Connect to external Model Context Protocol (MCP) servers via WebSocket transport. Monday implements the full MCP JSON-RPC 2.0 handshake — initialize, tools/list, tools/call — and registers discovered tools with the built-in tool registry. Connected servers appear in the MCP Servers view with their available tools listed. Tools from MCP servers are invoked alongside built-in and plugin tools, with full request/response/latency tracking in the ToolCallPanel.',
+    changes: [
+      { type: 'added', text: 'McpServer + McpTool types — server and tool definitions for MCP integration' },
+      { type: 'added', text: 'mcpClient.ts — WebSocket MCP client with JSON-RPC 2.0 protocol (initialize, tools/list, tools/call, notifications)' },
+      { type: 'added', text: 'useMcpServers hook — add/remove/reconnect MCP servers, tool registration and cleanup' },
+      { type: 'added', text: 'McpServerManager component — server list with connection status, tool display, reconnect/remove actions' },
+      { type: 'added', text: 'MCP Servers view in App — dedicated management view' },
+      { type: 'added', text: 'MCP nav button in Sidebar — 🌐 icon for quick access' },
+      { type: 'added', text: 'MCP Servers command in Command Palette (⌘K) — 🌐 MCP Servers' },
+      { type: 'added', text: 'MCP CSS — full dark/light theme support for McpServerManager' },
+      { type: 'changed', text: 'Updated version to v0.27.2' },
+    ],
+  },
+  {
     version: '0.27.1',
     date: '2026-04-26',
     title: 'Plugin System — Load Third-Party Tool Plugins from URL',

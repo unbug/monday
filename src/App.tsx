@@ -17,9 +17,11 @@ import { PersonaMarketplace } from './components/PersonaMarketplace'
 import { KnowledgePanel } from './components/KnowledgePanel'
 import { ToolCallPanel } from './components/ToolCallPanel'
 import { PluginManager } from './components/PluginManager'
+import { McpServerManager } from './components/McpServerManager'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
+import { useMcpServers } from './hooks/useMcpServers'
 import { useEmbeddingModel } from './hooks/useEmbeddingModel'
 import { useModel } from './hooks/useModel'
 import { useChat } from './hooks/useChat'
@@ -34,7 +36,7 @@ import { resetModelUsage } from './lib/modelUsage'
 import { resetRecentModels as resetRecent } from './lib/recentModels'
 import './App.css'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers'
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
@@ -59,6 +61,7 @@ export default function App() {
     : null
   const vectorStore = useVectorStore()
   const embedding = useEmbeddingModel()
+  const mcpServers = useMcpServers()
 
   // Apply base filter to vector store when active base changes
   useEffect(() => {
@@ -139,6 +142,7 @@ export default function App() {
     onResetRecentModels: () => resetRecent(),
     onOpenPersonaMarketplace: () => setView('persona-marketplace'),
     onOpenKnowledge: () => setView('knowledge'),
+    onOpenMcpServers: () => setView('mcp-servers'),
   })
 
   const isReady = model.status === 'ready'
@@ -205,6 +209,10 @@ export default function App() {
             }}
             onOpenPlugins={() => {
               setView('plugins')
+              closeSidebarOnMobile()
+            }}
+            onOpenMcpServers={() => {
+              setView('mcp-servers')
               closeSidebarOnMobile()
             }}
             onUpdateSession={(updated) => {
@@ -401,6 +409,10 @@ export default function App() {
         ) : view === 'plugins' ? (
           <div className="main-content main-content--plugins">
             <PluginManager onBack={() => setView('chat')} />
+          </div>
+        ) : view === 'mcp-servers' ? (
+          <div className="main-content main-content--mcp-servers">
+            <McpServerManager onBack={() => setView('chat')} />
           </div>
         ) : (
           <div className="chat-layout">

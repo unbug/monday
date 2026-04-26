@@ -177,3 +177,32 @@ export interface InstalledPlugin {
   /** Error message if loading failed */
   error: string | null
 }
+
+// v0.27.2: MCP client types
+export interface McpServer {
+  /** Unique server identifier (derived from URL) */
+  id: string
+  /** WebSocket URL of the MCP server */
+  url: string
+  /** Display name (derived from URL hostname) */
+  displayName: string
+  /** Connection status */
+  status: 'disconnected' | 'connecting' | 'connected' | 'error'
+  /** Error message if connection failed */
+  error: string | null
+  /** Available tools from the server */
+  tools: McpTool[]
+  /** When it was added */
+  addedAt: number
+}
+
+export interface McpTool {
+  /** Unique tool name (server-prefixed, e.g. "weather-forecast_get_weather") */
+  name: string
+  /** Human-readable display name */
+  displayName: string
+  /** Description of what the tool does */
+  description: string
+  /** JSON Schema describing the tool's input parameters */
+  inputSchema: Record<string, unknown>
+}

@@ -7563,3 +7563,343 @@
 [data-theme='light'] .plugin-manager-card {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
+
+/* ============================================
+   MCP Server Manager
+   ============================================ */
+
+.mcp-server-manager {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.mcp-server-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-top: 8px;
+}
+
+.mcp-server-manager-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color 0.15s ease;
+}
+
+.mcp-server-manager-back-btn:hover {
+  color: var(--accent);
+}
+
+.mcp-server-manager-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.mcp-server-manager-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px 0;
+}
+
+.mcp-server-manager-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 12px 0;
+}
+
+.mcp-server-manager-hint code {
+  background: var(--bg-surface-raised);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.mcp-server-manager-add {
+  background: var(--bg-surface);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.mcp-server-manager-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.mcp-server-manager-url-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.mcp-server-manager-url-input:focus {
+  border-color: var(--accent);
+}
+
+.mcp-server-manager-url-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mcp-server-manager-add-btn {
+  padding: 10px 20px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.mcp-server-manager-add-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.mcp-server-manager-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mcp-server-manager-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 13px;
+}
+
+.mcp-server-manager-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mcp-server-manager-card {
+  background: var(--bg-surface);
+  border-radius: 12px;
+  padding: 16px;
+  transition: box-shadow 0.15s ease;
+}
+
+.mcp-server-manager-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mcp-server-manager-card-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mcp-server-manager-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mcp-server-manager-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mcp-server-manager-status-text {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.mcp-server-manager-status-connected {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.mcp-server-manager-status-connecting {
+  background: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+}
+
+.mcp-server-manager-status-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.mcp-server-manager-card-url {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  margin: 0 0 8px 0;
+  word-break: break-all;
+}
+
+.mcp-server-manager-card-error {
+  font-size: 13px;
+  color: #ef4444;
+  margin: 0 0 8px 0;
+}
+
+.mcp-server-manager-tools {
+  margin: 8px 0;
+}
+
+.mcp-server-manager-tools-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.mcp-server-manager-tools-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mcp-server-manager-tool-tag {
+  font-size: 12px;
+  padding: 3px 8px;
+  background: var(--bg-surface-raised);
+  border-radius: 6px;
+  color: var(--accent);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  cursor: default;
+  transition: background 0.15s ease;
+}
+
+.mcp-server-manager-tool-tag:hover {
+  background: var(--bg-elevated);
+}
+
+.mcp-server-manager-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.mcp-server-manager-reconnect-btn {
+  padding: 6px 14px;
+  background: var(--bg-surface-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mcp-server-manager-reconnect-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mcp-server-manager-remove-btn {
+  padding: 6px 14px;
+  background: none;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: auto;
+}
+
+.mcp-server-manager-remove-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+}
+
+.mcp-server-manager-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.mcp-server-manager-empty-icon {
+  color: var(--text-tertiary);
+  margin: 0 auto 16px;
+  opacity: 0.4;
+}
+
+.mcp-server-manager-empty-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+}
+
+.mcp-server-manager-empty-hint {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.mcp-server-manager-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: mcp-spin 0.6s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@keyframes mcp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Dark theme */
+[data-theme='dark'] .mcp-server-manager-add {
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .mcp-server-manager-card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Light theme */
+[data-theme='light'] .mcp-server-manager-add {
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .mcp-server-manager-card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}

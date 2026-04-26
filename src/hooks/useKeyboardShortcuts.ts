@@ -23,6 +23,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenPersonaMarketplace?: () => void
   onOpenKnowledge?: () => void
   onOpenPlugins?: () => void
+  onOpenMcpServers?: () => void
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) {
@@ -172,6 +173,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Plugins',
               icon: '🔌',
               action: options.onOpenPlugins,
+            },
+          ]
+        : []),
+      ...(options.onOpenMcpServers
+        ? [
+            {
+              id: 'open-mcp-servers',
+              label: 'MCP Servers',
+              icon: '🌐',
+              action: options.onOpenMcpServers,
             },
           ]
         : []),
