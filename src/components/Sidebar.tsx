@@ -270,7 +270,7 @@ export function Sidebar({
 
       {/* Quick Nav */}
       <div className="sidebar-quick-nav">
-        {/* Row 1 — always visible, fixed 4-col layout */}
+        {/* Row 1 — always visible, fixed 6-col layout */}
         <div className="sidebar-nav-row">
           <button
             className="sidebar-nav-btn"
@@ -309,7 +309,31 @@ export function Sidebar({
               </svg>
             </button>
           ) : <span className="sidebar-nav-placeholder" />}
-          {/* More / Less toggle — always 4th slot */}
+          {onOpenPersonaMarketplace ? (
+            <button
+              className="sidebar-nav-btn"
+              onClick={onOpenPersonaMarketplace}
+              title={t('sidebar.personas')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </button>
+          ) : <span className="sidebar-nav-placeholder" />}
+          {onOpenMemory ? (
+            <button
+              className="sidebar-nav-btn"
+              onClick={onOpenMemory}
+              title={t('sidebar.memory')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+            </button>
+          ) : <span className="sidebar-nav-placeholder" />}
+          {/* More / Less toggle — always last slot */}
           <button
             className="sidebar-nav-btn sidebar-nav-more-btn"
             onClick={() => setNavExpanded((v) => !v)}
@@ -360,18 +384,7 @@ export function Sidebar({
                 </svg>
               </button>
             )}
-            {onOpenPersonaMarketplace && (
-              <button
-                className="sidebar-nav-btn"
-                onClick={onOpenPersonaMarketplace}
-                title={t('sidebar.personas')}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </button>
-            )}
+
             {onOpenPlugins && (
               <button
                 className="sidebar-nav-btn"
@@ -410,18 +423,7 @@ export function Sidebar({
                 </svg>
               </button>
             )}
-            {onOpenMemory && (
-              <button
-                className="sidebar-nav-btn"
-                onClick={onOpenMemory}
-                title={t('sidebar.memory')}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-              </button>
-            )}
+
             {onOpenStats && (
               <button
                 className="sidebar-nav-btn"
