@@ -23,6 +23,7 @@ import { UsageAnalytics } from './components/UsageAnalytics'
 import { WebDAVSettings } from './components/WebDAVSettings'
 import { AgentPanel } from './components/AgentPanel'
 import { useAgentMode } from './hooks/useAgentMode'
+import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
@@ -130,6 +131,9 @@ export default function App() {
 
   // a11y: screen-reader announcement
   const [announcement, setAnnouncement] = useState('')
+
+  // v0.31: collapsible personas panel above chat input
+  const [showPersonas, setShowPersonas] = useState(false)
 
   // v0.30.5: i18n locale
   const { locale, changeLocale: handleChangeLocale } = useLocale()
@@ -344,7 +348,7 @@ export default function App() {
     onOpenMcpServers: () => setView('mcp-servers'),
     onOpenWebDAV: () => setView('webdav'),
     onOpenMemory: () => setView('memory'),
-    onOpenAgent: () => setShowAgent(true),
+    onOpenAgent: () => setView('agent'),
     onOpenUsageAnalytics: () => setView('usage-analytics'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
@@ -449,7 +453,7 @@ export default function App() {
               closeSidebarOnMobile()
             }}
             onOpenAgent={() => {
-              setShowAgent(true)
+              setView('agent')
               closeSidebarOnMobile()
             }}
             onOpenUsageAnalytics={() => {
@@ -474,9 +478,6 @@ export default function App() {
                 chat.updateSessions(updatedSessions)
               }
             }}
-            activePersonaId={activePersonaId ?? null}
-            onApplyPersona={chat.applyPersona}
-            onClearPersona={chat.clearPersona}
             onImport={handleImportData}
             onExport={handleExportData}
             locale={locale}
@@ -725,9 +726,9 @@ export default function App() {
           <div className="main-content main-content--usage-analytics">
             <UsageAnalytics />
           </div>
-        ) : view === 'agent' || (showAgent && agentMode.state.task) ? (
+        ) : view === 'agent' ? (
           <div className="agent-view">
-            {agentMode.state.task && (
+            {agentMode.state.task ? (
               <AgentPanel
                 task={agentMode.state.task}
                 onStop={agentMode.stop}
@@ -736,6 +737,15 @@ export default function App() {
                   setView('chat')
                 }}
               />
+            ) : (
+              <div className="agent-empty-state">
+                <div className="agent-empty-icon">🤖</div>
+                <h2 className="agent-empty-title">Agent Mode</h2>
+                <p className="agent-empty-desc">Send a message from the chat to start an agent task.</p>
+                <button className="agent-empty-back-btn" onClick={() => setView('chat')}>
+                  Back to Chat
+                </button>
+              </div>
             )}
           </div>
         ) : showBatch ? (
@@ -812,6 +822,37 @@ export default function App() {
                 onCollapse={() => {}}
               />
             </div>
+            {chat.activeSession && (
+              <div className="chat-personas">
+                <button
+                  className={`chat-personas-toggle ${showPersonas ? 'chat-personas-toggle--open' : ''} ${activePersonaId ? 'chat-personas-toggle--active' : ''}`}
+                  onClick={() => setShowPersonas((v) => !v)}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span>Personas{activePersonaId ? ' ●' : ''}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    className="chat-personas-chevron">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                {showPersonas && (
+                  <QuickPrompts
+                    activePersonaId={activePersonaId ?? null}
+                    onApplyPersona={(persona) => {
+                      chat.applyPersona(persona)
+                      setShowPersonas(false)
+                    }}
+                    onClearPersona={() => {
+                      chat.clearPersona()
+                      setShowPersonas(false)
+                    }}
+                  />
+                )}
+              </div>
+            )}
             <ChatInput
               onSend={handleSend}
               onBatchSend={handleOpenBatch}
@@ -834,7 +875,7 @@ export default function App() {
               agentMode={agentMode.state.isRunning}
               onToggleAgentMode={() => {
                 if (!agentMode.state.isRunning) {
-                  setShowAgent(true)
+                  setView('agent')
                 }
               }}
               onAgentSend={

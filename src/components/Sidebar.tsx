@@ -5,9 +5,7 @@ import type { Locale } from '../lib/i18n'
 import { t } from '../lib/i18n'
 import { downloadSession, downloadAll } from '../lib/export'
 import { SettingsPanel } from './SettingsPanel'
-import { QuickPrompts } from './QuickPrompts'
 import { SessionSearch } from './SessionSearch'
-import { DEFAULT_PERSONA, PROMPT_TEMPLATES } from '../lib/prompts'
 import type { DateFilter } from './SessionSearch'
 import { getLocalDataSize } from '../lib/recentModels'
 import { version } from '../../package.json'
@@ -54,9 +52,6 @@ interface Props {
   onOpenInNewWindow?: (sessionId: string) => void
   onShare?: () => void
   onUpdateSession?: (session: ChatSession) => void
-  activePersonaId: string | null
-  onApplyPersona?: (persona: any) => void
-  onClearPersona: () => void
   shareSession?: (session: ChatSession) => void
   onImport?: (file: File) => Promise<void>
   onExport?: () => Promise<void>
@@ -91,9 +86,6 @@ export function Sidebar({
   onImport,
   onExport,
   onUpdateSession,
-  activePersonaId,
-  onApplyPersona,
-  onClearPersona,
   shareSession,
   locale,
   onChangeLocale,
@@ -104,6 +96,7 @@ export function Sidebar({
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
+  const [navExpanded, setNavExpanded] = useState(false)
   const activeSession = sessions.find((s) => s.id === activeSessionId)
 
   // Filter sessions by search query and date filter
@@ -275,18 +268,9 @@ export function Sidebar({
         </div>
       )}
 
-      {activeSession && onApplyPersona && (
-        <div className="sidebar-quick-prompts">
-          <QuickPrompts
-            activePersonaId={activePersonaId}
-            onApplyPersona={onApplyPersona}
-            onClearPersona={onClearPersona}
-          />
-        </div>
-      )}
-
       {/* Quick Nav */}
       <div className="sidebar-quick-nav">
+        {/* Row 1 — always visible */}
         <button
           className="sidebar-nav-btn"
           onClick={onOpenStats}
@@ -297,124 +281,8 @@ export function Sidebar({
             <path d="M12 20V4" />
             <path d="M6 20v-6" />
           </svg>
-            <span className="sidebar-nav-label">{t('sidebar.stats')}</span>
+          <span className="sidebar-nav-label">{t('sidebar.stats')}</span>
         </button>
-        {onOpenArena && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenArena}
-            title={t('sidebar.arena')}
-          >
-            <span className="sidebar-nav-icon">⚔️</span>
-            <span className="sidebar-nav-label">{t('sidebar.arena')}</span>
-          </button>
-        )}
-        {onOpenBenchmark && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenBenchmark}
-            title={t('sidebar.bench')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.bench')}</span>
-          </button>
-        )}
-        {onOpenCustomModels && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenCustomModels}
-            title={t('sidebar.models')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.models')}</span>
-          </button>
-        )}
-        {onOpenPersonaMarketplace && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenPersonaMarketplace}
-            title={t('sidebar.personas')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.personas')}</span>
-          </button>
-        )}
-        {onOpenKnowledge && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenKnowledge}
-            title={t('sidebar.docs')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.docs')}</span>
-          </button>
-        )}
-        {onOpenPlugins && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenPlugins}
-            title={t('sidebar.plugins')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
-              <line x1="16" y1="8" x2="2" y2="22" />
-              <line x1="17.5" y1="15" x2="9" y2="15" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.plugins')}</span>
-          </button>
-        )}
-        {onOpenMcpServers && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenMcpServers}
-            title={t('sidebar.mcp')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20" />
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.mcp')}</span>
-          </button>
-        )}
-        {onOpenWebDAV && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenWebDAV}
-            title={t('sidebar.webdav')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9" />
-              <path d="M12 3v9l6-3" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.webdav')}</span>
-          </button>
-        )}
-        {onOpenMemory && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenMemory}
-            title={t('sidebar.memory')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z" />
-              <path d="M12 6v6l4 2" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.memory')}</span>
-          </button>
-        )}
         {onOpenAgent && (
           <button
             className="sidebar-nav-btn"
@@ -430,57 +298,193 @@ export function Sidebar({
             <span className="sidebar-nav-label">{t('sidebar.agent')}</span>
           </button>
         )}
-        {onOpenUsageAnalytics && (
+        {onOpenKnowledge && (
           <button
             className="sidebar-nav-btn"
-            onClick={onOpenUsageAnalytics}
-            title="Usage Analytics"
+            onClick={onOpenKnowledge}
+            title={t('sidebar.docs')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
-            <span className="sidebar-nav-label">Analytics</span>
+            <span className="sidebar-nav-label">{t('sidebar.docs')}</span>
           </button>
         )}
-        {onOpenShortcuts && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenShortcuts}
-            title="Keyboard Shortcuts"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h12" />
-            </svg>
-            <span className="sidebar-nav-label">Hotkeys</span>
-          </button>
-        )}
-        {onShare && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onShare}
-            title="Share conversation"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-              <polyline points="16 6 12 2 8 6" />
-              <line x1="12" y1="2" x2="12" y2="15" />
-            </svg>
-            <span className="sidebar-nav-label">Share</span>
-          </button>
-        )}
+        {/* More / Less toggle — always last in row 1 */}
         <button
-          className="sidebar-nav-btn"
-          onClick={onVersionClick}
-          title="Changelog"
+          className="sidebar-nav-btn sidebar-nav-more-btn"
+          onClick={() => setNavExpanded((v) => !v)}
+          title={navExpanded ? 'Show less' : 'More'}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="16" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12.01" y2="8" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            style={{ transform: navExpanded ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }}>
+            <polyline points="6 9 12 15 18 9" />
           </svg>
-          <span className="sidebar-nav-label">What's New</span>
+          <span className="sidebar-nav-label">{navExpanded ? 'Less' : 'More'}</span>
         </button>
+
+        {/* Expanded rows */}
+        {navExpanded && (
+          <>
+            {onOpenArena && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenArena}
+                title={t('sidebar.arena')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.arena')}</span>
+              </button>
+            )}
+            {onOpenBenchmark && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenBenchmark}
+                title={t('sidebar.bench')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.bench')}</span>
+              </button>
+            )}
+            {onOpenCustomModels && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenCustomModels}
+                title={t('sidebar.models')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.models')}</span>
+              </button>
+            )}
+            {onOpenPersonaMarketplace && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenPersonaMarketplace}
+                title={t('sidebar.personas')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.personas')}</span>
+              </button>
+            )}
+            {onOpenPlugins && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenPlugins}
+                title={t('sidebar.plugins')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+                  <line x1="16" y1="8" x2="2" y2="22" />
+                  <line x1="17.5" y1="15" x2="9" y2="15" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.plugins')}</span>
+              </button>
+            )}
+            {onOpenMcpServers && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenMcpServers}
+                title={t('sidebar.mcp')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.mcp')}</span>
+              </button>
+            )}
+            {onOpenWebDAV && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenWebDAV}
+                title={t('sidebar.webdav')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9" />
+                  <path d="M12 3v9l6-3" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.webdav')}</span>
+              </button>
+            )}
+            {onOpenMemory && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenMemory}
+                title={t('sidebar.memory')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+                <span className="sidebar-nav-label">{t('sidebar.memory')}</span>
+              </button>
+            )}
+            {onOpenUsageAnalytics && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenUsageAnalytics}
+                title="Usage Analytics"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="sidebar-nav-label">Analytics</span>
+              </button>
+            )}
+            {onOpenShortcuts && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenShortcuts}
+                title="Keyboard Shortcuts"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h12" />
+                </svg>
+                <span className="sidebar-nav-label">Hotkeys</span>
+              </button>
+            )}
+            {onShare && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onShare}
+                title="Share conversation"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                  <polyline points="16 6 12 2 8 6" />
+                  <line x1="12" y1="2" x2="12" y2="15" />
+                </svg>
+                <span className="sidebar-nav-label">Share</span>
+              </button>
+            )}
+            <button
+              className="sidebar-nav-btn"
+              onClick={onVersionClick}
+              title="Changelog"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <span className="sidebar-nav-label">What's New</span>
+            </button>
+          </>
+        )}
       </div>
 
       <div className="sidebar-footer">
