@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import type { PromptTemplate, CustomPersona } from '../lib/prompts'
 import {
   PROMPT_TEMPLATES,
@@ -9,16 +9,22 @@ import {
 import { getCustomPersonas, deleteCustomPersona } from '../lib/personas'
 import { MODELS } from '../lib/models'
 
+const LAST_PERSONA_KEY = 'monday_last_persona_id'
+
 interface Props {
   activePersonaId: string | null
   onApplyPersona: (persona: PromptTemplate) => void
   onClearPersona: () => void
+  systemPrompt?: string
+  onUpdateSystemPrompt?: (prompt: string) => void
 }
 
 export function QuickPrompts({
   activePersonaId,
   onApplyPersona,
   onClearPersona,
+  systemPrompt,
+  onUpdateSystemPrompt,
 }: Props) {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -26,6 +32,19 @@ export function QuickPrompts({
   const [showCreate, setShowCreate] = useState(false)
 
   const customPersonas = useMemo(() => getCustomPersonas(), [])
+
+  // Auto-select last used or first persona when none is active
+  useEffect(() => {
+    if (activePersonaId) {
+      localStorage.setItem(LAST_PERSONA_KEY, activePersonaId)
+      return
+    }
+    const lastId = localStorage.getItem(LAST_PERSONA_KEY)
+    const target = lastId
+      ? (PROMPT_TEMPLATES.find((p) => p.id === lastId) ?? PROMPT_TEMPLATES[0])
+      : PROMPT_TEMPLATES[0]
+    if (target) onApplyPersona(target)
+  }, [activePersonaId])
 
   const categories = useMemo(() => {
     const cats = new Set<string>()
@@ -189,6 +208,20 @@ export function QuickPrompts({
         >
           Clear Persona
         </button>
+      )}
+
+      {/* System Prompt */}
+      {onUpdateSystemPrompt !== undefined && (
+        <div className="quick-prompts-system-prompt">
+          <label className="quick-prompts-system-prompt-label">System Prompt</label>
+          <textarea
+            className="quick-prompts-system-prompt-textarea"
+            placeholder="Override system prompt for this session…"
+            value={systemPrompt ?? ''}
+            onChange={(e) => onUpdateSystemPrompt(e.target.value)}
+            rows={3}
+          />
+        </div>
       )}
 
       {/* Create/Edit Persona Modal */}

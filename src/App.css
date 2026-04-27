@@ -663,6 +663,7 @@
   margin: 0 auto;
   padding: 24px 24px;
   width: 100%;
+  max-width: 900px;
   box-sizing: border-box;
 }
 
@@ -1336,7 +1337,7 @@
   border-radius: 0;
   padding: 4px 0 8px;
   box-shadow: none;
-  max-height: 240px;
+  max-height: 460px;
 }
 
 /* ===== Chat Input ===== */
@@ -2941,6 +2942,50 @@
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.1);
 }
 
+/* System Prompt within QuickPrompts */
+.quick-prompts-system-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.quick-prompts-system-prompt-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quick-prompts-system-prompt-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 12px;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.quick-prompts-system-prompt-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-bg);
+}
+
+.quick-prompts-system-prompt-textarea::placeholder {
+  color: var(--color-text-light);
+  opacity: 0.5;
+}
+
 /* ===== Persona Form ===== */
 
 .persona-form-overlay {
@@ -4019,10 +4064,10 @@
   flex-shrink: 0;
 }
 
-/* Row 1 — always 4 equal columns, never wraps */
+/* Row 1 — always 6 equal columns, never wraps */
 .sidebar-nav-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 4px;
 }
 
@@ -4031,10 +4076,10 @@
   display: block;
 }
 
-/* Expanded rows — same 4-col grid, shown below row 1 */
+/* Expanded rows — same 6-col grid, shown below row 1 */
 .sidebar-nav-expanded {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 4px;
   margin-top: 4px;
   border-top: 1px solid var(--color-border-subtle);

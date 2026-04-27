@@ -168,23 +168,6 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
             </div>
           </div>
 
-          {/* System Prompt */}
-          <div className="settings-section">
-            <div className="settings-section-header">
-              <span className="settings-section-title">{t('settings.systemPrompt')}</span>
-            </div>
-            <textarea
-              className="settings-textarea"
-              placeholder={t('settings.systemPromptPlaceholder')}
-              value={session.systemPrompt ?? ''}
-              onChange={(e) => updateSystemPrompt(e.target.value)}
-              rows={4}
-            />
-            <p className="settings-hint">
-              {t('settings.systemPromptHint')}
-            </p>
-          </div>
-
           {/* Language Picker */}
           {onChangeLocale && (
             <LanguagePicker locale={locale ?? 'en'} onChange={onChangeLocale} />

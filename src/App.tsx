@@ -845,11 +845,20 @@ export default function App() {
                     activePersonaId={activePersonaId ?? null}
                     onApplyPersona={(persona) => {
                       chat.applyPersona(persona)
-                      setShowPersonas(false)
                     }}
                     onClearPersona={() => {
                       chat.clearPersona()
-                      setShowPersonas(false)
+                    }}
+                    systemPrompt={chat.activeSession?.systemPrompt ?? ''}
+                    onUpdateSystemPrompt={(prompt) => {
+                      const session = chat.activeSession
+                      if (!session) return
+                      const updated = [...chat.sessions]
+                      const idx = updated.findIndex((s) => s.id === session.id)
+                      if (idx !== -1) {
+                        updated[idx] = { ...session, systemPrompt: prompt, updatedAt: Date.now() }
+                        chat.updateSessions(updated)
+                      }
                     }}
                   />
                 )}
