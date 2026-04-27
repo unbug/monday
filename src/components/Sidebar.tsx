@@ -270,63 +270,65 @@ export function Sidebar({
 
       {/* Quick Nav */}
       <div className="sidebar-quick-nav">
-        {/* Row 1 — always visible */}
-        <button
-          className="sidebar-nav-btn"
-          onClick={onOpenUsageAnalytics}
-          title={t('sidebar.analytics')}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 20V10" />
-            <path d="M12 20V4" />
-            <path d="M6 20v-6" />
-          </svg>
-          <span className="sidebar-nav-label">{t('sidebar.analytics')}</span>
-        </button>
-        {onOpenAgent && (
+        {/* Row 1 — always visible, fixed 4-col layout */}
+        <div className="sidebar-nav-row">
           <button
             className="sidebar-nav-btn"
-            onClick={onOpenAgent}
-            title={t('sidebar.agent')}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.9 2-2 2h-4a2 2 0 0 1-2-2 4 4 0 0 1 4-4z" />
-              <path d="M8 8v2a4 4 0 0 0 8 0V8" />
-              <path d="M12 14a3 3 0 0 0-3 3v1h6v-1a3 3 0 0 0-3-3z" />
-              <line x1="4" y1="20" x2="20" y2="20" />
-            </svg>
-            <span className="sidebar-nav-label">{t('sidebar.agent')}</span>
-          </button>
-        )}
-        {onOpenKnowledge && (
-          <button
-            className="sidebar-nav-btn"
-            onClick={onOpenKnowledge}
-            title={t('sidebar.docs')}
+            onClick={onOpenUsageAnalytics}
+            title={t('sidebar.analytics')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              <path d="M18 20V10" />
+              <path d="M12 20V4" />
+              <path d="M6 20v-6" />
             </svg>
-            <span className="sidebar-nav-label">{t('sidebar.docs')}</span>
+            <span className="sidebar-nav-label">{t('sidebar.analytics')}</span>
           </button>
-        )}
-        {/* More / Less toggle — always last in row 1 */}
-        <button
-          className="sidebar-nav-btn sidebar-nav-more-btn"
-          onClick={() => setNavExpanded((v) => !v)}
-          title={navExpanded ? 'Show less' : 'More'}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-            style={{ transform: navExpanded ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }}>
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-          <span className="sidebar-nav-label">{navExpanded ? 'Less' : 'More'}</span>
-        </button>
+          {onOpenAgent ? (
+            <button
+              className="sidebar-nav-btn"
+              onClick={onOpenAgent}
+              title={t('sidebar.agent')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.9 2-2 2h-4a2 2 0 0 1-2-2 4 4 0 0 1 4-4z" />
+                <path d="M8 8v2a4 4 0 0 0 8 0V8" />
+                <path d="M12 14a3 3 0 0 0-3 3v1h6v-1a3 3 0 0 0-3-3z" />
+                <line x1="4" y1="20" x2="20" y2="20" />
+              </svg>
+              <span className="sidebar-nav-label">{t('sidebar.agent')}</span>
+            </button>
+          ) : <span className="sidebar-nav-placeholder" />}
+          {onOpenKnowledge ? (
+            <button
+              className="sidebar-nav-btn"
+              onClick={onOpenKnowledge}
+              title={t('sidebar.docs')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+              <span className="sidebar-nav-label">{t('sidebar.docs')}</span>
+            </button>
+          ) : <span className="sidebar-nav-placeholder" />}
+          {/* More / Less toggle — always 4th slot */}
+          <button
+            className="sidebar-nav-btn sidebar-nav-more-btn"
+            onClick={() => setNavExpanded((v) => !v)}
+            title={navExpanded ? 'Show less' : 'More'}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              style={{ transform: navExpanded ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }}>
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+            <span className="sidebar-nav-label">{navExpanded ? 'Less' : 'More'}</span>
+          </button>
+        </div>
 
-        {/* Expanded rows */}
+        {/* Expanded rows — separate container, always below row1 */}
         {navExpanded && (
-          <>
+          <div className="sidebar-nav-expanded">
             {onOpenArena && (
               <button
                 className="sidebar-nav-btn"
@@ -484,7 +486,7 @@ export function Sidebar({
               </svg>
               <span className="sidebar-nav-label">What's New</span>
             </button>
-          </>
+          </div>
         )}
       </div>
 

@@ -1,6 +1,6 @@
 /**
  * Lightweight i18n engine — zero dependencies.
- * Supports en / zh / ja locales.
+ * Supports en / zh locales.
  */
 
 // Global window augmentation for locale tracking
@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-export type Locale = 'en' | 'zh' | 'ja'
+export type Locale = 'en' | 'zh'
 
 export interface LocaleMeta {
   name: string
@@ -21,7 +21,6 @@ export interface LocaleMeta {
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
   en: { name: 'English', nativeName: 'English', dir: 'ltr' },
   zh: { name: 'Chinese (Simplified)', nativeName: '简体中文', dir: 'ltr' },
-  ja: { name: 'Japanese', nativeName: '日本語', dir: 'ltr' },
 }
 
 /** All translation dictionaries */
@@ -113,59 +112,6 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.copy': '复制',
     'arena.noPreview': '没有可预览的 HTML 输出',
   },
-  ja: {
-    'sidebar.brand': 'Monday',
-    'sidebar.newChat': '新しいチャット',
-    'sidebar.noConversations': 'まだ会話がありません',
-    'sidebar.noMatching': '一致する会話がありません',
-    'sidebar.delete': '削除',
-    'sidebar.newWindow': '新しいウィンドウで開く',
-    'sidebar.stats': '利用統計',
-    'sidebar.compare': 'モデル比較',
-    'sidebar.arena': '比較',
-    'sidebar.bench': 'モデルベンチマーク',
-    'sidebar.models': 'カスタムモデル',
-    'sidebar.personas': 'ペルソナマーケット',
-    'sidebar.docs': 'ナレッジ',
-    'sidebar.plugins': 'プラグイン',
-    'sidebar.mcp': 'MCPサーバー',
-    'sidebar.webdav': 'WebDAV同期',
-    'sidebar.memory': 'メモリ',
-    'sidebar.agent': 'エージェントモード',
-    'sidebar.analytics': '利用分析',
-    'sidebar.hotkeys': 'キーボードショートカット',
-    'sidebar.share': '会話を共有',
-    'sidebar.changelog': '更新履歴',
-    'sidebar.exportCurrent': '現在の会話をエクスポート',
-    'sidebar.exportAll': 'すべての会話をエクスポート',
-    'sidebar.shareHtml': 'HTMLで共有',
-    'sidebar.exportData': 'すべてのデータをエクスポート',
-    'sidebar.importData': 'データをインポート',
-    'sidebar.storage': 'localStorage使用量',
-    'sidebar.exportMenu': 'エクスポート',
-    'sidebar.github': 'GitHub',
-    'sidebar.viewChangelog': '更新履歴を表示',
-    'arena.teamA': 'チーム A',
-    'arena.teamB': 'チーム B',
-    'arena.start': '⚔️ アリーナ開始',
-    'arena.reset': '⚔️ もう一度比較',
-    'arena.stop': '⏹ 停止',
-    'arena.pending': '待機中',
-    'arena.streaming': 'ストリーミング',
-    'arena.done': '完了',
-    'arena.error': 'エラー',
-    'arena.waiting': 'ターンを待機中...',
-    'arena.generating': '生成中',
-    'arena.duration': '時間',
-    'arena.tokens': 'トークン',
-    'arena.speed': '速度',
-    'arena.webgpu': 'WebGPU',
-    'arena.wasm': 'WASM',
-    'arena.code': 'コード',
-    'arena.preview': 'プレビュー',
-    'arena.copy': 'コピー',
-    'arena.noPreview': '表示可能なHTML出力がありません',
-  },
 }
 
 // ── Command Palette ──
@@ -177,10 +123,6 @@ const cmd: Record<Locale, Record<string, string>> = {
   zh: {
     'cmd.placeholder': '输入命令或搜索…',
     'cmd.empty': '未找到命令',
-  },
-  ja: {
-    'cmd.placeholder': 'コマンドを入力または検索…',
-    'cmd.empty': 'コマンドが見つかりません',
   },
 }
 
@@ -242,34 +184,6 @@ const chat: Record<Locale, Record<string, string>> = {
     'chat.knowledgeChunks': '个片段',
     'chat.slashHint': '快速人格：',
   },
-  ja: {
-    'chat.placeholderDisabled': 'モデルを選択してチャットを開始…',
-    'chat.placeholderWithImages': 'メッセージを追加するか、上の画像を削除…',
-    'chat.placeholderAgent': 'エージェントに実行してもらうタスクを説明…',
-    'chat.placeholderNormal': 'メッセージを入力…（Enterで送信、Shift+Enterで改行）',
-    'chat.attachFile': 'ファイルを添付',
-    'chat.voiceInput': '音声入力',
-    'chat.stopListening': '録音を停止',
-    'chat.quickPersonas': 'クイックペルソナ：',
-    'chat.stop': '停止',
-    'chat.agent': 'エージェント',
-    'chat.agentOn': 'エージェントモードON',
-    'chat.agentOff': 'エージェントモードを有効化',
-    'chat.batch': '一括',
-    'chat.batchTitle': '複数の応答を生成',
-    'chat.send': '送信',
-    'chat.hint': 'WebGPUでブラウザ内100%ローカル実行',
-    'chat.chainingDrafting': 'ドラフト作成中…',
-    'chat.chainingRefining': 'リファイン中…',
-    'chat.chainingSwitching': 'モデル切替中…',
-    'chat.chainingLoadingDraft': 'ドラフトモデル読み込み中…',
-    'chat.chainingDone': '完了',
-    'chat.chainingDefault': 'モデルチェーン',
-    'chat.tokPerSec': 'tok/s',
-    'chat.tokens': 'トークン',
-    'chat.knowledgeChunks': 'チャンク',
-    'chat.slashHint': 'クイックペルソナ：',
-  },
 }
 
 // ── Usage Analytics ──
@@ -320,29 +234,6 @@ const analytics: Record<Locale, Record<string, string>> = {
     'analytics.tableTime': '时间',
     'analytics.tps': 'tps',
   },
-  ja: {
-    'analytics.title': '利用分析',
-    'analytics.desc': 'トークン使用量、スループット、セッションアクティビティを追跡',
-    'analytics.loading': '分析データを読み込み中…',
-    'analytics.totalTokens': '総トークン',
-    'analytics.avgTps': '平均 TPS',
-    'analytics.totalSessions': '総セッション',
-    'analytics.sessionsPerDay': '1日あたりセッション',
-    'analytics.tokenByModel': 'モデル別トークン使用量',
-    'analytics.dailyTokens': '1日あたりトークン使用量（過去7日間）',
-    'analytics.sessionsPerDayChart': '1日あたりセッション（過去7日間）',
-    'analytics.avgTpsByModel': 'モデル別平均 TPS',
-    'analytics.recentGenerations': '最近の生成',
-    'analytics.noData': '利用統計を見るには応答を生成してください！',
-    'analytics.chartEmpty': 'データなし',
-    'analytics.tableModel': 'モデル',
-    'analytics.tablePrompt': 'プロンプト',
-    'analytics.tableCompletion': '完成',
-    'analytics.tableTotal': '合計',
-    'analytics.tableTps': 'TPS',
-    'analytics.tableTime': '時間',
-    'analytics.tps': 'tps',
-  },
 }
 
 // ── Knowledge Panel ──
@@ -361,13 +252,6 @@ const knowledge: Record<Locale, Record<string, string>> = {
     'knowledge.loading': '解析文档中…',
     'knowledge.error': '错误',
   },
-  ja: {
-    'knowledge.activeBase': '📌 有効なベース:',
-    'knowledge.indexedChunks': '📊 {count}チャンクをインデックス済み',
-    'knowledge.noDocs': 'まだドキュメントがありません。ファイルをアップロードしてナレッジベースを構築してください。',
-    'knowledge.loading': 'ドキュメントを解析中…',
-    'knowledge.error': 'エラー',
-  },
 }
 
 // ── Memory Panel ──
@@ -379,10 +263,6 @@ const memory: Record<Locale, Record<string, string>> = {
   zh: {
     'memory.title': '记忆',
     'memory.noSummaries': '暂无摘要',
-  },
-  ja: {
-    'memory.title': 'メモリ',
-    'memory.noSummaries': 'サマリーなし',
   },
 }
 
@@ -446,35 +326,6 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.highContrastOn': '高对比度已开启',
     'settings.highContrastOff': '高对比度已关闭',
   },
-  ja: {
-    'settings.title': '設定',
-    'settings.reset': 'リセット',
-    'settings.params': '生成パラメータ',
-    'settings.temperature': '温度',
-    'settings.creative': 'クリエイティブ',
-    'settings.precise': '精密',
-    'settings.topP': 'Top-p',
-    'settings.strict': '厳格',
-    'settings.diverse': '多様',
-    'settings.maxTokens': '最大トークン',
-    'settings.language': '言語',
-    'settings.langAuto': '自動（検出）',
-    'settings.langEnglish': 'English',
-    'settings.langChinese': '中文',
-    'settings.langJapanese': '日本語',
-    'settings.systemPrompt': 'システムプロンプト',
-    'settings.systemPromptPlaceholder': 'システムプロンプトを入力（任意）...\n\n例：あなたは役に立つプログラミングアシスタントです。簡潔に正確に。',
-    'settings.systemPromptHint': 'このプロンプトは各会話のシステムメッセージとして送信されます。空白にするとモデルのデフォルト動作が使用されます。',
-    'settings.notifications': '通知',
-    'settings.notificationsHint': '長時間の生成が完了したときにブラウザ通知を受け取ります。',
-    'settings.allowNotifications': '通知を許可',
-    'settings.notificationsEnabled': '✓ 通知が有効',
-    'settings.notificationsBlocked': '通知がブロックされました — ブラウザ設定を確認してください',
-    'settings.highContrast': 'ハイコントラスト',
-    'settings.highContrastHint': '視認性を向上させるためにコントラストを強化します。ライトテーマとダークテーマの両方で動作します。',
-    'settings.highContrastOn': 'ハイコントラスト有効',
-    'settings.highContrastOff': 'ハイコントラスト無効',
-  },
 }
 
 // ── Message List ──
@@ -495,14 +346,6 @@ const msgList: Record<Locale, Record<string, string>> = {
     'msg.startConversation': '开始对话',
     'msg.startHint': '你的消息在浏览器本地处理，不会发送到任何服务器。',
   },
-  ja: {
-    'msg.noModel': 'モデルが読み込まれていません',
-    'msg.noModelHint': 'モデルをダウンロードしてチャットを開始 — すべてブラウザ内でローカル実行されます。',
-    'msg.loadingModel': 'モデルを読み込み中…',
-    'msg.loadingModelHint': 'モデルの準備中です。まもなくチャットが利用可能になります。',
-    'msg.startConversation': '会話を開始',
-    'msg.startHint': 'メッセージはブラウザ内でローカル処理されます。サーバーには送信されません。',
-  },
 }
 
 // ── Cache Manager ──
@@ -515,10 +358,6 @@ const cache: Record<Locale, Record<string, string>> = {
     'cache.loading': '加载缓存信息…',
     'cache.noModels': '未找到缓存模型。',
   },
-  ja: {
-    'cache.loading': 'キャッシュ情報を読み込み中…',
-    'cache.noModels': 'キャッシュされたモデルが見つかりません。',
-  },
 }
 
 // ── Update Banner ──
@@ -530,10 +369,6 @@ const banner: Record<Locale, Record<string, string>> = {
   zh: {
     'banner.title': 'Monday 已更新！',
     'banner.desc': '新版本已就绪。刷新以获取最新版本。',
-  },
-  ja: {
-    'banner.title': 'Mondayが更新されました！',
-    'banner.desc': '新しいバージョンが準備できました。リロードして最新バージョンを取得してください。',
   },
 }
 
@@ -549,11 +384,6 @@ const webdav: Record<Locale, Record<string, string>> = {
     'webdav.connected': '已连接',
     'webdav.corsNotice': '你可能需要 CORS 代理（如 "CORS Unblock"）来允许跨域请求。',
   },
-  ja: {
-    'webdav.offline': 'WebDAV同期にはインターネット接続が必要です。',
-    'webdav.connected': '接続済み',
-    'webdav.corsNotice': 'クロスオリジンリクエストを許可するためにCORSプロキシ（例：「CORS Unblock」）が必要になる場合があります。',
-  },
 }
 
 // ── MCP ──
@@ -566,10 +396,6 @@ const mcp: Record<Locale, Record<string, string>> = {
     'mcp.offline': 'MCP 服务器连接需要网络连接。',
     'mcp.urlHint': '输入 MCP 服务器的 WebSocket URL（例如 <code>ws://localhost:3001/mcp</code>）。',
   },
-  ja: {
-    'mcp.offline': 'MCPサーバー接続にはインターネット接続が必要です。',
-    'mcp.urlHint': 'MCPサーバーのWebSocket URLを入力してください（例：<code>ws://localhost:3001/mcp</code>）。',
-  },
 }
 
 // ── Plugin Manager ──
@@ -581,10 +407,6 @@ const plugin: Record<Locale, Record<string, string>> = {
   zh: {
     'plugin.offline': '插件安装需要网络连接。',
     'plugin.manifestHint': '清单必须是有效的 JSON，包含 <code>id</code>、<code>name</code>、<code>description</code>、<code>version</code>、<code>inputSchema</code> 和 <code>handlerUrl</code> 字段。',
-  },
-  ja: {
-    'plugin.offline': 'プラグインのインストールにはインターネット接続が必要です。',
-    'plugin.manifestHint': 'マニフェストは<code>id</code>、<code>name</code>、<code>description</code>、<code>version</code>、<code>inputSchema</code>、<code>handlerUrl</code>フィールドを含む有効なJSONである必要があります。',
   },
 }
 
@@ -600,11 +422,6 @@ const persona: Record<Locale, Record<string, string>> = {
     'persona.noResultsWithQuery': '搜索 "{query}"',
     'persona.noResultsCategory': '此分类中',
   },
-  ja: {
-    'persona.noResults': 'ペルソナが見つかりません',
-    'persona.noResultsWithQuery': '"{query}"',
-    'persona.noResultsCategory': 'このカテゴリ',
-  },
 }
 
 // ── Persona Publish ──
@@ -614,9 +431,6 @@ const publish: Record<Locale, Record<string, string>> = {
   },
   zh: {
     'publish.jsonHint': '文件。将你的条目添加到 <code>PERSONA_REGISTRY</code> 数组中。',
-  },
-  ja: {
-    'publish.jsonHint': 'ファイル。<code>PERSONA_REGISTRY</code>配列にエントリを追加してください。',
   },
 }
 
@@ -638,14 +452,6 @@ const customModel: Record<Locale, Record<string, string>> = {
     'customModel.tip3': '更大的模型需要更多显存 — 请先检查你的设备规格',
     'customModel.tip4': '使用 <code>onnx-community/</code> 前缀获取 WebGPU 兼容模型',
   },
-  ja: {
-    'customModel.example': '例: onnx-community/Qwen2.5-0.5B-Instruct',
-    'customModel.tipsTitle': 'ヒント',
-    'customModel.tip1': 'モデルはMLCコンパイル済みである必要があります（モデルIDに<code>-MLC</code>接尾辞があるか確認）',
-    'customModel.tip2': 'モデルはHuggingFaceからダウンロードされ、ブラウザにキャッシュされます',
-    'customModel.tip3': '大きなモデルはより多くのVRAMが必要です — まずデバイスの仕様を確認してください',
-    'customModel.tip4': 'WebGPU対応モデルには<code>onnx-community/</code>プレフィックスを使用',
-  },
 }
 
 // ── WebGPU Check ──
@@ -655,9 +461,6 @@ const webgpu: Record<Locale, Record<string, string>> = {
   },
   zh: {
     'webgpu.title': '不支持 WebGPU',
-  },
-  ja: {
-    'webgpu.title': 'WebGPUがサポートされていません',
   },
 }
 
@@ -681,15 +484,6 @@ const quickPrompts: Record<Locale, Record<string, string>> = {
     'qp.refineModel': '质量精炼模型',
     'qp.none': '无',
   },
-  ja: {
-    'qp.icon': 'アイコン',
-    'qp.name': '名前',
-    'qp.description': '説明',
-    'qp.systemPrompt': 'システムプロンプト',
-    'qp.draftModel': '高速ドラフトモデル',
-    'qp.refineModel': '高品質リファインモデル',
-    'qp.none': 'なし',
-  },
 }
 
 // ── Model Selector ──
@@ -699,9 +493,6 @@ const modelSelector: Record<Locale, Record<string, string>> = {
   },
   zh: {
     'model.params': '参数',
-  },
-  ja: {
-    'model.params': 'パラメータ',
   },
 }
 
@@ -714,10 +505,6 @@ const benchmark: Record<Locale, Record<string, string>> = {
   zh: {
     'bench.chooseModel': '选择模型…',
     'bench.generatedResponse': '生成的回复',
-  },
-  ja: {
-    'bench.chooseModel': 'モデルを選択…',
-    'bench.generatedResponse': '生成された応答',
   },
 }
 
@@ -775,32 +562,6 @@ const shortcuts: Record<Locale, Record<string, string>> = {
     'shortcut.resetRecentModels': '重置最近模型',
     'shortcut.settings': '设置',
   },
-  ja: {
-    'shortcut.commandPalette': 'コマンドパレット',
-    'shortcut.newChat': '新しいチャット',
-    'shortcut.stopGeneration': '生成を停止',
-    'shortcut.models': 'モデル',
-    'shortcut.modelCache': 'モデルキャッシュ',
-    'shortcut.usageStatistics': '利用統計',
-    'shortcut.personaMarketplace': 'ペルソナマーケット',
-    'shortcut.knowledge': 'ナレッジ',
-    'shortcut.modelComparison': 'モデル比較',
-    'shortcut.modelBenchmark': 'モデルベンチマーク',
-    'shortcut.customModelImport': 'カスタムモデル',
-    'shortcut.plugins': 'プラグイン',
-    'shortcut.mcpServers': 'MCPサーバー',
-    'shortcut.exportAllData': 'すべてのデータをエクスポート',
-    'shortcut.importData': 'データをインポート',
-    'shortcut.hotkeys': 'キーボードショートカット',
-    'shortcut.agentMode': 'エージェントモード',
-    'shortcut.usageAnalytics': '利用分析',
-    'shortcut.memory': 'メモリ',
-    'shortcut.publishPersona': 'ペルソナ公開',
-    'shortcut.shareConversation': '会話を共有',
-    'shortcut.resetRecommendations': '推奨をリセット',
-    'shortcut.resetRecentModels': '最近のモデルをリセット',
-    'shortcut.settings': '設定',
-  },
 }
 
 // ── Model Selector ──
@@ -838,23 +599,6 @@ const modelSelectorPanel: Record<Locale, Record<string, string>> = {
     'modelSelector.customModels': '自定义模型',
     'modelSelector.personaMarketplace': '人格市场',
     'modelSelector.params': '参数',
-  },
-  ja: {
-    'modelSelector.title': 'モデルを選択',
-    'modelSelector.desc': 'すべてのモデルはWebGPUでブラウザ内で直接実行されます。サーバーは不要です。',
-    'modelSelector.cache': 'キャッシュ',
-    'modelSelector.sortPopular': '人気',
-    'modelSelector.sortLatest': '最新',
-    'modelSelector.sortSize': 'サイズ',
-    'modelSelector.recent': '最近の使用',
-    'modelSelector.resetRecent': '最近のモデルをリセット',
-    'modelSelector.recommended': '推奨',
-    'modelSelector.downloaded': '✓ ダウンロード済み',
-    'modelSelector.ready': '● 準備完了',
-    'modelSelector.benchmark': 'モデルベンチマーク',
-    'modelSelector.customModels': 'カスタムモデル',
-    'modelSelector.personaMarketplace': 'ペルソナマーケット',
-    'modelSelector.params': 'パラメータ',
   },
 }
 
@@ -906,29 +650,6 @@ const analyticsPanel: Record<Locale, Record<string, string>> = {
     'analytics.tableTime': '时间',
     'analytics.tps': 'tps',
   },
-  ja: {
-    'analytics.title': '利用分析',
-    'analytics.desc': 'トークン使用量、スループット、セッションアクティビティを追跡',
-    'analytics.loading': '分析データを読み込み中…',
-    'analytics.totalTokens': '総トークン',
-    'analytics.avgTps': '平均 TPS',
-    'analytics.totalSessions': '総セッション',
-    'analytics.sessionsPerDay': '1日あたりセッション',
-    'analytics.tokenByModel': 'モデル別トークン使用量',
-    'analytics.dailyTokens': '1日あたりトークン使用量（過去7日間）',
-    'analytics.sessionsPerDayChart': '1日あたりセッション（過去7日間）',
-    'analytics.avgTpsByModel': 'モデル別平均 TPS',
-    'analytics.recentGenerations': '最近の生成',
-    'analytics.noData': '利用統計を見るには応答を生成してください！',
-    'analytics.chartEmpty': 'データなし',
-    'analytics.tableModel': 'モデル',
-    'analytics.tablePrompt': 'プロンプト',
-    'analytics.tableCompletion': '完成',
-    'analytics.tableTotal': '合計',
-    'analytics.tableTps': 'TPS',
-    'analytics.tableTime': '時間',
-    'analytics.tps': 'tps',
-  },
 }
 
 // ── Agent Panel ──
@@ -973,26 +694,6 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.closePanel': '关闭面板',
     'agent.noArgs': '（无参数）',
   },
-  ja: {
-    'agent.title': 'エージェントモード',
-    'agent.running': '実行中',
-    'agent.complete': '完了',
-    'agent.cancelled': 'キャンセル',
-    'agent.error': 'エラー',
-    'agent.idle': '待機中',
-    'agent.goal': '目標',
-    'agent.steps': 'ステップ',
-    'agent.stop': '停止',
-    'agent.taskComplete': '✓ タスク完了',
-    'agent.waiting': '開始待機中…',
-    'agent.thought': '思考',
-    'agent.tool': 'ツール',
-    'agent.result': '結果',
-    'agent.errorLabel': 'エラー',
-    'agent.finalAnswer': '最終回答',
-    'agent.closePanel': 'パネルを閉じる',
-    'agent.noArgs': '（引数なし）',
-  },
 }
 
 // ── Batch Generation ──
@@ -1031,23 +732,6 @@ const batchGen: Record<Locale, Record<string, string>> = {
     'batch.currentModel': '当前模型',
     'batch.tok': 'tokens',
   },
-  ja: {
-    'batch.title': '一括生成',
-    'batch.back': 'チャットに戻る',
-    'batch.responses': '応答数：',
-    'batch.generate': '生成',
-    'batch.generateAgain': '再帰成',
-    'batch.stop': '停止',
-    'batch.prompt': 'プロンプト：',
-    'batch.discardAll': 'すべて破棄',
-    'batch.errors': '一部に応答エラーがあります。成功したものを選ぶか、すべて破棄してください。',
-    'batch.generating': '生成中…',
-    'batch.expand': '展開',
-    'batch.collapse': '折りたたみ',
-    'batch.pick': '選択',
-    'batch.currentModel': '現在のモデル',
-    'batch.tok': 'トークン',
-  },
 }
 
 // ── Changelog ──
@@ -1062,11 +746,6 @@ const changelog: Record<Locale, Record<string, string>> = {
     'changelog.viewOnGitHub': '在 GitHub 上查看',
     'changelog.released': '发布日期',
   },
-  ja: {
-    'changelog.title': '更新履歴',
-    'changelog.viewOnGitHub': 'GitHubで表示',
-    'changelog.released': 'リリース日',
-  },
 }
 
 // ── Offline Indicator ──
@@ -1078,10 +757,6 @@ const offlineIndicator: Record<Locale, Record<string, string>> = {
   zh: {
     'offline.text': '你已离线 — WebDAV、MCP 和插件已禁用',
     'offline.dismiss': '关闭',
-  },
-  ja: {
-    'offline.text': 'オフラインです — WebDAV、MCP、プラグインが無効化されています',
-    'offline.dismiss': '閉じる',
   },
 }
 
@@ -1110,18 +785,6 @@ const pluginManager: Record<Locale, Record<string, string>> = {
     'pluginManager.error': '✗ 错误',
     'pluginManager.remove': '移除',
     'pluginManager.failed': '安装插件失败',
-  },
-  ja: {
-    'pluginManager.title': 'プラグイン',
-    'pluginManager.install': 'プラグインをインストール',
-    'pluginManager.installed': 'インストール済みプラグイン',
-    'pluginManager.noPlugins': 'プラグインがインストールされていません。',
-    'pluginManager.installHint': '上記のマニフェストURLを貼り付けてサードパーティプラグインをインストールしてください。',
-    'pluginManager.installing': 'インストール中…',
-    'pluginManager.loaded': '✓ 読み込み済み',
-    'pluginManager.error': '✗ エラー',
-    'pluginManager.remove': '削除',
-    'pluginManager.failed': 'プラグインのインストールに失敗しました',
   },
 }
 
@@ -1152,19 +815,6 @@ const mcpManager: Record<Locale, Record<string, string>> = {
     'mcpManager.reconnect': '重连',
     'mcpManager.remove': '移除',
     'mcpManager.toolsAvailable': '个可用工具',
-  },
-  ja: {
-    'mcpManager.title': 'MCPサーバー',
-    'mcpManager.add': 'MCPサーバーを追加',
-    'mcpManager.connected': '接続済み',
-    'mcpManager.noServers': 'MCPサーバーが接続されていません。',
-    'mcpManager.addHint': '上記のWebSocket URLを入力してサーバーを追加してください。',
-    'mcpManager.connecting': '接続中…',
-    'mcpManager.addServer': 'サーバーを追加',
-    'mcpManager.disconnected': '切断済み',
-    'mcpManager.reconnect': '再接続',
-    'mcpManager.remove': '削除',
-    'mcpManager.toolsAvailable': '個の利用可能ツール',
   },
 }
 
@@ -1232,37 +882,6 @@ const webdavSettings: Record<Locale, Record<string, string>> = {
     'webdav.syncWarning': '下载将替换你的当前数据 — 如有需要请先导出。',
     'webdav.serverHint': '输入你的 WebDAV 服务器信息以跨设备同步 Monday 数据。',
   },
-  ja: {
-    'webdav.title': 'WebDAV同期',
-    'webdav.server': 'WebDAVサーバー',
-    'webdav.configured': '✓ 設定済み',
-    'webdav.lastSync': '最後の同期',
-    'webdav.never': 'なし',
-    'webdav.justNow': 'たった今',
-    'webdav.syncData': 'データを同期',
-    'webdav.upload': 'アップロード',
-    'webdav.download': 'ダウンロード',
-    'webdav.both': '両方',
-    'webdav.testConnection': '接続をテスト',
-    'webdav.testing': 'テスト中…',
-    'webdav.saveConfig': '設定を保存',
-    'webdav.removeConfig': '設定を削除',
-    'webdav.uploading': 'アップロード中…',
-    'webdav.downloading': 'ダウンロード中…',
-    'webdav.uploadToWebDAV': 'WebDAVにアップロード',
-    'webdav.downloadFromWebDAV': 'WebDAVからダウンロード',
-    'webdav.noConfig': 'WebDAVサーバーが設定されていません。',
-    'webdav.noConfigHint': '上記にWebDAVサーバーの詳細を入力して、デバイス間の同期を有効にしてください。',
-    'webdav.hidePassword': 'パスワードを隠す',
-    'webdav.showPassword': 'パスワードを表示',
-    'webdav.placeholderUrl': 'https://dav.example.com/remote.php/dav/',
-    'webdav.placeholderUser': 'ユーザー名',
-    'webdav.placeholderPass': 'パスワード',
-    'webdav.placeholderMasked': '••••••••',
-    'webdav.syncHint': '現在のデータをWebDAVにアップロード、WebDAVからダウンロード、または双方向で同期します。',
-    'webdav.syncWarning': 'ダウンロードは現在のデータを置き換えます — 必要に応じて先にエクスポートしてください。',
-    'webdav.serverHint': 'Mondayのデータをデバイス間で同期するには、WebDAVサーバーの詳細を入力してください。',
-  },
 }
 
 // ── Persona Marketplace ──
@@ -1280,13 +899,6 @@ const personaMarketplace: Record<Locale, Record<string, string>> = {
     'personaMarketplace.all': '全部',
     'personaMarketplace.back': '返回聊天',
     'personaMarketplace.noResults': '未找到人格',
-  },
-  ja: {
-    'personaMarketplace.title': 'ペルソナマーケット',
-    'personaMarketplace.searchPlaceholder': 'ペルソナを検索…',
-    'personaMarketplace.all': 'すべて',
-    'personaMarketplace.back': 'チャットに戻る',
-    'personaMarketplace.noResults': 'ペルソナが見つかりません',
   },
 }
 
@@ -1320,20 +932,6 @@ const modelComparison: Record<Locale, Record<string, string>> = {
     'modelComparison.elapsed': '耗时',
     'modelComparison.tps': 'tok/s',
   },
-  ja: {
-    'modelComparison.title': 'モデル比較',
-    'modelComparison.compare': '比較',
-    'modelComparison.back': 'モデルに戻る',
-    'modelComparison.placeholder': 'モデルを比較するプロンプトを入力…',
-    'modelComparison.compareModels': 'モデルを比較',
-    'modelComparison.generating': '生成中…',
-    'modelComparison.stop': '停止',
-    'modelComparison.reset': 'リセット',
-    'modelComparison.generated': '生成された応答',
-    'modelComparison.tokenCount': 'トークン',
-    'modelComparison.elapsed': '経過',
-    'modelComparison.tps': 'tok/s',
-  },
 }
 
 // ── Tool Call Panel ──
@@ -1354,14 +952,6 @@ const toolCallPanel: Record<Locale, Record<string, string>> = {
     'toolCall.args': '参数',
     'toolCall.result': '结果',
   },
-  ja: {
-    'toolCall.title': 'ツール呼び出し',
-    'toolCall.input': '入力',
-    'toolCall.output': '出力',
-    'toolCall.latency': 'レイテンシ',
-    'toolCall.args': '引数',
-    'toolCall.result': '結果',
-  },
 }
 
 // ── Tool Call Inspector ──
@@ -1381,14 +971,6 @@ const toolCallInspector: Record<Locale, Record<string, string>> = {
     'toolCallInspector.success': '成功',
     'toolCallInspector.error': '错误',
     'toolCallInspector.noCalls': '暂无工具调用。',
-  },
-  ja: {
-    'toolCallInspector.title': 'ツール呼び出しインスペクター',
-    'toolCallInspector.rawJson': '生JSON',
-    'toolCallInspector.copy': 'コピー',
-    'toolCallInspector.success': '成功',
-    'toolCallInspector.error': 'エラー',
-    'toolCallInspector.noCalls': 'ツール呼び出しはありません。',
   },
 }
 
@@ -1438,28 +1020,6 @@ const knowledgePanel: Record<Locale, Record<string, string>> = {
     'knowledgePanel.addDoc': '添加到知识库',
     'knowledgePanel.removeDoc': '从知识库移除',
   },
-  ja: {
-    'knowledgePanel.back': 'チャットに戻る',
-    'knowledgePanel.uploadDocs': 'ドキュメントをアップロード',
-    'knowledgePanel.search': '検索',
-    'knowledgePanel.indexStatus': '{count}チャンクをインデックス済み',
-    'knowledgePanel.reIndex': '再インデックス',
-    'knowledgePanel.noDocs': 'まだドキュメントがありません。ファイルをアップロードしてナレッジベースを構築してください。',
-    'knowledgePanel.loading': 'ドキュメントを解析中…',
-    'knowledgePanel.activeBase': '📌 有効なベース:',
-    'knowledgePanel.error': 'エラー',
-    'knowledgePanel.noResults': '結果なし',
-    'knowledgePanel.clearIndex': 'インデックスをクリア',
-    'knowledgePanel.clearDocs': 'すべてクリア',
-    'knowledgePanel.clearDocsConfirm': 'すべてのドキュメントをクリアしますか？',
-    'knowledgePanel.clearIndexConfirm': 'ベクターインデックスをクリアしますか？',
-    'knowledgePanel.noBase': '有効なナレッジベースなし',
-    'knowledgePanel.clearBase': 'クリア',
-    'knowledgePanel.createBase': 'ベースを作成',
-    'knowledgePanel.baseName': 'ベース名',
-    'knowledgePanel.addDoc': 'ベースに追加',
-    'knowledgePanel.removeDoc': 'ベースから削除',
-  },
 }
 
 // ── Memory Panel ──
@@ -1486,17 +1046,6 @@ const memoryPanel: Record<Locale, Record<string, string>> = {
     'memoryPanel.summarizing': '压缩中…',
     'memoryPanel.contextFull': '上下文已满',
   },
-  ja: {
-    'memoryPanel.title': 'メモリ',
-    'memoryPanel.back': 'チャットに戻る',
-    'memoryPanel.compress': '圧縮',
-    'memoryPanel.cancel': 'キャンセル',
-    'memoryPanel.noSummaries': 'サマリーなし',
-    'memoryPanel.estimatedTokens': '推定トークン',
-    'memoryPanel.needsSummarization': 'コンテキストが一杯 — 領域を空けるために圧縮',
-    'memoryPanel.summarizing': '圧縮中…',
-    'memoryPanel.contextFull': 'コンテキストがいっぱい',
-  },
 }
 
 // ── WebGPU Check ──
@@ -1508,10 +1057,6 @@ const webgpuCheck: Record<Locale, Record<string, string>> = {
   zh: {
     'webgpu.title': '不支持 WebGPU',
     'webgpu.hint': '你的浏览器不支持 WebGPU。模型将通过 WASM 缓慢运行。要获得最佳体验，请使用 Chrome 113+ 或 Edge 113+。',
-  },
-  ja: {
-    'webgpu.title': 'WebGPUがサポートされていません',
-    'webgpu.hint': 'お使いのブラウザはWebGPUをサポートしていません。モデルはWASMで低速実行されます。最適な体験にはChrome 113+またはEdge 113+を使用してください。',
   },
 }
 
@@ -1533,15 +1078,6 @@ const cacheManager: Record<Locale, Record<string, string>> = {
     'cacheManager.delete': '删除',
     'cacheManager.total': '总计',
     'cacheManager.size': '大小',
-    'cacheManager.actions': '操作',
-  },
-  ja: {
-    'cacheManager.loading': 'キャッシュ情報を読み込み中…',
-    'cacheManager.noModels': 'キャッシュされたモデルが見つかりません。',
-    'cacheManager.deleteConfirm': 'このモデルキャッシュを削除しますか？',
-    'cacheManager.delete': '削除',
-    'cacheManager.total': '合計',
-    'cacheManager.size': 'サイズ',
     'cacheManager.actions': '操作',
   },
 }
@@ -1578,21 +1114,6 @@ const modelStats: Record<Locale, Record<string, string>> = {
     'modelStats.totalSessions': '总会话',
     'modelStats.peakDayLabel': '峰值日',
   },
-  ja: {
-    'modelStats.title': '利用統計',
-    'modelStats.totalUsage': '総利用',
-    'modelStats.modelsUsed': '使用モデル',
-    'modelStats.topModel': 'トップモデル',
-    'modelStats.peakDay': 'ピーク日',
-    'modelStats.weeklyUsage': '週間利用（過去7日間）',
-    'modelStats.byProvider': 'プロバイダー別利用',
-    'modelStats.noData': 'データなし',
-    'modelStats.resetRecommendations': '推奨をリセット',
-    'modelStats.resetRecentModels': '最近のモデルをリセット',
-    'modelStats.totalTokens': '総トークン',
-    'modelStats.totalSessions': '総セッション',
-    'modelStats.peakDayLabel': 'ピーク日',
-  },
 }
 
 // ── Persona Publish ──
@@ -1620,18 +1141,6 @@ const personaPublish: Record<Locale, Record<string, string>> = {
     'personaPublish.description': '描述',
     'personaPublish.systemPrompt': '系统提示',
     'personaPublish.icon': '图标',
-  },
-  ja: {
-    'personaPublish.title': 'ペルソナ公開',
-    'personaPublish.back': '戻る',
-    'personaPublish.jsonHint': 'ファイル。<code>PERSONA_REGISTRY</code>配列にエントリを追加してください。',
-    'personaPublish.success': 'ペルソナが公開されました！',
-    'personaPublish.error': 'ペルソナの公開に失敗しました',
-    'personaPublish.preview': 'プレビュー',
-    'personaPublish.name': '名前',
-    'personaPublish.description': '説明',
-    'personaPublish.systemPrompt': 'システムプロンプト',
-    'personaPublish.icon': 'アイコン',
   },
 }
 
@@ -1686,36 +1195,12 @@ const a11y = {
     'a11y.offline': '您已离线',
     'a11y.online': '已恢复在线',
   },
-  ja: {
-    'a11y.skipToContent': 'メインコンテンツにスキップ',
-    'a11y.sidebar': 'サイドバーナビゲーション',
-    'a11y.mainContent': 'メインコンテンツ',
-    'a11y.commandPalette': 'コマンドパレット',
-    'a11y.search': '検索',
-    'a11y.close': '閉じる',
-    'a11y.expand': '展開',
-    'a11y.collapse': '折りたたむ',
-    'a11y.loading': '読み込み中',
-    'a11y.error': 'エラー',
-    'a11y.success': '成功',
-    'a11y.highContrast': 'ハイコントラストモード',
-    'a11y.keyboardNav': 'キーボードナビゲーション有効',
-    'a11y.newSession': '新しいセッションを作成しました',
-    'a11y.deleteSession': 'セッションを削除しました',
-    'a11y.copyMessage': 'メッセージをクリップボードにコピーしました',
-    'a11y.regenerate': '応答を再生成中',
-    'a11y.stopGeneration': '生成を停止しました',
-    'a11y.modelLoaded': 'モデルが読み込まれ、準備完了',
-    'a11y.modelLoading': 'モデルを読み込み中',
-    'a11y.offline': 'オフラインです',
-    'a11y.online': 'オンラインに復帰しました',
-  },
 }
 
 
 // ── Merge all into one dictionary ──
-const all: Record<Locale, Record<string, string>> = { en: {}, zh: {}, ja: {} }
-for (const locale of ['en', 'zh', 'ja'] as Locale[]) {
+const all: Record<Locale, Record<string, string>> = { en: {}, zh: {} }
+for (const locale of ['en', 'zh'] as Locale[]) {
   all[locale] = {
     ...translations[locale],
     ...cmd[locale],
@@ -1803,6 +1288,5 @@ export function detectLocale(): Locale {
   if (typeof navigator === 'undefined') return 'en'
   const lang = navigator.language?.toLowerCase() ?? ''
   if (lang.startsWith('zh')) return 'zh'
-  if (lang.startsWith('ja')) return 'ja'
   return 'en'
 }
