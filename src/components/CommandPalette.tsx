@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
+import { t } from '../lib/i18n'
 import type { CommandItem } from '../hooks/useKeyboardShortcuts'
 
 interface Props {
@@ -69,7 +70,7 @@ export function CommandPalette({
               ref={searchRef}
               type="text"
               className="command-palette-input"
-              placeholder="Type a command or search..."
+              placeholder={t('cmd.placeholder')}
               value={search}
               onChange={(e) => {
                 onSearchChange(e.target.value)
@@ -83,7 +84,7 @@ export function CommandPalette({
 
           <div className="command-palette-list">
             {commands.length === 0 ? (
-              <div className="command-palette-empty">No commands found</div>
+              <div className="command-palette-empty">{t('cmd.empty')}</div>
             ) : (
               commands.map((cmd, index) => (
                 <button

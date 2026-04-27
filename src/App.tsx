@@ -54,6 +54,7 @@ import { getRecentModels, resetRecentModels as resetRecent } from './lib/recentM
 import { getLocale, setLocale, detectLocale } from './lib/i18n'
 import type { Locale } from './lib/i18n'
 import './App.css'
+import { useLocale } from './hooks/useLocale'
 
 type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics'
 
@@ -126,16 +127,7 @@ export default function App() {
   const [showBatch, setShowBatch] = useState(false)
   const [batchPrompt, setBatchPrompt] = useState('')
   // v0.30.5: i18n locale
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    const saved = localStorage.getItem('monday-locale')
-    if (saved && saved !== 'auto') return saved as Locale
-    return detectLocale()
-  })
-  const handleChangeLocale = useCallback((l: Locale) => {
-    setLocaleState(l)
-    setLocale(l)
-    localStorage.setItem('monday-locale', l)
-  }, [])
+  const { locale, changeLocale: handleChangeLocale } = useLocale()
   const model = useModel()
   const chat = useChat(selectedModelId ?? '', {
     onGenerationComplete: (title, body) => {

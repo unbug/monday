@@ -138,7 +138,7 @@ export function Sidebar({
           <span className="sidebar-brand-text">{t('sidebar.brand')}</span>
         </h1>
         <BorderBeam size="sm" theme="auto" colorVariant="mono" strength={0.5} duration={2.4}>
-          <button className="sidebar-new-btn" onClick={onNew} title="New Chat">
+          <button className="sidebar-new-btn" onClick={onNew} title={t('sidebar.newChat')}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -187,7 +187,7 @@ export function Sidebar({
                         e.stopPropagation()
                         onDelete(session.id)
                       }}
-                      title="Delete"
+                      title={t('sidebar.delete')}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -201,7 +201,7 @@ export function Sidebar({
                           e.stopPropagation()
                           onOpenInNewWindow(session.id)
                         }}
-                        title="Open in New Window"
+                        title={t('sidebar.newWindow')}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -227,7 +227,7 @@ export function Sidebar({
                         e.stopPropagation()
                         onDelete(session.id)
                       }}
-                      title="Delete"
+                      title={t('sidebar.delete')}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -241,7 +241,7 @@ export function Sidebar({
                           e.stopPropagation()
                           onOpenInNewWindow(session.id)
                         }}
-                        title="Open in New Window"
+                        title={t('sidebar.newWindow')}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -284,20 +284,20 @@ export function Sidebar({
         <button
           className="sidebar-nav-btn"
           onClick={onOpenStats}
-          title="Usage Statistics"
+          title={t('sidebar.stats')}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M18 20V10" />
             <path d="M12 20V4" />
             <path d="M6 20v-6" />
           </svg>
-          <span className="sidebar-nav-label">Stats</span>
+            <span className="sidebar-nav-label">{t('sidebar.stats')}</span>
         </button>
         {onOpenComparison && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenComparison}
-            title="Model Comparison"
+            title={t('sidebar.compare')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M16 3h5v5" />
@@ -305,120 +305,120 @@ export function Sidebar({
               <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.813L3 3" />
               <path d="M21 3l-7.173 7.173a4 4 0 0 0-2.813 1.172L21 21" />
             </svg>
-            <span className="sidebar-nav-label">Compare</span>
+            <span className="sidebar-nav-label">{t('sidebar.compare')}</span>
           </button>
         )}
         {onOpenBenchmark && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenBenchmark}
-            title="Model Benchmark"
+            title={t('sidebar.bench')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
-            <span className="sidebar-nav-label">Bench</span>
+            <span className="sidebar-nav-label">{t('sidebar.bench')}</span>
           </button>
         )}
         {onOpenCustomModels && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenCustomModels}
-            title="Custom Model Import"
+            title={t('sidebar.models')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>
-            <span className="sidebar-nav-label">Models</span>
+            <span className="sidebar-nav-label">{t('sidebar.models')}</span>
           </button>
         )}
         {onOpenPersonaMarketplace && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenPersonaMarketplace}
-            title="Persona Marketplace"
+            title={t('sidebar.personas')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
-            <span className="sidebar-nav-label">Personas</span>
+            <span className="sidebar-nav-label">{t('sidebar.personas')}</span>
           </button>
         )}
         {onOpenKnowledge && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenKnowledge}
-            title="Knowledge"
+            title={t('sidebar.docs')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
-            <span className="sidebar-nav-label">Docs</span>
+            <span className="sidebar-nav-label">{t('sidebar.docs')}</span>
           </button>
         )}
         {onOpenPlugins && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenPlugins}
-            title="Plugins"
+            title={t('sidebar.plugins')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
               <line x1="16" y1="8" x2="2" y2="22" />
               <line x1="17.5" y1="15" x2="9" y2="15" />
             </svg>
-            <span className="sidebar-nav-label">Plugins</span>
+            <span className="sidebar-nav-label">{t('sidebar.plugins')}</span>
           </button>
         )}
         {onOpenMcpServers && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenMcpServers}
-            title="MCP Servers"
+            title={t('sidebar.mcp')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <path d="M2 12h20" />
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
-            <span className="sidebar-nav-label">MCP</span>
+            <span className="sidebar-nav-label">{t('sidebar.mcp')}</span>
           </button>
         )}
         {onOpenWebDAV && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenWebDAV}
-            title="WebDAV Sync"
+            title={t('sidebar.webdav')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9" />
               <path d="M12 3v9l6-3" />
             </svg>
-            <span className="sidebar-nav-label">WebDAV</span>
+            <span className="sidebar-nav-label">{t('sidebar.webdav')}</span>
           </button>
         )}
         {onOpenMemory && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenMemory}
-            title="Memory"
+            title={t('sidebar.memory')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z" />
               <path d="M12 6v6l4 2" />
             </svg>
-            <span className="sidebar-nav-label">Memory</span>
+            <span className="sidebar-nav-label">{t('sidebar.memory')}</span>
           </button>
         )}
         {onOpenAgent && (
           <button
             className="sidebar-nav-btn"
             onClick={onOpenAgent}
-            title="Agent Mode"
+            title={t('sidebar.agent')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.9 2-2 2h-4a2 2 0 0 1-2-2 4 4 0 0 1 4-4z" />
@@ -426,7 +426,7 @@ export function Sidebar({
               <path d="M12 14a3 3 0 0 0-3 3v1h6v-1a3 3 0 0 0-3-3z" />
               <line x1="4" y1="20" x2="20" y2="20" />
             </svg>
-            <span className="sidebar-nav-label">Agent</span>
+            <span className="sidebar-nav-label">{t('sidebar.agent')}</span>
           </button>
         )}
         {onOpenUsageAnalytics && (
@@ -531,7 +531,7 @@ export function Sidebar({
                 }}
                 disabled={!activeSession}
               >
-                Export current conversation
+                {t('sidebar.exportCurrent')}
               </button>
               <button
                 className="sidebar-export-menu-item"

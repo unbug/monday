@@ -447,7 +447,7 @@ tools functionality; offline mode degrades gracefully.
       the best
 - [x] **Usage analytics** — Local-only dashboard: model usage, tokens
       consumed, average tps, sessions per day
-- [ ] **i18n** — Multi-language interface (English, 中文, 日本語) with
+- [x] **i18n** — Multi-language interface (English, 中文, 日本語) with
       language picker in settings
 - [ ] **Accessibility** — Screen-reader landmarks, keyboard-only
       navigation, high-contrast theme

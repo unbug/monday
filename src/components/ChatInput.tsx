@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
+import { t } from '../lib/i18n'
 import { ImagePreview } from './ImagePreview'
 import { FileAttachment } from './FileAttachment'
 import { useVoiceInput } from '../hooks/useVoiceInput'
@@ -320,7 +321,7 @@ export function ChatInput({
             className="chat-input-file-btn"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled}
-            title="Attach file"
+            title={t('chat.attachFile')}
             type="button"
           >
             <svg
@@ -355,12 +356,12 @@ export function ChatInput({
             onPaste={handlePaste}
             placeholder={
               disabled
-                ? 'Select and load a model to start chatting...'
+                ? t('chat.placeholderDisabled')
                 : images.length > 0
-                  ? 'Add a message or remove images above...'
+                  ? t('chat.placeholderWithImages')
                   : agentMode
-                    ? 'Describe a task for the agent to accomplish...'
-                    : 'Type a message... (Enter to send, Shift+Enter for new line)'
+                    ? t('chat.placeholderAgent')
+                    : t('chat.placeholderNormal')
             }
             disabled={disabled}
             rows={1}
@@ -378,8 +379,8 @@ export function ChatInput({
                 }
                 title={
                   voiceInput.isListening
-                    ? 'Stop listening'
-                    : 'Voice input'
+                    ? t('chat.stopListening')
+                    : t('chat.voiceInput')
                 }
                 type="button"
               >
@@ -399,7 +400,7 @@ export function ChatInput({
           )}
           {showSlashHint && (
             <div className="slash-hint">
-              <span className="slash-hint-label">Quick personas:</span>
+              <span className="slash-hint-label">{t('chat.quickPersonas')}:</span>
               {PROMPT_TEMPLATES.slice(0, 6).map((p) => (
                 <button
                   key={p.id}
@@ -429,7 +430,7 @@ export function ChatInput({
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <rect x="6" y="6" width="12" height="12" rx="1" />
               </svg>
-              Stop
+              {t('chat.stop')}
             </button>
           ) : (
             <>
@@ -438,7 +439,7 @@ export function ChatInput({
                   className={`chat-btn chat-btn-agent ${agentMode ? 'agent-active' : ''}`}
                   onClick={onToggleAgentMode}
                   disabled={disabled}
-                  title={agentMode ? 'Agent mode on' : 'Enable agent mode'}
+                  title={agentMode ? t('chat.agentOn') : t('chat.agentOff')}
                   type="button"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -447,7 +448,7 @@ export function ChatInput({
                     <path d="M12 14a3 3 0 0 0-3 3v1h6v-1a3 3 0 0 0-3-3z" />
                     <line x1="4" y1="20" x2="20" y2="20" />
                   </svg>
-                  Agent
+                  {t('chat.agent')}
                 </button>
               )}
               {onBatchSend && (
@@ -455,7 +456,7 @@ export function ChatInput({
                   className="chat-btn chat-btn-batch"
                   onClick={() => onBatchSend(input.trim())}
                   disabled={disabled || !input.trim()}
-                  title="Generate multiple responses"
+                  title={t('chat.batchTitle')}
                   type="button"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -476,14 +477,14 @@ export function ChatInput({
                   <line x1="22" y1="2" x2="11" y2="13" />
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
-                Send
+                {t('chat.send')}
               </button>
             </>
           )}
         </div>
       </BorderBeam>
       <p className="chat-input-hint">
-        Running 100% locally in your browser via WebGPU
+        {t('chat.hint')}
       </p>
       {/* v0.30: model chaining indicator */}
       {chainConfig && (
@@ -491,16 +492,16 @@ export function ChatInput({
           <span className="model-chain-icon">⛓️</span>
           <span className="model-chain-label">
             {chainProgress?.status === 'drafting'
-              ? 'Drafting…'
+              ? t('chat.chainingDrafting')
               : chainProgress?.status === 'refining'
-                ? 'Refining…'
+                ? t('chat.chainingRefining')
                 : chainProgress?.status === 'switching'
-                  ? 'Switching models…'
+                  ? t('chat.chainingSwitching')
                   : chainProgress?.status === 'loading_draft'
-                    ? 'Loading draft model…'
+                    ? t('chat.chainingLoadingDraft')
                     : chainProgress?.status === 'done'
-                      ? 'Done'
-                      : 'Model Chaining'}
+                      ? t('chat.chainingDone')
+                      : t('chat.chainingDefault')}
           </span>
         </div>
       )}
@@ -511,7 +512,7 @@ export function ChatInput({
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
-            {tokenStats.tokensPerSecond} tok/s
+            {tokenStats.tokensPerSecond} {t('chat.tokPerSec')}
           </span>
           <span className="token-stats-item">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -527,7 +528,7 @@ export function ChatInput({
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
-            {tokenStats.sessionTokens} tokens
+            {tokenStats.sessionTokens} {t('chat.tokens')}
           </span>
           {/* v0.26.1: knowledge context count */}
           {knowledgeContextCount != null && knowledgeContextCount > 0 && (
@@ -536,7 +537,7 @@ export function ChatInput({
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
               </svg>
-              {knowledgeContextCount} chunks
+              {knowledgeContextCount} {t('chat.knowledgeChunks', {count: String(knowledgeContextCount)})}
             </span>
           )}
         </div>

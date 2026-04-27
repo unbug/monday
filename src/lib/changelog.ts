@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.30.5',
+    date: '2026-04-27',
+    title: 'i18n — Multi-Language Interface',
+    description:
+      'Monday now supports three languages: English, 中文 (Simplified Chinese), and 日本語 (Japanese). A language picker lives in Settings — changes persist in localStorage and the URL (?lang=zh). Browser auto-detection uses navigator.language. All UI text across every view is translated.',
+    changes: [
+      { type: 'added', text: 'i18n.ts — zero-dependency lightweight i18n engine with t() translation function, {param} interpolation, en/zh/ja dictionaries, and detectLocale() from navigator.language' },
+      { type: 'added', text: 'useLocale hook — manages locale state with URL param (?lang=zh), localStorage persistence, and HTML lang attribute updates' },
+      { type: 'added', text: 'LanguagePicker component — native-name buttons (English / 中文 / 日本語) in Settings panel with active state and dark/light theme' },
+      { type: 'added', text: 'Full translation coverage — 15+ translation categories covering Sidebar, ChatInput, CommandPalette, MessageList, SettingsPanel, KnowledgePanel, MemoryPanel, AgentPanel, BatchGeneration, UsageAnalytics, ModelSelector, ModelComparison, Benchmark, CustomModelImport, PersonaMarketplace, PluginManager, MCPManager, WebDAVSettings, ToolCallPanel, ToolCallInspector, CacheManager, ModelStats, PersonaPublish, QuickPrompts, UpdateBanner, OfflineIndicator, WebGPUCheck, changelog' },
+      { type: 'changed', text: 'Updated version to v0.30.5' },
+    ],
+  },
+  {
     version: '0.30.4',
     date: '2026-04-27',
     title: 'Usage Analytics — Local-Only Dashboard',
