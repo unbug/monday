@@ -4018,9 +4018,10 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   padding: 8px 12px;
-  overflow: hidden;
+  overflow-x: hidden;
   max-width: 100%;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .sidebar-nav-btn {

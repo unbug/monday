@@ -1,9 +1,38 @@
 import {
   CreateMLCEngine,
+  prebuiltAppConfig,
   type MLCEngineInterface,
   type InitProgressReport,
   type ChatCompletionChunk,
+  type AppConfig,
 } from '@mlc-ai/web-llm'
+
+// Custom models not yet in web-llm prebuilt list, using hf-mirror.com for China accessibility
+const CUSTOM_MODELS: AppConfig['model_list'] = [
+  {
+    model: 'https://hf-mirror.com/mlc-ai/Qwen3.5-0.8B-q4f16_1-MLC',
+    model_id: 'Qwen3.5-0.8B-q4f16_1-MLC',
+    model_lib:
+      'https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_80/Qwen3.5-0.8B-q4f16_1-ctx4k_cs1k-webgpu.wasm',
+    vram_required_MB: 1500,
+    low_resource_required: true,
+    overrides: { context_window_size: 4096 },
+  },
+  {
+    model: 'https://hf-mirror.com/mlc-ai/Qwen3.5-2B-q4f16_1-MLC',
+    model_id: 'Qwen3.5-2B-q4f16_1-MLC',
+    model_lib:
+      'https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_80/Qwen3.5-2B-q4f16_1-ctx4k_cs1k-webgpu.wasm',
+    vram_required_MB: 2400,
+    low_resource_required: false,
+    overrides: { context_window_size: 4096 },
+  },
+]
+
+// Merged app config: prebuilt models + custom Qwen3.5 models
+const appConfig: AppConfig = {
+  model_list: [...prebuiltAppConfig.model_list, ...CUSTOM_MODELS],
+}
 
 let engineInstance: MLCEngineInterface | null = null
 let currentModelId: string | null = null
@@ -25,6 +54,7 @@ export async function loadModel(
   }
 
   const engine = await CreateMLCEngine(modelId, {
+    appConfig,
     initProgressCallback: onProgress,
   })
 
