@@ -455,6 +455,8 @@ tools functionality; offline mode degrades gracefully.
 **Release gate**: a documented agent-mode demo solves a 3-step task
 (search → summarize → save) end-to-end with zero manual intervention.
 
+Released: 2026-04-27
+
 #### v0.31 — Code Arena / Showdown Mode
 
 A richer evolution of the existing **Model Comparison** view, inspired by
