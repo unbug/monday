@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { MODELS } from '../lib/models'
 import { useModelComparison } from '../hooks/useModelComparison'
 import type { ModelInfo } from '../types'
@@ -7,6 +7,17 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 import { t } from '../lib/i18n'
+import { extractHTMLCode } from '../lib/htmlExtract'
+
+function codeHash(code: string | null): string {
+  if (!code) return 'empty'
+  let hash = 0
+  for (let i = 0; i < code.length; i++) {
+    const chr = code.charCodeAt(i)
+    hash = ((hash << 5) - hash + chr) | 0
+  }
+  return hash.toString(36)
+}
 
 interface Props {
   onBack: () => void
@@ -251,6 +262,26 @@ export function CodeArena({ onBack }: Props) {
                     <span className="arena-terminal-model">{result.modelName}</span>
                     <span className="arena-terminal-divider">·</span>
                     {providerBadge(result.provider)}
+                    {/* Refresh button — visible when code is available */}
+                    {result.extractedCode && (
+                      <button
+                        className="arena-iframe-refresh"
+                        title="Refresh iframe preview"
+                        onClick={() => {
+                          const iframe = comparison.iframeRef.current[idx]
+                          if (iframe && result.extractedCode) {
+                            const doc = iframe.contentDocument
+                            if (doc) {
+                              doc.open()
+                              doc.write(result.extractedCode)
+                              doc.close()
+                            }
+                          }
+                        }}
+                      >
+                        ↻
+                      </button>
+                    )}
                   </div>
                   <div className="arena-terminal-status">
                     {statusBadge(result.status)}
@@ -292,6 +323,20 @@ export function CodeArena({ onBack }: Props) {
                           {result.totalTokens} tokens
                         </span>
                       </div>
+                      {/* Sandboxed iframe preview */}
+                      {result.extractedCode && (
+                        <div className="arena-iframe-container">
+                          <iframe
+                            key={'code-' + codeHash(result.extractedCode)}
+                            srcDoc={result.extractedCode}
+                            sandbox="allow-scripts"
+                            className="arena-iframe"
+                            ref={(el) => {
+                              if (el) comparison.iframeRef.current[idx] = el
+                            }}
+                          />
+                        </div>
+                      )}
                     </>
                   ) : (
                     <>
@@ -303,6 +348,20 @@ export function CodeArena({ onBack }: Props) {
                           {result.content}
                         </ReactMarkdown>
                       </div>
+                      {/* Sandboxed iframe preview (final) */}
+                      {result.extractedCode && (
+                        <div className="arena-iframe-container">
+                          <iframe
+                            key={'code-' + codeHash(result.extractedCode)}
+                            srcDoc={result.extractedCode}
+                            sandbox="allow-scripts"
+                            className="arena-iframe"
+                            ref={(el) => {
+                              if (el) comparison.iframeRef.current[idx] = el
+                            }}
+                          />
+                        </div>
+                      )}
                       {/* Final stats */}
                       <div className="arena-final-stats">
                         <div className="arena-final-stat">

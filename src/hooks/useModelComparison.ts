@@ -4,12 +4,61 @@ import { recordModelUsage } from '../lib/modelUsage'
 import type { ModelInfo } from '../types'
 import type { InitProgressReport } from '@mlc-ai/web-llm'
 
+// Extract HTML code blocks from markdown content
+function extractHTMLCode(content: string): string | null {
+  // Match ```html ... ``` or ``` ... ``` (no language specified)
+  const blockRegex = /```(?:html|HTML)?\s*\n?([\s\S]*?)```/g
+  let match
+  const blocks: string[] = []
+
+  while ((match = blockRegex.exec(content)) !== null) {
+    blocks.push(match[1].trim())
+  }
+
+  if (blocks.length === 0) return null
+
+  // Combine all blocks into a single HTML document
+  const styles = blocks
+    .map((b) => {
+      const styleMatch = b.match(/<style>([\s\S]*?)<\/style>/i)
+      return styleMatch ? styleMatch[1] : null
+    })
+    .filter(Boolean)
+
+  const scripts = blocks
+    .map((b) => {
+      const scriptMatch = b.match(/<script>([\s\S]*?)<\/script>/i)
+      return scriptMatch ? scriptMatch[1] : null
+    })
+    .filter(Boolean)
+
+  const bodies = blocks.filter((b) => !b.includes('<style') && !b.includes('<script'))
+
+  const html = [
+    '<!DOCTYPE html>',
+    '<html lang="en">',
+    '<head>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    ...(styles.length > 0 ? [`<style>${styles.join('\n')}</style>`] : []),
+    '</head>',
+    '<body>',
+    ...(bodies.length > 0 ? bodies : ['<div style="padding:16px;font-family:sans-serif;color:#333">No visual output — text-only generation.</div>']),
+    '</body>',
+    ...(scripts.length > 0 ? [`<script>${scripts.join('\n')}</script>`] : []),
+    '</html>',
+  ].join('\n')
+
+  return html
+}
+
 type PaneStatus = 'pending' | 'streaming' | 'done' | 'error'
 
 interface ComparisonResult {
   modelId: string
   modelName: string
   content: string
+  extractedCode: string | null
   tokensPerSecond: number
   totalTokens: number
   elapsedMs: number
@@ -65,6 +114,7 @@ export function useModelComparison() {
         modelId: modelA.id,
         modelName: modelA.name,
         content: '',
+        extractedCode: null,
         tokensPerSecond: 0,
         totalTokens: 0,
         elapsedMs: 0,
@@ -77,6 +127,7 @@ export function useModelComparison() {
         modelId: modelB.id,
         modelName: modelB.name,
         content: '',
+        extractedCode: null,
         tokensPerSecond: 0,
         totalTokens: 0,
         elapsedMs: 0,
@@ -131,6 +182,7 @@ export function useModelComparison() {
           modelId: modelA.id,
           modelName: modelA.name,
           content: fullContentA,
+          extractedCode: extractHTMLCode(fullContentA),
           tokensPerSecond: usageA.current?.completionTokens
             ? Math.round(usageA.current.completionTokens / ((Date.now() - startTime) / 1000))
             : 0,
@@ -186,6 +238,7 @@ export function useModelComparison() {
           modelId: modelB.id,
           modelName: modelB.name,
           content: fullContentB,
+          extractedCode: extractHTMLCode(fullContentB),
           tokensPerSecond: usageB.current?.completionTokens
             ? Math.round(usageB.current.completionTokens / ((Date.now() - startTime) / 1000))
             : 0,
@@ -225,6 +278,8 @@ export function useModelComparison() {
     setError(null)
   }, [])
 
+  const iframeRef = useRef<Record<number, HTMLIFrameElement | null>>({ 0: null, 1: null })
+
   return {
     modelA,
     modelB,
@@ -239,5 +294,6 @@ export function useModelComparison() {
     stopComparison,
     reset,
     setError,
+    iframeRef,
   }
 }
