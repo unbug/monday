@@ -94,13 +94,13 @@ export const MODELS: ModelInfo[] = [
   {
     id: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
     name: 'Phi 3.5 Mini',
-    description: 'Microsoft Phi 3.5 Mini - strong reasoning, supports function calling',
+    description: 'Microsoft Phi 3.5 Mini - strong reasoning for its size',
     size: '~2 GB',
     parameters: '3.8B',
     provider: 'Microsoft',
     paramCount: 3800000000,
     releaseDate: '2024-06-04',
-    tags: ['thinking', 'tools'],
+    tags: ['thinking'],
   },
   {
     id: 'TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC',
@@ -143,25 +143,25 @@ export const MODELS: ModelInfo[] = [
   {
     id: 'Llama-3.2-1B-Instruct-q4f16_1-MLC',
     name: 'Llama 3.2 1B',
-    description: 'Meta Llama 3.2 - lightweight, fast inference, supports function calling',
+    description: 'Meta Llama 3.2 - lightweight, fast inference',
     size: '~700 MB',
     parameters: '1B',
     provider: 'Meta',
     paramCount: 1000000000,
     releaseDate: '2024-09-25',
-    tags: ['thinking', 'tools'],
+    tags: ['thinking'],
   },
   {
     id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
     name: 'Llama 3.2 3B',
-    description: 'Meta Llama 3.2 - stronger reasoning, supports function calling',
+    description: 'Meta Llama 3.2 - stronger reasoning, multilingual support',
     size: '~1.8 GB',
     parameters: '3B',
     provider: 'Meta',
     paramCount: 3000000000,
     releaseDate: '2024-09-25',
     recommended: true,
-    tags: ['thinking', 'tools'],
+    tags: ['thinking'],
   },
   // --- NousResearch Hermes (function calling specialist) ---
   {
@@ -180,14 +180,14 @@ export const MODELS: ModelInfo[] = [
   {
     id: 'Phi-4-mini-instruct-q4f16_1-MLC',
     name: 'Phi 4 Mini',
-    description: 'Microsoft Phi 4 Mini - state-of-the-art 3.8B reasoning model with function calling',
+    description: 'Microsoft Phi 4 Mini - state-of-the-art 3.8B reasoning model',
     size: '~2.2 GB',
     parameters: '3.8B',
     provider: 'Microsoft',
     paramCount: 3800000000,
     releaseDate: '2025-02-04',
     recommended: true,
-    tags: ['thinking', 'tools'],
+    tags: ['thinking'],
   },
   // --- Google Gemma ---
   {
@@ -222,7 +222,7 @@ export const MODELS: ModelInfo[] = [
     provider: 'Alibaba',
     paramCount: 1500000000,
     releaseDate: '2024-11-12',
-    tags: ['thinking', 'tools'],
+    tags: ['thinking'],
   },
   // --- Stability AI ---
   {
@@ -240,13 +240,13 @@ export const MODELS: ModelInfo[] = [
   {
     id: 'internlm2_5-1_8b-chat-q4f16_1-MLC',
     name: 'InternLM 2.5 1.8B',
-    description: 'Shanghai AI Lab InternLM 2.5 - strong chat model with tool-use capability',
+    description: 'Shanghai AI Lab InternLM 2.5 - strong chat model',
     size: '~1.1 GB',
     parameters: '1.8B',
     provider: 'Shanghai AI Lab',
     paramCount: 1800000000,
     releaseDate: '2024-07-03',
-    tags: ['thinking', 'tools'],
+    tags: ['thinking'],
   },
   // --- Allen Institute ---
   {

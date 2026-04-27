@@ -284,6 +284,8 @@ export function useChat(
 
         if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---
+          let usedToolsPath = false
+          try {
           const events: ToolCallEvent[] = []
           let conversationMessages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }> = [...refineMessages]
           let maxTurns = 5
@@ -311,6 +313,7 @@ export function useChat(
             // Stream tokens
             for await (const token of result.generator) {
               if (abortRef.current) break
+              usedToolsPath = true
               fullContent += token
               tokenCount++
               tokenStats.addTokens(1)
@@ -370,6 +373,44 @@ export function useChat(
           }
 
           setToolCallEvents(events)
+          } catch (toolErr: unknown) {
+            // If the model doesn't actually support function calling, fall back to standard streaming
+            const msg = toolErr instanceof Error ? toolErr.message : String(toolErr)
+            const isFunctionCallingError = msg.includes('tool') || msg.includes('function call') || msg.includes('not supported')
+            if (isFunctionCallingError && !usedToolsPath) {
+              // Fall back to standard streaming silently
+              const { generator } = streamChatWithUsage(refineMessages, {
+                ...opts,
+                systemPrompt: summarizedPrompt,
+                context: sessionContext,
+                images,
+                files,
+                modelId: effectiveModelId,
+              })
+              for await (const token of generator) {
+                if (abortRef.current) break
+                fullContent += token
+                tokenCount++
+                tokenStats.addTokens(1)
+                const captured = fullContent
+                currentSessions = currentSessions.map((s) =>
+                  s.id === sessionId
+                    ? {
+                        ...s,
+                        messages: s.messages.map((m) =>
+                          m.id === assistantMsg.id
+                            ? { ...m, content: captured }
+                            : m,
+                        ),
+                      }
+                    : s,
+                )
+                setSessions([...currentSessions])
+              }
+            } else {
+              throw toolErr
+            }
+          }
         } else {
           // --- Standard streaming path ---
           const { generator } = streamChatWithUsage(refineMessages, {
