@@ -827,6 +827,20 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.1',
+    date: '2026-04-27',
+    title: 'Sandboxed iframe preview — HTML/CSS/JS execution in arena panes',
+    description:
+      'Each Code Arena pane now renders streamed HTML/CSS/JS output in a sandboxed iframe. The iframe updates reactively as the model generates code, with a manual refresh button in the terminal header. Net-new built-in mini-tools remain out of scope until v0.27+ plugins.',
+    changes: [
+      { type: 'added', text: 'Sandboxed iframe preview — each pane mounts streamed HTML/CSS/JS into a sandbox="allow-scripts" iframe with srcDoc reactive updates' },
+      { type: 'added', text: 'Stable iframe key during streaming — uses code hash to remount only when content changes, preventing unnecessary unmounts' },
+      { type: 'added', text: 'Manual refresh button (↻) — writes extracted code directly to iframe document in the terminal title bar' },
+      { type: 'added', text: 'extractHTMLCode utility — extracted to src/lib/htmlExtract.ts; combines multiple code fences into a single sandboxable HTML document' },
+      { type: 'changed', text: 'Removed debouncedUpdateIframe from useModelComparison — srcDoc handles reactive updates directly' },
+    ],
+  },
+  {
     version: '0.31.0',
     date: '2026-04-27',
     title: 'Code Arena — Terminal-style dual model comparison',
