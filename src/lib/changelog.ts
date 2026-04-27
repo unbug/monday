@@ -826,4 +826,24 @@ export const CHANGELOG: ChangelogEntry[] = [
       { type: 'added', text: '100% client-side — zero data leaves the browser' },
     ],
   },
+  {
+    version: '0.31.0',
+    date: '2026-04-27',
+    title: 'Code Arena — Terminal-style dual model comparison',
+    description:
+      'A side-by-side terminal-style comparison view inspired by WebDev Arena and Grass Field challenge rigs. Two models generate responses in parallel with live status tracking and a terminal-inspired UI.',
+    changes: [
+      { type: 'added', text: 'CodeArena component — side-by-side terminal-style cards with macOS-style window dots, provider badge (WebGPU/WASM), model name, and live status indicators (pending/streaming/done)' },
+      { type: 'added', text: 'Per-pane status tracking — each model pane shows its current status with color-coded badges and animated pulse dot for streaming' },
+      { type: 'added', text: 'Live generation duration timer — counts seconds during streaming, shows final stats (duration, tokens, speed) when complete' },
+      { type: 'added', text: 'Team A / Team B selection — model picker with active state highlighting for both sides' },
+      { type: 'added', text: 'Terminal-inspired dark theme — Catppuccin Mocha palette for the terminal body, title bar, and status elements' },
+      { type: 'added', text: 'Streaming cursor animation — blinking cursor during generation, markdown rendering on completion' },
+      { type: 'added', text: 'Responsive layout — stacks to single column on mobile' },
+      { type: 'added', text: 'High-contrast theme support for arena terminals' },
+      { type: 'added', text: 'i18n — arena strings in en/zh/ja (Team A/B, status labels, duration/tokens/speed labels)' },
+      { type: 'changed', text: 'Replaced Model Comparison view with Code Arena (sidebar nav icon updated to ⚔️)' },
+      { type: 'changed', text: 'Updated version to v0.31.0' },
+    ],
+  },
 ]

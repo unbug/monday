@@ -465,7 +465,7 @@ and the indie "Grass Field challenge" rigs that show up in Twitter dual-pane
 screenshots: same prompt → two models → live HTML/canvas preview → shareable
 recording. Net-new vs. v0.2's plain text-only comparison.
 
-- [ ] **Dual artifact panes** — Side-by-side terminal-style cards with
+- [x] **Dual artifact panes** — Side-by-side terminal-style cards with
       provider badge, model name, status (`pending / streaming / done`)
       and generation duration in seconds
 - [ ] **Sandboxed iframe preview** — Each pane mounts the streamed

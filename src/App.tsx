@@ -11,6 +11,7 @@ import { Changelog } from './components/Changelog'
 import { CommandPalette } from './components/CommandPalette'
 import { ModelStats } from './components/ModelStats'
 import { ModelComparison } from './components/ModelComparison'
+import { CodeArena } from './components/CodeArena'
 import { ModelBenchmark } from './components/ModelBenchmark'
 import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
@@ -56,7 +57,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'comparison' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics'
 
 const BASE = '/monday'
 
@@ -66,7 +67,7 @@ const VIEW_PATH: Record<View, string> = {
   changelog: BASE + '/changelog',
   cache: BASE + '/cache',
   stats: BASE + '/stats',
-  comparison: BASE + '/comparison',
+  arena: BASE + '/arena',
   benchmark: BASE + '/benchmark',
   'custom-models': BASE + '/custom-models',
   'persona-marketplace': BASE + '/persona-marketplace',
@@ -332,7 +333,7 @@ export default function App() {
     onOpenCache: () => setView('cache'),
     onOpenChangelog: () => setView('changelog'),
     onOpenStats: () => setView('stats'),
-    onOpenComparison: () => setView('comparison'),
+    onOpenArena: () => setView('arena'),
     onOpenBenchmark: () => setView('benchmark'),
     onOpenCustomModels: () => setView('custom-models'),
     onResetRecommendations: () => handleResetRecommendations(),
@@ -411,8 +412,8 @@ export default function App() {
               setView('stats')
               closeSidebarOnMobile()
             }}
-            onOpenComparison={() => {
-              setView('comparison')
+            onOpenArena={() => {
+              setView('arena')
               closeSidebarOnMobile()
             }}
             onOpenBenchmark={() => {
@@ -624,9 +625,9 @@ export default function App() {
             <ModelStats onResetRecommendations={handleResetRecommendations}
               />
           </div>
-        ) : view === 'comparison' ? (
-          <div className="main-content main-content--comparison">
-            <ModelComparison onBack={() => setView('models')} />
+        ) : view === 'arena' ? (
+          <div className="main-content main-content--arena">
+            <CodeArena onBack={() => setView('models')} />
           </div>
         ) : view === 'benchmark' ? (
           <div className="main-content main-content--benchmark">

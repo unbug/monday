@@ -174,10 +174,10 @@ export function ModelComparison({ onBack }: Props) {
                   </div>
                 </div>
                 <div className="comparison-result-content">
-                  {result.isStreaming ? (
+                  {result.status === 'streaming' ? (
                     <div className="comparison-streaming-text">
                       {result.content || <span className="comparison-typing">Generating...</span>}
-                      {result.isStreaming && <span className="comparison-cursor">▊</span>}
+                      {result.status === 'streaming' && <span className="comparison-cursor">▊</span>}
                     </div>
                   ) : result.error ? (
                     <div className="comparison-error-text">{result.error}</div>

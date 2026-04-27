@@ -15,7 +15,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenCache?: () => void
   onOpenChangelog?: () => void
   onOpenStats?: () => void
-  onOpenComparison?: () => void
+  onOpenArena?: () => void
   onOpenBenchmark?: () => void
   onOpenCustomModels?: () => void
   onResetRecommendations?: () => void
@@ -105,13 +105,13 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
             },
           ]
         : []),
-      ...(options.onOpenComparison
+      ...(options.onOpenArena
         ? [
             {
-              id: 'open-comparison',
-              label: 'Model Comparison',
-              icon: '⚖️',
-              action: options.onOpenComparison,
+              id: 'open-arena',
+              label: 'Code Arena',
+              icon: '⚔️',
+              action: options.onOpenArena,
             },
           ]
         : []),

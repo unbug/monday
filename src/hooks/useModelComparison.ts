@@ -4,6 +4,8 @@ import { recordModelUsage } from '../lib/modelUsage'
 import type { ModelInfo } from '../types'
 import type { InitProgressReport } from '@mlc-ai/web-llm'
 
+type PaneStatus = 'pending' | 'streaming' | 'done' | 'error'
+
 interface ComparisonResult {
   modelId: string
   modelName: string
@@ -11,8 +13,9 @@ interface ComparisonResult {
   tokensPerSecond: number
   totalTokens: number
   elapsedMs: number
-  isStreaming: boolean
+  status: PaneStatus
   error: string | null
+  provider: 'WebGPU' | 'WASM' | 'Unknown'
 }
 
 export function useModelComparison() {
@@ -27,6 +30,11 @@ export function useModelComparison() {
 
   useEffect(() => {
     setWebgpuSupported(checkWebGPUSupport())
+  }, [])
+
+  const detectProvider = useCallback((): 'WebGPU' | 'WASM' | 'Unknown' => {
+    if (checkWebGPUSupport()) return 'WebGPU'
+    return 'WASM'
   }, [])
 
   const loadModelForComparison = useCallback(
@@ -49,9 +57,10 @@ export function useModelComparison() {
       setResults([])
 
       const startTime = Date.now()
+      const provider = detectProvider()
       const opts = { temperature: 0.7, top_p: 0.9, maxTokens: 1024 }
 
-      // Run Model A
+      // Create result slots
       const resultA: ComparisonResult = {
         modelId: modelA.id,
         modelName: modelA.name,
@@ -59,14 +68,32 @@ export function useModelComparison() {
         tokensPerSecond: 0,
         totalTokens: 0,
         elapsedMs: 0,
-        isStreaming: true,
+        status: 'pending',
         error: null,
+        provider,
       }
 
-      setResults([resultA])
+      const resultB: ComparisonResult = {
+        modelId: modelB.id,
+        modelName: modelB.name,
+        content: '',
+        tokensPerSecond: 0,
+        totalTokens: 0,
+        elapsedMs: 0,
+        status: 'pending',
+        error: null,
+        provider,
+      }
+
+      setResults([resultA, resultB])
 
       try {
-        // Load model A
+        // Run Model A
+        const slotAIndex = 0
+        setResults((prev) =>
+          prev.map((r, i) => (i === slotAIndex ? { ...r, status: 'streaming' as PaneStatus } : r)),
+        )
+
         await loadModel(modelA.id, () => {})
         const { generator: genA, usage: usageA } = streamChatWithUsage(
           [{ role: 'user', content: prompt }],
@@ -84,16 +111,20 @@ export function useModelComparison() {
           const elapsed = (Date.now() - startTime) / 1000
           const tps = elapsed > 0 ? Math.round(tokenCountA / elapsed) : 0
 
-          setResults([
-            {
-              ...resultA,
-              content: fullContentA,
-              isStreaming: true,
-              tokensPerSecond: tps,
-              totalTokens: tokenCountA,
-              elapsedMs: Date.now() - startTime,
-            },
-          ])
+          setResults((prev) =>
+            prev.map((r, i) =>
+              i === slotAIndex
+                ? {
+                    ...r,
+                    content: fullContentA,
+                    status: 'streaming' as PaneStatus,
+                    tokensPerSecond: tps,
+                    totalTokens: tokenCountA,
+                    elapsedMs: Date.now() - startTime,
+                  }
+                : r,
+            ),
+          )
         }
 
         const finalA: ComparisonResult = {
@@ -105,25 +136,18 @@ export function useModelComparison() {
             : 0,
           totalTokens: usageA.current?.completionTokens ?? tokenCountA,
           elapsedMs: Date.now() - startTime,
-          isStreaming: false,
+          status: 'done' as PaneStatus,
           error: null,
-        }
-
-        setResults([finalA])
-
-        // Run Model B
-        const resultB: ComparisonResult = {
-          modelId: modelB.id,
-          modelName: modelB.name,
-          content: '',
-          tokensPerSecond: 0,
-          totalTokens: 0,
-          elapsedMs: 0,
-          isStreaming: true,
-          error: null,
+          provider,
         }
 
         setResults([finalA, resultB])
+
+        // Run Model B
+        const slotBIndex = 1
+        setResults((prev) =>
+          prev.map((r, i) => (i === slotBIndex ? { ...r, status: 'streaming' as PaneStatus } : r)),
+        )
 
         await loadModel(modelB.id, () => {})
         const { generator: genB, usage: usageB } = streamChatWithUsage(
@@ -142,17 +166,20 @@ export function useModelComparison() {
           const elapsed = (Date.now() - startTime) / 1000
           const tps = elapsed > 0 ? Math.round(tokenCountB / elapsed) : 0
 
-          setResults([
-            finalA,
-            {
-              ...resultB,
-              content: fullContentB,
-              isStreaming: true,
-              tokensPerSecond: tps,
-              totalTokens: tokenCountB,
-              elapsedMs: Date.now() - startTime,
-            },
-          ])
+          setResults((prev) =>
+            prev.map((r, i) =>
+              i === slotBIndex
+                ? {
+                    ...r,
+                    content: fullContentB,
+                    status: 'streaming' as PaneStatus,
+                    tokensPerSecond: tps,
+                    totalTokens: tokenCountB,
+                    elapsedMs: Date.now() - startTime,
+                  }
+                : r,
+            ),
+          )
         }
 
         const finalB: ComparisonResult = {
@@ -164,8 +191,9 @@ export function useModelComparison() {
             : 0,
           totalTokens: usageB.current?.completionTokens ?? tokenCountB,
           elapsedMs: Date.now() - startTime,
-          isStreaming: false,
+          status: 'done' as PaneStatus,
           error: null,
+          provider,
         }
 
         setResults([finalA, finalB])
@@ -174,11 +202,14 @@ export function useModelComparison() {
         const errMsg = err instanceof Error ? err.message : 'Comparison failed'
         setError(errMsg)
         setCurrentStep('done')
+        setResults((prev) =>
+          prev.map((r) => (r.status === 'streaming' ? { ...r, status: 'error' as PaneStatus, error: errMsg } : r)),
+        )
       } finally {
         setIsComparing(false)
       }
     },
-    [modelA, modelB],
+    [modelA, modelB, detectProvider],
   )
 
   const stopComparison = useCallback(() => {
