@@ -471,7 +471,7 @@ recording. Net-new vs. v0.2's plain text-only comparison.
 - [x] **Sandboxed iframe preview** — Each pane mounts the streamed
       HTML/CSS/JS into a `sandbox="allow-scripts"` iframe, refreshed on
       every chunk (debounced) and on a manual **↻ Run** button
-- [ ] **Code ↔ Preview tabs** — Per-pane toggle between rendered preview
+- [x] **Code ↔ Preview tabs** — Per-pane toggle between rendered preview
       and source view, with a **Copy** button on each
 - [ ] **Synchronized scroll** — Code view in both panes scrolls in
       lockstep (line-aligned) to make diffs obvious

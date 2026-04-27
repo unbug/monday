@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.31.2',
+    date: '2026-04-27',
+    title: 'Code Arena — Code ↔ Preview tabs per pane',
+    description:
+      'Each arena pane now has a Code/Preview toggle tab bar with a Copy button, letting users switch between source view and rendered iframe preview without losing context.',
+    changes: [
+      { type: 'added', text: 'Per-pane Code ↔ Preview tab bar — toggle between source code and rendered iframe preview in each arena pane' },
+      { type: 'added', text: 'Copy button — one-click code copy to clipboard on each pane' },
+      { type: 'added', text: 'Tab bar CSS — dark terminal-style tabs with active state highlighting, hover effects, and Copy button styling' },
+      { type: 'added', text: 'Japanese i18n for arena tabs — コード / プレビュー / コピー / 表示可能なHTML出力がありません' },
+      { type: 'changed', text: 'Updated version to v0.31.2' },
+    ],
+  },
+  {
     version: '0.30.6',
     date: '2026-04-27',
     title: 'Accessibility — Screen-reader landmarks, keyboard nav, high-contrast',

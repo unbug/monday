@@ -108,6 +108,10 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.speed': '速度',
     'arena.webgpu': 'WebGPU',
     'arena.wasm': 'WASM',
+    'arena.code': '代码',
+    'arena.preview': '预览',
+    'arena.copy': '复制',
+    'arena.noPreview': '没有可预览的 HTML 输出',
   },
   ja: {
     'sidebar.brand': 'Monday',
@@ -157,6 +161,10 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.speed': '速度',
     'arena.webgpu': 'WebGPU',
     'arena.wasm': 'WASM',
+    'arena.code': 'コード',
+    'arena.preview': 'プレビュー',
+    'arena.copy': 'コピー',
+    'arena.noPreview': '表示可能なHTML出力がありません',
   },
 }
 

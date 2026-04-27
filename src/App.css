@@ -12176,6 +12176,67 @@ textarea:focus:not(:focus-visible),
   border-color: #585b70;
 }
 
+/* Per-pane Code ↔ Preview tab bar */
+.arena-pane-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #181825;
+  border-bottom: 1px solid #313244;
+  flex-shrink: 0;
+}
+
+.arena-pane-tab {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #6c7086;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.arena-pane-tab:hover {
+  color: #cdd6f4;
+  background: color-mix(in srgb, #89b4fa 10%, transparent);
+}
+
+.arena-pane-tab.active {
+  color: #89b4fa;
+  background: color-mix(in srgb, #89b4fa 15%, transparent);
+  border-color: color-mix(in srgb, #89b4fa 30%, transparent);
+}
+
+.arena-pane-copy-btn {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid #585b70;
+  color: #6c7086;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.arena-pane-copy-btn:hover {
+  color: #a6e3a1;
+  border-color: #a6e3a1;
+  background: color-mix(in srgb, #a6e3a1 10%, transparent);
+}
+
+.arena-no-preview-msg {
+  color: #6c7086;
+  text-align: center;
+  padding: 40px 0;
+  font-size: 13px;
+}
+
 /* Footer */
 .arena-footer {
   text-align: center;

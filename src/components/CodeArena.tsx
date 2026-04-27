@@ -19,6 +19,8 @@ function codeHash(code: string | null): string {
   return hash.toString(36)
 }
 
+type PaneView = 'code' | 'preview'
+
 interface Props {
   onBack: () => void
 }
@@ -29,6 +31,7 @@ export function CodeArena({ onBack }: Props) {
   const comparison = useModelComparison()
   const [prompt, setPrompt] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('select')
+  const [paneViewModes, setPaneViewModes] = useState<Record<number, PaneView>>({})
   const [durationA, setDurationA] = useState(0)
   const [durationB, setDurationB] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -85,7 +88,16 @@ export function CodeArena({ onBack }: Props) {
     comparison.reset()
     setPrompt('')
     setViewMode('select')
+    setPaneViewModes({})
   }, [comparison])
+
+  const setPaneView = useCallback((idx: number, mode: PaneView) => {
+    setPaneViewModes((prev) => ({ ...prev, [idx]: mode }))
+  }, [])
+
+  const copyCode = useCallback((content: string) => {
+    navigator.clipboard.writeText(content).catch(() => {})
+  }, [])
 
   const isReady = !!comparison.modelA && !!comparison.modelB
 
@@ -297,59 +309,97 @@ export function CodeArena({ onBack }: Props) {
                       <span className="arena-error-content-icon">✕</span>
                       {result.error}
                     </div>
-                  ) : result.status === 'streaming' ? (
-                    <>
-                      <div className="arena-streaming-content">
-                        {result.content || (
-                          <span className="arena-typing">
-                            {t('arena.generating')}<span className="arena-typing-dots">...</span>
-                          </span>
-                        )}
-                        {result.status === 'streaming' && (
-                          <span className="arena-cursor">▊</span>
-                        )}
-                      </div>
-                      {/* Duration timer */}
-                      <div className="arena-duration">
-                        <span className="arena-duration-icon">⏱</span>
-                        {idx === 0 ? durationA : durationB}s
-                      </div>
-                      {/* Stats bar */}
-                      <div className="arena-stats-bar">
-                        <span className="arena-stat-item">
-                          {result.tokensPerSecond} t/s
-                        </span>
-                        <span className="arena-stat-item">
-                          {result.totalTokens} tokens
-                        </span>
-                      </div>
-                      {/* Sandboxed iframe preview */}
-                      {result.extractedCode && (
-                        <div className="arena-iframe-container">
-                          <iframe
-                            key={'code-' + codeHash(result.extractedCode)}
-                            srcDoc={result.extractedCode}
-                            sandbox="allow-scripts"
-                            className="arena-iframe"
-                            ref={(el) => {
-                              if (el) comparison.iframeRef.current[idx] = el
-                            }}
-                          />
-                        </div>
-                      )}
-                    </>
                   ) : (
                     <>
-                      <div className="arena-rendered-content">
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          rehypePlugins={[rehypeHighlight, rehypeKatex]}
+                      {/* Per-pane Code / Preview tabs */}
+                      <div className="arena-pane-tabs">
+                        <button
+                          className={`arena-pane-tab ${(paneViewModes[idx] || 'code') === 'code' ? 'active' : ''}`}
+                          onClick={() => setPaneView(idx, 'code')}
                         >
-                          {result.content}
-                        </ReactMarkdown>
+                          {t('arena.code')}
+                        </button>
+                        <button
+                          className={`arena-pane-tab ${(paneViewModes[idx] || 'code') === 'preview' ? 'active' : ''}`}
+                          onClick={() => setPaneView(idx, 'preview')}
+                        >
+                          {t('arena.preview')}
+                        </button>
+                        <button
+                          className="arena-pane-copy-btn"
+                          title="Copy code"
+                          onClick={() => copyCode(result.content)}
+                        >
+                          {t('arena.copy')}
+                        </button>
                       </div>
-                      {/* Sandboxed iframe preview (final) */}
-                      {result.extractedCode && (
+                      {/* Code view */}
+                      {(paneViewModes[idx] || 'code') === 'code' && (
+                        <>
+                          {result.status === 'streaming' ? (
+                            <>
+                              <div className="arena-streaming-content">
+                                {result.content || (
+                                  <span className="arena-typing">
+                                    {t('arena.generating')}<span className="arena-typing-dots">...</span>
+                                  </span>
+                                )}
+                                {result.status === 'streaming' && (
+                                  <span className="arena-cursor">▊</span>
+                                )}
+                              </div>
+                              {/* Duration timer */}
+                              <div className="arena-duration">
+                                <span className="arena-duration-icon">⏱</span>
+                                {idx === 0 ? durationA : durationB}s
+                              </div>
+                              {/* Stats bar */}
+                              <div className="arena-stats-bar">
+                                <span className="arena-stat-item">
+                                  {result.tokensPerSecond} t/s
+                                </span>
+                                <span className="arena-stat-item">
+                                  {result.totalTokens} tokens
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="arena-rendered-content">
+                                <ReactMarkdown
+                                  remarkPlugins={[remarkGfm]}
+                                  rehypePlugins={[rehypeHighlight, rehypeKatex]}
+                                >
+                                  {result.content}
+                                </ReactMarkdown>
+                              </div>
+                              {/* Final stats */}
+                              <div className="arena-final-stats">
+                                <div className="arena-final-stat">
+                                  <span className="arena-final-stat-label">{t('arena.duration')}</span>
+                                  <span className="arena-final-stat-value">
+                                    {Math.round(result.elapsedMs / 1000)}s
+                                  </span>
+                                </div>
+                                <div className="arena-final-stat">
+                                  <span className="arena-final-stat-label">{t('arena.tokens')}</span>
+                                  <span className="arena-final-stat-value">
+                                    {result.totalTokens}
+                                  </span>
+                                </div>
+                                <div className="arena-final-stat">
+                                  <span className="arena-final-stat-label">{t('arena.speed')}</span>
+                                  <span className="arena-final-stat-value">
+                                    {result.tokensPerSecond} t/s
+                                  </span>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      )}
+                      {/* Preview view */}
+                      {(paneViewModes[idx] || 'code') === 'preview' && result.extractedCode && (
                         <div className="arena-iframe-container">
                           <iframe
                             key={'code-' + codeHash(result.extractedCode)}
@@ -362,27 +412,9 @@ export function CodeArena({ onBack }: Props) {
                           />
                         </div>
                       )}
-                      {/* Final stats */}
-                      <div className="arena-final-stats">
-                        <div className="arena-final-stat">
-                          <span className="arena-final-stat-label">{t('arena.duration')}</span>
-                          <span className="arena-final-stat-value">
-                            {Math.round(result.elapsedMs / 1000)}s
-                          </span>
-                        </div>
-                        <div className="arena-final-stat">
-                          <span className="arena-final-stat-label">{t('arena.tokens')}</span>
-                          <span className="arena-final-stat-value">
-                            {result.totalTokens}
-                          </span>
-                        </div>
-                        <div className="arena-final-stat">
-                          <span className="arena-final-stat-label">{t('arena.speed')}</span>
-                          <span className="arena-final-stat-value">
-                            {result.tokensPerSecond} t/s
-                          </span>
-                        </div>
-                      </div>
+                      {(paneViewModes[idx] || 'code') === 'preview' && !result.extractedCode && (
+                        <div className="arena-no-preview-msg">{t('arena.noPreview')}</div>
+                      )}
                     </>
                   )}
                 </div>
