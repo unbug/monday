@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { BorderBeam } from 'border-beam'
 import type { ChatSession } from '../types'
+import type { Locale } from '../lib/i18n'
+import { t } from '../lib/i18n'
 import { downloadSession, downloadAll } from '../lib/export'
 import { SettingsPanel } from './SettingsPanel'
 import { QuickPrompts } from './QuickPrompts'
@@ -58,6 +60,8 @@ interface Props {
   shareSession?: (session: ChatSession) => void
   onImport?: (file: File) => Promise<void>
   onExport?: () => Promise<void>
+  locale?: Locale
+  onChangeLocale?: (locale: Locale) => void
 }
 
 export function Sidebar({
@@ -89,6 +93,8 @@ export function Sidebar({
   onApplyPersona,
   onClearPersona,
   shareSession,
+  locale,
+  onChangeLocale,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -129,7 +135,7 @@ export function Sidebar({
             <line x1="9" y1="9" x2="9.01" y2="9" />
             <line x1="15" y1="9" x2="15.01" y2="9" />
           </svg>
-          Monday
+          <span className="sidebar-brand-text">{t('sidebar.brand')}</span>
         </h1>
         <BorderBeam size="sm" theme="auto" colorVariant="mono" strength={0.5} duration={2.4}>
           <button className="sidebar-new-btn" onClick={onNew} title="New Chat">
@@ -257,6 +263,8 @@ export function Sidebar({
           <SettingsPanel
             session={activeSession}
             onUpdate={onUpdateSession}
+            locale={locale}
+            onChangeLocale={onChangeLocale}
           />
         </div>
       )}

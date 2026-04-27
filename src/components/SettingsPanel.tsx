@@ -1,17 +1,22 @@
 import { useState, useCallback } from 'react'
 import type { ChatSession, GenerationParams } from '../types'
 import { useNotifications } from '../hooks/useNotifications'
+import { t } from '../lib/i18n'
+import type { Locale } from '../lib/i18n'
+import { LanguagePicker } from './LanguagePicker'
 
 interface Props {
   session: ChatSession
   onUpdate: (session: ChatSession) => void
+  locale?: Locale
+  onChangeLocale?: (locale: Locale) => void
 }
 
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_TOP_P = 0.9
 const DEFAULT_MAX_TOKENS = 1024
 
-export function SettingsPanel({ session, onUpdate }: Props) {
+export function SettingsPanel({ session, onUpdate, locale, onChangeLocale }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const notifications = useNotifications()
 
@@ -60,7 +65,7 @@ export function SettingsPanel({ session, onUpdate }: Props) {
       <button
         className="settings-toggle"
         onClick={() => setIsOpen(!isOpen)}
-        title="Generation settings"
+        title={t('sidebar.stats')}
       >
         <svg
           width="16"
@@ -73,7 +78,7 @@ export function SettingsPanel({ session, onUpdate }: Props) {
         >
           <path d="M6 9l6 6 6-6" />
         </svg>
-        Settings
+        {t('sidebar.stats')}
         {hasCustomParams && <span className="settings-dot" />}
       </button>
 
@@ -82,20 +87,20 @@ export function SettingsPanel({ session, onUpdate }: Props) {
           {/* Generation Parameters */}
           <div className="settings-section">
             <div className="settings-section-header">
-              <span className="settings-section-title">Generation Params</span>
+              <span className="settings-section-title">{t('settings.temperature')}</span>
               <button
                 className="settings-reset-btn"
                 onClick={resetParams}
-                title="Reset to defaults"
+                title={t('sidebar.changelog')}
               >
-                Reset
+                {t('cmd.empty')}
               </button>
             </div>
 
             {/* Temperature */}
             <div className="settings-param">
               <label className="settings-label">
-                Temperature
+                {t('settings.temperature')}
                 <span className="settings-value">{params.temperature.toFixed(2)}</span>
               </label>
               <input
@@ -110,15 +115,15 @@ export function SettingsPanel({ session, onUpdate }: Props) {
                 className="settings-slider"
               />
               <div className="settings-range-labels">
-                <span>Creative</span>
-                <span>Precise</span>
+                <span>{t('settings.creative')}</span>
+                <span>{t('settings.precise')}</span>
               </div>
             </div>
 
             {/* Top P */}
             <div className="settings-param">
               <label className="settings-label">
-                Top-p
+                {t('settings.topP')}
                 <span className="settings-value">{params.top_p.toFixed(2)}</span>
               </label>
               <input
@@ -131,15 +136,15 @@ export function SettingsPanel({ session, onUpdate }: Props) {
                 className="settings-slider"
               />
               <div className="settings-range-labels">
-                <span>Strict</span>
-                <span>Diverse</span>
+                <span>{t('settings.strict')}</span>
+                <span>{t('settings.diverse')}</span>
               </div>
             </div>
 
             {/* Max Tokens */}
             <div className="settings-param">
               <label className="settings-label">
-                Max Tokens
+                {t('settings.maxTokens')}
                 <span className="settings-value">{params.maxTokens}</span>
               </label>
               <input
@@ -163,45 +168,49 @@ export function SettingsPanel({ session, onUpdate }: Props) {
           {/* System Prompt */}
           <div className="settings-section">
             <div className="settings-section-header">
-              <span className="settings-section-title">System Prompt</span>
+              <span className="settings-section-title">{t('settings.systemPrompt')}</span>
             </div>
             <textarea
               className="settings-textarea"
-              placeholder="Enter system prompt (optional)...&#10;&#10;e.g. You are a helpful coding assistant. Be concise and precise."
+              placeholder={t('settings.systemPromptPlaceholder')}
               value={session.systemPrompt ?? ''}
               onChange={(e) => updateSystemPrompt(e.target.value)}
               rows={4}
             />
             <p className="settings-hint">
-              This prompt will be sent as the system message for each conversation.
-              Leave empty to use the model's default behavior.
+              {t('settings.systemPromptHint')}
             </p>
           </div>
+
+          {/* Language Picker */}
+          {onChangeLocale && (
+            <LanguagePicker locale={locale ?? 'en'} onChange={onChangeLocale} />
+          )}
 
           {/* Notifications */}
           <div className="settings-section">
             <div className="settings-section-header">
-              <span className="settings-section-title">Notifications</span>
+              <span className="settings-section-title">{t('settings.notifications')}</span>
             </div>
             <p className="settings-hint">
-              Get a browser notification when a long generation finishes while you're away.
+              {t('settings.notificationsHint')}
             </p>
             {notifications.permission === 'default' && (
               <button
                 className="settings-notify-btn"
                 onClick={() => notifications.requestPermission()}
               >
-                Allow notifications
+                {t('settings.allowNotifications')}
               </button>
             )}
             {notifications.permission === 'granted' && (
               <span className="settings-notify-status settings-notify-ok">
-                ✓ Notifications enabled
+                {t('settings.notificationsEnabled')}
               </span>
             )}
             {notifications.permission === 'denied' && (
               <span className="settings-notify-status settings-notify-blocked">
-                Notifications blocked — check browser settings
+                {t('settings.notificationsBlocked')}
               </span>
             )}
           </div>
