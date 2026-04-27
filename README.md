@@ -449,7 +449,7 @@ tools functionality; offline mode degrades gracefully.
       consumed, average tps, sessions per day
 - [x] **i18n** — Multi-language interface (English, 中文, 日本語) with
       language picker in settings
-- [ ] **Accessibility** — Screen-reader landmarks, keyboard-only
+- [x] **Accessibility** — Screen-reader landmarks, keyboard-only
       navigation, high-contrast theme
 
 **Release gate**: a documented agent-mode demo solves a 3-step task
