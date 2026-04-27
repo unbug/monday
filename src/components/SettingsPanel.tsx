@@ -68,7 +68,7 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
       <button
         className="settings-toggle"
         onClick={() => setIsOpen(!isOpen)}
-        title={t('sidebar.stats')}
+        title={t('settings.title')}
       >
         <svg
           width="16"
@@ -81,7 +81,7 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
         >
           <path d="M6 9l6 6 6-6" />
         </svg>
-        {t('sidebar.stats')}
+        {t('settings.title')}
         {hasCustomParams && <span className="settings-dot" />}
       </button>
 
@@ -90,13 +90,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
           {/* Generation Parameters */}
           <div className="settings-section">
             <div className="settings-section-header">
-              <span className="settings-section-title">{t('settings.temperature')}</span>
+              <span className="settings-section-title">{t('settings.params')}</span>
               <button
                 className="settings-reset-btn"
                 onClick={resetParams}
-                title={t('sidebar.changelog')}
+                title={t('settings.reset')}
               >
-                {t('cmd.empty')}
+                {t('settings.reset')}
               </button>
             </div>
 

@@ -125,6 +125,8 @@ export default function App() {
   const [showShortcuts, setShowShortcuts] = useState(false)
   // v0.30: agent mode panel
   const [showAgent, setShowAgent] = useState(false)
+  // v0.30: agent input mode toggle (enables agent send from chat input)
+  const [agentInputMode, setAgentInputMode] = useState(false)
   // v0.30.3: batch generation overlay
   const [showBatch, setShowBatch] = useState(false)
   const [batchPrompt, setBatchPrompt] = useState('')
@@ -872,23 +874,32 @@ export default function App() {
                 : null}
               knowledgeContextCount={chat.knowledgeContextCount}
               // v0.30: agent mode
-              agentMode={agentMode.state.isRunning}
+              agentMode={agentInputMode || agentMode.state.isRunning}
               onToggleAgentMode={() => {
-                if (!agentMode.state.isRunning) {
-                  setView('agent')
-                }
+                setAgentInputMode((v) => !v)
               }}
               onAgentSend={
                 agentMode.state.isRunning
                   ? undefined
                   : (goal: string) => {
                       agentMode.start(goal)
+                      setAgentInputMode(false)
+                      setShowAgent(true)
                     }
               }
               // v0.30: model chaining
               chainConfig={chat.chainConfig}
               chainProgress={chat.chainProgress}
             />
+            {showAgent && agentMode.state.task && (
+              <div className="agent-chat-overlay">
+                <AgentPanel
+                  task={agentMode.state.task}
+                  onStop={agentMode.stop}
+                  onClose={() => setShowAgent(false)}
+                />
+              </div>
+            )}
           </div>
         )}
       </main>

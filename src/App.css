@@ -650,6 +650,7 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  position: relative;
 }
 
 .chat-messages {
@@ -4017,6 +4018,9 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   padding: 8px 12px;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .sidebar-nav-btn {
@@ -10114,6 +10118,21 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
+}
+
+/* Agent overlay inside chat layout */
+.agent-chat-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg-primary, #fff);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.dark .agent-chat-overlay {
+  background: var(--bg-primary, #1a1a1a);
 }
 
 /* Agent empty state (no active task) */

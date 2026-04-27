@@ -36,7 +36,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.newWindow': 'Open in New Window',
     'sidebar.stats': 'Usage Statistics',
     'sidebar.compare': 'Model Comparison',
-    'sidebar.arena': 'Code Arena',
+    'sidebar.arena': 'Compare',
     'sidebar.bench': 'Model Benchmark',
     'sidebar.models': 'Custom Model Import',
     'sidebar.personas': 'Persona Marketplace',
@@ -69,7 +69,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.newWindow': '在新窗口打开',
     'sidebar.stats': '使用统计',
     'sidebar.compare': '模型对比',
-    'sidebar.arena': '代码竞技场',
+    'sidebar.arena': '模型对比',
     'sidebar.bench': '模型基准',
     'sidebar.models': '自定义模型',
     'sidebar.personas': '人格市场',
@@ -122,7 +122,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.newWindow': '新しいウィンドウで開く',
     'sidebar.stats': '利用統計',
     'sidebar.compare': 'モデル比較',
-    'sidebar.arena': 'コードアリーナ',
+    'sidebar.arena': '比較',
     'sidebar.bench': 'モデルベンチマーク',
     'sidebar.models': 'カスタムモデル',
     'sidebar.personas': 'ペルソナマーケット',
@@ -389,6 +389,9 @@ const memory: Record<Locale, Record<string, string>> = {
 // ── Settings Panel ──
 const settings: Record<Locale, Record<string, string>> = {
   en: {
+    'settings.title': 'Settings',
+    'settings.reset': 'Reset',
+    'settings.params': 'Generation Params',
     'settings.temperature': 'Temperature',
     'settings.creative': 'Creative',
     'settings.precise': 'Precise',
@@ -415,6 +418,9 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.highContrastOff': 'High Contrast Off',
   },
   zh: {
+    'settings.title': '设置',
+    'settings.reset': '重置',
+    'settings.params': '生成参数',
     'settings.temperature': '温度',
     'settings.creative': '创意',
     'settings.precise': '精确',
@@ -441,6 +447,9 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.highContrastOff': '高对比度已关闭',
   },
   ja: {
+    'settings.title': '設定',
+    'settings.reset': 'リセット',
+    'settings.params': '生成パラメータ',
     'settings.temperature': '温度',
     'settings.creative': 'クリエイティブ',
     'settings.precise': '精密',
