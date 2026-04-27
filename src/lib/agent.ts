@@ -78,7 +78,7 @@ export function createAgentEngine(options: AgentEngineOptions): AgentEngine {
   const run = async (): Promise<string> => {
     task.status = 'running'
 
-    // Initial planning step
+    try {
     addStep('planning', {
       thought: `Analyzing task: ${options.goal}`,
     })
@@ -132,18 +132,35 @@ export function createAgentEngine(options: AgentEngineOptions): AgentEngine {
       }))
 
       // Call the model
-      const result = streamChatWithTools(messages, {
-        temperature: 0.3, // Lower temperature for more deterministic behavior
-        maxTokens: 2048,
-        tools,
-      })
+      let result
+      try {
+        result = streamChatWithTools(messages, {
+          temperature: 0.3, // Lower temperature for more deterministic behavior
+          maxTokens: 2048,
+          tools,
+        })
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err)
+        if (msg.toLowerCase().includes('function call') || msg.toLowerCase().includes('tool')) {
+          throw new Error('This model does not support function calling (tool use). Please switch to a model tagged with "tools" — e.g. Phi-4 Mini, Llama 3.2 3B, Hermes-3, or Qwen2.5-Coder.')
+        }
+        throw err
+      }
 
       // Stream any text content (the model may output thoughts before tool calls)
       let textContent = ''
-      for await (const token of result.generator) {
-        if (aborted || options.signal?.aborted) break
-        textContent += token
-        finalContent += token
+      try {
+        for await (const token of result.generator) {
+          if (aborted || options.signal?.aborted) break
+          textContent += token
+          finalContent += token
+        }
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err)
+        if (msg.toLowerCase().includes('function call') || msg.toLowerCase().includes('tool')) {
+          throw new Error('This model does not support function calling (tool use). Please switch to a model tagged with "tools" — e.g. Phi-4 Mini, Llama 3.2 3B, Hermes-3, or Qwen2.5-Coder.')
+        }
+        throw err
       }
 
       // Check for tool calls
@@ -232,6 +249,14 @@ export function createAgentEngine(options: AgentEngineOptions): AgentEngine {
     options.onResult?.(finalContent)
 
     return finalContent
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      task.status = 'error'
+      task.error = msg
+      task.finishedAt = Date.now()
+      addStep('error', { error: msg })
+      throw err
+    }
   }
 
   const stop = () => {
