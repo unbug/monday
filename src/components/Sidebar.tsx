@@ -62,6 +62,8 @@ interface Props {
   onExport?: () => Promise<void>
   locale?: Locale
   onChangeLocale?: (locale: Locale) => void
+  highContrast?: boolean
+  onToggleHighContrast?: (hc: boolean) => void
 }
 
 export function Sidebar({
@@ -95,6 +97,8 @@ export function Sidebar({
   shareSession,
   locale,
   onChangeLocale,
+  highContrast,
+  onToggleHighContrast,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -126,7 +130,7 @@ export function Sidebar({
   })
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" role="navigation" aria-label={t("a11y.sidebar")}>
       <div className="sidebar-header">
         <h1 className="sidebar-brand">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -265,6 +269,8 @@ export function Sidebar({
             onUpdate={onUpdateSession}
             locale={locale}
             onChangeLocale={onChangeLocale}
+            highContrast={highContrast}
+            onToggleHighContrast={onToggleHighContrast}
           />
         </div>
       )}

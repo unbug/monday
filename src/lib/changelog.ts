@@ -11,6 +11,25 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.30.6',
+    date: '2026-04-27',
+    title: 'Accessibility — Screen-reader landmarks, keyboard nav, high-contrast',
+    description:
+      'Monday now includes comprehensive accessibility support: ARIA landmarks on all major regions, a skip-to-content link, keyboard-only focus indicators (:focus-visible), a high-contrast theme toggle in Settings, and screen-reader announcements for key events. All translations include a11y strings in en/zh/ja.',
+    changes: [
+      { type: 'added', text: 'Skip-to-content link — visually hidden until focused, jumps to #main-content' },
+      { type: 'added', text: 'ARIA landmarks — sidebar (role=navigation), main content (role=main), messages (role=log aria-live=polite), command palette (role=dialog), header (role=banner)' },
+      { type: 'added', text: 'High-contrast theme — toggle in Settings panel; applies high-contrast CSS variables and borders across all components (sidebar, messages, inputs, modals, badges, links, progress bars)' },
+      { type: 'added', text: 'Keyboard focus indicators — :focus-visible outlines on all interactive elements; :focus:not(:focus-visible) removes outline for mouse users' },
+      { type: 'added', text: 'Screen-reader announcements — aria-live polite region for key events (new session, delete, copy, model loaded, offline, etc.)' },
+      { type: 'added', text: 'aria-expanded on sidebar toggle button' },
+      { type: 'added', text: 'prefers-reduced-motion support — disables all animations for users who prefer reduced motion' },
+      { type: 'added', text: 'sr-only utility class — for screen-reader-only text' },
+      { type: 'added', text: 'a11y i18n strings — en/zh/ja translations for skip link, landmarks, and event announcements' },
+      { type: 'changed', text: 'Updated version to v0.30.6' },
+    ],
+  },
+  {
     version: '0.30.5',
     date: '2026-04-27',
     title: 'i18n — Multi-Language Interface',

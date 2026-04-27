@@ -11294,3 +11294,338 @@
   background: var(--bg-surface-active);
   color: var(--accent-color);
 }
+
+/* ========================================
+   v0.30.6 — Accessibility (a11y)
+   ======================================== */
+
+/* Skip link — visually hidden until focused */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-color);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* High-contrast theme */
+.high-contrast {
+  --text-primary: #000;
+  --text-secondary: #1a1a1a;
+  --text-tertiary: #333;
+  --bg-canvas: #fff;
+  --bg-surface: #f5f5f5;
+  --bg-surface-hover: #e8e8e8;
+  --bg-surface-active: #ddd;
+  --border-color: #000;
+  --border-subtle: #333;
+  --accent-color: #000;
+  --code-bg: #f0f0f0;
+}
+
+.light-theme.high-contrast {
+  --text-primary: #000;
+  --text-secondary: #1a1a1a;
+  --text-tertiary: #333;
+  --bg-canvas: #fff;
+  --bg-surface: #f5f5f5;
+  --bg-surface-hover: #e8e8e8;
+  --bg-surface-active: #ddd;
+  --border-color: #000;
+  --border-subtle: #333;
+  --accent-color: #000;
+  --code-bg: #f0f0f0;
+}
+
+.high-contrast .sidebar {
+  border-right: 2px solid #000;
+}
+
+.high-contrast .sidebar-item {
+  border: 1px solid transparent;
+}
+
+.high-contrast .sidebar-item:hover,
+.high-contrast .sidebar-item--active {
+  border-color: #000;
+}
+
+.high-contrast .message-bubble {
+  border: 1px solid #000;
+}
+
+.high-contrast .message-bubble--user {
+  border: 2px solid #000;
+}
+
+.high-contrast .chat-input {
+  border: 2px solid #000;
+}
+
+.high-contrast .chat-input:focus,
+.high-contrast .chat-input:focus-visible {
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.high-contrast button,
+.high-contrast .sidebar-nav-btn,
+.high-contrast .sidebar-icon-btn {
+  border: 1px solid #000;
+}
+
+.high-contrast .model-card {
+  border: 2px solid #000;
+}
+
+.high-contrast .model-card:hover {
+  border-color: #000;
+  box-shadow: 0 0 0 2px #000;
+}
+
+.high-contrast .code-block,
+.high-contrast pre,
+.high-contrast code {
+  border: 1px solid #000;
+  background: #f0f0f0;
+}
+
+.high-contrast .command-palette {
+  border: 2px solid #000;
+}
+
+.high-contrast .command-palette-item {
+  border: 1px solid transparent;
+}
+
+.high-contrast .command-palette-item:hover,
+.high-contrast .command-palette-item--active {
+  border-color: #000;
+  background: #e8e8e8;
+}
+
+.high-contrast .knowledge-doc-pill {
+  border: 1px solid #000;
+}
+
+.high-contrast .persona-chip {
+  border: 1px solid #000;
+}
+
+.high-contrast .webgpu-warn {
+  border: 2px solid #000;
+}
+
+.high-contrast .toggle-btn {
+  border: 1px solid #000;
+}
+
+.high-contrast .toggle-btn--active {
+  border: 2px solid #000;
+  box-shadow: 0 0 0 1px #000;
+}
+
+/* Focus-visible — keyboard-only focus indicators */
+*:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Remove outline for mouse clicks — keep for keyboard */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+/* Stronger focus for interactive elements in high-contrast mode */
+.high-contrast *:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+/* Skip to main content area */
+.skip-link:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* ARIA landmark styling — subtle visual distinction */
+[role='navigation'] {
+  outline: none;
+}
+
+[role='main'] {
+  outline: none;
+}
+
+[role='complementary'] {
+  outline: none;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High-contrast: ensure all text has sufficient contrast */
+.high-contrast .text-tertiary,
+.high-contrast [class*='text-tertiary'] {
+  color: #333 !important;
+}
+
+.high-contrast .text-secondary,
+.high-contrast [class*='text-secondary'] {
+  color: #1a1a1a !important;
+}
+
+.high-contrast .opacity-50,
+.high-contrast [class*='opacity-50'] {
+  opacity: 0.65 !important;
+}
+
+.high-contrast .opacity-30,
+.high-contrast [class*='opacity-30'] {
+  opacity: 0.5 !important;
+}
+
+/* Ensure progress bars are visible in high-contrast */
+.high-contrast .progress-bar,
+.high-contrast .progress-bar-fill {
+  border: 1px solid #000;
+}
+
+.high-contrast .progress-bar-fill {
+  background: #000 !important;
+}
+
+/* High-contrast: ensure links are clearly visible */
+.high-contrast a,
+.high-contrast .link {
+  color: #000;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.high-contrast a:hover,
+.high-contrast .link:hover {
+  color: #333;
+}
+
+/* High-contrast: ensure badges are visible */
+.high-contrast .badge,
+.high-contrast [class*='badge'] {
+  border: 1px solid #000;
+}
+
+/* High-contrast: ensure modal overlays are clearly visible */
+.high-contrast .modal-overlay,
+.high-contrast .command-palette,
+.high-contrast .keyboard-shortcuts-overlay {
+  border: 2px solid #000;
+}
+
+/* High-contrast: ensure sidebar items are clearly visible */
+.high-contrast .sidebar-item {
+  border-left: 3px solid transparent;
+}
+
+.high-contrast .sidebar-item--active {
+  border-left-color: #000;
+  background: var(--bg-surface-active);
+}
+
+.high-contrast .sidebar-item:hover {
+  border-left-color: #666;
+  background: var(--bg-surface-hover);
+}
+
+/* High-contrast: ensure chat bubbles are distinct */
+.high-contrast .message-bubble--user {
+  background: #e8e8e8;
+  border: 2px solid #000;
+}
+
+.high-contrast .message-bubble--assistant {
+  background: var(--bg-surface);
+  border: 1px solid #000;
+}
+
+/* High-contrast: ensure settings panel sections are distinct */
+.high-contrast .settings-section {
+  border: 1px solid #000;
+}
+
+/* High-contrast: ensure input fields are clearly visible */
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+}
+
+.high-contrast input:focus,
+.high-contrast textarea:focus,
+.high-contrast select:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* High-contrast: ensure dropdowns/popovers are visible */
+.high-contrast .dropdown-menu,
+.high-contrast .popover {
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+}
+
+/* High-contrast: ensure empty states are visible */
+.high-contrast .empty-state {
+  border: 1px solid #000;
+}
+
+/* High-contrast: ensure tabs/panels are distinct */
+.high-contrast .tab,
+.high-contrast .tab-panel {
+  border: 1px solid #000;
+}
+
+.high-contrast .tab--active {
+  border-bottom: 3px solid #000;
+}

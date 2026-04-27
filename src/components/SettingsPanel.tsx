@@ -4,19 +4,22 @@ import { useNotifications } from '../hooks/useNotifications'
 import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
+import { HighContrastToggle } from './HighContrastToggle'
 
 interface Props {
   session: ChatSession
   onUpdate: (session: ChatSession) => void
   locale?: Locale
   onChangeLocale?: (locale: Locale) => void
+  highContrast?: boolean
+  onToggleHighContrast?: (hc: boolean) => void
 }
 
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_TOP_P = 0.9
 const DEFAULT_MAX_TOKENS = 1024
 
-export function SettingsPanel({ session, onUpdate, locale, onChangeLocale }: Props) {
+export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const notifications = useNotifications()
 
@@ -214,6 +217,22 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale }: Pro
               </span>
             )}
           </div>
+
+          {/* High Contrast */}
+          {onToggleHighContrast !== undefined && (
+            <div className="settings-section">
+              <div className="settings-section-header">
+                <span className="settings-section-title">{t('settings.highContrast')}</span>
+              </div>
+              <p className="settings-hint">
+                {t('settings.highContrastHint')}
+              </p>
+              <HighContrastToggle
+                highContrast={highContrast ?? false}
+                onChange={onToggleHighContrast}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

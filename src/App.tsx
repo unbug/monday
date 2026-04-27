@@ -51,7 +51,7 @@ import { exportMondayData } from './lib/dataExport'
 import { importMondayData } from './lib/dataImport'
 import { resetModelUsage } from './lib/modelUsage'
 import { getRecentModels, resetRecentModels as resetRecent } from './lib/recentModels'
-import { getLocale, setLocale, detectLocale } from './lib/i18n'
+import { getLocale, setLocale, detectLocale, t } from './lib/i18n'
 import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
@@ -126,6 +126,10 @@ export default function App() {
   // v0.30.3: batch generation overlay
   const [showBatch, setShowBatch] = useState(false)
   const [batchPrompt, setBatchPrompt] = useState('')
+
+  // a11y: screen-reader announcement
+  const [announcement, setAnnouncement] = useState('')
+
   // v0.30.5: i18n locale
   const { locale, changeLocale: handleChangeLocale } = useLocale()
   const model = useModel()
@@ -368,6 +372,16 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* a11y: skip to main content */}
+      <a href="#main-content" className="skip-link">
+        {t('a11y.skipToContent')}
+      </a>
+
+      {/* a11y: live region for screen-reader announcements */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
+      </div>
+
       {/* Theme transition overlay */}
       {transitioning && (
         <div className={`theme-transition-overlay ${transitioning ? 'active' : ''}`} />
@@ -466,6 +480,8 @@ export default function App() {
             onExport={handleExportData}
             locale={locale}
             onChangeLocale={handleChangeLocale}
+            highContrast={theme.highContrast}
+            onToggleHighContrast={(hc) => theme.setHighContrast(hc)}
           />
         </>
       )}
@@ -505,12 +521,13 @@ export default function App() {
         <KeyboardShortcutsOverlay onClose={() => setShowShortcuts(false)} />
       )}
 
-      <main className="main">
-        <header className="header">
+      <main id="main-content" className="main" role="main">
+        <header className="header" role="banner">
           <button
             className="header-toggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-label="Toggle sidebar"
+            aria-expanded={sidebarOpen}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6" />
@@ -707,13 +724,18 @@ export default function App() {
           <div className="main-content main-content--usage-analytics">
             <UsageAnalytics />
           </div>
-        ) : showAgent && agentMode.state.task ? (
+        ) : view === 'agent' || (showAgent && agentMode.state.task) ? (
           <div className="agent-view">
-            <AgentPanel
-              task={agentMode.state.task}
-              onStop={agentMode.stop}
-              onClose={() => setShowAgent(false)}
-            />
+            {agentMode.state.task && (
+              <AgentPanel
+                task={agentMode.state.task}
+                onStop={agentMode.stop}
+                onClose={() => {
+                  setShowAgent(false)
+                  setView('chat')
+                }}
+              />
+            )}
           </div>
         ) : showBatch ? (
           <div className="chat-layout">

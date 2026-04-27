@@ -52,7 +52,7 @@ export function CommandPalette({
   return (
     <div className="command-palette-overlay" onClick={onClose}>
       <div className="command-palette-border">
-        <div className="command-palette" onClick={(e) => e.stopPropagation()}>
+        <div className="command-palette" role="dialog" aria-label={t('a11y.commandPalette')} onClick={(e) => e.stopPropagation()}>
           <div className="command-palette-input-wrapper">
             <svg
               className="command-palette-icon"

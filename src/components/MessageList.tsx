@@ -107,7 +107,7 @@ export function MessageList({
   }
 
   return (
-    <div className="messages">
+    <div className="messages" role="log" aria-label={t("a11y.mainContent")} aria-live="polite">
       {messages.map((msg, msgIndex) => (
         <div
           key={msg.id}

@@ -305,7 +305,7 @@ export function ChatInput({
         duration={1.96}
       >
         <div
-          className="chat-input-container"
+          className="chat-input-container" role="form" aria-label={t("a11y.search")}
           onDragOver={(e) => {
             e.preventDefault()
             setIsDragOver(true)

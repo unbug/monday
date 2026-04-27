@@ -366,6 +366,10 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.allowNotifications': 'Allow notifications',
     'settings.notificationsEnabled': '✓ Notifications enabled',
     'settings.notificationsBlocked': 'Notifications blocked — check browser settings',
+    'settings.highContrast': 'High Contrast',
+    'settings.highContrastHint': 'Increase contrast for better visibility. Works with both light and dark themes.',
+    'settings.highContrastOn': 'High Contrast On',
+    'settings.highContrastOff': 'High Contrast Off',
   },
   zh: {
     'settings.temperature': '温度',
@@ -388,6 +392,10 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.allowNotifications': '允许通知',
     'settings.notificationsEnabled': '✓ 通知已启用',
     'settings.notificationsBlocked': '通知被阻止 — 请检查浏览器设置',
+    'settings.highContrast': '高对比度',
+    'settings.highContrastHint': '提高对比度以增强可见性。同时适用于亮色和暗色主题。',
+    'settings.highContrastOn': '高对比度已开启',
+    'settings.highContrastOff': '高对比度已关闭',
   },
   ja: {
     'settings.temperature': '温度',
@@ -410,6 +418,10 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.allowNotifications': '通知を許可',
     'settings.notificationsEnabled': '✓ 通知が有効',
     'settings.notificationsBlocked': '通知がブロックされました — ブラウザ設定を確認してください',
+    'settings.highContrast': 'ハイコントラスト',
+    'settings.highContrastHint': '視認性を向上させるためにコントラストを強化します。ライトテーマとダークテーマの両方で動作します。',
+    'settings.highContrastOn': 'ハイコントラスト有効',
+    'settings.highContrastOff': 'ハイコントラスト無効',
   },
 }
 
@@ -1572,6 +1584,83 @@ const personaPublish: Record<Locale, Record<string, string>> = {
 }
 
 
+// ── Accessibility (a11y) ──
+const a11y = {
+  en: {
+    'a11y.skipToContent': 'Skip to main content',
+    'a11y.sidebar': 'Sidebar navigation',
+    'a11y.mainContent': 'Main content',
+    'a11y.commandPalette': 'Command palette',
+    'a11y.search': 'Search',
+    'a11y.close': 'Close',
+    'a11y.expand': 'Expand',
+    'a11y.collapse': 'Collapse',
+    'a11y.loading': 'Loading',
+    'a11y.error': 'Error',
+    'a11y.success': 'Success',
+    'a11y.highContrast': 'High contrast mode',
+    'a11y.keyboardNav': 'Keyboard navigation enabled',
+    'a11y.newSession': 'New session created',
+    'a11y.deleteSession': 'Session deleted',
+    'a11y.copyMessage': 'Message copied to clipboard',
+    'a11y.regenerate': 'Regenerating response',
+    'a11y.stopGeneration': 'Generation stopped',
+    'a11y.modelLoaded': 'Model loaded and ready',
+    'a11y.modelLoading': 'Model loading in progress',
+    'a11y.offline': 'You are offline',
+    'a11y.online': 'Back online',
+  },
+  zh: {
+    'a11y.skipToContent': '跳转到主要内容',
+    'a11y.sidebar': '侧边栏导航',
+    'a11y.mainContent': '主要内容',
+    'a11y.commandPalette': '命令面板',
+    'a11y.search': '搜索',
+    'a11y.close': '关闭',
+    'a11y.expand': '展开',
+    'a11y.collapse': '收起',
+    'a11y.loading': '加载中',
+    'a11y.error': '错误',
+    'a11y.success': '成功',
+    'a11y.highContrast': '高对比度模式',
+    'a11y.keyboardNav': '键盘导航已启用',
+    'a11y.newSession': '已创建新会话',
+    'a11y.deleteSession': '已删除会话',
+    'a11y.copyMessage': '消息已复制到剪贴板',
+    'a11y.regenerate': '正在重新生成回复',
+    'a11y.stopGeneration': '已停止生成',
+    'a11y.modelLoaded': '模型已加载并准备就绪',
+    'a11y.modelLoading': '模型加载中',
+    'a11y.offline': '您已离线',
+    'a11y.online': '已恢复在线',
+  },
+  ja: {
+    'a11y.skipToContent': 'メインコンテンツにスキップ',
+    'a11y.sidebar': 'サイドバーナビゲーション',
+    'a11y.mainContent': 'メインコンテンツ',
+    'a11y.commandPalette': 'コマンドパレット',
+    'a11y.search': '検索',
+    'a11y.close': '閉じる',
+    'a11y.expand': '展開',
+    'a11y.collapse': '折りたたむ',
+    'a11y.loading': '読み込み中',
+    'a11y.error': 'エラー',
+    'a11y.success': '成功',
+    'a11y.highContrast': 'ハイコントラストモード',
+    'a11y.keyboardNav': 'キーボードナビゲーション有効',
+    'a11y.newSession': '新しいセッションを作成しました',
+    'a11y.deleteSession': 'セッションを削除しました',
+    'a11y.copyMessage': 'メッセージをクリップボードにコピーしました',
+    'a11y.regenerate': '応答を再生成中',
+    'a11y.stopGeneration': '生成を停止しました',
+    'a11y.modelLoaded': 'モデルが読み込まれ、準備完了',
+    'a11y.modelLoading': 'モデルを読み込み中',
+    'a11y.offline': 'オフラインです',
+    'a11y.online': 'オンラインに復帰しました',
+  },
+}
+
+
 // ── Merge all into one dictionary ──
 const all: Record<Locale, Record<string, string>> = { en: {}, zh: {}, ja: {} }
 for (const locale of ['en', 'zh', 'ja'] as Locale[]) {
@@ -1615,6 +1704,7 @@ for (const locale of ['en', 'zh', 'ja'] as Locale[]) {
     ...batchGen[locale],
     ...changelog[locale],
     ...offlineIndicator[locale],
+    ...a11y[locale],
   }
 }
 
