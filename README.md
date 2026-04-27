@@ -468,7 +468,7 @@ recording. Net-new vs. v0.2's plain text-only comparison.
 - [x] **Dual artifact panes** — Side-by-side terminal-style cards with
       provider badge, model name, status (`pending / streaming / done`)
       and generation duration in seconds
-- [ ] **Sandboxed iframe preview** — Each pane mounts the streamed
+- [x] **Sandboxed iframe preview** — Each pane mounts the streamed
       HTML/CSS/JS into a `sandbox="allow-scripts"` iframe, refreshed on
       every chunk (debounced) and on a manual **↻ Run** button
 - [ ] **Code ↔ Preview tabs** — Per-pane toggle between rendered preview
