@@ -1,12 +1,13 @@
 import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 7
+const DB_VERSION = 8
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
 const BASES_STORE = 'knowledgeBases'
 const EMBEDDINGS_STORE = 'embeddings'
+const VERDICTS_STORE = 'verdicts'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -59,6 +60,10 @@ function openDB(): Promise<IDBDatabase> {
             }
           }
         }
+      }
+      // Migration v7→v8: add verdicts object store for v0.31.7 Code Arena verdicts
+      if (!db.objectStoreNames.contains(VERDICTS_STORE)) {
+        db.createObjectStore(VERDICTS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {

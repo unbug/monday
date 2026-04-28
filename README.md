@@ -483,7 +483,7 @@ recording. Net-new vs. v0.2's plain text-only comparison.
       configurable), with a small "@username" watermark from settings
 - [x] **PNG share card** — Export a single PNG with both final previews,
       model names, durations and watermark — sized for Twitter (16:9)
-- [ ] **Verdict & local leaderboard** — `Team A / Tie / Team B` voting UI;
+- [x] **Verdict & local leaderboard** — `Team A / Tie / Team B` voting UI;
       results persisted in IndexedDB and aggregated into a per-model
       win/tie/loss table (purely local, no upload)
 

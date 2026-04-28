@@ -56,6 +56,24 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.7',
+    date: '2026-04-29',
+    title: 'Code Arena — Verdict & Local Leaderboard',
+    description:
+      'After each Code Arena comparison, users can vote Team A / Tie / Team B. Votes are stored locally in IndexedDB and aggregated into a per-model win/tie/loss leaderboard.',
+    changes: [
+      { type: 'added', text: 'Verdict voting UI — Team A / Tie / Team B buttons shown after comparison completes' },
+      { type: 'added', text: 'Optional vote note — textarea for users to explain their vote (optional)' },
+      { type: 'added', text: 'Verdict storage — IndexedDB object store (verdicts) persists votes locally' },
+      { type: 'added', text: 'Local leaderboard — per-model win/tie/loss table aggregated from stored verdicts' },
+      { type: 'added', text: 'Leaderboard clear — one-click clear all verdicts' },
+      { type: 'added', text: 'Database migration v7→v8 — adds verdicts object store' },
+      { type: 'added', text: 'Verdict i18n — en/zh translations for verdict title, subtitle, tie, note placeholder, leaderboard, model, wins, losses, ties, total, clear all' },
+      { type: 'added', text: 'Verdict & leaderboard CSS — dark terminal-style voting buttons with color-coded selected states, leaderboard table with win/loss/tie color coding' },
+      { type: 'changed', text: 'Updated version to v0.31.7' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

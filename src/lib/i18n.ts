@@ -90,6 +90,18 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.fpsLabel': 'Framerate',
     'arena.recordingDuration': 'Duration',
     'arena.shareCard': '🖼 Share Card',
+    // ── Verdict & Leaderboard ──
+    'arena.verdictTitle': '🏆 Verdict',
+    'arena.verdictSubtitle': 'Who won this round?',
+    'arena.tie': 'Tie',
+    'arena.verdictNotePlaceholder': 'Why did you vote for this? (optional)',
+    'arena.leaderboardTitle': 'Local Leaderboard',
+    'arena.clearAll': 'Clear',
+    'arena.model': 'Model',
+    'arena.wins': 'Wins',
+    'arena.losses': 'Losses',
+    'arena.ties': 'Ties',
+    'arena.total': 'Total',
   },
   zh: {
     'sidebar.brand': 'Monday',
@@ -155,6 +167,18 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.fpsLabel': '帧率',
     'arena.recordingDuration': '时长',
     'arena.shareCard': '🖼 分享卡片',
+    // ── Verdict & Leaderboard ──
+    'arena.verdictTitle': '🏆 裁决',
+    'arena.verdictSubtitle': '谁赢了这一轮？',
+    'arena.tie': '平局',
+    'arena.verdictNotePlaceholder': '为什么投给这个？（可选）',
+    'arena.leaderboardTitle': '本地排行榜',
+    'arena.clearAll': '清除',
+    'arena.model': '模型',
+    'arena.wins': '胜',
+    'arena.losses': '负',
+    'arena.ties': '平',
+    'arena.total': '总计',
   },
 }
 

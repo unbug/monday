@@ -12723,6 +12723,221 @@ textarea:focus:not(:focus-visible),
   font-size: 16px;
 }
 
+/* --- Verdict & Leaderboard --- */
+
+.arena-verdict {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.arena-verdict-header {
+  margin-bottom: 12px;
+}
+
+.arena-verdict-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin: 0 0 4px;
+}
+
+.arena-verdict-subtitle {
+  font-size: 13px;
+  color: #8b949e;
+  margin: 0;
+}
+
+.arena-verdict-vote-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.arena-verdict-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border: 2px solid #30363d;
+  border-radius: 6px;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.arena-verdict-btn:hover:not(:disabled) {
+  border-color: #58a6ff;
+  background: #161b22;
+}
+
+.arena-verdict-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.arena-verdict-btn.voted {
+  border-color: #58a6ff;
+  background: rgba(88, 166, 255, 0.1);
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
+}
+
+.arena-verdict-btn.team-a.voted {
+  border-color: #3fb950;
+  background: rgba(63, 185, 80, 0.1);
+  box-shadow: 0 0 8px rgba(63, 185, 80, 0.3);
+}
+
+.arena-verdict-btn.team-b.voted {
+  border-color: #f0883e;
+  background: rgba(240, 136, 62, 0.1);
+  box-shadow: 0 0 8px rgba(240, 136, 62, 0.3);
+}
+
+.arena-verdict-btn.tie.voted {
+  border-color: #a371f7;
+  background: rgba(163, 113, 247, 0.1);
+  box-shadow: 0 0 8px rgba(163, 113, 247, 0.3);
+}
+
+.arena-verdict-team {
+  font-size: 20px;
+}
+
+.arena-verdict-team-name {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.arena-verdict-note {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+.arena-verdict-note:focus {
+  outline: none;
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+.arena-verdict-note::placeholder {
+  color: #484f58;
+}
+
+.arena-verdict-note:disabled {
+  opacity: 0.5;
+}
+
+/* Leaderboard */
+.arena-leaderboard {
+  border-top: 1px solid #21262d;
+  padding-top: 12px;
+}
+
+.arena-leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.arena-leaderboard-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin: 0;
+}
+
+.arena-leaderboard-clear {
+  background: none;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 4px 10px;
+  color: #8b949e;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.arena-leaderboard-clear:hover {
+  border-color: #f85149;
+  color: #f85149;
+}
+
+.arena-leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.arena-leaderboard-table thead th {
+  text-align: left;
+  padding: 6px 8px;
+  color: #8b949e;
+  font-weight: 500;
+  border-bottom: 1px solid #21262d;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.arena-leaderboard-table tbody td {
+  padding: 8px;
+  color: #c9d1d9;
+  border-bottom: 1px solid #21262d;
+}
+
+.arena-leaderboard-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.arena-lb-model-cell {
+  font-weight: 500;
+}
+
+.arena-lb-wins-cell {
+  color: #3fb950;
+  font-weight: 600;
+}
+
+.arena-lb-losses-cell {
+  color: #f85149;
+  font-weight: 600;
+}
+
+.arena-lb-ties-cell {
+  color: #a371f7;
+  font-weight: 600;
+}
+
+.arena-lb-total-cell {
+  color: #8b949e;
+}
+
+.lb-team-a {
+  background: rgba(63, 185, 80, 0.05);
+}
+
+.lb-team-b {
+  background: rgba(240, 136, 62, 0.05);
+}
+
 /* --- High contrast --- */
 .high-contrast .arena-terminal-card {
   border: 2px solid #000;

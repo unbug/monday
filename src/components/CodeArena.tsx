@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { MODELS } from '../lib/models'
 import { useModelComparison } from '../hooks/useModelComparison'
 import type { ModelInfo } from '../types'
+import { VerdictPanel } from '../components/VerdictPanel'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
@@ -521,6 +522,16 @@ export function CodeArena({ onBack }: Props) {
                 <span className="arena-share-card-icon">🖼</span>
                 {t('arena.shareCard')}
               </button>
+
+              {/* Verdict & Leaderboard */}
+              {comparison.modelA && comparison.modelB && (
+                <VerdictPanel
+                  modelAId={comparison.modelA.id}
+                  modelAName={comparison.modelA.name}
+                  modelBId={comparison.modelB.id}
+                  modelBName={comparison.modelB.name}
+                />
+              )}
 
               {/* Recording controls */}
               <div className="arena-recording-controls">
