@@ -478,7 +478,7 @@ recording. Net-new vs. v0.2's plain text-only comparison.
 - [x] **Challenge prompt library** — Curated presets (Grass Field, Solar
       System, Pelican on a Bicycle, Tetris, Snake, Bouncing Balls,
       Particle System, CSS Loader Gallery), one-click load into the arena
-- [ ] **Recording & video export** — `MediaRecorder` captures both
+- [x] **Recording & video export** — `MediaRecorder` captures both
       iframes as a synchronized timelapse `.webm` (default 30 fps,
       configurable), with a small "@username" watermark from settings
 - [ ] **PNG share card** — Export a single PNG with both final previews,

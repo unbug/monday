@@ -56,6 +56,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.5',
+    date: '2026-04-28',
+    title: 'Code Arena — Recording & Video Export',
+    description:
+      'Code Arena now supports recording both model panes as a synchronized .webm video using MediaRecorder and OffscreenCanvas. Configurable 15/30/60 fps, with a @Monday watermark. Download the recording directly from the arena footer.',
+    changes: [
+      { type: 'added', text: 'Recording infrastructure — MediaRecorder + OffscreenCanvas captures both iframes as a synchronized 1280×720 video' },
+      { type: 'added', text: 'FPS selector — 15/30/60 fps dropdown in arena footer; defaults to 30 fps' },
+      { type: 'added', text: 'Record/Stop controls — red dot indicator with pulse animation during recording; elapsed duration counter' },
+      { type: 'added', text: 'Download recording — one-click .webm download with elapsed-time filename after recording completes' },
+      { type: 'added', text: 'Watermark — semi-transparent @Monday text in bottom-right corner of recorded video' },
+      { type: 'added', text: 'Recording state management — idle/recording/done states with reset capability' },
+      { type: 'added', text: 'VP9 codec preference with video/webm fallback — MediaRecorder picks best available codec' },
+      { type: 'added', text: 'Recording controls CSS — dark terminal-style controls with pulse animation and disabled state' },
+      { type: 'added', text: 'Recording i18n — en/zh translations for record, recording, stop, download, fps, duration strings' },
+      { type: 'changed', text: 'Updated version to v0.31.5' },
+    ],
+  },
+  {
     version: '0.30.6',
     date: '2026-04-27',
     title: 'Accessibility — Screen-reader landmarks, keyboard nav, high-contrast',

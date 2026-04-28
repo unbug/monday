@@ -76,6 +76,19 @@ export function useModelComparison() {
   const [webgpuSupported, setWebgpuSupported] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [scrollSyncEnabled, setScrollSyncEnabled] = useState(true)
+
+  // Recording state
+  const [recording, setRecording] = useState<{
+    active: boolean
+    status: 'idle' | 'recording' | 'done'
+    fps: number
+    duration: number
+  }>({ active: false, status: 'idle', fps: 30, duration: 0 })
+  const recordingCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
+  const animFrameRef = useRef<number | null>(null)
+  const recordingStartRef = useRef<number>(0)
   const abortRef = useRef(false)
   const syncingRef = useRef(false)
 
@@ -304,6 +317,162 @@ export function useModelComparison() {
     [scrollSyncEnabled],
   )
 
+  // ── Recording helpers ──
+  const drawFrame = useCallback(() => {
+    const canvas = recordingCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const w = canvas.width
+    const h = canvas.height
+    const halfW = w / 2
+
+    // Clear
+    ctx.fillStyle = '#0d1117'
+    ctx.fillRect(0, 0, w, h)
+
+    // Draw each pane
+    for (let i = 0; i < 2; i++) {
+      const iframe = iframeRef.current[i]
+      const x = i * halfW
+
+      // Pane background
+      ctx.fillStyle = '#161b22'
+      ctx.fillRect(x + 4, 4, halfW - 8, h - 8)
+
+      // Title bar
+      ctx.fillStyle = '#21262d'
+      ctx.fillRect(x + 4, 4, halfW - 8, 28)
+
+      // Title bar dots
+      ctx.fillStyle = '#f38ba8'
+      ctx.beginPath()
+      ctx.arc(x + 18, 18, 4, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.fillStyle = '#f9e2af'
+      ctx.beginPath()
+      ctx.arc(x + 32, 18, 4, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.fillStyle = '#a6e3a1'
+      ctx.beginPath()
+      ctx.arc(x + 46, 18, 4, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Model name in title bar
+      ctx.fillStyle = '#c9d1d9'
+      ctx.font = 'bold 12px monospace'
+      ctx.fillText(i === 0 ? results[0]?.modelName || 'Model A' : results[1]?.modelName || 'Model B', x + 60, 22)
+
+      // Draw iframe content
+      if (iframe && iframe.contentDocument) {
+        try {
+          ctx.save()
+          ctx.beginPath()
+          ctx.rect(x + 4, 36, halfW - 8, h - 44)
+          ctx.clip()
+          ctx.drawImage(iframe as unknown as CanvasImageSource, x + 4, 36, halfW - 8, h - 44)
+          ctx.restore()
+        } catch {
+          // iframe may be sandboxed or cross-origin
+        }
+      }
+
+      // Status text overlay
+      const status = results[i]?.status || 'pending'
+      const statusText = status === 'streaming' ? '● streaming' : status === 'done' ? '✓ done' : '○ pending'
+      ctx.fillStyle = status === 'streaming' ? '#8b5cf6' : status === 'done' ? '#22c55e' : '#6b7280'
+      ctx.font = '11px monospace'
+      ctx.fillText(statusText, x + halfW - 100, h - 8)
+    }
+
+    // Timestamp
+    const elapsed = recordingStartRef.current ? Math.floor((Date.now() - recordingStartRef.current) / 1000) : 0
+    ctx.fillStyle = '#484f58'
+    ctx.font = '11px monospace'
+    const mins = String(Math.floor(elapsed / 60)).padStart(2, '0')
+    const secs = String(elapsed % 60).padStart(2, '0')
+    ctx.fillText(`${mins}:${secs}`, 8, 20)
+
+    // Watermark
+    ctx.fillStyle = 'rgba(167, 139, 250, 0.45)'
+    ctx.font = 'bold 14px sans-serif'
+    ctx.fillText('@Monday', w - 120, h - 10)
+  }, [iframeRef, results])
+
+  const startRecording = useCallback(
+    (fps: number) => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1280
+      canvas.height = 720
+      const stream = canvas.captureStream(fps)
+
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+        ? 'video/webm;codecs=vp9'
+        : 'video/webm'
+
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 2_500_000 })
+      chunksRef.current = []
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data)
+      }
+
+      mediaRecorderRef.current = recorder
+      recorder.start()
+      recordingStartRef.current = Date.now()
+
+      const tick = () => {
+        drawFrame()
+        setRecording((prev) => ({
+          ...prev,
+          active: true,
+          status: 'recording',
+          fps,
+          duration: recordingStartRef.current ? Math.floor((Date.now() - recordingStartRef.current) / 1000) : 0,
+        }))
+        animFrameRef.current = requestAnimationFrame(tick)
+      }
+      animFrameRef.current = requestAnimationFrame(tick)
+    },
+    [drawFrame],
+  )
+
+  const stopRecording = useCallback(() => {
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current)
+      animFrameRef.current = null
+    }
+    const recorder = mediaRecorderRef.current
+    if (recorder && recorder.state === 'recording') {
+      recorder.stop()
+      mediaRecorderRef.current = null
+    }
+    setRecording((prev) => ({ ...prev, active: false, status: 'done' }))
+  }, [])
+
+  const downloadRecording = useCallback(() => {
+    if (chunksRef.current.length === 0) return null
+    const blob = new Blob(chunksRef.current, { type: 'video/webm' })
+    chunksRef.current = []
+    const url = URL.createObjectURL(blob)
+    const elapsed = recordingStartRef.current ? Math.floor((Date.now() - recordingStartRef.current) / 1000) : 0
+    const mins = String(Math.floor(elapsed / 60)).padStart(2, '0')
+    const secs = String(elapsed % 60).padStart(2, '0')
+    const filename = `arena-${mins}-${secs}.webm`
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+    return filename
+  }, [])
+
+  const resetRecording = useCallback(() => {
+    setRecording({ active: false, status: 'idle', fps: 30, duration: 0 })
+    chunksRef.current = []
+  }, [])
+
   return {
     modelA,
     modelB,
@@ -323,5 +492,12 @@ export function useModelComparison() {
     setScrollSyncEnabled,
     scrollContainerRefs,
     handleScrollSync,
+    // Recording
+    recording,
+    recordingCanvasRef,
+    startRecording,
+    stopRecording,
+    downloadRecording,
+    resetRecording,
   }
 }

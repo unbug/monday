@@ -126,6 +126,22 @@ export function CodeArena({ onBack }: Props) {
 
   const scrollSyncActive = comparison.scrollSyncEnabled
 
+  // Recording handlers
+  const [fps, setFps] = useState(30)
+  const handleStartRecording = useCallback(() => {
+    comparison.startRecording(fps)
+  }, [comparison, fps])
+  const handleStopRecording = useCallback(() => {
+    comparison.stopRecording()
+  }, [comparison])
+  const handleDownload = useCallback(() => {
+    comparison.downloadRecording()
+  }, [comparison])
+  const handleResetRecording = useCallback(() => {
+    comparison.resetRecording()
+  }, [comparison])
+  const rec = comparison.recording
+
   // Status badge helper
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
@@ -502,6 +518,50 @@ export function CodeArena({ onBack }: Props) {
               <button className="arena-reset-btn" onClick={handleReset}>
                 {t('arena.reset')}
               </button>
+
+              {/* Recording controls */}
+              <div className="arena-recording-controls">
+                <span className="arena-recording-label">{t('arena.fpsLabel')}</span>
+                <select
+                  className="arena-fps-selector"
+                  value={rec.status === 'recording' ? rec.fps : fps}
+                  onChange={(e) => setFps(Number(e.target.value))}
+                  disabled={rec.status === 'recording'}
+                >
+                  <option value={15}>15 fps</option>
+                  <option value={30}>30 fps</option>
+                  <option value={60}>60 fps</option>
+                </select>
+
+                {rec.status === 'idle' && (
+                  <button className="arena-recording-btn" onClick={handleStartRecording}>
+                    <span className="arena-rec-dot" />
+                    {t('arena.record')}
+                  </button>
+                )}
+
+                {rec.status === 'recording' && (
+                  <button className="arena-recording-btn recording" onClick={handleStopRecording}>
+                    <span className="arena-rec-dot-pulse" />
+                    {t('arena.recording')} {rec.duration}s
+                  </button>
+                )}
+
+                {rec.status === 'done' && (
+                  <>
+                    <span className="arena-recording-duration">
+                      {t('arena.recordingDuration')}: {rec.duration}s
+                    </span>
+                    <button className="arena-recording-btn download" onClick={handleDownload}>
+                      <span className="arena-download-icon">⬇</span>
+                      {t('arena.download')}
+                    </button>
+                    <button className="arena-recording-btn reset" onClick={handleResetRecording}>
+                      ↺
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
         </div>

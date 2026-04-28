@@ -12585,6 +12585,114 @@ textarea:focus:not(:focus-visible),
   }
 }
 
+/* --- Recording controls --- */
+.arena-recording-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.arena-recording-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.arena-fps-selector {
+  padding: 4px 8px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.arena-fps-selector:hover {
+  border-color: var(--accent-color);
+}
+
+.arena-fps-selector:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.arena-recording-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.arena-recording-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.arena-recording-btn.recording {
+  border-color: #ef4444;
+  color: #ef4444;
+  animation: arena-pulse-border 1.5s ease-in-out infinite;
+}
+
+.arena-rec-dot {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+}
+
+.arena-rec-dot-pulse {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: arena-pulse-dot 1s ease-in-out infinite;
+}
+
+@keyframes arena-pulse-border {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes arena-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+}
+
+.arena-recording-duration {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.arena-download-icon {
+  font-size: 14px;
+}
+
 /* --- High contrast --- */
 .high-contrast .arena-terminal-card {
   border: 2px solid #000;

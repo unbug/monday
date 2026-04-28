@@ -83,6 +83,13 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.challengesTitle': 'Challenge Presets',
     'arena.challengesSubtitle': 'Pick a challenge to test model creativity',
     'arena.challengeClear': 'Clear Challenge',
+    'arena.record': 'Record',
+    'arena.recording': 'Recording...',
+    'arena.stopRecord': 'Stop Recording',
+    'arena.download': 'Download',
+    'arena.fps': 'Framerate',
+    'arena.fpsLabel': 'Framerate',
+    'arena.recordingDuration': 'Duration',
   },
   zh: {
     'sidebar.brand': 'Monday',
@@ -141,6 +148,13 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.challengesTitle': '挑战预设',
     'arena.challengesSubtitle': '选择挑战来测试模型创造力',
     'arena.challengeClear': '清除挑战',
+    'arena.record': '录制',
+    'arena.recording': '录制中...',
+    'arena.stopRecord': '停止录制',
+    'arena.download': '下载',
+    'arena.fps': '帧率',
+    'arena.fpsLabel': '帧率',
+    'arena.recordingDuration': '时长',
   },
 }
 
