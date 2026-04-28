@@ -25,6 +25,21 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.3',
+    date: '2026-04-28',
+    title: 'Code Arena — Synchronized Scroll',
+    description:
+      'Code Arena panes now scroll in lockstep — scroll one pane and the other follows at the same ratio, making it easy to spot diffs between model outputs. Toggle on/off with a chain-link icon in the arena header.',
+    changes: [
+      { type: 'added', text: 'Synchronized scroll — scroll one code pane and the other follows at the same scroll ratio' },
+      { type: 'added', text: 'Scroll sync toggle — chain-link button in arena header to enable/disable sync' },
+      { type: 'added', text: 'Line-aligned lockstep — scroll position normalized to ratio (0-1) for accurate cross-pane sync regardless of content height differences' },
+      { type: 'added', text: 'Feedback loop prevention — syncingRef flag + requestAnimationFrame guard prevents infinite scroll cascades' },
+      { type: 'added', text: 'Scroll sync i18n — en/zh translations for toggle tooltip' },
+      { type: 'changed', text: 'Updated version to v0.31.3' },
+    ],
+  },
+  {
     version: '0.30.6',
     date: '2026-04-27',
     title: 'Accessibility — Screen-reader landmarks, keyboard nav, high-contrast',
