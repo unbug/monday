@@ -481,7 +481,7 @@ recording. Net-new vs. v0.2's plain text-only comparison.
 - [x] **Recording & video export** — `MediaRecorder` captures both
       iframes as a synchronized timelapse `.webm` (default 30 fps,
       configurable), with a small "@username" watermark from settings
-- [ ] **PNG share card** — Export a single PNG with both final previews,
+- [x] **PNG share card** — Export a single PNG with both final previews,
       model names, durations and watermark — sized for Twitter (16:9)
 - [ ] **Verdict & local leaderboard** — `Team A / Tie / Team B` voting UI;
       results persisted in IndexedDB and aggregated into a per-model

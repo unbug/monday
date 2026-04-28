@@ -56,6 +56,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.6',
+    date: '2026-04-29',
+    title: 'Code Arena — PNG Share Card',
+    description:
+      'Code Arena now exports a single PNG share card with both model previews, model names, durations, token counts, and TPS stats — sized for Twitter (16:9). Click the 🖼 Share Card button in the arena footer after a comparison to download the card.',
+    changes: [
+      { type: 'added', text: 'PNG share card export — 1280×720 canvas captures both final preview cards with terminal-style title bars, model names, status badges, and stats' },
+      { type: 'added', text: 'Model metadata — Team A/B labels, generation duration, total tokens, and tokens/sec displayed in header' },
+      { type: 'added', text: 'Iframe content capture — rendered iframe previews drawn onto canvas with clip region' },
+      { type: 'added', text: 'Paint-delayed capture — requestAnimationFrame ensures iframe content is fully rendered before canvas draw' },
+      { type: 'added', text: 'Watermark — semi-transparent @Monday text in bottom-right corner' },
+      { type: 'added', text: 'Date footer — ISO date shown in bottom-left corner' },
+      { type: 'added', text: 'Share card button in arena footer — gradient purple button with 🖼 icon' },
+      { type: 'added', text: 'Share card CSS — gradient background, hover lift effect, shadow' },
+      { type: 'added', text: 'Share card i18n — en/zh translations for shareCard label' },
+      { type: 'changed', text: 'Updated version to v0.31.6' },
+    ],
+  },
+  {
     version: '0.31.5',
     date: '2026-04-28',
     title: 'Code Arena — Recording & Video Export',

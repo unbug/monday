@@ -603,16 +603,37 @@ export function useModelComparison() {
     ctx.font = 'bold 16px sans-serif'
     ctx.fillText('@Monday', W - 140, footerY)
 
-    // Download
-    canvas.toBlob((blob) => {
-      if (!blob) return
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `arena-share-${ts}.png`
-      a.click()
-      URL.revokeObjectURL(url)
-    }, 'image/png')
+    // Paint delay — let the browser render iframe content before capture
+    requestAnimationFrame(() => {
+      // Re-draw iframe content (may have changed since initial draw)
+      for (let i = 0; i < 2; i++) {
+        const x = 40 + i * (cardW + 40)
+        const iframe = iframeRef.current[i]
+        if (iframe && iframe.contentDocument && iframe.contentDocument.body) {
+          try {
+            ctx.save()
+            ctx.beginPath()
+            ctx.rect(x, cardY + 28, cardW, cardH - 28)
+            ctx.clip()
+            ctx.drawImage(iframe as unknown as CanvasImageSource, x, cardY + 28, cardW, cardH - 28)
+            ctx.restore()
+          } catch {
+            // iframe may not be renderable (cross-origin, etc.)
+          }
+        }
+      }
+
+      // Download
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `arena-share-${ts}.png`
+        a.click()
+        URL.revokeObjectURL(url)
+      }, 'image/png')
+    })
 
     return canvas
   }, [results, iframeRef])
