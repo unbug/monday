@@ -475,7 +475,7 @@ recording. Net-new vs. v0.2's plain text-only comparison.
       and source view, with a **Copy** button on each
 - [x] **Synchronized scroll** — Code view in both panes scrolls in
       lockstep (line-aligned) to make diffs obvious
-- [ ] **Challenge prompt library** — Curated presets (Grass Field, Solar
+- [x] **Challenge prompt library** — Curated presets (Grass Field, Solar
       System, Pelican on a Bicycle, Tetris, Snake, Bouncing Balls,
       Particle System, CSS Loader Gallery), one-click load into the arena
 - [ ] **Recording & video export** — `MediaRecorder` captures both
