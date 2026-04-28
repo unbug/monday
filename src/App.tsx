@@ -485,6 +485,9 @@ export default function App() {
             onChangeLocale={handleChangeLocale}
             highContrast={theme.highContrast}
             onToggleHighContrast={(hc) => theme.setHighContrast(hc)}
+            // v1.0.0: provider
+            provider={chat.activeSession?.provider ?? null}
+            onSetProvider={chat.setProvider}
           />
         </>
       )}

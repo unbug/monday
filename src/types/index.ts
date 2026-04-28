@@ -68,6 +68,8 @@ export interface ChatSession {
   forkId: string | null
   /** Auto-generated conversation summaries for context compression (v0.30) */
   summaries: MemorySummary[]
+  /** Provider: 'web-llm' (local) or 'openai' (remote API). null = default to web-llm */
+  provider: Provider | null
   createdAt: number
   updatedAt: number
 }
@@ -268,4 +270,22 @@ export interface AgentTask {
   createdAt: number
   /** When the task completed (timestamp) */
   finishedAt: number | null
+}
+
+// v1.0: OpenAI-compatible API settings
+export interface OpenAISettings {
+  /** Custom base URL (e.g. https://api.openai.com/v1 or http://localhost:11434/v1) */
+  baseUrl: string
+  /** API key for authentication (stored encrypted in IndexedDB) */
+  apiKey: string
+  /** Model ID to use (e.g. gpt-4o, qwen2.5:latest) */
+  modelId: string
+}
+
+export type Provider = 'web-llm' | 'openai'
+
+export interface OpenAIUsage {
+  promptTokens: number
+  completionTokens: number
+  totalTokens: number
 }

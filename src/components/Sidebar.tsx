@@ -59,6 +59,9 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
+  // v1.0.0: provider
+  provider?: 'web-llm' | 'openai' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | null) => void
 }
 
 export function Sidebar({
@@ -91,6 +94,8 @@ export function Sidebar({
   onChangeLocale,
   highContrast,
   onToggleHighContrast,
+  provider,
+  onSetProvider,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -264,6 +269,8 @@ export function Sidebar({
             onChangeLocale={onChangeLocale}
             highContrast={highContrast}
             onToggleHighContrast={onToggleHighContrast}
+            provider={provider}
+            onSetProvider={onSetProvider}
           />
         </div>
       )}

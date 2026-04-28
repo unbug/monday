@@ -1,3 +1,4 @@
+import { streamOpenAI, type OpenAISettings } from './openaiApi'
 import {
   CreateMLCEngine,
   type MLCEngineInterface,
@@ -519,4 +520,169 @@ export function getToolCalls(
   generator: AsyncGenerator<string>,
 ): ToolCallInfo[] | null {
   return (generator as any)._toolCalls ?? null
+}
+
+/**
+ * Unified streaming engine that routes to either Web-LLM (local) or
+ * an OpenAI-compatible API based on the provider parameter.
+ */
+export interface ProviderStreamOptions {
+  temperature?: number
+  top_p?: number
+  maxTokens?: number
+  systemPrompt?: string
+  context?: string
+  images?: Array<{ id: string; data: string; name?: string }>
+  files?: Array<{ id: string; name: string; size: number; type: string; content: string }>
+  modelId?: string
+  /** 'web-llm' for local inference, 'openai' for remote API. null defaults to web-llm */
+  provider?: 'web-llm' | 'openai' | null
+  /** OpenAI settings — required when provider === 'openai' */
+  apiSettings?: OpenAISettings
+}
+
+export async function* streamChatWithProvider(
+  messages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }>,
+  options: ProviderStreamOptions = {},
+): AsyncGenerator<string, StreamUsage, unknown> {
+  const { provider = null } = options
+
+  if (provider === 'openai') {
+    // Remote API path
+    if (!options.apiSettings) {
+      throw new Error('OpenAI API settings not configured')
+    }
+    const { temperature = 0.7, top_p = 0.9, maxTokens = 1024, systemPrompt } = options
+
+    let chatMessages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
+
+    // Prepend context
+    let contextMessage: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = []
+    if (options.context?.trim()) {
+      contextMessage.push({ role: 'user', content: `Context:\n${options.context}\n\n---\n\n` })
+    }
+    if (options.files?.length) {
+      for (const file of options.files) {
+        contextMessage.push({
+          role: 'user',
+          content: `File: ${file.name} (${file.type})\n${file.content}`,
+        })
+      }
+      if (contextMessage.length > 0) {
+        contextMessage.push({ role: 'user', content: '\n---\n' })
+      }
+    }
+
+    if (systemPrompt?.trim()) {
+      chatMessages = [
+        { role: 'system', content: systemPrompt.trim() },
+        ...contextMessage,
+        ...(messages as Array<{ role: 'user' | 'assistant' | 'system'; content: string }>),
+      ]
+    } else {
+      chatMessages = [...contextMessage, ...(messages as Array<{ role: 'user' | 'assistant' | 'system'; content: string }>)]
+    }
+
+    for await (const delta of streamOpenAI(
+      chatMessages as Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }>,
+      {
+        settings: options.apiSettings,
+        temperature,
+        topP: top_p,
+        maxTokens,
+        systemPrompt,
+      },
+    )) {
+      yield delta
+    }
+    return { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
+  }
+
+  // Web-LLM local path (default)
+  const targetModelId = options.modelId ?? currentModelId
+  if (targetModelId && currentModelId !== targetModelId) {
+    try {
+      await loadModel(targetModelId)
+    } catch {
+      // Model load failed — fall back to whatever is loaded
+    }
+  }
+
+  const engine = engineInstance
+  if (!engine) {
+    throw new Error('No model loaded')
+  }
+
+  const { temperature = 0.7, top_p: topP = 0.9, maxTokens = 1024, systemPrompt } = options
+
+  let chatMessages: Array<{
+    role: 'user' | 'assistant' | 'system' | 'tool'
+    content: string
+  }>
+
+  let contextMessage: Array<{
+    role: 'user' | 'assistant' | 'system' | 'tool'
+    content: string
+  }> = []
+  if (options.context?.trim()) {
+    contextMessage.push(
+      { role: 'user', content: `Context:\n${options.context}\n\n---\n\n` },
+    )
+  }
+  if (options.files?.length) {
+    for (const file of options.files) {
+      contextMessage.push({
+        role: 'user',
+        content: `File: ${file.name} (${file.type})\n${file.content}`,
+      })
+    }
+    if (contextMessage.length > 0) {
+      contextMessage.push({ role: 'user', content: '\n---\n' })
+    }
+  }
+
+  if (systemPrompt?.trim()) {
+    chatMessages = [
+      { role: 'system', content: systemPrompt.trim() },
+      ...contextMessage,
+      ...messages,
+    ]
+  } else {
+    chatMessages = [...contextMessage, ...messages]
+  }
+
+  const visionMessages: Array<{
+    role: 'user' | 'assistant' | 'system' | 'tool'
+    content: string | Array<{ type: string; text?: string; image_url?: { url: string } }>
+  }> = options.images && options.images.length > 0
+    ? toVisionMessages(chatMessages, options.images)
+    : chatMessages
+
+  let usage: StreamUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
+
+  const chunks = (await engine.chat.completions.create({
+    messages: visionMessages as any,
+    temperature,
+    top_p: topP,
+    max_tokens: maxTokens,
+    stream: true,
+    stream_options: { include_usage: true },
+  } as any)) as unknown as AsyncIterable<any>
+
+  for await (const chunk of chunks) {
+    if (chunk.usage) {
+      usage = {
+        promptTokens: chunk.usage.prompt_tokens ?? 0,
+        completionTokens: chunk.usage.completion_tokens ?? 0,
+        totalTokens: chunk.usage.total_tokens ?? 0,
+      }
+    }
+
+    const delta = chunk.choices[0]?.delta?.content
+    if (delta) {
+      yield delta
+    }
+  }
+
+  return usage
 }

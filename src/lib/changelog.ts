@@ -74,6 +74,28 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.0',
+    date: '2026-04-29',
+    title: 'OpenAI-Compatible API — Remote Inference',
+    description:
+      'Monday now supports connecting to any OpenAI-compatible API endpoint. Configure the base URL, API key, and model ID in Settings — switch between local WebGPU inference and remote API per session. Settings are persisted in IndexedDB. A test connection button verifies the endpoint before use.',
+    changes: [
+      { type: 'added', text: 'OpenAI-compatible streaming engine (openaiApi.ts) — native fetch-based SSE streaming with text delta yields and usage stats' },
+      { type: 'added', text: 'API settings storage — saveApiSettings / loadApiSettings / deleteApiSettings in IndexedDB (apiSettings object store, DB v8→v9)' },
+      { type: 'added', text: 'ChatSession.provider field — per-session provider toggle (web-llm local / openai remote), null defaults to web-llm' },
+      { type: 'added', text: 'streamChatWithProvider — unified streaming engine routing to either Web-LLM or OpenAI API based on provider' },
+      { type: 'added', text: 'External API section in SettingsPanel — baseUrl, apiKey (password), modelId inputs; Save / Test Connection / Clear buttons' },
+      { type: 'added', text: 'Provider toggle — Local (WebGPU) / Remote API button pair in Settings' },
+      { type: 'added', text: 'Test connection — fetches /models endpoint to verify API key and base URL' },
+      { type: 'added', text: 'Provider threading through useChat hook — sendUserMessage checks session.provider and routes accordingly' },
+      { type: 'added', text: 'forkSession copies provider — forked sessions inherit the source session provider' },
+      { type: 'added', text: 'openai i18n category — en/zh translations for all API settings UI strings' },
+      { type: 'added', text: 'API settings CSS — dark/light theme support for inputs, toggle buttons, status indicators' },
+      { type: 'added', text: 'Database migration v8→v9 — adds apiSettings object store + provider field on existing sessions' },
+      { type: 'changed', text: 'Updated version to v1.0.0' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

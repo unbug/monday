@@ -466,6 +466,52 @@ const mcp: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── OpenAI API Settings ──
+const openai: Record<Locale, Record<string, string>> = {
+  en: {
+    'openai.title': 'External API',
+    'openai.desc': 'Connect to any OpenAI-compatible API endpoint for remote inference.',
+    'openai.baseUrl': 'Base URL',
+    'openai.apiKey': 'API Key',
+    'openai.modelId': 'Model ID',
+    'openai.save': 'Save',
+    'openai.saved': '✓ Saved',
+    'openai.testConnection': 'Test Connection',
+    'openai.testing': 'Testing…',
+    'openai.connected': '✓ Connected',
+    'openai.error': 'Connection failed',
+    'openai.clear': 'Clear',
+    'openai.placeholderUrl': 'https://api.openai.com/v1',
+    'openai.placeholderKey': 'sk-...',
+    'openai.placeholderModel': 'gpt-4o',
+    'openai.providerLabel': 'Provider',
+    'openai.providerLocal': 'Local (WebGPU)',
+    'openai.providerRemote': 'Remote API',
+    'openai.disabled': 'API disabled — configure above to enable',
+  },
+  zh: {
+    'openai.title': '外部 API',
+    'openai.desc': '连接任意 OpenAI 兼容 API 端点以进行远程推理。',
+    'openai.baseUrl': '基础 URL',
+    'openai.apiKey': 'API 密钥',
+    'openai.modelId': '模型 ID',
+    'openai.save': '保存',
+    'openai.saved': '✓ 已保存',
+    'openai.testConnection': '测试连接',
+    'openai.testing': '测试中…',
+    'openai.connected': '✓ 已连接',
+    'openai.error': '连接失败',
+    'openai.clear': '清除',
+    'openai.placeholderUrl': 'https://api.openai.com/v1',
+    'openai.placeholderKey': 'sk-...',
+    'openai.placeholderModel': 'gpt-4o',
+    'openai.providerLabel': '提供商',
+    'openai.providerLocal': '本地 (WebGPU)',
+    'openai.providerRemote': '远程 API',
+    'openai.disabled': 'API 已禁用 — 在上方配置以启用',
+  },
+}
+
 // ── Plugin Manager ──
 const plugin: Record<Locale, Record<string, string>> = {
   en: {
@@ -1308,6 +1354,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...changelog[locale],
     ...offlineIndicator[locale],
     ...a11y[locale],
+    ...openai[locale],
   }
 }
 

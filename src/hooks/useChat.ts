@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
-import { streamChatWithUsage } from '../lib/engine'
+import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
+import { loadApiSettings, saveApiSettings, deleteApiSettings } from '../lib/storage'
+import type { OpenAISettings } from '../lib/openaiApi'
 import { useTokenStats } from './useTokenStats'
 import {
   createMessage,
@@ -261,6 +263,17 @@ export function useChat(
           }
         }
 
+        // v1.0.0: check if using external API provider
+        const activeProvider = latestSession?.provider ?? null
+        let apiSettings: OpenAISettings | null = null
+        if (activeProvider === 'openai') {
+          try {
+            apiSettings = await loadApiSettings()
+          } catch {
+            // Ignore — will fall through to local
+          }
+        }
+
         // Check if the current model supports tools
         const modelInfo = getModelById(effectiveModelId)
         const supportsTools = modelInfo?.tags?.includes('tools') ?? false
@@ -282,7 +295,48 @@ export function useChat(
           )
         }
 
-        if (supportsTools && toolDefs.length > 0) {
+        // v1.0.0: external API path
+        if (activeProvider === 'openai' && apiSettings) {
+          try {
+            const { streamOpenAI } = await import('../lib/openaiApi')
+            let usage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
+            for await (const token of streamOpenAI(
+              refineMessages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system' | 'tool', content: m.content })),
+              {
+                settings: apiSettings,
+                temperature: opts.temperature ?? 0.7,
+                topP: opts.top_p ?? 0.9,
+                maxTokens: opts.maxTokens ?? 1024,
+                systemPrompt: summarizedPrompt,
+              },
+            )) {
+              if (abortRef.current) break
+              fullContent += token
+              tokenCount++
+              tokenStats.addTokens(1)
+              const captured = fullContent
+              currentSessions = currentSessions.map((s) =>
+                s.id === sessionId
+                  ? {
+                      ...s,
+                      messages: s.messages.map((m) =>
+                        m.id === assistantMsg.id
+                          ? { ...m, content: captured }
+                          : m,
+                      ),
+                    }
+                  : s,
+              )
+              setSessions([...currentSessions])
+            }
+            // Usage is captured from the last chunk — use a ref to get it
+            // For now, estimate from tokenCount
+            finalUsage = { promptTokens: 0, completionTokens: tokenCount, totalTokens: tokenCount }
+          } catch (apiErr: unknown) {
+            const msg = apiErr instanceof Error ? apiErr.message : String(apiErr)
+            throw new Error(`OpenAI API error: ${msg}`)
+          }
+        } else if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---
           let usedToolsPath = false
           try {
@@ -754,6 +808,20 @@ export function useChat(
     [activeSessionId, sessions, persistSessions],
   )
 
+  // v1.0.0: set provider for the active session
+  const setProvider = useCallback(
+    (provider: 'web-llm' | 'openai' | null) => {
+      if (!activeSessionId) return
+      const updatedSessions = sessions.map((s) =>
+        s.id === activeSessionId
+          ? { ...s, provider, updatedAt: Date.now() }
+          : s,
+      )
+      persistSessions(updatedSessions)
+    },
+    [activeSessionId, sessions, persistSessions],
+  )
+
   /**
    * Fork a session at a specific message index.
    * Creates a new session with all messages up to and including messageIndex.
@@ -778,6 +846,7 @@ export function useChat(
         knowledgeBaseId: source.knowledgeBaseId,
         forkId: source.id,
         summaries: [],
+        provider: source.provider,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       }
@@ -819,6 +888,8 @@ export function useChat(
     clearFiles,
     removeFile,
     setKnowledgeBaseId,
+    // v1.0.0: set provider for the active session
+    setProvider,
     // v0.28: conversation forking
     forkSession,
     // v0.26.1: knowledge context

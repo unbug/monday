@@ -1,13 +1,14 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 8
+const DB_VERSION = 9
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
 const BASES_STORE = 'knowledgeBases'
 const EMBEDDINGS_STORE = 'embeddings'
 const VERDICTS_STORE = 'verdicts'
+const API_SETTINGS_STORE = 'apiSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -64,6 +65,22 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v7→v8: add verdicts object store for v0.31.7 Code Arena verdicts
       if (!db.objectStoreNames.contains(VERDICTS_STORE)) {
         db.createObjectStore(VERDICTS_STORE, { keyPath: 'id' })
+      }
+      // Migration v8→v9: add apiSettings object store + provider field on sessions for v1.0
+      if (!db.objectStoreNames.contains(API_SETTINGS_STORE)) {
+        db.createObjectStore(API_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      if (oldVersion > 0 && oldVersion < 9) {
+        const sessionsStore = upgradeTx.objectStore(SESSIONS_STORE)
+        const req = sessionsStore.getAll()
+        req.onsuccess = () => {
+          for (const session of req.result as ChatSession[]) {
+            if (session.provider === undefined) {
+              session.provider = null
+              sessionsStore.put(session)
+            }
+          }
+        }
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -136,6 +153,7 @@ function migrateSession(session: ChatSession): ChatSession {
   if (migrated.knowledgeBaseId === undefined) migrated.knowledgeBaseId = null
   if (migrated.forkId === undefined) migrated.forkId = null
   if (migrated.summaries === undefined) migrated.summaries = []
+  if (migrated.provider === undefined) migrated.provider = null
   return migrated
 }
 
@@ -151,6 +169,7 @@ export function createSession(modelId: string): ChatSession {
     knowledgeBaseId: null,
     forkId: null,
     summaries: [],
+    provider: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
@@ -309,6 +328,43 @@ export async function loadEmbeddings(): Promise<EmbeddingEntry[]> {
       resolve(embeddings)
     }
     request.onerror = () => reject(request.error)
+  })
+}
+
+// ── API Settings storage (v1.0.0) ───────────────────────────────────────────
+
+export async function saveApiSettings(settings: OpenAISettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(API_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(API_SETTINGS_STORE)
+  store.put({ id: 'api-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadApiSettings(): Promise<OpenAISettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(API_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(API_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('api-settings')
+    request.onsuccess = () => {
+      resolve((request.result as OpenAISettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteApiSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(API_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(API_SETTINGS_STORE)
+  store.delete('api-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
   })
 }
 

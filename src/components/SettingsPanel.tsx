@@ -1,10 +1,12 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { ChatSession, GenerationParams } from '../types'
 import { useNotifications } from '../hooks/useNotifications'
 import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
+import { loadApiSettings, saveApiSettings, deleteApiSettings } from '../lib/storage'
+import type { OpenAISettings } from '../lib/openaiApi'
 
 interface Props {
   session: ChatSession
@@ -13,15 +15,63 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
+  onSetProvider?: (provider: 'web-llm' | 'openai' | null) => void
+  provider?: 'web-llm' | 'openai' | null
 }
 
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_TOP_P = 0.9
 const DEFAULT_MAX_TOKENS = 1024
 
-export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast }: Props) {
+export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast, onSetProvider, provider }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const notifications = useNotifications()
+
+  // v1.0.0: API settings state
+  const [apiSettings, setApiSettings] = useState<OpenAISettings | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [testResult, setTestResult] = useState<'ok' | 'error' | null>(null)
+
+  useEffect(() => {
+    loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
+  }, [])
+
+  const handleSaveApiSettings = useCallback(async () => {
+    if (!apiSettings) return
+    setSaving(true)
+    try {
+      await saveApiSettings(apiSettings)
+      setSaving(false)
+    } catch {
+      setSaving(false)
+    }
+  }, [apiSettings])
+
+  const handleTestConnection = useCallback(async () => {
+    if (!apiSettings) return
+    setTesting(true)
+    setTestResult(null)
+    try {
+      const resp = await fetch(apiSettings.baseUrl.replace(/\/+$/, '') + '/models', {
+        headers: { Authorization: `Bearer ${apiSettings.apiKey}` },
+      })
+      if (resp.ok) {
+        setTestResult('ok')
+      } else {
+        setTestResult('error')
+      }
+    } catch {
+      setTestResult('error')
+    }
+    setTesting(false)
+  }, [apiSettings])
+
+  const handleClearApiSettings = useCallback(async () => {
+    await deleteApiSettings()
+    setApiSettings(null)
+    setTestResult(null)
+  }, [])
 
   const params = session.generationParams ?? {
     temperature: DEFAULT_TEMPERATURE,
@@ -216,6 +266,117 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
               />
             </div>
           )}
+
+          {/* v1.0.0: External API Settings */}
+          <div className="settings-section">
+            <div className="settings-section-header">
+              <span className="settings-section-title">{t('openai.title')}</span>
+            </div>
+            <p className="settings-hint">
+              {t('openai.desc')}
+            </p>
+
+            {/* Provider toggle */}
+            {onSetProvider && (
+              <div className="settings-param">
+                <label className="settings-label">
+                  {t('openai.providerLabel')}
+                </label>
+                <div className="api-provider-toggle">
+                  <button
+                    className={`api-provider-btn ${!provider || provider === 'web-llm' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('web-llm')}
+                    type="button"
+                  >
+                    {t('openai.providerLocal')}
+                  </button>
+                  <button
+                    className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('openai')}
+                    type="button"
+                  >
+                    {t('openai.providerRemote')}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {provider === 'openai' && (
+              <>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('openai.baseUrl')}
+                  </label>
+                  <input
+                    type="text"
+                    className="settings-input api-url-input"
+                    placeholder={t('openai.placeholderUrl')}
+                    value={apiSettings?.baseUrl ?? ''}
+                    onChange={(e) => setApiSettings(apiSettings ? { ...apiSettings, baseUrl: e.target.value } : apiSettings)}
+                  />
+                </div>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('openai.apiKey')}
+                  </label>
+                  <input
+                    type="password"
+                    className="settings-input api-key-input"
+                    placeholder={t('openai.placeholderKey')}
+                    value={apiSettings?.apiKey ?? ''}
+                    onChange={(e) => setApiSettings(apiSettings ? { ...apiSettings, apiKey: e.target.value } : apiSettings)}
+                  />
+                </div>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('openai.modelId')}
+                  </label>
+                  <input
+                    type="text"
+                    className="settings-input api-model-input"
+                    placeholder={t('openai.placeholderModel')}
+                    value={apiSettings?.modelId ?? ''}
+                    onChange={(e) => setApiSettings(apiSettings ? { ...apiSettings, modelId: e.target.value } : apiSettings)}
+                  />
+                </div>
+                <div className="api-actions">
+                  <button
+                    className="api-save-btn"
+                    onClick={handleSaveApiSettings}
+                    disabled={saving || !apiSettings?.baseUrl || !apiSettings?.apiKey || !apiSettings?.modelId}
+                    type="button"
+                  >
+                    {saving ? t('openai.saved') : t('openai.save')}
+                  </button>
+                  <button
+                    className="api-test-btn"
+                    onClick={handleTestConnection}
+                    disabled={testing || !apiSettings?.baseUrl || !apiSettings?.apiKey}
+                    type="button"
+                  >
+                    {testing ? t('openai.testing') : t('openai.testConnection')}
+                  </button>
+                  <button
+                    className="api-clear-btn"
+                    onClick={handleClearApiSettings}
+                    type="button"
+                  >
+                    {t('openai.clear')}
+                  </button>
+                </div>
+                {testResult === 'ok' && (
+                  <span className="api-status api-status-ok">{t('openai.connected')}</span>
+                )}
+                {testResult === 'error' && (
+                  <span className="api-status api-status-error">{t('openai.error')}</span>
+                )}
+              </>
+            )}
+
+            {provider === 'web-llm' && (
+              <span className="api-status api-status-disabled">{t('openai.disabled')}</span>
+            )}
+          </div>
         </div>
       )}
     </div>
