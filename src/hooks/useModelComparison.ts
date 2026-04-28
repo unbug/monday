@@ -75,7 +75,9 @@ export function useModelComparison() {
   const [currentStep, setCurrentStep] = useState<'select' | 'running' | 'done'>('select')
   const [webgpuSupported, setWebgpuSupported] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [scrollSyncEnabled, setScrollSyncEnabled] = useState(true)
   const abortRef = useRef(false)
+  const syncingRef = useRef(false)
 
   useEffect(() => {
     setWebgpuSupported(checkWebGPUSupport())
@@ -279,6 +281,28 @@ export function useModelComparison() {
   }, [])
 
   const iframeRef = useRef<Record<number, HTMLIFrameElement | null>>({ 0: null, 1: null })
+  const scrollContainerRefs = useRef<Record<number, HTMLDivElement | null>>({ 0: null, 1: null })
+
+  // Synchronized scroll handler
+  const handleScrollSync = useCallback(
+    (fromIdx: number) => {
+      if (!scrollSyncEnabled) return
+      const toIdx = fromIdx === 0 ? 1 : 0
+      const fromEl = scrollContainerRefs.current[fromIdx]
+      const toEl = scrollContainerRefs.current[toIdx]
+      if (!fromEl || !toEl) return
+      if (syncingRef.current) return
+
+      syncingRef.current = true
+      const fromScrollRatio = fromEl.scrollTop / Math.max(1, fromEl.scrollHeight - fromEl.clientHeight)
+      toEl.scrollTop = fromScrollRatio * (toEl.scrollHeight - toEl.clientHeight)
+
+      requestAnimationFrame(() => {
+        syncingRef.current = false
+      })
+    },
+    [scrollSyncEnabled],
+  )
 
   return {
     modelA,
@@ -295,5 +319,9 @@ export function useModelComparison() {
     reset,
     setError,
     iframeRef,
+    scrollSyncEnabled,
+    setScrollSyncEnabled,
+    scrollContainerRefs,
+    handleScrollSync,
   }
 }

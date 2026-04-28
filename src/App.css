@@ -11844,6 +11844,38 @@ textarea:focus:not(:focus-visible),
   font-size: 14px;
 }
 
+/* Header actions */
+.code-arena-header-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.arena-scroll-sync-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.arena-scroll-sync-btn:hover {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+.arena-scroll-sync-btn.active {
+  color: #89b4fa;
+  border-color: color-mix(in srgb, #89b4fa 50%, transparent);
+  background: color-mix(in srgb, #89b4fa 10%, transparent);
+}
+
 /* --- Selection Phase --- */
 .arena-select {
   display: flex;

@@ -101,6 +101,13 @@ export function CodeArena({ onBack }: Props) {
 
   const isReady = !!comparison.modelA && !!comparison.modelB
 
+  // Scroll sync toggle handler
+  const toggleScrollSync = useCallback(() => {
+    comparison.setScrollSyncEnabled((prev) => !prev)
+  }, [comparison])
+
+  const scrollSyncActive = comparison.scrollSyncEnabled
+
   // Status badge helper
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
@@ -145,6 +152,15 @@ export function CodeArena({ onBack }: Props) {
         <h2 className="code-arena-title">
           <span className="arena-icon">⚔️</span> Code Arena
         </h2>
+        <div className="code-arena-header-actions">
+          <button
+            className={`arena-scroll-sync-btn ${scrollSyncActive ? 'active' : ''}`}
+            onClick={toggleScrollSync}
+            title={scrollSyncActive ? t('arena.scrollSyncOff') : t('arena.scrollSyncOn')}
+          >
+            {scrollSyncActive ? '⛓' : '⛓‍💥'}
+          </button>
+        </div>
         <p className="code-arena-desc">
           Side-by-side model comparison with live streaming
         </p>
@@ -301,7 +317,18 @@ export function CodeArena({ onBack }: Props) {
                 </div>
 
                 {/* Terminal body */}
-                <div className="arena-terminal-body">
+                <div
+                  className="arena-terminal-body"
+                  ref={(el) => {
+                    comparison.scrollContainerRefs.current[idx] = el
+                  }}
+                  onScroll={() => {
+                    if (paneViewModes[idx] === 'code') {
+                      comparison.handleScrollSync(idx)
+                    }
+                  }}
+                  style={{ overflowY: 'auto', flex: 1 }}
+                >
                   {result.status === 'pending' ? (
                     <div className="arena-pending-msg">{t('arena.waiting')}</div>
                   ) : result.error && result.status === 'error' ? (
