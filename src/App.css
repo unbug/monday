@@ -12723,7 +12723,7 @@ textarea:focus:not(:focus-visible),
   font-size: 16px;
 }
 
-/* --- High contrast ---
+/* --- High contrast --- */
 .high-contrast .arena-terminal-card {
   border: 2px solid #000;
   background: #000;
