@@ -149,7 +149,7 @@ export const MODELS: ModelInfo[] = [
     provider: 'Meta',
     paramCount: 1000000000,
     releaseDate: '2024-09-25',
-    tags: ['thinking'],
+    tags: ['thinking', 'tools'],
   },
   {
     id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
@@ -161,7 +161,7 @@ export const MODELS: ModelInfo[] = [
     paramCount: 3000000000,
     releaseDate: '2024-09-25',
     recommended: true,
-    tags: ['thinking'],
+    tags: ['thinking', 'tools'],
   },
   // --- NousResearch Hermes (function calling specialist) ---
   {
@@ -187,7 +187,7 @@ export const MODELS: ModelInfo[] = [
     paramCount: 3800000000,
     releaseDate: '2025-02-04',
     recommended: true,
-    tags: ['thinking'],
+    tags: ['thinking', 'tools'],
   },
   // --- Google Gemma ---
   {
@@ -222,7 +222,7 @@ export const MODELS: ModelInfo[] = [
     provider: 'Alibaba',
     paramCount: 1500000000,
     releaseDate: '2024-11-12',
-    tags: ['thinking'],
+    tags: ['thinking', 'tools'],
   },
   // --- Stability AI ---
   {

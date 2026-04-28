@@ -14,8 +14,9 @@
  *   await engine.run()
  */
 
-import { streamChatWithTools, getToolCalls, type ToolCallInfo } from './engine'
+import { streamChatWithTools, getToolCalls, getCurrentModelId, type ToolCallInfo } from './engine'
 import { toolRegistry } from './toolRegistry'
+import { getModelById } from './models'
 import type { ToolCallResult } from '../types'
 import type { AgentTask, AgentStep } from '../types'
 
@@ -120,8 +121,13 @@ export function createAgentEngine(options: AgentEngineOptions): AgentEngine {
 
       stepCount++
 
-      // Get available tools
-      const toolDefs = toolRegistry.getDefinitions()
+      // Check if the current model supports tool calling
+      const currentModelId = getCurrentModelId()
+      const modelInfo = currentModelId ? getModelById(currentModelId) : null
+      const supportsTools = modelInfo?.tags?.includes('tools') ?? false
+
+      // Get available tools (only for tool-capable models)
+      const toolDefs = supportsTools ? toolRegistry.getDefinitions() : []
       const tools = toolDefs.map((t) => ({
         function: {
           name: t.name,
@@ -132,35 +138,18 @@ export function createAgentEngine(options: AgentEngineOptions): AgentEngine {
       }))
 
       // Call the model
-      let result
-      try {
-        result = streamChatWithTools(messages, {
-          temperature: 0.3, // Lower temperature for more deterministic behavior
-          maxTokens: 2048,
-          tools,
-        })
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err)
-        if (msg.toLowerCase().includes('function call') || msg.toLowerCase().includes('tool')) {
-          throw new Error('This model does not support function calling (tool use). Please switch to a model tagged with "tools" — e.g. Phi-4 Mini, Llama 3.2 3B, Hermes-3, or Qwen2.5-Coder.')
-        }
-        throw err
-      }
+      const result = streamChatWithTools(messages, {
+        temperature: 0.3, // Lower temperature for more deterministic behavior
+        maxTokens: 2048,
+        tools,
+      })
 
       // Stream any text content (the model may output thoughts before tool calls)
       let textContent = ''
-      try {
-        for await (const token of result.generator) {
-          if (aborted || options.signal?.aborted) break
-          textContent += token
-          finalContent += token
-        }
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err)
-        if (msg.toLowerCase().includes('function call') || msg.toLowerCase().includes('tool')) {
-          throw new Error('This model does not support function calling (tool use). Please switch to a model tagged with "tools" — e.g. Phi-4 Mini, Llama 3.2 3B, Hermes-3, or Qwen2.5-Coder.')
-        }
-        throw err
+      for await (const token of result.generator) {
+        if (aborted || options.signal?.aborted) break
+        textContent += token
+        finalContent += token
       }
 
       // Check for tool calls

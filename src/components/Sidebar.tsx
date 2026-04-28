@@ -48,6 +48,7 @@ interface Props {
   onOpenMemory?: () => void
   onOpenAgent?: () => void
   onOpenUsageAnalytics?: () => void
+  onOpenComparison?: () => void
   onOpenShortcuts?: () => void
   onOpenInNewWindow?: (sessionId: string) => void
   onShare?: () => void
@@ -80,6 +81,7 @@ export function Sidebar({
   onOpenMemory,
   onOpenAgent,
   onOpenUsageAnalytics,
+  onOpenComparison,
   onOpenShortcuts,
   onOpenInNewWindow,
   onShare,
@@ -368,6 +370,18 @@ export function Sidebar({
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </button>
+            )}
+            {onOpenComparison && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenComparison}
+                title={t('sidebar.compare')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="8" height="18" rx="1" />
+                  <rect x="13" y="3" width="8" height="18" rx="1" />
                 </svg>
               </button>
             )}

@@ -58,7 +58,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison'
 
 const BASE = '/monday'
 
@@ -79,6 +79,7 @@ const VIEW_PATH: Record<View, string> = {
   memory: BASE + '/memory',
   agent: BASE + '/agent',
   'usage-analytics': BASE + '/usage-analytics',
+  comparison: BASE + '/comparison',
 }
 
 function viewFromPath(pathname: string): View {
@@ -352,6 +353,7 @@ export default function App() {
     onOpenMemory: () => setView('memory'),
     onOpenAgent: () => setView('agent'),
     onOpenUsageAnalytics: () => setView('usage-analytics'),
+    onOpenComparison: () => setView('comparison'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -460,6 +462,10 @@ export default function App() {
             }}
             onOpenUsageAnalytics={() => {
               setView('usage-analytics')
+              closeSidebarOnMobile()
+            }}
+            onOpenComparison={() => {
+              setView('comparison')
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -727,6 +733,10 @@ export default function App() {
         ) : view === 'usage-analytics' ? (
           <div className="main-content main-content--usage-analytics">
             <UsageAnalytics />
+          </div>
+        ) : view === 'comparison' ? (
+          <div className="main-content main-content--comparison">
+            <ModelComparison />
           </div>
         ) : view === 'agent' ? (
           <div className="agent-view">

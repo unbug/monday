@@ -8,10 +8,10 @@ import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 
 interface Props {
-  onBack: () => void
+  // intentionally empty — no back navigation needed
 }
 
-export function ModelComparison({ onBack }: Props) {
+export function ModelComparison(_props: Props = {}) {
   const comparison = useModelComparison()
   const [prompt, setPrompt] = useState('')
   const [showPrompt, setShowPrompt] = useState(false)
@@ -44,6 +44,10 @@ export function ModelComparison({ onBack }: Props) {
 
   const isReady = !!comparison.modelA && !!comparison.modelB
 
+  const chatModels = MODELS.filter(
+    (m) => !m.tags?.includes('embedding') && !m.tags?.includes('vision'),
+  )
+
   return (
     <div className="model-comparison">
       <div className="model-comparison-header">
@@ -63,7 +67,7 @@ export function ModelComparison({ onBack }: Props) {
                 <span className="comparison-select-badge">Model A</span>
               </div>
               <div className="comparison-model-list">
-                {MODELS.slice(0, 10).map((model) => (
+                {chatModels.map((model) => (
                   <button
                     key={model.id}
                     className={`comparison-model-option ${comparison.modelA?.id === model.id ? 'active' : ''}`}
@@ -90,7 +94,7 @@ export function ModelComparison({ onBack }: Props) {
                 <span className="comparison-select-badge comparison-select-badge-b">Model B</span>
               </div>
               <div className="comparison-model-list">
-                {MODELS.slice(0, 10).map((model) => (
+                {chatModels.map((model) => (
                   <button
                     key={model.id}
                     className={`comparison-model-option ${comparison.modelB?.id === model.id ? 'active' : ''}`}

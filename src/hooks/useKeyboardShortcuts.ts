@@ -28,6 +28,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenMemory?: () => void
   onOpenAgent?: () => void
   onOpenUsageAnalytics?: () => void
+  onOpenComparison?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -232,6 +233,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Usage Analytics',
               icon: '📊',
               action: options.onOpenUsageAnalytics,
+            },
+          ]
+        : []),
+      ...(options.onOpenComparison
+        ? [
+            {
+              id: 'open-comparison',
+              label: 'Model Comparison',
+              icon: '⚖️',
+              action: options.onOpenComparison,
             },
           ]
         : []),
