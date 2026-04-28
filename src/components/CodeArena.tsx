@@ -8,6 +8,7 @@ import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 import { t } from '../lib/i18n'
 import { extractHTMLCode } from '../lib/htmlExtract'
+import { CHALLENGE_PRESETS, getChallengePreset } from '../data/challengePresets'
 
 function codeHash(code: string | null): string {
   if (!code) return 'empty'
@@ -31,6 +32,7 @@ export function CodeArena({ onBack }: Props) {
   const comparison = useModelComparison()
   const [prompt, setPrompt] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('select')
+  const [activeChallenge, setActiveChallenge] = useState<string | null>(null)
   const [paneViewModes, setPaneViewModes] = useState<Record<number, PaneView>>({})
   const [durationA, setDurationA] = useState(0)
   const [durationB, setDurationB] = useState(0)
@@ -88,8 +90,24 @@ export function CodeArena({ onBack }: Props) {
     comparison.reset()
     setPrompt('')
     setViewMode('select')
+    setActiveChallenge(null)
     setPaneViewModes({})
   }, [comparison])
+
+  const handleLoadChallenge = useCallback(
+    (presetId: string) => {
+      const preset = getChallengePreset(presetId)
+      if (preset) {
+        setPrompt(preset.prompt)
+        setActiveChallenge(presetId)
+      }
+    },
+    [],
+  )
+
+  const handleClearChallenge = useCallback(() => {
+    setActiveChallenge(null)
+  }, [])
 
   const setPaneView = useCallback((idx: number, mode: PaneView) => {
     setPaneViewModes((prev) => ({ ...prev, [idx]: mode }))
@@ -228,6 +246,36 @@ export function CodeArena({ onBack }: Props) {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Challenge presets */}
+          <div className="arena-challenges">
+            <div className="arena-challenges-header">
+              <span className="arena-challenges-title">{t('arena.challengesTitle')}</span>
+              <span className="arena-challenges-subtitle">{t('arena.challengesSubtitle')}</span>
+            </div>
+            <div className="arena-challenges-grid">
+              {CHALLENGE_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  className={`arena-challenge-card ${activeChallenge === preset.id ? 'active' : ''}`}
+                  onClick={() => handleLoadChallenge(preset.id)}
+                  title={preset.description}
+                >
+                  <span className="arena-challenge-icon">{preset.icon}</span>
+                  <span className="arena-challenge-name">{preset.name}</span>
+                  <span className={`arena-challenge-difficulty difficulty-${preset.difficulty}`}>{preset.difficulty}</span>
+                </button>
+              ))}
+            </div>
+            {activeChallenge && (
+              <button
+                className="arena-challenge-clear"
+                onClick={handleClearChallenge}
+              >
+                {t('arena.challengeClear')}
+              </button>
+            )}
           </div>
 
           {/* Prompt input */}

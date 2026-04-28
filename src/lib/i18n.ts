@@ -80,6 +80,9 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.noPreview': 'No HTML output to preview',
     'arena.scrollSyncOn': 'Enable scroll sync',
     'arena.scrollSyncOff': 'Disable scroll sync',
+    'arena.challengesTitle': 'Challenge Presets',
+    'arena.challengesSubtitle': 'Pick a challenge to test model creativity',
+    'arena.challengeClear': 'Clear Challenge',
   },
   zh: {
     'sidebar.brand': 'Monday',
@@ -135,6 +138,9 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.noPreview': '没有可预览的 HTML 输出',
     'arena.scrollSyncOn': '启用同步滚动',
     'arena.scrollSyncOff': '禁用同步滚动',
+    'arena.challengesTitle': '挑战预设',
+    'arena.challengesSubtitle': '选择挑战来测试模型创造力',
+    'arena.challengeClear': '清除挑战',
   },
 }
 

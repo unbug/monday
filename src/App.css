@@ -11876,6 +11876,115 @@ textarea:focus:not(:focus-visible),
   background: color-mix(in srgb, #89b4fa 10%, transparent);
 }
 
+/* --- Challenge Presets --- */
+.arena-challenges {
+  width: 100%;
+  max-width: 1100px;
+  margin: 16px 0;
+}
+
+.arena-challenges-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.arena-challenges-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.arena-challenges-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.arena-challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.arena-challenge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  text-align: center;
+}
+
+.arena-challenge-card:hover {
+  border-color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 5%, var(--surface-1));
+  transform: translateY(-1px);
+}
+
+.arena-challenge-card.active {
+  border-color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 10%, var(--surface-1));
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+.arena-challenge-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.arena-challenge-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.arena-challenge-difficulty {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.difficulty-easy {
+  color: #a6e3a1;
+  background: color-mix(in srgb, #a6e3a1 15%, transparent);
+}
+
+.difficulty-medium {
+  color: #f9e2af;
+  background: color-mix(in srgb, #f9e2af 15%, transparent);
+}
+
+.difficulty-hard {
+  color: #f38ba8;
+  background: color-mix(in srgb, #f38ba8 15%, transparent);
+}
+
+.arena-challenge-clear {
+  margin-top: 8px;
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.arena-challenge-clear:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
 /* --- Selection Phase --- */
 .arena-select {
   display: flex;

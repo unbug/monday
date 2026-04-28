@@ -40,6 +40,22 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.4',
+    date: '2026-04-28',
+    title: 'Code Arena — Challenge Prompt Library',
+    description:
+      'A curated library of 8 challenge prompts lets users one-click load pre-built prompts into the arena — from simple CSS animations to full games like Tetris. Each challenge is categorized by type and difficulty to help discover what models can do.',
+    changes: [
+      { type: 'added', text: 'Challenge preset data — 8 curated prompts (Grass Field, Solar System, Pelican on a Bicycle, Tetris, Snake, Bouncing Balls, Particle System, CSS Loader Gallery) with id, name, description, prompt, icon, difficulty, and category' },
+      { type: 'added', text: 'Challenge cards grid — clickable cards in the arena select phase showing emoji icon, name, and difficulty badge (color-coded: green/yellow/red)' },
+      { type: 'added', text: 'One-click load — clicking a challenge card fills the arena prompt textarea with the preset prompt' },
+      { type: 'added', text: 'Active challenge indicator — selected card gets highlighted border and glow; clear button appears to deselect' },
+      { type: 'added', text: 'Challenge i18n — en/zh translations for challenges title, subtitle, and clear button' },
+      { type: 'added', text: 'Category grouping helper — groupByCategory() utility for future category-filtered views' },
+      { type: 'changed', text: 'Updated version to v0.31.4' },
+    ],
+  },
+  {
     version: '0.30.6',
     date: '2026-04-27',
     title: 'Accessibility — Screen-reader landmarks, keyboard nav, high-contrast',
