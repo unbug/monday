@@ -491,6 +491,8 @@ recording. Net-new vs. v0.2's plain text-only comparison.
 preset, hits Send, sees both iframes animate side-by-side, exports a
 `.webm` with watermark, votes a winner, and the leaderboard updates.
 
+Released: 2026-04-29
+
 #### v1.0 — External LLM Providers & Web Search _(stable)_
 
 The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
