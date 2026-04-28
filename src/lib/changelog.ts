@@ -925,3 +925,14 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
 ]
+
+// Sort descending by version (latest first)
+CHANGELOG.sort((a, b) => {
+  const av = a.version.split('.').map(Number)
+  const bv = b.version.split('.').map(Number)
+  for (let i = 0; i < 3; i++) {
+    const d = (bv[i] ?? 0) - (av[i] ?? 0)
+    if (d !== 0) return d
+  }
+  return 0
+})

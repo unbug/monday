@@ -12693,7 +12693,37 @@ textarea:focus:not(:focus-visible),
   font-size: 14px;
 }
 
-/* --- High contrast --- */
+/* --- PNG share card --- */
+.arena-share-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #7c3aed, #a78bfa);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.arena-share-card-btn:hover {
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+.arena-share-card-btn:active {
+  transform: translateY(0);
+}
+
+.arena-share-card-icon {
+  font-size: 16px;
+}
+
+/* --- High contrast ---
 .high-contrast .arena-terminal-card {
   border: 2px solid #000;
   background: #000;

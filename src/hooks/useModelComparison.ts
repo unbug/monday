@@ -473,6 +473,150 @@ export function useModelComparison() {
     chunksRef.current = []
   }, [])
 
+  // ── PNG share card ──
+  const exportShareCard = useCallback(() => {
+    const W = 1280
+    const H = 720
+    const canvas = document.createElement('canvas')
+    canvas.width = W
+    canvas.height = H
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return null
+
+    // Background
+    ctx.fillStyle = '#0d1117'
+    ctx.fillRect(0, 0, W, H)
+
+    // Title
+    ctx.fillStyle = '#c9d1d9'
+    ctx.font = 'bold 28px -apple-system, sans-serif'
+    ctx.fillText('Code Arena', 40, 44)
+
+    // Model names + durations row
+    const modelRowY = 72
+    ctx.font = '16px -apple-system, sans-serif'
+    const durA = results[0] ? Math.round(results[0].elapsedMs / 1000) : 0
+    const durB = results[1] ? Math.round(results[1].elapsedMs / 1000) : 0
+    const tokensA = results[0]?.totalTokens ?? 0
+    const tokensB = results[1]?.totalTokens ?? 0
+    const tpsA = results[0]?.tokensPerSecond ?? 0
+    const tpsB = results[1]?.tokensPerSecond ?? 0
+
+    // Left model info
+    ctx.fillStyle = '#58a6ff'
+    ctx.font = 'bold 16px -apple-system, sans-serif'
+    ctx.fillText('Team A: ' + (results[0]?.modelName || 'Model A'), 40, modelRowY)
+    ctx.fillStyle = '#8b949e'
+    ctx.font = '13px monospace'
+    ctx.fillText(`${durA}s  ·  ${tokensA} tokens  ·  ${tpsA} t/s`, 40, modelRowY + 22)
+
+    // Right model info
+    ctx.fillStyle = '#58a6ff'
+    ctx.font = 'bold 16px -apple-system, sans-serif'
+    const rightLabel = 'Team B: ' + (results[1]?.modelName || 'Model B')
+    const rightLabelW = ctx.measureText(rightLabel).width
+    ctx.fillText(rightLabel, W - 40 - rightLabelW, modelRowY)
+    ctx.fillStyle = '#8b949e'
+    ctx.font = '13px monospace'
+    const rightStats = `${durB}s  ·  ${tokensB} tokens  ·  ${tpsB} t/s`
+    const rightStatsW = ctx.measureText(rightStats).width
+    ctx.fillText(rightStats, W - 40 - rightStatsW, modelRowY + 22)
+
+    // Divider
+    ctx.strokeStyle = '#21262d'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(40, 116)
+    ctx.lineTo(W - 40, 116)
+    ctx.stroke()
+
+    // Preview cards
+    const cardW = (W - 120) / 2
+    const cardH = H - 200
+    const cardY = 130
+
+    for (let i = 0; i < 2; i++) {
+      const x = 40 + i * (cardW + 40)
+
+      // Card background
+      ctx.fillStyle = '#161b22'
+      ctx.fillRect(x, cardY, cardW, cardH)
+
+      // Terminal title bar
+      ctx.fillStyle = '#21262d'
+      ctx.fillRect(x, cardY, cardW, 28)
+
+      // Dots
+      const dotColors = ['#f38ba8', '#f9e2af', '#a6e3a1']
+      dotColors.forEach((c, di) => {
+        ctx.fillStyle = c
+        ctx.beginPath()
+        ctx.arc(x + 14 + di * 14, cardY + 14, 5, 0, Math.PI * 2)
+        ctx.fill()
+      })
+
+      // Model name in title bar
+      ctx.fillStyle = '#c9d1d9'
+      ctx.font = 'bold 12px monospace'
+      const modelName = results[i]?.modelName || 'Model' + (i === 0 ? 'A' : 'B')
+      const nameW = ctx.measureText(modelName).width
+      ctx.fillText(modelName, x + cardW - nameW - 12, cardY + 19)
+
+      // Status badge
+      const status = results[i]?.status || 'pending'
+      const statusColors: Record<string, string> = { streaming: '#8b5cf6', done: '#22c55e', error: '#ef4444', pending: '#6b7280' }
+      ctx.fillStyle = statusColors[status] || '#6b7280'
+      const statusText = status === 'streaming' ? '● streaming' : status === 'done' ? '✓ done' : '○ pending'
+      const statusW = ctx.measureText(statusText).width
+      ctx.fillText(statusText, x + cardW - statusW - 12, cardY + 50)
+
+      // Draw iframe content if available
+      const iframe = iframeRef.current[i]
+      if (iframe && iframe.contentDocument && iframe.contentDocument.body) {
+        try {
+          ctx.save()
+          ctx.beginPath()
+          ctx.rect(x, cardY + 28, cardW, cardH - 28)
+          ctx.clip()
+          ctx.drawImage(iframe as unknown as CanvasImageSource, x, cardY + 28, cardW, cardH - 28)
+          ctx.restore()
+        } catch {
+          // iframe may not be renderable (cross-origin, etc.)
+        }
+      }
+
+      // Border
+      ctx.strokeStyle = '#30363d'
+      ctx.lineWidth = 1
+      ctx.strokeRect(x, cardY, cardW, cardH)
+    }
+
+    // Footer
+    const footerY = H - 40
+    ctx.fillStyle = '#484f58'
+    ctx.font = '12px monospace'
+    const ts = new Date().toISOString().slice(0, 10)
+    ctx.fillText('Generated on ' + ts, 40, footerY)
+
+    // Watermark
+    ctx.fillStyle = 'rgba(167, 139, 250, 0.45)'
+    ctx.font = 'bold 16px sans-serif'
+    ctx.fillText('@Monday', W - 140, footerY)
+
+    // Download
+    canvas.toBlob((blob) => {
+      if (!blob) return
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `arena-share-${ts}.png`
+      a.click()
+      URL.revokeObjectURL(url)
+    }, 'image/png')
+
+    return canvas
+  }, [results, iframeRef])
+
   return {
     modelA,
     modelB,
@@ -499,5 +643,7 @@ export function useModelComparison() {
     stopRecording,
     downloadRecording,
     resetRecording,
+    // PNG share card
+    exportShareCard,
   }
 }

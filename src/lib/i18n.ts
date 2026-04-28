@@ -89,6 +89,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.fps': 'Framerate',
     'arena.fpsLabel': 'Framerate',
     'arena.recordingDuration': 'Duration',
+    'arena.shareCard': '🖼 Share Card',
   },
   zh: {
     'sidebar.brand': 'Monday',
@@ -153,6 +154,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'arena.fps': '帧率',
     'arena.fpsLabel': '帧率',
     'arena.recordingDuration': '时长',
+    'arena.shareCard': '🖼 分享卡片',
   },
 }
 

@@ -516,6 +516,12 @@ export function CodeArena({ onBack }: Props) {
                 {t('arena.reset')}
               </button>
 
+              {/* PNG share card */}
+              <button className="arena-share-card-btn" onClick={() => comparison.exportShareCard()}>
+                <span className="arena-share-card-icon">🖼</span>
+                {t('arena.shareCard')}
+              </button>
+
               {/* Recording controls */}
               <div className="arena-recording-controls">
                 <span className="arena-recording-label">{t('arena.fpsLabel')}</span>
