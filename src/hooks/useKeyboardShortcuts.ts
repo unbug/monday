@@ -14,7 +14,6 @@ interface UseKeyboardShortcutsOptions {
   onOpenModels?: () => void
   onOpenCache?: () => void
   onOpenChangelog?: () => void
-  onOpenStats?: () => void
   onOpenArena?: () => void
   onOpenBenchmark?: () => void
   onOpenCustomModels?: () => void
@@ -93,16 +92,6 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Changelog',
               icon: '📋',
               action: options.onOpenChangelog,
-            },
-          ]
-        : []),
-      ...(options.onOpenStats
-        ? [
-            {
-              id: 'open-stats',
-              label: 'Usage Statistics',
-              icon: '📊',
-              action: options.onOpenStats,
             },
           ]
         : []),

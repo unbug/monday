@@ -9,7 +9,6 @@ import { WebGPUCheck } from './components/WebGPUCheck'
 import { ThemeToggle } from './components/ThemeToggle'
 import { Changelog } from './components/Changelog'
 import { CommandPalette } from './components/CommandPalette'
-import { ModelStats } from './components/ModelStats'
 import { ModelComparison } from './components/ModelComparison'
 import { CodeArena } from './components/CodeArena'
 import { ModelBenchmark } from './components/ModelBenchmark'
@@ -58,7 +57,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'stats' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison'
 
 const BASE = '/monday'
 
@@ -67,7 +66,6 @@ const VIEW_PATH: Record<View, string> = {
   models: BASE + '/models',
   changelog: BASE + '/changelog',
   cache: BASE + '/cache',
-  stats: BASE + '/stats',
   arena: BASE + '/arena',
   benchmark: BASE + '/benchmark',
   'custom-models': BASE + '/custom-models',
@@ -339,7 +337,6 @@ export default function App() {
     onOpenModels: () => setView('models'),
     onOpenCache: () => setView('cache'),
     onOpenChangelog: () => setView('changelog'),
-    onOpenStats: () => setView('stats'),
     onOpenArena: () => setView('arena'),
     onOpenBenchmark: () => setView('benchmark'),
     onOpenCustomModels: () => setView('custom-models'),
@@ -414,10 +411,6 @@ export default function App() {
             onDelete={chat.deleteSession}
             onVersionClick={() => {
               setView('changelog')
-              closeSidebarOnMobile()
-            }}
-            onOpenStats={() => {
-              setView('stats')
               closeSidebarOnMobile()
             }}
             onOpenArena={() => {
@@ -628,11 +621,6 @@ export default function App() {
               onOpenCache={() => setView('cache')}
               showCacheManager
             />
-          </div>
-        ) : view === 'stats' ? (
-          <div className="main-content main-content--stats">
-            <ModelStats onResetRecommendations={handleResetRecommendations}
-              />
           </div>
         ) : view === 'arena' ? (
           <div className="main-content main-content--arena">

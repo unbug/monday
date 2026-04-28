@@ -24,7 +24,6 @@ const GROUPS: ShortcutGroup[] = [
     shortcuts: [
       { key: '⌘1', label: 'Models' },
       { key: '⌘2', label: 'Model Cache' },
-      { key: '⌘3', label: 'Usage Statistics' },
       { key: '⌘4', label: 'Persona Marketplace' },
       { key: '⌘5', label: 'Knowledge' },
     ],

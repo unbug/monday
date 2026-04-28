@@ -180,9 +180,6 @@ export function CodeArena({ onBack }: Props) {
   return (
     <div className="code-arena">
       <div className="code-arena-header">
-        <button className="arena-back-btn" onClick={onBack} title="Back">
-          ← Back
-        </button>
         <h2 className="code-arena-title">
           <span className="arena-icon">⚔️</span> Code Arena
         </h2>
