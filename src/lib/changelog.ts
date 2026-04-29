@@ -191,6 +191,21 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.6',
+    date: '2026-04-29',
+    title: 'Provider Switcher — Per-Session Inference Provider Toggle',
+    description:
+      'A clickable provider badge in the header lets you toggle between WebGPU local inference and any configured external API provider — OpenAI, Ollama, LM Studio, llama.cpp, vLLM, or DeepSeek — without leaving the chat view. The dropdown is grouped into Local Inference and Remote Servers sections.',
+    changes: [
+      { type: 'added', text: 'ProviderSwitcher component — clickable badge in header + dropdown with grouped providers (Local Inference / Remote Servers); icon, label, description per provider; active checkmark indicator; closes on outside click' },
+      { type: 'added', text: 'Provider type list — web-llm, openai, ollama, lmstudio, llamacpp, vllm, deepseek grouped into local vs remote' },
+      { type: 'added', text: 'Header integration — ProviderSwitcher in .header-center alongside model badge, wired to chat.activeSession.provider + chat.setProvider' },
+      { type: 'added', text: 'provider i18n dictionary — title, local, localDesc, remoteDesc, groupLocal, groupRemote in en/zh' },
+      { type: 'added', text: 'Provider switcher CSS — dark terminal-style dropdown, hover/active states, chevron rotation, light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.0.6' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',
