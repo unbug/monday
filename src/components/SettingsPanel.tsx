@@ -5,8 +5,10 @@ import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
-import { loadApiSettings, saveApiSettings, deleteApiSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
+import type { OllamaModel } from '../lib/ollamaApi'
+import { fetchOllamaModels } from '../lib/ollamaApi'
 
 interface Props {
   session: ChatSession
@@ -15,8 +17,8 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
-  onSetProvider?: (provider: 'web-llm' | 'openai' | null) => void
-  provider?: 'web-llm' | 'openai' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | null) => void
+  provider?: 'web-llm' | 'openai' | 'ollama' | null
 }
 
 const DEFAULT_TEMPERATURE = 0.7
@@ -33,8 +35,18 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<'ok' | 'error' | null>(null)
 
+  // v1.0.1: Ollama settings state
+  const [ollamaSettings, setOllamaSettings] = useState<{ url: string; modelId: string } | null>(null)
+  const [ollamaModels, setOllamaModels] = useState<OllamaModel[]>([])
+  const [ollamaDiscovering, setOllamaDiscovering] = useState(false)
+  const [ollamaSaving, setOllamaSaving] = useState(false)
+  const [ollamaTestResult, setOllamaTestResult] = useState<'ok' | 'error' | null>(null)
+
   useEffect(() => {
     loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
+    loadOllamaSettings().then((s) => {
+      if (s) setOllamaSettings({ url: s.url, modelId: s.modelId })
+    }).catch(() => {})
   }, [])
 
   const handleSaveApiSettings = useCallback(async () => {
@@ -71,6 +83,52 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     await deleteApiSettings()
     setApiSettings(null)
     setTestResult(null)
+  }, [])
+
+  const handleDiscoverModels = useCallback(async () => {
+    if (!ollamaSettings?.url) return
+    setOllamaDiscovering(true)
+    setOllamaTestResult(null)
+    try {
+      const models = await fetchOllamaModels(ollamaSettings.url)
+      setOllamaModels(models)
+    } catch {
+      setOllamaModels([])
+    }
+    setOllamaDiscovering(false)
+  }, [ollamaSettings])
+
+  const handleTestOllama = useCallback(async () => {
+    if (!ollamaSettings?.url || !ollamaSettings?.modelId) return
+    setOllamaTestResult(null)
+    try {
+      const resp = await fetch(`${ollamaSettings.url.replace(/\/+$/, '')}/api/tags`)
+      if (resp.ok) {
+        setOllamaTestResult('ok')
+      } else {
+        setOllamaTestResult('error')
+      }
+    } catch {
+      setOllamaTestResult('error')
+    }
+  }, [ollamaSettings])
+
+  const handleSaveOllamaSettings = useCallback(async () => {
+    if (!ollamaSettings?.url || !ollamaSettings?.modelId) return
+    setOllamaSaving(true)
+    try {
+      await saveOllamaSettings({ url: ollamaSettings.url, modelId: ollamaSettings.modelId })
+      setOllamaSaving(false)
+    } catch {
+      setOllamaSaving(false)
+    }
+  }, [ollamaSettings])
+
+  const handleClearOllamaSettings = useCallback(async () => {
+    await deleteOllamaSettings()
+    setOllamaSettings(null)
+    setOllamaModels([])
+    setOllamaTestResult(null)
   }, [])
 
   const params = session.generationParams ?? {
@@ -291,6 +349,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                     {t('openai.providerLocal')}
                   </button>
                   <button
+                    className={`api-provider-btn ${provider === 'ollama' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('ollama')}
+                    type="button"
+                  >
+                    Ollama
+                  </button>
+                  <button
                     className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
                     onClick={() => onSetProvider('openai')}
                     type="button"
@@ -375,6 +440,95 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
 
             {provider === 'web-llm' && (
               <span className="api-status api-status-disabled">{t('openai.disabled')}</span>
+            )}
+
+            {provider === 'ollama' && (
+              <>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('ollama.url')}
+                  </label>
+                  <input
+                    type="text"
+                    className="settings-input api-url-input"
+                    placeholder={t('ollama.placeholderUrl')}
+                    value={ollamaSettings?.url ?? ''}
+                    onChange={(e) => setOllamaSettings(ollamaSettings ? { ...ollamaSettings, url: e.target.value } : { url: e.target.value, modelId: '' })}
+                  />
+                </div>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('ollama.discoverModels')}
+                  </label>
+                  <button
+                    className="api-discover-btn"
+                    onClick={handleDiscoverModels}
+                    disabled={ollamaDiscovering || !ollamaSettings?.url}
+                    type="button"
+                  >
+                    {ollamaDiscovering
+                      ? t('openai.testing')
+                      : t('ollama.discoverModels')}
+                  </button>
+                </div>
+                {ollamaModels.length > 0 && (
+                  <div className="settings-param">
+                    <label className="settings-label">
+                      {t('ollama.model')}
+                    </label>
+                    <select
+                      className="settings-input api-model-select"
+                      value={ollamaSettings?.modelId ?? ''}
+                      onChange={(e) => setOllamaSettings(ollamaSettings ? { ...ollamaSettings, modelId: e.target.value } : { url: '', modelId: e.target.value })}
+                    >
+                      <option value="">— {t('ollama.noModels')} —</option>
+                      {ollamaModels.map((m) => (
+                        <option key={m.name} value={m.name}>
+                          {m.name} ({m.details?.parameter_size ?? '?GB'})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {ollamaModels.length === 0 && ollamaDiscovering === false && ollamaSettings?.url && (
+                  <span className="api-status api-status-error">
+                    {t('ollama.noModels')}
+                  </span>
+                )}
+                <div className="api-actions">
+                  <button
+                    className="api-save-btn"
+                    onClick={handleSaveOllamaSettings}
+                    disabled={ollamaSaving || !ollamaSettings?.url || !ollamaSettings?.modelId}
+                    type="button"
+                  >
+                    {ollamaSaving ? t('ollama.saved') : t('ollama.save')}
+                  </button>
+                  <button
+                    className="api-test-btn"
+                    onClick={handleTestOllama}
+                    disabled={!ollamaSettings?.url || !ollamaSettings?.modelId}
+                    type="button"
+                  >
+                    {t('ollama.testConnection')}
+                  </button>
+                  <button
+                    className="api-clear-btn"
+                    onClick={handleClearOllamaSettings}
+                    type="button"
+                  >
+                    {t('ollama.clear')}
+                  </button>
+                </div>
+                {ollamaTestResult === 'ok' && (
+                  <span className="api-status api-status-ok">{t('ollama.connected')}</span>
+                )}
+                {ollamaTestResult === 'error' && (
+                  <span className="api-status api-status-error">
+                    {t('ollama.error')} — {t('ollama.corsHint')}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>

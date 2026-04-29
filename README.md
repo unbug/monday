@@ -499,7 +499,7 @@ The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
 
 - [x] **OpenAI-compatible API** — Configure any OpenAI-compatible endpoint
       (custom base URL + API key, stored encrypted in IndexedDB)
-- [ ] **Ollama integration** — Connect to a local Ollama server
+- [x] **Ollama integration** — Connect to a local Ollama server
       (`http://localhost:11434`) with model auto-discovery
 - [ ] **LM Studio** — Connect to LM Studio's local OpenAI-compatible
       server

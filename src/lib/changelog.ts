@@ -96,6 +96,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.1',
+    date: '2026-04-29',
+    title: 'Ollama Integration — Local Server with Auto-Discovery',
+    description:
+      'Connect Monday to a local Ollama server for inference. The Settings panel now includes an Ollama option with auto-discovery of available models on your server. Configure the server URL and pick from discovered models — no API key needed for local instances. Streaming works via Ollama\'s OpenAI-compatible /v1/chat/completions endpoint.',
+    changes: [
+      { type: 'added', text: 'ollamaApi.ts — Ollama client with fetchOllamaModels() for auto-discovery and streamOllama() for SSE streaming via /v1/chat/completions' },
+      { type: 'added', text: 'OllamaSettings type — url (default http://localhost:11434) + modelId fields' },
+      { type: 'added', text: 'Provider "ollama" — new option alongside web-llm and openai in the Provider type' },
+      { type: 'added', text: 'Ollama section in SettingsPanel — URL input, Auto-Discover button, model dropdown from discovered models, Save / Test Connection / Clear buttons' },
+      { type: 'added', text: 'Ollama settings storage — saveOllamaSettings / loadOllamaSettings / deleteOllamaSettings in IndexedDB (ollamaSettings object store, DB v9→v10)' },
+      { type: 'added', text: 'Ollama routing in useChat — sendUserMessage loads Ollama settings and streams via streamOllama when provider === "ollama"' },
+      { type: 'added', text: 'streamChatWithProvider ollama path — unified routing with context/file injection support' },
+      { type: 'added', text: 'ollama i18n category — en/zh translations for all Ollama UI strings (title, desc, url, discoverModels, model, save, testConnection, error, corsHint)' },
+      { type: 'added', text: 'Database migration v9→v10 — adds ollamaSettings object store' },
+      { type: 'changed', text: 'Updated version to v1.0.1' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

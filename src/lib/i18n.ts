@@ -466,6 +466,44 @@ const mcp: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Ollama ──
+const ollama: Record<Locale, Record<string, string>> = {
+  en: {
+    'ollama.title': 'Ollama',
+    'ollama.desc': 'Connect to a local Ollama server for inference.',
+    'ollama.url': 'Server URL',
+    'ollama.placeholderUrl': 'http://localhost:11434',
+    'ollama.discoverModels': 'Auto-Discover',
+    'ollama.noModels': 'No models found — make sure Ollama is running',
+    'ollama.model': 'Model',
+    'ollama.save': 'Save',
+    'ollama.saved': '✓ Saved',
+    'ollama.testing': 'Testing…',
+    'ollama.testConnection': 'Test Connection',
+    'ollama.connected': '✓ Connected',
+    'ollama.error': 'Connection failed',
+    'ollama.clear': 'Clear',
+    'ollama.corsHint': 'CORS error? Make sure Ollama allows cross-origin requests.',
+  },
+  zh: {
+    'ollama.title': 'Ollama',
+    'ollama.desc': '连接本地 Ollama 服务器进行推理。',
+    'ollama.url': '服务器 URL',
+    'ollama.placeholderUrl': 'http://localhost:11434',
+    'ollama.discoverModels': '自动发现',
+    'ollama.noModels': '未找到模型 — 请确保 Ollama 正在运行',
+    'ollama.model': '模型',
+    'ollama.save': '保存',
+    'ollama.saved': '✓ 已保存',
+    'ollama.testing': '测试中…',
+    'ollama.testConnection': '测试连接',
+    'ollama.connected': '✓ 已连接',
+    'ollama.error': '连接失败',
+    'ollama.clear': '清除',
+    'ollama.corsHint': 'CORS 错误？请确保 Ollama 允许跨域请求。',
+  },
+}
+
 // ── OpenAI API Settings ──
 const openai: Record<Locale, Record<string, string>> = {
   en: {
@@ -1355,6 +1393,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...offlineIndicator[locale],
     ...a11y[locale],
     ...openai[locale],
+    ...ollama[locale],
   }
 }
 

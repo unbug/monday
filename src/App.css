@@ -2133,7 +2133,8 @@
 
 .api-url-input,
 .api-key-input,
-.api-model-input {
+.api-model-input,
+.api-model-select {
   width: 100%;
   padding: 6px 10px;
   background: var(--color-surface);
@@ -2158,6 +2159,28 @@
   gap: 6px;
   flex-wrap: wrap;
   margin-top: 4px;
+}
+
+.api-discover-btn {
+  padding: 6px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.api-discover-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: var(--color-surface-elevated);
+}
+
+.api-discover-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .api-save-btn,

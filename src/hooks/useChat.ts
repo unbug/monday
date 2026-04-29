@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import { useTokenStats } from './useTokenStats'
 import {
@@ -266,9 +266,17 @@ export function useChat(
         // v1.0.0: check if using external API provider
         const activeProvider = latestSession?.provider ?? null
         let apiSettings: OpenAISettings | null = null
+        let ollamaSettings: { url: string; modelId: string } | null = null
         if (activeProvider === 'openai') {
           try {
             apiSettings = await loadApiSettings()
+          } catch {
+            // Ignore — will fall through to local
+          }
+        }
+        if (activeProvider === 'ollama') {
+          try {
+            ollamaSettings = await loadOllamaSettings()
           } catch {
             // Ignore — will fall through to local
           }
@@ -335,6 +343,46 @@ export function useChat(
           } catch (apiErr: unknown) {
             const msg = apiErr instanceof Error ? apiErr.message : String(apiErr)
             throw new Error(`OpenAI API error: ${msg}`)
+          }
+        } else if (activeProvider === 'ollama' && ollamaSettings) {
+          // v1.0.1: Ollama local server path
+          try {
+            const { streamOllama } = await import('../lib/ollamaApi')
+            let usage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
+            for await (const token of streamOllama(
+              ollamaSettings.url,
+              ollamaSettings.modelId,
+              refineMessages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system' | 'tool', content: m.content })),
+              {
+                temperature: opts.temperature ?? 0.7,
+                topP: opts.top_p ?? 0.9,
+                maxTokens: opts.maxTokens ?? 1024,
+                systemPrompt: summarizedPrompt,
+              },
+            )) {
+              if (abortRef.current) break
+              fullContent += token
+              tokenCount++
+              tokenStats.addTokens(1)
+              const captured = fullContent
+              currentSessions = currentSessions.map((s) =>
+                s.id === sessionId
+                  ? {
+                      ...s,
+                      messages: s.messages.map((m) =>
+                        m.id === assistantMsg.id
+                          ? { ...m, content: captured }
+                          : m,
+                      ),
+                    }
+                  : s,
+              )
+              setSessions([...currentSessions])
+            }
+            finalUsage = { promptTokens: 0, completionTokens: tokenCount, totalTokens: tokenCount }
+          } catch (ollamaErr: unknown) {
+            const msg = ollamaErr instanceof Error ? ollamaErr.message : String(ollamaErr)
+            throw new Error(`Ollama error: ${msg}`)
           }
         } else if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---
@@ -810,7 +858,7 @@ export function useChat(
 
   // v1.0.0: set provider for the active session
   const setProvider = useCallback(
-    (provider: 'web-llm' | 'openai' | null) => {
+    (provider: 'web-llm' | 'openai' | 'ollama' | null) => {
       if (!activeSessionId) return
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId

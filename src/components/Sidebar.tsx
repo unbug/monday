@@ -60,8 +60,8 @@ interface Props {
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
   // v1.0.0: provider
-  provider?: 'web-llm' | 'openai' | null
-  onSetProvider?: (provider: 'web-llm' | 'openai' | null) => void
+  provider?: 'web-llm' | 'openai' | 'ollama' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | null) => void
 }
 
 export function Sidebar({

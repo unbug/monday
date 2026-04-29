@@ -282,7 +282,15 @@ export interface OpenAISettings {
   modelId: string
 }
 
-export type Provider = 'web-llm' | 'openai'
+// v1.0.1: Ollama-specific settings (separate from generic OpenAI settings)
+export interface OllamaSettings {
+  /** Ollama server URL (default: http://localhost:11434) */
+  url: string
+  /** Model ID to use (e.g. llama3, qwen2.5:latest) */
+  modelId: string
+}
+
+export type Provider = 'web-llm' | 'openai' | 'ollama'
 
 export interface OpenAIUsage {
   promptTokens: number

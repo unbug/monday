@@ -1,7 +1,7 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 9
+const DB_VERSION = 10
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -9,6 +9,7 @@ const BASES_STORE = 'knowledgeBases'
 const EMBEDDINGS_STORE = 'embeddings'
 const VERDICTS_STORE = 'verdicts'
 const API_SETTINGS_STORE = 'apiSettings'
+const OLLAMA_SETTINGS_STORE = 'ollamaSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -81,6 +82,14 @@ function openDB(): Promise<IDBDatabase> {
             }
           }
         }
+      }
+      // Migration v9→v10: add ollamaSettings object store for v1.0.1 Ollama integration
+      if (!db.objectStoreNames.contains(OLLAMA_SETTINGS_STORE)) {
+        db.createObjectStore(OLLAMA_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v9→v10: add ollamaSettings object store for v1.0.1 Ollama integration
+      if (!db.objectStoreNames.contains(OLLAMA_SETTINGS_STORE)) {
+        db.createObjectStore(OLLAMA_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -373,6 +382,43 @@ export async function clearEmbeddings(): Promise<void> {
   const tx = db.transaction(EMBEDDINGS_STORE, 'readwrite')
   const store = tx.objectStore(EMBEDDINGS_STORE)
   store.clear()
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── Ollama Settings storage (v1.0.1) ────────────────────────────────────────
+
+export async function saveOllamaSettings(settings: OllamaSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(OLLAMA_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(OLLAMA_SETTINGS_STORE)
+  store.put({ id: 'ollama-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadOllamaSettings(): Promise<OllamaSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(OLLAMA_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(OLLAMA_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('ollama-settings')
+    request.onsuccess = () => {
+      resolve((request.result as OllamaSettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteOllamaSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(OLLAMA_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(OLLAMA_SETTINGS_STORE)
+  store.delete('ollama-settings')
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)
