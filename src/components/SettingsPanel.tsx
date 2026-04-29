@@ -5,13 +5,15 @@ import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings, loadVllmSettings, saveVllmSettings, deleteVllmSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { OllamaModel } from '../lib/ollamaApi'
 import type { LlamaCppModel } from '../lib/llamaCppApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
+import type { VllmModel } from '../lib/vllmApi'
 import { fetchOllamaModels } from '../lib/ollamaApi'
 import { fetchLmStudioModels } from '../lib/lmStudioApi'
+import { fetchVllmModels } from '../lib/vllmApi'
 
 interface Props {
   session: ChatSession
@@ -20,8 +22,8 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
-  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | null) => void
-  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | null) => void
+  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | null
 }
 
 const DEFAULT_TEMPERATURE = 0.7
@@ -59,6 +61,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   const [lmStudioSaving, setLmStudioSaving] = useState(false)
   const [lmStudioTestResult, setLmStudioTestResult] = useState<'ok' | 'error' | null>(null)
 
+  // v1.0.4: vLLM settings state
+  const [vllmSettings, setVllmSettings] = useState<{ url: string; modelId: string } | null>(null)
+  const [vllmModels, setVllmModels] = useState<VllmModel[]>([])
+  const [vllmDiscovering, setVllmDiscovering] = useState(false)
+  const [vllmSaving, setVllmSaving] = useState(false)
+  const [vllmTestResult, setVllmTestResult] = useState<'ok' | 'error' | null>(null)
+
   useEffect(() => {
     loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
     loadOllamaSettings().then((s) => {
@@ -69,6 +78,9 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     }).catch(() => {})
     loadLmStudioSettings().then((s) => {
       if (s) setLmStudioSettings({ url: s.url, modelId: s.modelId })
+    }).catch(() => {})
+    loadVllmSettings().then((s) => {
+      if (s) setVllmSettings({ url: s.url, modelId: s.modelId })
     }).catch(() => {})
   }, [])
 
@@ -201,6 +213,55 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   }, [])
 
   // v1.0.3: llama.cpp handlers
+
+  // v1.0.4: vLLM handlers
+  const handleDiscoverVllmModels = useCallback(async () => {
+    if (!vllmSettings?.url) return
+    setVllmDiscovering(true)
+    try {
+      const models = await fetchVllmModels(vllmSettings.url)
+      setVllmModels(models)
+    } catch {
+      setVllmModels([])
+    } finally {
+      setVllmDiscovering(false)
+    }
+  }, [vllmSettings])
+
+  const handleTestVllm = useCallback(async () => {
+    if (!vllmSettings?.url || !vllmSettings?.modelId) return
+    setVllmTestResult(null)
+    try {
+      const resp = await fetch(`${vllmSettings.url.replace(/\/+$/, '')}/v1/models`)
+      if (resp.ok) {
+        setVllmTestResult('ok')
+      } else {
+        setVllmTestResult('error')
+      }
+    } catch {
+      setVllmTestResult('error')
+    }
+  }, [vllmSettings])
+
+  const handleSaveVllmSettings = useCallback(async () => {
+    if (!vllmSettings?.url || !vllmSettings?.modelId) return
+    setVllmSaving(true)
+    try {
+      await saveVllmSettings({ url: vllmSettings.url, modelId: vllmSettings.modelId })
+      setVllmTestResult('ok')
+    } catch {
+      setVllmTestResult('error')
+    } finally {
+      setVllmSaving(false)
+    }
+  }, [vllmSettings])
+
+  const handleClearVllmSettings = useCallback(async () => {
+    await deleteVllmSettings()
+    setVllmSettings(null)
+    setVllmModels([])
+    setVllmTestResult(null)
+  }, [])
   const handleDiscoverLlamaModels = useCallback(async () => {
     if (!llamaCppSettings?.url) return
     setLlamaCppDiscovering(true)
@@ -484,6 +545,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                     type="button"
                   >
                     llama.cpp
+                  </button>
+                  <button
+                    className={`api-provider-btn ${provider === 'vllm' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('vllm')}
+                    type="button"
+                  >
+                    vLLM
                   </button>
                   <button
                     className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
@@ -828,6 +896,89 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 {llamaCppTestResult === 'error' && (
                   <span className="api-status api-status-error">
                     {t('llamaCpp.error')} — {t('llamaCpp.corsHint')}
+                  </span>
+                )}
+              </>
+            )}
+
+            {/* v1.0.4: vLLM server settings */}
+            {provider === 'vllm' && (
+              <>
+                <div className="settings-section-title">{t('vllm.title')}</div>
+                <div className="settings-section-desc">{t('vllm.desc')}</div>
+                <div className="settings-field">
+                  <label>{t('vllm.url')}</label>
+                  <input
+                    type="url"
+                    className="settings-input"
+                    placeholder={t('vllm.placeholderUrl')}
+                    value={vllmSettings?.url ?? ''}
+                    onChange={(e) => setVllmSettings({ url: e.target.value, modelId: '' })}
+                  />
+                </div>
+                <div className="settings-row">
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleDiscoverVllmModels}
+                    disabled={vllmDiscovering || !vllmSettings?.url}
+                    type="button"
+                  >
+                    {vllmDiscovering
+                      ? t('vllm.discovering')
+                      : t('vllm.discoverModels')}
+                  </button>
+                </div>
+                {vllmModels.length > 0 && (
+                  <div className="settings-field">
+                    <label>{t('vllm.model')}</label>
+                    <select
+                      className="settings-select"
+                      value={vllmSettings?.modelId ?? ''}
+                      onChange={(e) => setVllmSettings(vllmSettings ? { ...vllmSettings, modelId: e.target.value } : { url: '', modelId: e.target.value })}
+                    >
+                      <option value="">— {t('vllm.noModels')} —</option>
+                      {vllmModels.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {vllmModels.length === 0 && vllmDiscovering === false && vllmSettings?.url && (
+                  <div className="settings-hint">{t('vllm.noModels')}</div>
+                )}
+                <div className="settings-row">
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleSaveVllmSettings}
+                    disabled={vllmSaving || !vllmSettings?.url || !vllmSettings?.modelId}
+                    type="button"
+                  >
+                    {vllmSaving ? t('vllm.saved') : t('vllm.save')}
+                  </button>
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleTestVllm}
+                    disabled={!vllmSettings?.url || !vllmSettings?.modelId}
+                    type="button"
+                  >
+                    {t('vllm.testConnection')}
+                  </button>
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleClearVllmSettings}
+                    type="button"
+                  >
+                    {t('vllm.clear')}
+                  </button>
+                </div>
+                {vllmTestResult === 'ok' && (
+                  <span className="api-status api-status-ok">{t('vllm.connected')}</span>
+                )}
+                {vllmTestResult === 'error' && (
+                  <span className="api-status api-status-error">
+                    {t('vllm.error')} — {t('vllm.corsHint')}
                   </span>
                 )}
               </>

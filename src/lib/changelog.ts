@@ -153,6 +153,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.4',
+    date: '2026-04-29',
+    title: 'vLLM Integration',
+    description:
+      'Connect Monday to a local vLLM inference server for high-throughput serving. vLLM exposes an OpenAI-compatible API on port 8000 by default. The Settings panel includes a vLLM option with auto-discovery of available models via /v1/models. Configure the server URL and pick from discovered models — no API key needed for local instances.',
+    changes: [
+      { type: 'added', text: 'vllmApi.ts — vLLM client with fetchVllmModels() for auto-discovery and streamVllm() for SSE streaming via /v1/chat/completions' },
+      { type: 'added', text: 'VllmSettings type — url (default http://localhost:8000) + modelId fields' },
+      { type: 'added', text: 'Provider "vllm" — new option alongside web-llm, openai, ollama, lmstudio, and llamacpp in the Provider type' },
+      { type: 'added', text: 'vLLM section in SettingsPanel — URL input, Auto-Discover button, model dropdown from discovered models, Save / Test Connection / Clear buttons' },
+      { type: 'added', text: 'vLLM settings storage — saveVllmSettings / loadVllmSettings / deleteVllmSettings in IndexedDB (vllmSettings object store, DB v12→v13)' },
+      { type: 'added', text: 'vLLM routing in useChat — sendUserMessage loads vLLM settings and streams via streamVllm when provider === "vllm"' },
+      { type: 'added', text: 'streamChatWithProvider vllm path — unified routing with context/file injection support' },
+      { type: 'added', text: 'vllm i18n category — en/zh translations for all vLLM UI strings (title, desc, url, discoverModels, model, save, testConnection, error, corsHint)' },
+      { type: 'added', text: 'Database migration v12→v13 — adds vllmSettings object store' },
+      { type: 'changed', text: 'Updated version to v1.0.4' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

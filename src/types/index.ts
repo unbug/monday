@@ -306,7 +306,15 @@ export interface LlamaCppSettings {
   modelId: string
 }
 
-export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp'
+// v1.0.4: vLLM-specific settings
+export interface VllmSettings {
+  /** vLLM server URL (default: http://localhost:8000) */
+  url: string
+  /** Model ID to use (e.g. meta/llama-3-8b-instruct) */
+  modelId: string
+}
+
+export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm'
 
 export interface OpenAIUsage {
   promptTokens: number

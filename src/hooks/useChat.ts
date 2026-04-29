@@ -1,9 +1,11 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { streamLmStudio } from '../lib/lmStudioApi'
+import type { VllmModel } from '../lib/vllmApi'
+import { streamVllm } from '../lib/vllmApi'
 import { useTokenStats } from './useTokenStats'
 import {
   createMessage,
@@ -271,6 +273,7 @@ export function useChat(
         let ollamaSettings: { url: string; modelId: string } | null = null
         let lmStudioSettings: { url: string; modelId: string } | null = null
         let llamaCppSettings: { url: string; modelId: string } | null = null
+        let vllmSettings: { url: string; modelId: string } | null = null
         if (activeProvider === 'openai') {
           try {
             apiSettings = await loadApiSettings()
@@ -297,6 +300,16 @@ export function useChat(
             const llamaSettings = await loadLlamaCppSettings()
             if (llamaSettings) {
               llamaCppSettings = { url: llamaSettings.url, modelId: llamaSettings.modelId }
+            }
+          } catch {
+            // Ignore — will fall through to local
+          }
+        }
+        if (activeProvider === 'vllm') {
+          try {
+            const vSettings = await loadVllmSettings()
+            if (vSettings) {
+              vllmSettings = { url: vSettings.url, modelId: vSettings.modelId }
             }
           } catch {
             // Ignore — will fall through to local
@@ -483,6 +496,47 @@ export function useChat(
           } catch (llamaErr: unknown) {
             const msg = llamaErr instanceof Error ? llamaErr.message : String(llamaErr)
             throw new Error(`llama.cpp error: ${msg}`)
+          }
+        } else if (activeProvider === 'vllm' && vllmSettings) {
+          // v1.0.4: vLLM local server path
+          try {
+            let fullContent = ''
+            let tokenCount = 0
+            let finalUsage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
+            for await (const token of streamVllm(
+              vllmSettings.url,
+              vllmSettings.modelId,
+              refineMessages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system' | 'tool', content: m.content })),
+              {
+                temperature: opts.temperature ?? 0.7,
+                topP: opts.top_p ?? 0.9,
+                maxTokens: opts.maxTokens ?? 1024,
+                systemPrompt: summarizedPrompt,
+              },
+            )) {
+              if (abortRef.current) break
+              fullContent += token
+              tokenCount++
+              tokenStats.addTokens(1)
+              const captured = fullContent
+              currentSessions = currentSessions.map((s) =>
+                s.id === sessionId
+                  ? {
+                      ...s,
+                      messages: s.messages.map((m) =>
+                        m.id === assistantMsg.id
+                          ? { ...m, content: captured }
+                          : m,
+                      ),
+                    }
+                  : s,
+              )
+              setSessions([...currentSessions])
+            }
+            finalUsage = { promptTokens: 0, completionTokens: tokenCount, totalTokens: tokenCount }
+          } catch (vllmErr: unknown) {
+            const msg = vllmErr instanceof Error ? vllmErr.message : String(vllmErr)
+            throw new Error(`vLLM error: ${msg}`)
           }
         } else if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---
@@ -958,7 +1012,7 @@ export function useChat(
 
   // v1.0.0: set provider for the active session
   const setProvider = useCallback(
-    (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | null) => {
+    (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | null) => {
       if (!activeSessionId) return
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId

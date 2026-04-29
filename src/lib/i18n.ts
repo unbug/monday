@@ -580,6 +580,44 @@ const llamaCpp: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── vLLM Settings ──
+const vllm: Record<Locale, Record<string, string>> = {
+  en: {
+    'vllm.title': 'vLLM',
+    'vllm.desc': 'Connect to a local vLLM inference server for high-throughput serving.',
+    'vllm.url': 'Server URL',
+    'vllm.placeholderUrl': 'http://localhost:8000',
+    'vllm.discoverModels': 'Auto-Discover',
+    'vllm.discovering': 'Discovering…',
+    'vllm.noModels': 'No models found — make sure vLLM is running',
+    'vllm.model': 'Model',
+    'vllm.save': 'Save',
+    'vllm.saved': '✓ Saved',
+    'vllm.testConnection': 'Test Connection',
+    'vllm.connected': '✓ Connected',
+    'vllm.error': 'Connection failed',
+    'vllm.clear': 'Clear',
+    'vllm.corsHint': 'CORS error? Make sure vLLM allows cross-origin requests.',
+  },
+  zh: {
+    'vllm.title': 'vLLM',
+    'vllm.desc': '连接本地 vLLM 推理服务器，实现高吞吐推理服务。',
+    'vllm.url': '服务器 URL',
+    'vllm.placeholderUrl': 'http://localhost:8000',
+    'vllm.discoverModels': '自动发现',
+    'vllm.discovering': '发现中…',
+    'vllm.noModels': '未找到模型 — 请确保 vLLM 正在运行',
+    'vllm.model': '模型',
+    'vllm.save': '保存',
+    'vllm.saved': '✓ 已保存',
+    'vllm.testConnection': '测试连接',
+    'vllm.connected': '✓ 已连接',
+    'vllm.error': '连接失败',
+    'vllm.clear': '清除',
+    'vllm.corsHint': 'CORS 错误？请确保 vLLM 允许跨域请求。',
+  },
+}
+
 // ── OpenAI API Settings ──
 const openai: Record<Locale, Record<string, string>> = {
   en: {
@@ -1472,6 +1510,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...ollama[locale],
     ...lmStudio[locale],
     ...llamaCpp[locale],
+    ...vllm[locale],
   }
 }
 

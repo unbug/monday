@@ -1,7 +1,7 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 12
+const DB_VERSION = 13
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -12,6 +12,7 @@ const API_SETTINGS_STORE = 'apiSettings'
 const OLLAMA_SETTINGS_STORE = 'ollamaSettings'
 const LMSTUDIO_SETTINGS_STORE = 'lmstudioSettings'
 const LLAMACPP_SETTINGS_STORE = 'llamaCppSettings'
+const VLLM_SETTINGS_STORE = 'vllmSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -96,6 +97,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v11→v12: add llamaCppSettings object store for v1.0.3 llama.cpp
       if (!db.objectStoreNames.contains(LLAMACPP_SETTINGS_STORE)) {
         db.createObjectStore(LLAMACPP_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v12→v13: add vllmSettings object store for v1.0.4 vLLM
+      if (!db.objectStoreNames.contains(VLLM_SETTINGS_STORE)) {
+        db.createObjectStore(VLLM_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -499,6 +504,43 @@ export async function deleteLlamaCppSettings(): Promise<void> {
   const tx = db.transaction(LLAMACPP_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(LLAMACPP_SETTINGS_STORE)
   store.delete('llamacpp-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── vLLM Settings storage (v1.0.4) ──────────────────────────────────────────
+
+export async function saveVllmSettings(settings: VllmSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(VLLM_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(VLLM_SETTINGS_STORE)
+  store.put({ id: 'vllm-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadVllmSettings(): Promise<VllmSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(VLLM_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(VLLM_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('vllm-settings')
+    request.onsuccess = () => {
+      resolve((request.result as VllmSettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteVllmSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(VLLM_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(VLLM_SETTINGS_STORE)
+  store.delete('vllm-settings')
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)
