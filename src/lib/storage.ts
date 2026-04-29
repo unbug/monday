@@ -1,7 +1,8 @@
 import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings } from '../types'
+import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 15
+const DB_VERSION = SCHEMA_VERSION
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -24,6 +25,10 @@ function openDB(): Promise<IDBDatabase> {
       const oldVersion = event.oldVersion
       // IMPORTANT: use the implicit upgrade transaction — never call db.transaction()
       // inside onupgradeneeded, as it throws InvalidStateError and aborts the upgrade.
+      //
+      // All migrations are documented in src/lib/migrationRegistry.ts (MIGRATION_REGISTRY).
+      // Rules: additive-only — future migrations MUST only add stores or fields, never
+      // rename, remove, or change types of existing ones.
       const upgradeTx = (event.target as IDBOpenDBRequest).transaction!
 
       if (!db.objectStoreNames.contains(SESSIONS_STORE)) {

@@ -225,6 +225,24 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.8',
+    date: '2026-04-30',
+    title: 'Stable Storage Schema v1 — Migration Registry & Governance',
+    description:
+      'The IndexedDB storage schema is now frozen at version 15 with a formal migration registry. All future migrations must follow additive-only rules: new object stores or fields can be added, but existing stores and fields must never be renamed, removed, or have their types changed. The registry in `src/lib/migrationRegistry.ts` documents every version transition, all 13 object stores, and their purposes — serving as the single source of truth for schema governance.',
+    changes: [
+      { type: 'added', text: 'Migration registry (migrationRegistry.ts) — documents all 15 DB versions, 13 object stores, and their purposes' },
+      { type: 'added', text: 'SCHEMA_VERSION constant — frozen at 15, synced with DB_VERSION in storage.ts' },
+      { type: 'added', text: 'SCHEMA_STORES — complete list of all object stores with name, purpose, keyPath, and sinceVersion' },
+      { type: 'added', text: 'MIGRATION_REGISTRY — versioned migration history with version, description, and affected stores' },
+      { type: 'added', text: 'Schema governance rules — additive-only migrations, no renaming/removing, new store names, version bump required' },
+      { type: 'added', text: 'getStoresForMigration() helper — returns stores added in a given migration version' },
+      { type: 'added', text: 'getMigrationDescription() helper — returns migration description by version' },
+      { type: 'added', text: 'getStoreCount() helper — returns total number of stores in the frozen schema' },
+      { type: 'changed', text: 'Updated version to v1.0.8' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

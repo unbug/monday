@@ -510,7 +510,7 @@ The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
 - [x] **Provider switcher** — Per-session toggle between WebGPU local
       inference and external API providers
 - [x] **SearXNG integration** — Web search via a user-supplied SearXNG URL
-- [ ] **Stable storage schema v1** — Migration registry frozen; future
+- [x] **Stable storage schema v1** — Migration registry frozen; future
       migrations must add, not break, fields
 
 **Release gate**: a 24-hour soak test (1 hour with each provider) passes;
