@@ -5,7 +5,7 @@ import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings, loadVllmSettings, saveVllmSettings, deleteVllmSettings, loadDeepSeekSettings, saveDeepSeekSettings, deleteDeepSeekSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings, loadVllmSettings, saveVllmSettings, deleteVllmSettings, loadDeepSeekSettings, saveDeepSeekSettings, deleteDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { OllamaModel } from '../lib/ollamaApi'
 import type { LlamaCppModel } from '../lib/llamaCppApi'
@@ -77,6 +77,11 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   const [deepSeekSaving, setDeepSeekSaving] = useState(false)
   const [deepSeekTestResult, setDeepSeekTestResult] = useState<'ok' | 'error' | null>(null)
 
+  // v1.0.7: SearXNG settings state
+  const [searxngSettings, setSearXngSettings] = useState<{ url: string } | null>(null)
+  const [searxngSaving, setSearXngSaving] = useState(false)
+  const [searxngTestResult, setSearXngTestResult] = useState<'ok' | 'error' | null>(null)
+
   useEffect(() => {
     loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
     loadOllamaSettings().then((s) => {
@@ -93,6 +98,9 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     }).catch(() => {})
     loadDeepSeekSettings().then((s) => {
       if (s) setDeepSeekSettings({ baseUrl: s.baseUrl, apiKey: s.apiKey, modelId: s.modelId })
+    }).catch(() => {})
+    loadSearXngSettings().then((s) => {
+      if (s) setSearXngSettings({ url: s.url })
     }).catch(() => {})
   }, [])
 
@@ -322,6 +330,39 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     setDeepSeekSettings(null)
     setDeepSeekModels([])
     setDeepSeekTestResult(null)
+  }, [])
+
+  // v1.0.7: SearXNG handlers
+  const handleTestSearXNG = useCallback(async () => {
+    if (!searxngSettings?.url) return
+    setSearXngTestResult(null)
+    try {
+      const resp = await fetch(`${searxngSettings.url.replace(/\/+$/, '')}/search?q=test&format=json`)
+      if (resp.ok) {
+        setSearXngTestResult('ok')
+      } else {
+        setSearXngTestResult('error')
+      }
+    } catch {
+      setSearXngTestResult('error')
+    }
+  }, [searxngSettings])
+
+  const handleSaveSearXngSettings = useCallback(async () => {
+    if (!searxngSettings?.url) return
+    setSearXngSaving(true)
+    try {
+      await saveSearXngSettings({ url: searxngSettings.url })
+      setSearXngSaving(false)
+    } catch {
+      setSearXngSaving(false)
+    }
+  }, [searxngSettings])
+
+  const handleClearSearXngSettings = useCallback(async () => {
+    await deleteSearXngSettings()
+    setSearXngSettings(null)
+    setSearXngTestResult(null)
   }, [])
   const handleDiscoverLlamaModels = useCallback(async () => {
     if (!llamaCppSettings?.url) return
@@ -1144,6 +1185,59 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 )}
               </>
             )}
+
+            {/* v1.0.7: SearXNG web search settings */}
+            <div className="settings-section">
+              <div className="settings-section-header">
+                <span className="settings-section-title">{t('searxng.title')}</span>
+              </div>
+              <p className="settings-hint">
+                {t('searxng.desc')}
+              </p>
+              <div className="settings-field">
+                <label>{t('searxng.url')}</label>
+                <input
+                  type="url"
+                  className="settings-input"
+                  placeholder={t('searxng.placeholderUrl')}
+                  value={searxngSettings?.url ?? ''}
+                  onChange={(e) => setSearXngSettings({ url: e.target.value })}
+                />
+              </div>
+              <div className="settings-row">
+                <button
+                  className="api-provider-btn"
+                  onClick={handleSaveSearXngSettings}
+                  disabled={searxngSaving || !searxngSettings?.url}
+                  type="button"
+                >
+                  {searxngSaving ? t('searxng.saved') : t('searxng.save')}
+                </button>
+                <button
+                  className="api-provider-btn"
+                  onClick={handleTestSearXNG}
+                  disabled={!searxngSettings?.url}
+                  type="button"
+                >
+                  {t('searxng.testConnection')}
+                </button>
+                <button
+                  className="api-provider-btn"
+                  onClick={handleClearSearXngSettings}
+                  type="button"
+                >
+                  {t('searxng.clear')}
+                </button>
+              </div>
+              {searxngTestResult === 'ok' && (
+                <span className="api-status api-status-ok">{t('searxng.connected')}</span>
+              )}
+              {searxngTestResult === 'error' && (
+                <span className="api-status api-status-error">
+                  {t('searxng.error')} — {t('searxng.corsHint')}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}

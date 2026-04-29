@@ -1,7 +1,7 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 14
+const DB_VERSION = 15
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -14,6 +14,7 @@ const LMSTUDIO_SETTINGS_STORE = 'lmstudioSettings'
 const LLAMACPP_SETTINGS_STORE = 'llamaCppSettings'
 const VLLM_SETTINGS_STORE = 'vllmSettings'
 const DEEPSEEK_SETTINGS_STORE = 'deepseekSettings'
+const SEARXNG_SETTINGS_STORE = 'searxngSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -106,6 +107,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v13→v14: add deepseekSettings object store for v1.0.5 DeepSeek API
       if (!db.objectStoreNames.contains(DEEPSEEK_SETTINGS_STORE)) {
         db.createObjectStore(DEEPSEEK_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v14→v15: add searxngSettings object store for v1.0.6 SearXNG search
+      if (!db.objectStoreNames.contains(SEARXNG_SETTINGS_STORE)) {
+        db.createObjectStore(SEARXNG_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -583,6 +588,43 @@ export async function deleteDeepSeekSettings(): Promise<void> {
   const tx = db.transaction(DEEPSEEK_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(DEEPSEEK_SETTINGS_STORE)
   store.delete('deepseek-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── SearXNG Settings storage (v1.0.6) ────────────────────────────────────────
+
+export async function saveSearXngSettings(settings: SearXngSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(SEARXNG_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(SEARXNG_SETTINGS_STORE)
+  store.put({ id: 'searxng-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadSearXngSettings(): Promise<SearXngSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(SEARXNG_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(SEARXNG_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('searxng-settings')
+    request.onsuccess = () => {
+      resolve((request.result as SearXngSettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteSearXngSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(SEARXNG_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(SEARXNG_SETTINGS_STORE)
+  store.delete('searxng-settings')
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

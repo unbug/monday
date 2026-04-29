@@ -206,6 +206,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.7',
+    date: '2026-04-30',
+    title: 'SearXNG Integration — Web Search via Self-Hosted Instance',
+    description:
+      'Connect Monday to a self-hosted SearXNG instance for web search. Configure the instance URL in Settings — when enabled, user queries are first sent to SearXNG and results are injected as context before sending to the model. A search toggle button appears in the ChatInput with a results badge showing the number of available results.',
+    changes: [
+      { type: 'added', text: 'searxngApi.ts — SearXNG client with searchSearXNG() for querying search results and testSearXNG() for connection testing' },
+      { type: 'added', text: 'SearXNGSettings type — url field (default https://search.sapti.me)' },
+      { type: 'added', text: 'SearXNG section in SettingsPanel — Instance URL input, Save / Test Connection / Clear buttons; CORS hint for public instances' },
+      { type: 'added', text: 'SearXNG settings storage — saveSearXngSettings / loadSearXngSettings / deleteSearXngSettings in IndexedDB (searxngSettings object store, DB v14→v15)' },
+      { type: 'added', text: 'Search toggle in ChatInput — 🔍 Search button with active state animation; results badge showing count of available results' },
+      { type: 'added', text: 'Search results as context — when sending a message with search enabled, SearXNG results are fetched and injected as context before the model response' },
+      { type: 'added', text: 'SearXNG i18n category — en/zh translations for search UI strings (title, desc, url, save, testConnection, error, toggleSearch, searching, web, results, noResults, corsHint)' },
+      { type: 'added', text: 'SearXNG CSS — search button styling, active pulse animation, results badge, light theme overrides' },
+      { type: 'added', text: 'Database migration v14→v15 — adds searxngSettings object store' },
+      { type: 'changed', text: 'Updated version to v1.0.7' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

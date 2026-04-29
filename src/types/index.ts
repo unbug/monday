@@ -324,6 +324,12 @@ export interface DeepSeekSettings {
   modelId: string
 }
 
+// v1.0.6: SearXNG web search settings
+export interface SearXngSettings {
+  /** SearXNG instance URL (default: https://search.sapti.me) */
+  url: string
+}
+
 export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek'
 
 export interface OpenAIUsage {
@@ -338,4 +344,12 @@ export interface DeepSeekModel {
   object: string
   created: number
   owned_by: string
+}
+
+// v1.0.6: SearXNG search result
+export interface SearXNGResult {
+  title: string
+  url: string
+  content: string
+  engine: string
 }

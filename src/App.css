@@ -6714,6 +6714,82 @@
   word-break: break-word;
 }
 
+/* ── SearXNG Web Search ─────────────────────────────────────────────────── */
+
+.chat-btn-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--border-color, rgba(139, 92, 246, 0.3));
+  border-radius: 8px;
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-btn-search:hover:not(:disabled) {
+  border-color: var(--accent-color, #8b5cf6);
+  color: var(--text-color, #e5e5e5);
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.chat-btn-search.search-active {
+  border-color: var(--accent-color, #8b5cf6);
+  color: var(--accent-color, #8b5cf6);
+  background: rgba(139, 92, 246, 0.1);
+  animation: search-pulse 2s ease-in-out infinite;
+}
+
+@keyframes search-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.search-results-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 12px;
+  color: var(--accent-color, #8b5cf6);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.search-results-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Light theme overrides */
+.light-theme .chat-btn-search {
+  border-color: var(--border-color, rgba(0, 0, 0, 0.15));
+  color: var(--text-muted, rgba(0, 0, 0, 0.5));
+}
+
+.light-theme .chat-btn-search:hover:not(:disabled) {
+  border-color: var(--accent-color, #8b5cf6);
+  color: var(--accent-color, #8b5cf6);
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.light-theme .chat-btn-search.search-active {
+  border-color: var(--accent-color, #8b5cf6);
+  color: var(--accent-color, #8b5cf6);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.light-theme .search-results-badge {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+  color: var(--accent-color, #8b5cf6);
+}
+
 /* Drop zone */
 .knowledge-drop-zone {
   border: 2px dashed var(--border-color, rgba(139, 92, 246, 0.3));

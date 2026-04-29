@@ -45,6 +45,7 @@ import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay'
 import { UpdateBanner } from './components/UpdateBanner'
 import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import type { ModelInfo, CitationEntry } from './types'
+import type { SearXNGResult } from './lib/searxngApi'
 import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
 import { getModelById } from './lib/models'
@@ -281,11 +282,28 @@ export default function App() {
     }
   }, [])
 
+  // v1.0.7: SearXNG web search state
+  const [searchContext, setSearchContext] = useState<string | null>(null)
+
   const handleSend = useCallback(
-    (content: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
-      chat.sendMessage(content, undefined, images, files, knowledgeBases.activeBaseId ?? undefined)
+    async (content: string, images?: Array<{ id: string; data: string; name?: string }>, files?: Array<{ id: string; name: string; size: number; type: string; content: string }>) => {
+      // Trigger SearXNG search if enabled and no results yet
+      let searchCtx = searchContext
+      if (chat.searxngUrl && chat.isSearching === false && chat.searchResults === null && content.trim()) {
+        try {
+          const results = await chat.toggleSearch(content)
+          if (results && results.length > 0) {
+            searchCtx = (results as SearXNGResult[]).map((r) => `[${r.title}](${r.url})\n${r.content}`).join('\n\n---\n\n')
+          }
+        } catch {
+          // Search failed — send without search context
+          searchCtx = null
+        }
+      }
+      setSearchContext(searchCtx)
+      chat.sendMessage(content, searchCtx ?? undefined, images, files, knowledgeBases.activeBaseId ?? undefined)
     },
-    [chat, knowledgeBases.activeBaseId],
+    [chat, knowledgeBases.activeBaseId, searchContext],
   )
 
   // v0.30.3: batch generation
@@ -905,6 +923,11 @@ export default function App() {
               // v0.30: model chaining
               chainConfig={chat.chainConfig}
               chainProgress={chat.chainProgress}
+              // v1.0.7: SearXNG web search
+              searxngUrl={chat.searxngUrl}
+              onToggleSearch={chat.isSearching ? undefined : (query: string) => chat.toggleSearch(query)}
+              isSearching={chat.isSearching}
+              searchResults={chat.searchResults ? Array.from(chat.searchResults) : null}
             />
             {showAgent && agentMode.state.task && (
               <div className="agent-chat-overlay">

@@ -618,6 +618,46 @@ const vllm: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── SearXNG Web Search ──
+const searxng: Record<Locale, Record<string, string>> = {
+  en: {
+    'searxng.title': 'SearXNG Web Search',
+    'searxng.desc': 'Connect to a self-hosted SearXNG instance for web search. Results are injected as context before sending to the model.',
+    'searxng.url': 'Instance URL',
+    'searxng.placeholderUrl': 'https://search.example.com',
+    'searxng.save': 'Save',
+    'searxng.saved': '✓ Saved',
+    'searxng.testConnection': 'Test Connection',
+    'searxng.connected': '✓ Connected',
+    'searxng.error': 'Connection failed',
+    'searxng.clear': 'Clear',
+    'searxng.corsHint': 'CORS error? Try a public instance like https://search.sapti.me',
+    'searxng.toggleSearch': 'Search the web',
+    'searxng.searching': 'Searching…',
+    'searxng.web': 'Web',
+    'searxng.results': 'results',
+    'searxng.noResults': 'No results found',
+  },
+  zh: {
+    'searxng.title': 'SearXNG 网页搜索',
+    'searxng.desc': '连接自托管的 SearXNG 实例进行网页搜索。搜索结果将作为上下文注入到模型中。',
+    'searxng.url': '实例 URL',
+    'searxng.placeholderUrl': 'https://search.example.com',
+    'searxng.save': '保存',
+    'searxng.saved': '✓ 已保存',
+    'searxng.testConnection': '测试连接',
+    'searxng.connected': '✓ 已连接',
+    'searxng.error': '连接失败',
+    'searxng.clear': '清除',
+    'searxng.corsHint': 'CORS 错误？试试公共实例如 https://search.sapti.me',
+    'searxng.toggleSearch': '搜索网页',
+    'searxng.searching': '搜索中…',
+    'searxng.web': '网页',
+    'searxng.results': '条结果',
+    'searxng.noResults': '未找到结果',
+  },
+}
+
 // ── DeepSeek Cloud API ──
 const deepseek: Record<Locale, Record<string, string>> = {
   en: {
@@ -1572,6 +1612,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...llamaCpp[locale],
     ...vllm[locale],
     ...deepseek[locale],
+    ...searxng[locale],
     ...provider[locale],
   }
 }

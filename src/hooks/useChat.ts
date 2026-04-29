@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { streamLmStudio } from '../lib/lmStudioApi'
@@ -8,6 +8,8 @@ import type { VllmModel } from '../lib/vllmApi'
 import { streamVllm } from '../lib/vllmApi'
 import type { DeepSeekModel } from '../lib/deepSeekApi'
 import { streamDeepSeek } from '../lib/deepSeekApi'
+import type { SearXNGResult } from '../lib/searxngApi'
+import { searchSearXNG, testSearXNG } from '../lib/searxngApi'
 import { useTokenStats } from './useTokenStats'
 import {
   createMessage,
@@ -74,6 +76,11 @@ export function useChat(
   const [context, setContext] = useState('')
   // v0.26.1: tracks how many knowledge chunks were injected on last send
   const [knowledgeContextCount, setKnowledgeContextCount] = useState<number | undefined>(undefined)
+  // v1.0.7: SearXNG web search state
+  const [searxngUrl, setSearXngUrl] = useState<string | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<SearXNGResult[] | null>(null)
+  const [searchQuery, setSearchQuery] = useState<string>('')
   // v0.27: tool call events for display
   const [toolCallEvents, setToolCallEvents] = useState<ToolCallEvent[]>([])
   // v0.30: model chaining state
@@ -128,6 +135,13 @@ export function useChat(
     }
   }, [])
 
+  // v1.0.7: load SearXNG settings on mount
+  useEffect(() => {
+    loadSearXngSettings().then((s) => {
+      if (s) setSearXngUrl(s.url)
+    }).catch(() => {})
+  }, [])
+
   const newSession = useCallback(() => {
     tokenStats.reset()
     const session = createSession(modelId)
@@ -139,6 +153,47 @@ export function useChat(
 
   const stopGenerating = useCallback(() => {
     abortRef.current = true
+  }, [])
+
+  // v1.0.7: SearXNG web search handlers
+  const toggleSearch = useCallback(async (query: string): Promise<SearXNGResult[] | null> => {
+    if (!searxngUrl) return null
+    if (isSearching) return null
+
+    if (searchResults && searchResults.length > 0) {
+      setSearchResults(null)
+      setSearchQuery('')
+      return null
+    }
+
+    setIsSearching(true)
+    setSearchResults(null)
+    setSearchQuery(query)
+    try {
+      const results = await searchSearXNG(searxngUrl, query)
+      setSearchResults(results.length > 0 ? results : null)
+      return results.length > 0 ? results : null
+    } catch {
+      console.warn('[monday] SearXNG search failed:', searxngUrl)
+      return null
+    } finally {
+      setIsSearching(false)
+    }
+  }, [searxngUrl, isSearching, searchResults])
+
+  const testSearchConnection = useCallback(async () => {
+    if (!searxngUrl) return false
+    return testSearXNG(searxngUrl)
+  }, [searxngUrl])
+
+  const saveSearXngUrl = useCallback(async (url: string) => {
+    await saveSearXngSettings({ url }).catch(() => {})
+    setSearXngUrl(url)
+  }, [])
+
+  const clearSearXngUrl = useCallback(async () => {
+    await deleteSearXngSettings().catch(() => {})
+    setSearXngUrl(null)
   }, [])
 
   /**
@@ -1159,5 +1214,11 @@ export function useChat(
     chainConfig,
     chainProgress,
     draftContent,
+    // v1.0.7: SearXNG web search state
+    searxngUrl,
+    isSearching,
+    searchResults,
+    searchQuery,
+    toggleSearch,
   }
 }

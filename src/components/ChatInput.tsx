@@ -7,6 +7,7 @@ import { FileAttachment } from './FileAttachment'
 import { useVoiceInput } from '../hooks/useVoiceInput'
 import type { ModelInfo } from '../types'
 import type { ModelChainConfig, ChainProgress } from '../lib/modelChaining'
+import type { SearXNGResult } from '../lib/searxngApi'
 
 interface ImageItem {
   id: string
@@ -41,6 +42,11 @@ interface Props {
   // v0.26.1: knowledge base context
   knowledgeBaseName?: string | null
   knowledgeContextCount?: number
+  // v1.0.6: SearXNG web search
+  searxngUrl?: string | null
+  onToggleSearch?: (query: string) => Promise<SearXNGResult[] | null> | void
+  isSearching?: boolean
+  searchResults?: SearXNGResult[] | null
   // v0.30: agent mode
   agentMode?: boolean
   onToggleAgentMode?: () => void
@@ -62,6 +68,10 @@ export function ChatInput({
   isStreaming,
   knowledgeBaseName,
   knowledgeContextCount,
+  searxngUrl,
+  onToggleSearch,
+  isSearching,
+  searchResults,
   agentMode,
   onToggleAgentMode,
   chainConfig,
@@ -423,6 +433,35 @@ export function ChatInput({
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
               </svg>
               {knowledgeBaseName}
+            </div>
+          )}
+          {/* v1.0.7: SearXNG search toggle button */}
+          {onToggleSearch && (
+            <button
+              className={`chat-btn chat-btn-search ${isSearching ? 'search-active' : ''}`}
+              onClick={() => onToggleSearch(input)}
+              disabled={disabled || !input.trim()}
+              title={isSearching ? t('searxng.searching') : t('searxng.toggleSearch')}
+              type="button"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              {isSearching ? '' : t('searxng.web')}
+            </button>
+          )}
+          {/* v1.0.7: search results badge */}
+          {searchResults && searchResults.length > 0 && (
+            <div
+              className="search-results-badge"
+              title={`${searchResults.length} search results available`}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              {searchResults.length}
             </div>
           )}
           {isGenerating ? (
