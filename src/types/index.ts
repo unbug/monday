@@ -290,7 +290,15 @@ export interface OllamaSettings {
   modelId: string
 }
 
-export type Provider = 'web-llm' | 'openai' | 'ollama'
+// v1.0.2: LM Studio-specific settings (separate from generic OpenAI settings)
+export interface LmStudioSettings {
+  /** LM Studio server URL (default: http://localhost:1234) */
+  url: string
+  /** Model ID to use (e.g. microsoft/Phi-3-mini-4k-instruct) */
+  modelId: string
+}
+
+export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio'
 
 export interface OpenAIUsage {
   promptTokens: number

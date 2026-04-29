@@ -504,6 +504,44 @@ const ollama: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── LM Studio ──
+const lmStudio: Record<Locale, Record<string, string>> = {
+  en: {
+    'lmstudio.title': 'LM Studio',
+    'lmstudio.desc': 'Connect to a local LM Studio server for inference.',
+    'lmstudio.url': 'Server URL',
+    'lmstudio.placeholderUrl': 'http://localhost:1234',
+    'lmstudio.discoverModels': 'Auto-Discover',
+    'lmstudio.noModels': 'No models found — make sure LM Studio is running',
+    'lmstudio.model': 'Model',
+    'lmstudio.save': 'Save',
+    'lmstudio.saved': '✓ Saved',
+    'lmstudio.testing': 'Testing…',
+    'lmstudio.testConnection': 'Test Connection',
+    'lmstudio.connected': '✓ Connected',
+    'lmstudio.error': 'Connection failed',
+    'lmstudio.clear': 'Clear',
+    'lmstudio.corsHint': 'CORS error? Make sure LM Studio allows cross-origin requests.',
+  },
+  zh: {
+    'lmstudio.title': 'LM Studio',
+    'lmstudio.desc': '连接本地 LM Studio 服务器进行推理。',
+    'lmstudio.url': '服务器 URL',
+    'lmstudio.placeholderUrl': 'http://localhost:1234',
+    'lmstudio.discoverModels': '自动发现',
+    'lmstudio.noModels': '未找到模型 — 请确保 LM Studio 正在运行',
+    'lmstudio.model': '模型',
+    'lmstudio.save': '保存',
+    'lmstudio.saved': '✓ 已保存',
+    'lmstudio.testing': '测试中…',
+    'lmstudio.testConnection': '测试连接',
+    'lmstudio.connected': '✓ 已连接',
+    'lmstudio.error': '连接失败',
+    'lmstudio.clear': '清除',
+    'lmstudio.corsHint': 'CORS 错误？请确保 LM Studio 允许跨域请求。',
+  },
+}
+
 // ── OpenAI API Settings ──
 const openai: Record<Locale, Record<string, string>> = {
   en: {
@@ -1394,6 +1432,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...a11y[locale],
     ...openai[locale],
     ...ollama[locale],
+    ...lmStudio[locale],
   }
 }
 

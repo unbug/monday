@@ -1,7 +1,7 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 10
+const DB_VERSION = 11
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -10,6 +10,7 @@ const EMBEDDINGS_STORE = 'embeddings'
 const VERDICTS_STORE = 'verdicts'
 const API_SETTINGS_STORE = 'apiSettings'
 const OLLAMA_SETTINGS_STORE = 'ollamaSettings'
+const LMSTUDIO_SETTINGS_STORE = 'lmstudioSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -87,9 +88,9 @@ function openDB(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(OLLAMA_SETTINGS_STORE)) {
         db.createObjectStore(OLLAMA_SETTINGS_STORE, { keyPath: 'id' })
       }
-      // Migration v9→v10: add ollamaSettings object store for v1.0.1 Ollama integration
-      if (!db.objectStoreNames.contains(OLLAMA_SETTINGS_STORE)) {
-        db.createObjectStore(OLLAMA_SETTINGS_STORE, { keyPath: 'id' })
+      // Migration v10→v11: add lmstudioSettings object store for v1.0.2 LM Studio
+      if (!db.objectStoreNames.contains(LMSTUDIO_SETTINGS_STORE)) {
+        db.createObjectStore(LMSTUDIO_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -419,6 +420,43 @@ export async function deleteOllamaSettings(): Promise<void> {
   const tx = db.transaction(OLLAMA_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(OLLAMA_SETTINGS_STORE)
   store.delete('ollama-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── LM Studio Settings storage (v1.0.2) ──────────────────────────────────────
+
+export async function saveLmStudioSettings(settings: LmStudioSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(LMSTUDIO_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(LMSTUDIO_SETTINGS_STORE)
+  store.put({ id: 'lmstudio-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadLmStudioSettings(): Promise<LmStudioSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(LMSTUDIO_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(LMSTUDIO_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('lmstudio-settings')
+    request.onsuccess = () => {
+      resolve((request.result as LmStudioSettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteLmStudioSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(LMSTUDIO_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(LMSTUDIO_SETTINGS_STORE)
+  store.delete('lmstudio-settings')
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

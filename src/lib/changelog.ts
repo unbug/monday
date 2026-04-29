@@ -115,6 +115,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.2',
+    date: '2026-04-29',
+    title: 'LM Studio Integration — Local Server with Auto-Discovery',
+    description:
+      'Connect Monday to a local LM Studio server for inference. LM Studio exposes an OpenAI-compatible API on port 1234 by default. The Settings panel includes an LM Studio option with auto-discovery of available models via /v1/models. Configure the server URL and pick from discovered models — no API key needed for local instances.',
+    changes: [
+      { type: 'added', text: 'lmStudioApi.ts — LM Studio client with fetchLmStudioModels() for auto-discovery and streamLmStudio() for SSE streaming via /v1/chat/completions' },
+      { type: 'added', text: 'LmStudioSettings type — url (default http://localhost:1234) + modelId fields' },
+      { type: 'added', text: 'Provider "lmstudio" — new option alongside web-llm, openai, and ollama in the Provider type' },
+      { type: 'added', text: 'LM Studio section in SettingsPanel — URL input, Auto-Discover button, model dropdown from discovered models, Save / Test Connection / Clear buttons' },
+      { type: 'added', text: 'LM Studio settings storage — saveLmStudioSettings / loadLmStudioSettings / deleteLmStudioSettings in IndexedDB (lmstudioSettings object store, DB v10→v11)' },
+      { type: 'added', text: 'LM Studio routing in useChat — sendUserMessage loads LM Studio settings and streams via streamLmStudio when provider === "lmstudio"' },
+      { type: 'added', text: 'streamChatWithProvider lmstudio path — unified routing with context/file injection support' },
+      { type: 'added', text: 'lmStudio i18n category — en/zh translations for all LM Studio UI strings (title, desc, url, discoverModels, model, save, testConnection, error, corsHint)' },
+      { type: 'added', text: 'Database migration v10→v11 — adds lmstudioSettings object store' },
+      { type: 'changed', text: 'Updated version to v1.0.2' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

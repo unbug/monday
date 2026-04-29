@@ -1,7 +1,9 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
+import type { LmStudioModel } from '../lib/lmStudioApi'
+import { streamLmStudio } from '../lib/lmStudioApi'
 import { useTokenStats } from './useTokenStats'
 import {
   createMessage,
@@ -267,6 +269,7 @@ export function useChat(
         const activeProvider = latestSession?.provider ?? null
         let apiSettings: OpenAISettings | null = null
         let ollamaSettings: { url: string; modelId: string } | null = null
+        let lmStudioSettings: { url: string; modelId: string } | null = null
         if (activeProvider === 'openai') {
           try {
             apiSettings = await loadApiSettings()
@@ -277,6 +280,13 @@ export function useChat(
         if (activeProvider === 'ollama') {
           try {
             ollamaSettings = await loadOllamaSettings()
+          } catch {
+            // Ignore — will fall through to local
+          }
+        }
+        if (activeProvider === 'lmstudio') {
+          try {
+            lmStudioSettings = await loadLmStudioSettings()
           } catch {
             // Ignore — will fall through to local
           }
@@ -383,6 +393,45 @@ export function useChat(
           } catch (ollamaErr: unknown) {
             const msg = ollamaErr instanceof Error ? ollamaErr.message : String(ollamaErr)
             throw new Error(`Ollama error: ${msg}`)
+          }
+        } else if (activeProvider === 'lmstudio' && lmStudioSettings) {
+          // v1.0.2: LM Studio local server path
+          try {
+            let lmUsage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
+            for await (const token of streamLmStudio(
+              lmStudioSettings.url,
+              lmStudioSettings.modelId,
+              refineMessages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system' | 'tool', content: m.content })),
+              {
+                temperature: opts.temperature ?? 0.7,
+                topP: opts.top_p ?? 0.9,
+                maxTokens: opts.maxTokens ?? 1024,
+                systemPrompt: summarizedPrompt,
+              },
+            )) {
+              if (abortRef.current) break
+              fullContent += token
+              tokenCount++
+              tokenStats.addTokens(1)
+              const captured = fullContent
+              currentSessions = currentSessions.map((s) =>
+                s.id === sessionId
+                  ? {
+                      ...s,
+                      messages: s.messages.map((m) =>
+                        m.id === assistantMsg.id
+                          ? { ...m, content: captured }
+                          : m,
+                      ),
+                    }
+                  : s,
+              )
+              setSessions([...currentSessions])
+            }
+            finalUsage = { promptTokens: 0, completionTokens: tokenCount, totalTokens: tokenCount }
+          } catch (lmstudioErr: unknown) {
+            const msg = lmstudioErr instanceof Error ? lmstudioErr.message : String(lmstudioErr)
+            throw new Error(`LM Studio error: ${msg}`)
           }
         } else if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---

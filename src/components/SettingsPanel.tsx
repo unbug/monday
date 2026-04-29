@@ -5,10 +5,12 @@ import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { OllamaModel } from '../lib/ollamaApi'
+import type { LmStudioModel } from '../lib/lmStudioApi'
 import { fetchOllamaModels } from '../lib/ollamaApi'
+import { fetchLmStudioModels } from '../lib/lmStudioApi'
 
 interface Props {
   session: ChatSession
@@ -17,8 +19,8 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
-  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | null) => void
-  provider?: 'web-llm' | 'openai' | 'ollama' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | null) => void
+  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | null
 }
 
 const DEFAULT_TEMPERATURE = 0.7
@@ -42,10 +44,20 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   const [ollamaSaving, setOllamaSaving] = useState(false)
   const [ollamaTestResult, setOllamaTestResult] = useState<'ok' | 'error' | null>(null)
 
+  // v1.0.2: LM Studio settings state
+  const [lmStudioSettings, setLmStudioSettings] = useState<{ url: string; modelId: string } | null>(null)
+  const [lmStudioModels, setLmStudioModels] = useState<LmStudioModel[]>([])
+  const [lmStudioDiscovering, setLmStudioDiscovering] = useState(false)
+  const [lmStudioSaving, setLmStudioSaving] = useState(false)
+  const [lmStudioTestResult, setLmStudioTestResult] = useState<'ok' | 'error' | null>(null)
+
   useEffect(() => {
     loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
     loadOllamaSettings().then((s) => {
       if (s) setOllamaSettings({ url: s.url, modelId: s.modelId })
+    }).catch(() => {})
+    loadLmStudioSettings().then((s) => {
+      if (s) setLmStudioSettings({ url: s.url, modelId: s.modelId })
     }).catch(() => {})
   }, [])
 
@@ -129,6 +141,52 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     setOllamaSettings(null)
     setOllamaModels([])
     setOllamaTestResult(null)
+  }, [])
+
+  const handleDiscoverLmStudioModels = useCallback(async () => {
+    if (!lmStudioSettings?.url) return
+    setLmStudioDiscovering(true)
+    setLmStudioTestResult(null)
+    try {
+      const models = await fetchLmStudioModels(lmStudioSettings.url)
+      setLmStudioModels(models)
+    } catch {
+      setLmStudioModels([])
+    }
+    setLmStudioDiscovering(false)
+  }, [lmStudioSettings])
+
+  const handleTestLmStudio = useCallback(async () => {
+    if (!lmStudioSettings?.url || !lmStudioSettings?.modelId) return
+    setLmStudioTestResult(null)
+    try {
+      const resp = await fetch(`${lmStudioSettings.url.replace(/\/+$/, '')}/v1/models`)
+      if (resp.ok) {
+        setLmStudioTestResult('ok')
+      } else {
+        setLmStudioTestResult('error')
+      }
+    } catch {
+      setLmStudioTestResult('error')
+    }
+  }, [lmStudioSettings])
+
+  const handleSaveLmStudioSettings = useCallback(async () => {
+    if (!lmStudioSettings?.url || !lmStudioSettings?.modelId) return
+    setLmStudioSaving(true)
+    try {
+      await saveLmStudioSettings({ url: lmStudioSettings.url, modelId: lmStudioSettings.modelId })
+      setLmStudioSaving(false)
+    } catch {
+      setLmStudioSaving(false)
+    }
+  }, [lmStudioSettings])
+
+  const handleClearLmStudioSettings = useCallback(async () => {
+    await deleteLmStudioSettings()
+    setLmStudioSettings(null)
+    setLmStudioModels([])
+    setLmStudioTestResult(null)
   }, [])
 
   const params = session.generationParams ?? {
@@ -356,6 +414,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                     Ollama
                   </button>
                   <button
+                    className={`api-provider-btn ${provider === 'lmstudio' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('lmstudio')}
+                    type="button"
+                  >
+                    LM Studio
+                  </button>
+                  <button
                     className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
                     onClick={() => onSetProvider('openai')}
                     type="button"
@@ -526,6 +591,95 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 {ollamaTestResult === 'error' && (
                   <span className="api-status api-status-error">
                     {t('ollama.error')} — {t('ollama.corsHint')}
+                  </span>
+                )}
+              </>
+            )}
+
+            {provider === 'lmstudio' && (
+              <>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('lmstudio.url')}
+                  </label>
+                  <input
+                    type="text"
+                    className="settings-input api-url-input"
+                    placeholder={t('lmstudio.placeholderUrl')}
+                    value={lmStudioSettings?.url ?? ''}
+                    onChange={(e) => setLmStudioSettings(lmStudioSettings ? { ...lmStudioSettings, url: e.target.value } : { url: e.target.value, modelId: '' })}
+                  />
+                </div>
+                <div className="settings-param">
+                  <label className="settings-label">
+                    {t('lmstudio.discoverModels')}
+                  </label>
+                  <button
+                    className="api-discover-btn"
+                    onClick={handleDiscoverLmStudioModels}
+                    disabled={lmStudioDiscovering || !lmStudioSettings?.url}
+                    type="button"
+                  >
+                    {lmStudioDiscovering
+                      ? t('openai.testing')
+                      : t('lmstudio.discoverModels')}
+                  </button>
+                </div>
+                {lmStudioModels.length > 0 && (
+                  <div className="settings-param">
+                    <label className="settings-label">
+                      {t('lmstudio.model')}
+                    </label>
+                    <select
+                      className="settings-input api-model-select"
+                      value={lmStudioSettings?.modelId ?? ''}
+                      onChange={(e) => setLmStudioSettings(lmStudioSettings ? { ...lmStudioSettings, modelId: e.target.value } : { url: '', modelId: e.target.value })}
+                    >
+                      <option value="">— {t('lmstudio.noModels')} —</option>
+                      {lmStudioModels.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {lmStudioModels.length === 0 && lmStudioDiscovering === false && lmStudioSettings?.url && (
+                  <span className="api-status api-status-error">
+                    {t('lmstudio.noModels')}
+                  </span>
+                )}
+                <div className="api-actions">
+                  <button
+                    className="api-save-btn"
+                    onClick={handleSaveLmStudioSettings}
+                    disabled={lmStudioSaving || !lmStudioSettings?.url || !lmStudioSettings?.modelId}
+                    type="button"
+                  >
+                    {lmStudioSaving ? t('lmstudio.saved') : t('lmstudio.save')}
+                  </button>
+                  <button
+                    className="api-test-btn"
+                    onClick={handleTestLmStudio}
+                    disabled={!lmStudioSettings?.url || !lmStudioSettings?.modelId}
+                    type="button"
+                  >
+                    {t('lmstudio.testConnection')}
+                  </button>
+                  <button
+                    className="api-clear-btn"
+                    onClick={handleClearLmStudioSettings}
+                    type="button"
+                  >
+                    {t('lmstudio.clear')}
+                  </button>
+                </div>
+                {lmStudioTestResult === 'ok' && (
+                  <span className="api-status api-status-ok">{t('lmstudio.connected')}</span>
+                )}
+                {lmStudioTestResult === 'error' && (
+                  <span className="api-status api-status-error">
+                    {t('lmstudio.error')} — {t('lmstudio.corsHint')}
                   </span>
                 )}
               </>
