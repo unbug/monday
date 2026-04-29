@@ -907,7 +907,7 @@ export function useChat(
 
   // v1.0.0: set provider for the active session
   const setProvider = useCallback(
-    (provider: 'web-llm' | 'openai' | 'ollama' | null) => {
+    (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | null) => {
       if (!activeSessionId) return
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId
