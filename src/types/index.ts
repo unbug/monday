@@ -298,7 +298,15 @@ export interface LmStudioSettings {
   modelId: string
 }
 
-export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio'
+// v1.0.3: llama.cpp server-specific settings
+export interface LlamaCppSettings {
+  /** llama.cpp server URL (default: http://localhost:8080) */
+  url: string
+  /** Model ID to use (e.g. llama3.2) */
+  modelId: string
+}
+
+export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp'
 
 export interface OpenAIUsage {
   promptTokens: number

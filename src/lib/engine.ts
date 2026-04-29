@@ -1,6 +1,7 @@
 import { streamOpenAI, type OpenAISettings } from './openaiApi'
 import { streamOllama } from './ollamaApi'
 import { streamLmStudio, type LmStudioModel } from './lmStudioApi'
+import { streamLlama } from './llamaCppApi'
 import {
   CreateMLCEngine,
   type MLCEngineInterface,
@@ -537,14 +538,16 @@ export interface ProviderStreamOptions {
   images?: Array<{ id: string; data: string; name?: string }>
   files?: Array<{ id: string; name: string; size: number; type: string; content: string }>
   modelId?: string
-  /** 'web-llm' for local inference, 'openai' for remote API, 'ollama' for local Ollama, 'lmstudio' for LM Studio. null defaults to web-llm */
-  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | null
+  /** 'web-llm' for local inference, 'openai' for remote API, 'ollama' for local Ollama, 'lmstudio' for LM Studio, 'llamacpp' for llama.cpp. null defaults to web-llm */
+  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | null
   /** OpenAI settings — required when provider === 'openai' */
   apiSettings?: OpenAISettings
   /** Ollama server URL — required when provider === 'ollama' */
   ollamaUrl?: string
   /** LM Studio server URL — required when provider === 'lmstudio' */
   lmStudioUrl?: string
+  /** llama.cpp server URL — required when provider === 'llamacpp' */
+  llamaCppUrl?: string
 }
 
 export async function* streamChatWithProvider(
@@ -687,6 +690,52 @@ export async function* streamChatWithProvider(
 
     for await (const delta of streamLmStudio(
       lmStudioUrl,
+      modelId,
+      chatMessages,
+      { temperature, topP, maxTokens, systemPrompt },
+    )) {
+      yield delta
+    }
+    return { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
+  }
+
+  if (provider === 'llamacpp') {
+    // llama.cpp local server path
+    const llamaCppUrl = options.llamaCppUrl ?? 'http://localhost:8080'
+    const modelId = options.modelId ?? ''
+    const { temperature = 0.7, top_p: topP = 0.9, maxTokens = 1024, systemPrompt } = options
+
+    let chatMessages: Array<{ role: string; content: string }>
+
+    // Prepend context
+    let contextMessage: Array<{ role: string; content: string }> = []
+    if (options.context?.trim()) {
+      contextMessage.push({ role: 'user', content: `Context:\n${options.context}\n\n---\n\n` })
+    }
+    if (options.files?.length) {
+      for (const file of options.files) {
+        contextMessage.push({
+          role: 'user',
+          content: `File: ${file.name} (${file.type})\n${file.content}`,
+        })
+      }
+      if (contextMessage.length > 0) {
+        contextMessage.push({ role: 'user', content: '\n---\n' })
+      }
+    }
+
+    if (systemPrompt?.trim()) {
+      chatMessages = [
+        { role: 'system', content: systemPrompt.trim() },
+        ...contextMessage,
+        ...messages,
+      ]
+    } else {
+      chatMessages = [...contextMessage, ...messages]
+    }
+
+    for await (const delta of streamLlama(
+      llamaCppUrl,
       modelId,
       chatMessages,
       { temperature, topP, maxTokens, systemPrompt },

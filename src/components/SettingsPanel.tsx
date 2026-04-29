@@ -5,9 +5,10 @@ import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { OllamaModel } from '../lib/ollamaApi'
+import type { LlamaCppModel } from '../lib/llamaCppApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { fetchOllamaModels } from '../lib/ollamaApi'
 import { fetchLmStudioModels } from '../lib/lmStudioApi'
@@ -19,8 +20,8 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
-  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | null) => void
-  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | null) => void
+  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | null
 }
 
 const DEFAULT_TEMPERATURE = 0.7
@@ -44,6 +45,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   const [ollamaSaving, setOllamaSaving] = useState(false)
   const [ollamaTestResult, setOllamaTestResult] = useState<'ok' | 'error' | null>(null)
 
+  // v1.0.3: llama.cpp settings state
+  const [llamaCppSettings, setLlamaCppSettings] = useState<{ url: string; modelId: string } | null>(null)
+  const [llamaCppModels, setLlamaCppModels] = useState<LlamaCppModel[]>([])
+  const [llamaCppDiscovering, setLlamaCppDiscovering] = useState(false)
+  const [llamaCppSaving, setLlamaCppSaving] = useState(false)
+  const [llamaCppTestResult, setLlamaCppTestResult] = useState<'ok' | 'error' | null>(null)
+
   // v1.0.2: LM Studio settings state
   const [lmStudioSettings, setLmStudioSettings] = useState<{ url: string; modelId: string } | null>(null)
   const [lmStudioModels, setLmStudioModels] = useState<LmStudioModel[]>([])
@@ -55,6 +63,9 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
     loadOllamaSettings().then((s) => {
       if (s) setOllamaSettings({ url: s.url, modelId: s.modelId })
+    }).catch(() => {})
+    loadLlamaCppSettings().then((s) => {
+      if (s) setLlamaCppSettings({ url: s.url, modelId: s.modelId })
     }).catch(() => {})
     loadLmStudioSettings().then((s) => {
       if (s) setLmStudioSettings({ url: s.url, modelId: s.modelId })
@@ -187,6 +198,53 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     setLmStudioSettings(null)
     setLmStudioModels([])
     setLmStudioTestResult(null)
+  }, [])
+
+  // v1.0.3: llama.cpp handlers
+  const handleDiscoverLlamaModels = useCallback(async () => {
+    if (!llamaCppSettings?.url) return
+    setLlamaCppDiscovering(true)
+    setLlamaCppTestResult(null)
+    try {
+      const models = await (await import('../lib/llamaCppApi')).fetchLlamaModels(llamaCppSettings.url)
+      setLlamaCppModels(models)
+    } catch {
+      setLlamaCppModels([])
+    }
+    setLlamaCppDiscovering(false)
+  }, [llamaCppSettings])
+
+  const handleTestLlama = useCallback(async () => {
+    if (!llamaCppSettings?.url || !llamaCppSettings?.modelId) return
+    setLlamaCppTestResult(null)
+    try {
+      const resp = await fetch(`${llamaCppSettings.url.replace(/\/+$/, '')}/v1/models`)
+      if (resp.ok) {
+        setLlamaCppTestResult('ok')
+      } else {
+        setLlamaCppTestResult('error')
+      }
+    } catch {
+      setLlamaCppTestResult('error')
+    }
+  }, [llamaCppSettings])
+
+  const handleSaveLlamaCppSettings = useCallback(async () => {
+    if (!llamaCppSettings?.url || !llamaCppSettings?.modelId) return
+    setLlamaCppSaving(true)
+    try {
+      await saveLlamaCppSettings({ url: llamaCppSettings.url, modelId: llamaCppSettings.modelId })
+      setLlamaCppSaving(false)
+    } catch {
+      setLlamaCppSaving(false)
+    }
+  }, [llamaCppSettings])
+
+  const handleClearLlamaCppSettings = useCallback(async () => {
+    await deleteLlamaCppSettings()
+    setLlamaCppSettings(null)
+    setLlamaCppModels([])
+    setLlamaCppTestResult(null)
   }, [])
 
   const params = session.generationParams ?? {
@@ -419,6 +477,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                     type="button"
                   >
                     LM Studio
+                  </button>
+                  <button
+                    className={`api-provider-btn ${provider === 'llamacpp' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('llamacpp')}
+                    type="button"
+                  >
+                    llama.cpp
                   </button>
                   <button
                     className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
@@ -680,6 +745,89 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 {lmStudioTestResult === 'error' && (
                   <span className="api-status api-status-error">
                     {t('lmstudio.error')} — {t('lmstudio.corsHint')}
+                  </span>
+                )}
+              </>
+            )}
+
+            {/* v1.0.3: llama.cpp server settings */}
+            {provider === 'llamacpp' && (
+              <>
+                <div className="settings-section-title">{t('llamaCpp.title')}</div>
+                <div className="settings-section-desc">{t('llamaCpp.desc')}</div>
+                <div className="settings-field">
+                  <label>{t('llamaCpp.url')}</label>
+                  <input
+                    type="url"
+                    className="settings-input"
+                    placeholder={t('llamaCpp.placeholderUrl')}
+                    value={llamaCppSettings?.url ?? ''}
+                    onChange={(e) => setLlamaCppSettings({ url: e.target.value, modelId: '' })}
+                  />
+                </div>
+                <div className="settings-row">
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleDiscoverLlamaModels}
+                    disabled={llamaCppDiscovering || !llamaCppSettings?.url}
+                    type="button"
+                  >
+                    {llamaCppDiscovering
+                      ? t('llamaCpp.discovering')
+                      : t('llamaCpp.discoverModels')}
+                  </button>
+                </div>
+                {llamaCppModels.length > 0 && (
+                  <div className="settings-field">
+                    <label>{t('llamaCpp.model')}</label>
+                    <select
+                      className="settings-select"
+                      value={llamaCppSettings?.modelId ?? ''}
+                      onChange={(e) => setLlamaCppSettings(llamaCppSettings ? { ...llamaCppSettings, modelId: e.target.value } : { url: '', modelId: e.target.value })}
+                    >
+                      <option value="">— {t('llamaCpp.noModels')} —</option>
+                      {llamaCppModels.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name ?? m.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {llamaCppModels.length === 0 && llamaCppDiscovering === false && llamaCppSettings?.url && (
+                  <div className="settings-hint">{t('llamaCpp.noModels')}</div>
+                )}
+                <div className="settings-row">
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleSaveLlamaCppSettings}
+                    disabled={llamaCppSaving || !llamaCppSettings?.url || !llamaCppSettings?.modelId}
+                    type="button"
+                  >
+                    {llamaCppSaving ? t('llamaCpp.saved') : t('llamaCpp.save')}
+                  </button>
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleTestLlama}
+                    disabled={!llamaCppSettings?.url || !llamaCppSettings?.modelId}
+                    type="button"
+                  >
+                    {t('llamaCpp.testConnection')}
+                  </button>
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleClearLlamaCppSettings}
+                    type="button"
+                  >
+                    {t('llamaCpp.clear')}
+                  </button>
+                </div>
+                {llamaCppTestResult === 'ok' && (
+                  <span className="api-status api-status-ok">{t('llamaCpp.connected')}</span>
+                )}
+                {llamaCppTestResult === 'error' && (
+                  <span className="api-status api-status-error">
+                    {t('llamaCpp.error')} — {t('llamaCpp.corsHint')}
                   </span>
                 )}
               </>

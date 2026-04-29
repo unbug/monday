@@ -542,6 +542,44 @@ const lmStudio: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── llama.cpp Server ──
+const llamaCpp: Record<Locale, Record<string, string>> = {
+  en: {
+    'llamaCpp.title': 'llama.cpp',
+    'llamaCpp.desc': 'Connect to a local llama.cpp server (–server mode) for inference.',
+    'llamaCpp.url': 'Server URL',
+    'llamaCpp.placeholderUrl': 'http://localhost:8080',
+    'llamaCpp.discoverModels': 'Auto-Discover',
+    'llamaCpp.discovering': 'Discovering…',
+    'llamaCpp.noModels': 'No models found — make sure llama.cpp is running',
+    'llamaCpp.model': 'Model',
+    'llamaCpp.save': 'Save',
+    'llamaCpp.saved': '✓ Saved',
+    'llamaCpp.testConnection': 'Test Connection',
+    'llamaCpp.connected': '✓ Connected',
+    'llamaCpp.error': 'Connection failed',
+    'llamaCpp.clear': 'Clear',
+    'llamaCpp.corsHint': 'CORS error? Make sure llama.cpp allows cross-origin requests.',
+  },
+  zh: {
+    'llamaCpp.title': 'llama.cpp',
+    'llamaCpp.desc': '连接本地 llama.cpp 服务器（–server 模式）进行推理。',
+    'llamaCpp.url': '服务器 URL',
+    'llamaCpp.placeholderUrl': 'http://localhost:8080',
+    'llamaCpp.discoverModels': '自动发现',
+    'llamaCpp.discovering': '发现中…',
+    'llamaCpp.noModels': '未找到模型 — 请确保 llama.cpp 正在运行',
+    'llamaCpp.model': '模型',
+    'llamaCpp.save': '保存',
+    'llamaCpp.saved': '✓ 已保存',
+    'llamaCpp.testConnection': '测试连接',
+    'llamaCpp.connected': '✓ 已连接',
+    'llamaCpp.error': '连接失败',
+    'llamaCpp.clear': '清除',
+    'llamaCpp.corsHint': 'CORS 错误？请确保 llama.cpp 允许跨域请求。',
+  },
+}
+
 // ── OpenAI API Settings ──
 const openai: Record<Locale, Record<string, string>> = {
   en: {
@@ -1433,6 +1471,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...openai[locale],
     ...ollama[locale],
     ...lmStudio[locale],
+    ...llamaCpp[locale],
   }
 }
 

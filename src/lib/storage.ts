@@ -1,7 +1,7 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 11
+const DB_VERSION = 12
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -11,6 +11,7 @@ const VERDICTS_STORE = 'verdicts'
 const API_SETTINGS_STORE = 'apiSettings'
 const OLLAMA_SETTINGS_STORE = 'ollamaSettings'
 const LMSTUDIO_SETTINGS_STORE = 'lmstudioSettings'
+const LLAMACPP_SETTINGS_STORE = 'llamaCppSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -91,6 +92,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v10→v11: add lmstudioSettings object store for v1.0.2 LM Studio
       if (!db.objectStoreNames.contains(LMSTUDIO_SETTINGS_STORE)) {
         db.createObjectStore(LMSTUDIO_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v11→v12: add llamaCppSettings object store for v1.0.3 llama.cpp
+      if (!db.objectStoreNames.contains(LLAMACPP_SETTINGS_STORE)) {
+        db.createObjectStore(LLAMACPP_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -457,6 +462,43 @@ export async function deleteLmStudioSettings(): Promise<void> {
   const tx = db.transaction(LMSTUDIO_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(LMSTUDIO_SETTINGS_STORE)
   store.delete('lmstudio-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── llama.cpp Settings storage (v1.0.3) ──────────────────────────────────────
+
+export async function saveLlamaCppSettings(settings: LlamaCppSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(LLAMACPP_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(LLAMACPP_SETTINGS_STORE)
+  store.put({ id: 'llamacpp-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadLlamaCppSettings(): Promise<LlamaCppSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(LLAMACPP_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(LLAMACPP_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('llamacpp-settings')
+    request.onsuccess = () => {
+      resolve((request.result as LlamaCppSettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteLlamaCppSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(LLAMACPP_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(LLAMACPP_SETTINGS_STORE)
+  store.delete('llamacpp-settings')
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

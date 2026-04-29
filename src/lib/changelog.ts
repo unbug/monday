@@ -134,6 +134,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.3',
+    date: '2026-04-29',
+    title: 'llama.cpp Server Integration — Local HTTP Inference',
+    description:
+      'Connect Monday to a local llama.cpp server (–server mode) for inference. llama.cpp exposes an OpenAI-compatible API on port 8080 by default. The Settings panel includes a llama.cpp option with auto-discovery of available models via /v1/models. Configure the server URL and pick from discovered models — no API key needed for local instances.',
+    changes: [
+      { type: 'added', text: 'llamaCppApi.ts — llama.cpp client with fetchLlamaModels() for auto-discovery and streamLlama() for SSE streaming via /v1/chat/completions' },
+      { type: 'added', text: 'LlamaCppSettings type — url (default http://localhost:8080) + modelId fields' },
+      { type: 'added', text: 'Provider "llamacpp" — new option alongside web-llm, openai, ollama, and lmstudio in the Provider type' },
+      { type: 'added', text: 'llama.cpp section in SettingsPanel — URL input, Auto-Discover button, model dropdown from discovered models, Save / Test Connection / Clear buttons' },
+      { type: 'added', text: 'llama.cpp settings storage — saveLlamaCppSettings / loadLlamaCppSettings / deleteLlamaCppSettings in IndexedDB (llamaCppSettings object store, DB v11→v12)' },
+      { type: 'added', text: 'llama.cpp routing in useChat — sendUserMessage loads llama.cpp settings and streams via streamLlama when provider === "llamacpp"' },
+      { type: 'added', text: 'streamChatWithProvider llamacpp path — unified routing with context/file injection support' },
+      { type: 'added', text: 'llamaCpp i18n category — en/zh translations for all llama.cpp UI strings (title, desc, url, discoverModels, model, save, testConnection, error, corsHint)' },
+      { type: 'added', text: 'Database migration v11→v12 — adds llamaCppSettings object store' },
+      { type: 'changed', text: 'Updated version to v1.0.3' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',
