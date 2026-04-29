@@ -704,6 +704,26 @@ const openai: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Provider Switcher ──
+const provider: Record<Locale, Record<string, string>> = {
+  en: {
+    'provider.title': 'Switch inference provider',
+    'provider.local': 'Local (WebGPU)',
+    'provider.localDesc': 'Run models in your browser',
+    'provider.remoteDesc': 'Remote inference server',
+    'provider.groupLocal': 'Local Inference',
+    'provider.groupRemote': 'Remote Servers',
+  },
+  zh: {
+    'provider.title': '切换推理提供商',
+    'provider.local': '本地 (WebGPU)',
+    'provider.localDesc': '在浏览器中运行模型',
+    'provider.remoteDesc': '远程推理服务器',
+    'provider.groupLocal': '本地推理',
+    'provider.groupRemote': '远程服务器',
+  },
+}
+
 // ── Plugin Manager ──
 const plugin: Record<Locale, Record<string, string>> = {
   en: {
@@ -1552,6 +1572,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...llamaCpp[locale],
     ...vllm[locale],
     ...deepseek[locale],
+    ...provider[locale],
   }
 }
 

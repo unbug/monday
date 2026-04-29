@@ -24,6 +24,7 @@ import { AgentPanel } from './components/AgentPanel'
 import { useAgentMode } from './hooks/useAgentMode'
 import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
+import { ProviderSwitcher } from './components/ProviderSwitcher'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
@@ -559,6 +560,10 @@ export default function App() {
               </BorderBeam>
             )}
             {!online && <OfflineIndicator online={online} />}
+            <ProviderSwitcher
+              provider={chat.activeSession?.provider ?? null}
+              onChange={chat.setProvider}
+            />
           </div>
 
           <ThemeToggle mode={theme.mode} onChange={theme.setMode} />
