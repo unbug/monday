@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -16,6 +16,7 @@ const LLAMACPP_SETTINGS_STORE = 'llamaCppSettings'
 const VLLM_SETTINGS_STORE = 'vllmSettings'
 const DEEPSEEK_SETTINGS_STORE = 'deepseekSettings'
 const SEARXNG_SETTINGS_STORE = 'searxngSettings'
+const SKILLS_STORE = 'skills'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -116,6 +117,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v14→v15: add searxngSettings object store for v1.0.6 SearXNG search
       if (!db.objectStoreNames.contains(SEARXNG_SETTINGS_STORE)) {
         db.createObjectStore(SEARXNG_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v15→v16: add skills object store for v1.1 Skills System
+      if (!db.objectStoreNames.contains(SKILLS_STORE)) {
+        db.createObjectStore(SKILLS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -630,6 +635,48 @@ export async function deleteSearXngSettings(): Promise<void> {
   const tx = db.transaction(SEARXNG_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(SEARXNG_SETTINGS_STORE)
   store.delete('searxng-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── Skills storage (v1.1) ───────────────────────────────────────────────────
+
+export async function saveSkills(skills: Skill[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(SKILLS_STORE, 'readwrite')
+  const store = tx.objectStore(SKILLS_STORE)
+  store.clear()
+  for (const skill of skills) {
+    store.put(skill)
+  }
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadSkills(): Promise<Skill[]> {
+  const db = await openDB()
+  const tx = db.transaction(SKILLS_STORE, 'readonly')
+  const store = tx.objectStore(SKILLS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.getAll()
+    request.onsuccess = () => {
+      const skills = request.result as Skill[]
+      skills.sort((a, b) => b.createdAt - a.createdAt)
+      resolve(skills)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteSkill(id: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(SKILLS_STORE, 'readwrite')
+  const store = tx.objectStore(SKILLS_STORE)
+  store.delete(id)
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

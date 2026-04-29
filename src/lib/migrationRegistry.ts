@@ -24,7 +24,7 @@
 // ── Frozen schema version ────────────────────────────────────────────────────
 // This is the current DB_VERSION in storage.ts. DO NOT edit this constant
 // without bumping DB_VERSION and adding a migration in storage.ts.
-export const SCHEMA_VERSION = 15
+export const SCHEMA_VERSION = 16
 
 // ── Object stores (frozen) ──────────────────────────────────────────────────
 // The following stores are part of the frozen v1.0 schema. Future migrations
@@ -109,6 +109,12 @@ export const SCHEMA_STORES = [
     keyPath: 'id',
     sinceVersion: 15,
   },
+  {
+    name: 'skills',
+    purpose: 'User-defined skills (instructions, tags, required plugins)',
+    keyPath: 'id',
+    sinceVersion: 16,
+  },
 ] as const
 
 // ── Migration history ───────────────────────────────────────────────────────
@@ -134,6 +140,7 @@ export const MIGRATION_REGISTRY: MigrationEntry[] = [
   { version: 13, description: 'Add vllmSettings store (v1.0.4)', stores: ['vllmSettings'] },
   { version: 14, description: 'Add deepseekSettings store (v1.0.5)', stores: ['deepseekSettings'] },
   { version: 15, description: 'Add searxngSettings store (v1.0.7)', stores: ['searxngSettings'] },
+  { version: 16, description: 'Add skills store for v1.1 Skills System', stores: ['skills'] },
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

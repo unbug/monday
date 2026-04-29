@@ -243,6 +243,23 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1',
+    date: '2026-04-30',
+    title: 'Skills System — Skill Format & IndexedDB Storage',
+    description:
+      'Monday now supports user-defined skills: structured capability packs that teach the model how to behave in a specialized domain. Skills are stored in IndexedDB with a formal schema (v16) and full CRUD support. Each skill declares its name, description, markdown instructions (injected into the system prompt), required plugins, version, tags, and icon. The Skill type and storage layer are ready for the Skill Composer UI in the next iteration.',
+    changes: [
+      { type: 'added', text: 'Skill type — id, name, description, instructions (markdown), requiredPlugins, version, tags, icon, createdAt, lastUsedAt' },
+      { type: 'added', text: 'Skills IndexedDB object store (skills) — keyPath: id, additive-only store per schema governance' },
+      { type: 'added', text: 'saveSkills() — clears store and inserts all skills (bulk replace pattern)' },
+      { type: 'added', text: 'loadSkills() — retrieves all skills sorted by createdAt descending' },
+      { type: 'added', text: 'deleteSkill() — removes a single skill by id' },
+      { type: 'added', text: 'Database migration v15→v16 — adds skills object store' },
+      { type: 'added', text: 'Migration registry update — SCHEMA_VERSION 16, skills store in SCHEMA_STORES, migration entry in MIGRATION_REGISTRY' },
+      { type: 'changed', text: 'Updated version to v1.1' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

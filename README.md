@@ -529,7 +529,7 @@ the model *how* to behave in a specialized domain — e.g. "Python Debugger",
 Persona = who the AI *is*. Plugin = what tools the AI has. Skill = what the AI *knows
 how to do* (domain instructions, workflow steps, required-plugin declarations).
 
-- [ ] **Skill format** — Skill spec stored in IndexedDB: `name`, `description`,
+- [x] **Skill format** — Skill spec stored in IndexedDB: `name`, `description`,
       `instructions` (markdown injected into system prompt), `requiredPlugins` (list
       of plugin URLs/IDs), `version`, `tags`, `icon`
 - [ ] **Skill composer** — Per-session skill panel: attach 1–N skills alongside a

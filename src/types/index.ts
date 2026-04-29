@@ -353,3 +353,27 @@ export interface SearXNGResult {
   content: string
   engine: string
 }
+
+// v1.1: Skill format
+export interface Skill {
+  /** Unique skill identifier (auto-generated) */
+  id: string
+  /** Skill display name */
+  name: string
+  /** Short description shown in skill picker */
+  description: string
+  /** Markdown instructions injected into system prompt (v0.27+ skills can include workflow steps) */
+  instructions: string
+  /** Plugin URLs/IDs this skill requires to function */
+  requiredPlugins: string[]
+  /** Semantic version of the skill spec */
+  version: string
+  /** Tags for categorization (e.g. 'coding', 'writing', 'research') */
+  tags: string[]
+  /** Emoji icon shown in skill chips */
+  icon: string
+  /** When the skill was created (timestamp) */
+  createdAt: number
+  /** Last time the skill was attached to a session (timestamp) */
+  lastUsedAt: number | null
+}
