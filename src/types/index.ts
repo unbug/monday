@@ -314,10 +314,28 @@ export interface VllmSettings {
   modelId: string
 }
 
-export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm'
+// v1.0.5: DeepSeek cloud API settings
+export interface DeepSeekSettings {
+  /** DeepSeek API base URL (default: https://api.deepseek.com/v1) */
+  baseUrl: string
+  /** API key for authentication */
+  apiKey: string
+  /** Model ID to use (e.g. deepseek-chat, deepseek-reasoner) */
+  modelId: string
+}
+
+export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek'
 
 export interface OpenAIUsage {
   promptTokens: number
   completionTokens: number
   totalTokens: number
+}
+
+// v1.0.5: DeepSeek model info from /v1/models endpoint
+export interface DeepSeekModel {
+  id: string
+  object: string
+  created: number
+  owned_by: string
 }

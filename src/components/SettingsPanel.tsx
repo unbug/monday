@@ -5,15 +5,17 @@ import { t } from '../lib/i18n'
 import type { Locale } from '../lib/i18n'
 import { LanguagePicker } from './LanguagePicker'
 import { HighContrastToggle } from './HighContrastToggle'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings, loadVllmSettings, saveVllmSettings, deleteVllmSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, saveOllamaSettings, deleteOllamaSettings, loadLmStudioSettings, saveLmStudioSettings, deleteLmStudioSettings, loadLlamaCppSettings, saveLlamaCppSettings, deleteLlamaCppSettings, loadVllmSettings, saveVllmSettings, deleteVllmSettings, loadDeepSeekSettings, saveDeepSeekSettings, deleteDeepSeekSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { OllamaModel } from '../lib/ollamaApi'
 import type { LlamaCppModel } from '../lib/llamaCppApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import type { VllmModel } from '../lib/vllmApi'
+import type { DeepSeekModel } from '../lib/deepSeekApi'
 import { fetchOllamaModels } from '../lib/ollamaApi'
 import { fetchLmStudioModels } from '../lib/lmStudioApi'
 import { fetchVllmModels } from '../lib/vllmApi'
+import { fetchDeepSeekModels } from '../lib/deepSeekApi'
 
 interface Props {
   session: ChatSession
@@ -22,8 +24,8 @@ interface Props {
   onChangeLocale?: (locale: Locale) => void
   highContrast?: boolean
   onToggleHighContrast?: (hc: boolean) => void
-  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | null) => void
-  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | null
+  onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null) => void
+  provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null
 }
 
 const DEFAULT_TEMPERATURE = 0.7
@@ -68,6 +70,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
   const [vllmSaving, setVllmSaving] = useState(false)
   const [vllmTestResult, setVllmTestResult] = useState<'ok' | 'error' | null>(null)
 
+  // v1.0.5: DeepSeek settings state
+  const [deepSeekSettings, setDeepSeekSettings] = useState<{ baseUrl: string; apiKey: string; modelId: string } | null>(null)
+  const [deepSeekModels, setDeepSeekModels] = useState<DeepSeekModel[]>([])
+  const [deepSeekDiscovering, setDeepSeekDiscovering] = useState(false)
+  const [deepSeekSaving, setDeepSeekSaving] = useState(false)
+  const [deepSeekTestResult, setDeepSeekTestResult] = useState<'ok' | 'error' | null>(null)
+
   useEffect(() => {
     loadApiSettings().then((s) => setApiSettings(s)).catch(() => {})
     loadOllamaSettings().then((s) => {
@@ -81,6 +90,9 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     }).catch(() => {})
     loadVllmSettings().then((s) => {
       if (s) setVllmSettings({ url: s.url, modelId: s.modelId })
+    }).catch(() => {})
+    loadDeepSeekSettings().then((s) => {
+      if (s) setDeepSeekSettings({ baseUrl: s.baseUrl, apiKey: s.apiKey, modelId: s.modelId })
     }).catch(() => {})
   }, [])
 
@@ -261,6 +273,55 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
     setVllmSettings(null)
     setVllmModels([])
     setVllmTestResult(null)
+  }, [])
+
+  // v1.0.5: DeepSeek handlers
+  const handleDiscoverDeepSeekModels = useCallback(async () => {
+    if (!deepSeekSettings?.baseUrl || !deepSeekSettings?.apiKey) return
+    setDeepSeekDiscovering(true)
+    setDeepSeekTestResult(null)
+    try {
+      const models = await fetchDeepSeekModels(deepSeekSettings.baseUrl, deepSeekSettings.apiKey)
+      setDeepSeekModels(models)
+    } catch {
+      setDeepSeekModels([])
+    }
+    setDeepSeekDiscovering(false)
+  }, [deepSeekSettings])
+
+  const handleTestDeepSeek = useCallback(async () => {
+    if (!deepSeekSettings?.baseUrl || !deepSeekSettings?.apiKey) return
+    setDeepSeekTestResult(null)
+    try {
+      const resp = await fetch(`${deepSeekSettings.baseUrl.replace(/\/+$/, '')}/v1/models`, {
+        headers: { Authorization: `Bearer ${deepSeekSettings.apiKey}` },
+      })
+      if (resp.ok) {
+        setDeepSeekTestResult('ok')
+      } else {
+        setDeepSeekTestResult('error')
+      }
+    } catch {
+      setDeepSeekTestResult('error')
+    }
+  }, [deepSeekSettings])
+
+  const handleSaveDeepSeekSettings = useCallback(async () => {
+    if (!deepSeekSettings?.baseUrl || !deepSeekSettings?.apiKey || !deepSeekSettings?.modelId) return
+    setDeepSeekSaving(true)
+    try {
+      await saveDeepSeekSettings({ baseUrl: deepSeekSettings.baseUrl, apiKey: deepSeekSettings.apiKey, modelId: deepSeekSettings.modelId })
+      setDeepSeekSaving(false)
+    } catch {
+      setDeepSeekSaving(false)
+    }
+  }, [deepSeekSettings])
+
+  const handleClearDeepSeekSettings = useCallback(async () => {
+    await deleteDeepSeekSettings()
+    setDeepSeekSettings(null)
+    setDeepSeekModels([])
+    setDeepSeekTestResult(null)
   }, [])
   const handleDiscoverLlamaModels = useCallback(async () => {
     if (!llamaCppSettings?.url) return
@@ -552,6 +613,13 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                     type="button"
                   >
                     vLLM
+                  </button>
+                  <button
+                    className={`api-provider-btn ${provider === 'deepseek' ? 'api-provider-btn--active' : ''}`}
+                    onClick={() => onSetProvider('deepseek')}
+                    type="button"
+                  >
+                    DeepSeek
                   </button>
                   <button
                     className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
@@ -979,6 +1047,99 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 {vllmTestResult === 'error' && (
                   <span className="api-status api-status-error">
                     {t('vllm.error')} — {t('vllm.corsHint')}
+                  </span>
+                )}
+              </>
+            )}
+
+            {/* v1.0.5: DeepSeek cloud API settings */}
+            {provider === 'deepseek' && (
+              <>
+                <div className="settings-section-title">{t('deepseek.title')}</div>
+                <div className="settings-section-desc">{t('deepseek.desc')}</div>
+                <div className="settings-field">
+                  <label>{t('deepseek.baseUrl')}</label>
+                  <input
+                    type="url"
+                    className="settings-input"
+                    placeholder={t('deepseek.placeholderUrl')}
+                    value={deepSeekSettings?.baseUrl ?? ''}
+                    onChange={(e) => setDeepSeekSettings({ baseUrl: e.target.value, apiKey: '', modelId: '' })}
+                  />
+                </div>
+                <div className="settings-field">
+                  <label>{t('deepseek.apiKey')}</label>
+                  <input
+                    type="password"
+                    className="settings-input"
+                    placeholder={t('deepseek.placeholderKey')}
+                    value={deepSeekSettings?.apiKey ?? ''}
+                    onChange={(e) => setDeepSeekSettings(deepSeekSettings ? { ...deepSeekSettings, apiKey: e.target.value } : { baseUrl: '', apiKey: e.target.value, modelId: '' })}
+                  />
+                </div>
+                <div className="settings-row">
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleDiscoverDeepSeekModels}
+                    disabled={deepSeekDiscovering || !deepSeekSettings?.baseUrl || !deepSeekSettings?.apiKey}
+                    type="button"
+                  >
+                    {deepSeekDiscovering
+                      ? t('deepseek.discovering')
+                      : t('deepseek.discoverModels')}
+                  </button>
+                </div>
+                {deepSeekModels.length > 0 && (
+                  <div className="settings-field">
+                    <label>{t('deepseek.model')}</label>
+                    <select
+                      className="settings-select"
+                      value={deepSeekSettings?.modelId ?? ''}
+                      onChange={(e) => setDeepSeekSettings(deepSeekSettings ? { ...deepSeekSettings, modelId: e.target.value } : { baseUrl: '', apiKey: '', modelId: e.target.value })}
+                    >
+                      <option value="">— {t('deepseek.noModels')} —</option>
+                      {deepSeekModels.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {deepSeekModels.length === 0 && deepSeekDiscovering === false && deepSeekSettings?.baseUrl && deepSeekSettings?.apiKey && (
+                  <div className="settings-hint">{t('deepseek.noModels')}</div>
+                )}
+                <div className="settings-row">
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleSaveDeepSeekSettings}
+                    disabled={deepSeekSaving || !deepSeekSettings?.baseUrl || !deepSeekSettings?.apiKey || !deepSeekSettings?.modelId}
+                    type="button"
+                  >
+                    {deepSeekSaving ? t('deepseek.saved') : t('deepseek.save')}
+                  </button>
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleTestDeepSeek}
+                    disabled={!deepSeekSettings?.baseUrl || !deepSeekSettings?.apiKey}
+                    type="button"
+                  >
+                    {t('deepseek.testConnection')}
+                  </button>
+                  <button
+                    className="api-provider-btn"
+                    onClick={handleClearDeepSeekSettings}
+                    type="button"
+                  >
+                    {t('deepseek.clear')}
+                  </button>
+                </div>
+                {deepSeekTestResult === 'ok' && (
+                  <span className="api-status api-status-ok">{t('deepseek.connected')}</span>
+                )}
+                {deepSeekTestResult === 'error' && (
+                  <span className="api-status api-status-error">
+                    {t('deepseek.error')}
                   </span>
                 )}
               </>

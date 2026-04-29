@@ -1,7 +1,7 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings } from '../types'
 
 const DB_NAME = 'monday-ai'
-const DB_VERSION = 13
+const DB_VERSION = 14
 const SESSIONS_STORE = 'sessions'
 const KNOWLEDGE_STORE = 'knowledge'
 const VECTOR_STORE = 'vectorIndex'
@@ -13,6 +13,7 @@ const OLLAMA_SETTINGS_STORE = 'ollamaSettings'
 const LMSTUDIO_SETTINGS_STORE = 'lmstudioSettings'
 const LLAMACPP_SETTINGS_STORE = 'llamaCppSettings'
 const VLLM_SETTINGS_STORE = 'vllmSettings'
+const DEEPSEEK_SETTINGS_STORE = 'deepseekSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -101,6 +102,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v12→v13: add vllmSettings object store for v1.0.4 vLLM
       if (!db.objectStoreNames.contains(VLLM_SETTINGS_STORE)) {
         db.createObjectStore(VLLM_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v13→v14: add deepseekSettings object store for v1.0.5 DeepSeek API
+      if (!db.objectStoreNames.contains(DEEPSEEK_SETTINGS_STORE)) {
+        db.createObjectStore(DEEPSEEK_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -541,6 +546,43 @@ export async function deleteVllmSettings(): Promise<void> {
   const tx = db.transaction(VLLM_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(VLLM_SETTINGS_STORE)
   store.delete('vllm-settings')
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── DeepSeek Settings storage (v1.0.5) ────────────────────────────────────────
+
+export async function saveDeepSeekSettings(settings: DeepSeekSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(DEEPSEEK_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(DEEPSEEK_SETTINGS_STORE)
+  store.put({ id: 'deepseek-settings', ...settings })
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadDeepSeekSettings(): Promise<DeepSeekSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(DEEPSEEK_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(DEEPSEEK_SETTINGS_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get('deepseek-settings')
+    request.onsuccess = () => {
+      resolve((request.result as DeepSeekSettings | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteDeepSeekSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(DEEPSEEK_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(DEEPSEEK_SETTINGS_STORE)
+  store.delete('deepseek-settings')
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

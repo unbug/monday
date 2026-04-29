@@ -618,6 +618,46 @@ const vllm: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── DeepSeek Cloud API ──
+const deepseek: Record<Locale, Record<string, string>> = {
+  en: {
+    'deepseek.title': 'DeepSeek',
+    'deepseek.desc': 'Connect to the DeepSeek cloud API for chat and reasoning models (deepseek-chat, deepseek-reasoner).',
+    'deepseek.baseUrl': 'Base URL',
+    'deepseek.placeholderUrl': 'https://api.deepseek.com/v1',
+    'deepseek.apiKey': 'API Key',
+    'deepseek.placeholderKey': 'sk-...',
+    'deepseek.discoverModels': 'Auto-Discover',
+    'deepseek.discovering': 'Discovering…',
+    'deepseek.noModels': 'No models found — check your API key',
+    'deepseek.model': 'Model',
+    'deepseek.save': 'Save',
+    'deepseek.saved': '✓ Saved',
+    'deepseek.testConnection': 'Test Connection',
+    'deepseek.connected': '✓ Connected',
+    'deepseek.error': 'Connection failed',
+    'deepseek.clear': 'Clear',
+  },
+  zh: {
+    'deepseek.title': 'DeepSeek',
+    'deepseek.desc': '连接 DeepSeek 云端 API，支持对话模型（deepseek-chat）和推理模型（deepseek-reasoner）。',
+    'deepseek.baseUrl': '基础 URL',
+    'deepseek.placeholderUrl': 'https://api.deepseek.com/v1',
+    'deepseek.apiKey': 'API 密钥',
+    'deepseek.placeholderKey': 'sk-...',
+    'deepseek.discoverModels': '自动发现',
+    'deepseek.discovering': '发现中…',
+    'deepseek.noModels': '未找到模型 — 请检查 API 密钥',
+    'deepseek.model': '模型',
+    'deepseek.save': '保存',
+    'deepseek.saved': '✓ 已保存',
+    'deepseek.testConnection': '测试连接',
+    'deepseek.connected': '✓ 已连接',
+    'deepseek.error': '连接失败',
+    'deepseek.clear': '清除',
+  },
+}
+
 // ── OpenAI API Settings ──
 const openai: Record<Locale, Record<string, string>> = {
   en: {
@@ -1511,6 +1551,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...lmStudio[locale],
     ...llamaCpp[locale],
     ...vllm[locale],
+    ...deepseek[locale],
   }
 }
 

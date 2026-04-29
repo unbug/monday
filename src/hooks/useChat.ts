@@ -1,11 +1,13 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { streamLmStudio } from '../lib/lmStudioApi'
 import type { VllmModel } from '../lib/vllmApi'
 import { streamVllm } from '../lib/vllmApi'
+import type { DeepSeekModel } from '../lib/deepSeekApi'
+import { streamDeepSeek } from '../lib/deepSeekApi'
 import { useTokenStats } from './useTokenStats'
 import {
   createMessage,
@@ -274,6 +276,7 @@ export function useChat(
         let lmStudioSettings: { url: string; modelId: string } | null = null
         let llamaCppSettings: { url: string; modelId: string } | null = null
         let vllmSettings: { url: string; modelId: string } | null = null
+        let deepSeekSettings: { baseUrl: string; apiKey: string; modelId: string } | null = null
         if (activeProvider === 'openai') {
           try {
             apiSettings = await loadApiSettings()
@@ -310,6 +313,16 @@ export function useChat(
             const vSettings = await loadVllmSettings()
             if (vSettings) {
               vllmSettings = { url: vSettings.url, modelId: vSettings.modelId }
+            }
+          } catch {
+            // Ignore — will fall through to local
+          }
+        }
+        if (activeProvider === 'deepseek') {
+          try {
+            const dsSettings = await loadDeepSeekSettings()
+            if (dsSettings) {
+              deepSeekSettings = { baseUrl: dsSettings.baseUrl, apiKey: dsSettings.apiKey, modelId: dsSettings.modelId }
             }
           } catch {
             // Ignore — will fall through to local
@@ -537,6 +550,48 @@ export function useChat(
           } catch (vllmErr: unknown) {
             const msg = vllmErr instanceof Error ? vllmErr.message : String(vllmErr)
             throw new Error(`vLLM error: ${msg}`)
+          }
+        } else if (activeProvider === 'deepseek' && deepSeekSettings) {
+          // v1.0.5: DeepSeek cloud API path
+          try {
+            let dsFullContent = ''
+            let dsTokenCount = 0
+            let dsFinalUsage: { promptTokens: number; completionTokens: number; totalTokens: number } | null = null
+            for await (const token of streamDeepSeek(
+              deepSeekSettings.baseUrl,
+              deepSeekSettings.modelId,
+              deepSeekSettings.apiKey,
+              refineMessages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system' | 'tool', content: m.content })),
+              {
+                temperature: opts.temperature ?? 0.7,
+                topP: opts.top_p ?? 0.9,
+                maxTokens: opts.maxTokens ?? 1024,
+                systemPrompt: summarizedPrompt,
+              },
+            )) {
+              if (abortRef.current) break
+              dsFullContent += token
+              dsTokenCount++
+              tokenStats.addTokens(1)
+              const captured = dsFullContent
+              currentSessions = currentSessions.map((s) =>
+                s.id === sessionId
+                  ? {
+                      ...s,
+                      messages: s.messages.map((m) =>
+                        m.id === assistantMsg.id
+                          ? { ...m, content: captured }
+                          : m,
+                      ),
+                    }
+                  : s,
+              )
+              setSessions([...currentSessions])
+            }
+            dsFinalUsage = { promptTokens: 0, completionTokens: dsTokenCount, totalTokens: dsTokenCount }
+          } catch (deepSeekErr: unknown) {
+            const msg = deepSeekErr instanceof Error ? deepSeekErr.message : String(deepSeekErr)
+            throw new Error(`DeepSeek error: ${msg}`)
           }
         } else if (supportsTools && toolDefs.length > 0) {
           // --- Function calling path (v0.27) ---
@@ -1012,7 +1067,7 @@ export function useChat(
 
   // v1.0.0: set provider for the active session
   const setProvider = useCallback(
-    (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | null) => {
+    (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null) => {
       if (!activeSessionId) return
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId

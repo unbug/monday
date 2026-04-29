@@ -172,6 +172,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.0.5',
+    date: '2026-04-29',
+    title: 'DeepSeek API — Cloud Provider with Chat & Reasoner Models',
+    description:
+      'Connect Monday to the DeepSeek cloud API for first-class support of deepseek-chat (chat) and deepseek-reasoner (reasoning) models. Configure your API key and base URL in Settings — stream responses via DeepSeek\'s OpenAI-compatible /v1/chat/completions endpoint. Auto-discovery lists available models from your account.',
+    changes: [
+      { type: 'added', text: 'deepSeekApi.ts — DeepSeek client with fetchDeepSeekModels() for auto-discovery and streamDeepSeek() for SSE streaming via /v1/chat/completions' },
+      { type: 'added', text: 'DeepSeekSettings type — baseUrl (default https://api.deepseek.com/v1) + apiKey + modelId fields' },
+      { type: 'added', text: 'Provider "deepseek" — new option alongside web-llm, openai, ollama, lmstudio, llamacpp, and vllm in the Provider type' },
+      { type: 'added', text: 'DeepSeek section in SettingsPanel — Base URL input, API Key (password), Auto-Discover button, model dropdown, Save / Test Connection / Clear buttons' },
+      { type: 'added', text: 'DeepSeek settings storage — saveDeepSeekSettings / loadDeepSeekSettings / deleteDeepSeekSettings in IndexedDB (deepseekSettings object store, DB v13→v14)' },
+      { type: 'added', text: 'DeepSeek routing in useChat — sendUserMessage loads DeepSeek settings and streams via streamDeepSeek when provider === "deepseek"' },
+      { type: 'added', text: 'streamChatWithProvider deepseek path — unified routing with context/file injection support' },
+      { type: 'added', text: 'deepseek i18n category — en/zh translations for all DeepSeek UI strings (title, desc, baseUrl, apiKey, discoverModels, model, save, testConnection, error)' },
+      { type: 'added', text: 'Database migration v13→v14 — adds deepseekSettings object store' },
+      { type: 'changed', text: 'Updated version to v1.0.5' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

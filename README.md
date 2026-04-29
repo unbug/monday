@@ -505,7 +505,7 @@ The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
       server
 - [x] **llama.cpp server** — Connect to `llama.cpp --server` HTTP mode
 - [x] **vLLM** — Connect to a vLLM inference endpoint
-- [ ] **DeepSeek API** — First-class DeepSeek cloud provider (chat +
+- [x] **DeepSeek API** — First-class DeepSeek cloud provider (chat +
       reasoner models)
 - [ ] **Provider switcher** — Per-session toggle between WebGPU local
       inference and external API providers
@@ -797,7 +797,7 @@ for future work — the `### Versioned task breakdown` above is.
 - [x] **LM Studio** — Connect to LM Studio's built-in OpenAI-compatible local server
 - [x] **llama.cpp server** — Connect to llama.cpp's HTTP server (`--server` mode)
 - [x] **vLLM** — Connect to a vLLM inference server endpoint
-- [ ] **DeepSeek API** — First-class DeepSeek cloud API provider (chat + reasoner models)
+- [x] **DeepSeek API** — First-class DeepSeek cloud API provider (chat + reasoner models)
 - [ ] **Provider switcher** — Toggle between WebGPU local inference and external API providers in-session
 - [ ] **SearXNG integration** — Web search via a self-hosted SearXNG instance URL
 - [ ] **Web search tool** — Inject search results as context before sending to the model
