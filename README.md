@@ -516,6 +516,8 @@ The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
 **Release gate**: a 24-hour soak test (1 hour with each provider) passes;
 the storage migration test from v0.25 → v1.0 round-trips without loss.
 
+Released: 2026-04-30
+
 #### v1.1 — Skills System
 
 Inspired by [OpenClaw's AgentSkills/SKILL.md ecosystem](https://docs.openclaw.ai/tools/skills) and
