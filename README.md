@@ -507,7 +507,7 @@ The "1.0" promise: anything saved in v1.0 keeps working until v2.0.
 - [x] **vLLM** — Connect to a vLLM inference endpoint
 - [x] **DeepSeek API** — First-class DeepSeek cloud provider (chat +
       reasoner models)
-- [ ] **Provider switcher** — Per-session toggle between WebGPU local
+- [x] **Provider switcher** — Per-session toggle between WebGPU local
       inference and external API providers
 - [ ] **SearXNG integration** — Web search via a user-supplied SearXNG URL
 - [ ] **Stable storage schema v1** — Migration registry frozen; future
@@ -798,7 +798,7 @@ for future work — the `### Versioned task breakdown` above is.
 - [x] **llama.cpp server** — Connect to llama.cpp's HTTP server (`--server` mode)
 - [x] **vLLM** — Connect to a vLLM inference server endpoint
 - [x] **DeepSeek API** — First-class DeepSeek cloud API provider (chat + reasoner models)
-- [ ] **Provider switcher** — Toggle between WebGPU local inference and external API providers in-session
+- [x] **Provider switcher** — Toggle between WebGPU local inference and external API providers in-session
 - [ ] **SearXNG integration** — Web search via a self-hosted SearXNG instance URL
 - [ ] **Web search tool** — Inject search results as context before sending to the model
 
