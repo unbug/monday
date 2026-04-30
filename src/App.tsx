@@ -560,6 +560,14 @@ export default function App() {
             // v1.0.0: provider
             provider={chat.activeSession?.provider ?? null}
             onSetProvider={chat.setProvider}
+            // v1.2.1: correction capture
+            correctionCaptureEnabled={chat.correctionCaptureEnabled}
+            onToggleCorrectionCapture={() => chat.setCorrectionCaptureEnabled((prev: boolean) => {
+              const next = !prev
+              try { localStorage.setItem('monday-correction-capture', String(next)) }
+              catch { /* best-effort */ }
+              return next
+            })}
           />
         </>
       )}

@@ -404,4 +404,6 @@ export interface MemoryEntry {
   createdAt: number
   /** When the memory was last edited (timestamp) */
   updatedAt: number
+  /** Source: 'manual' = user-created, 'correction' = auto-captured from message edit/regenerate (v1.2.1) */
+  source: 'manual' | 'correction'
 }

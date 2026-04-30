@@ -64,6 +64,9 @@ interface Props {
   // v1.0.0: provider
   provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null
   onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null) => void
+  // v1.2.1: correction capture
+  correctionCaptureEnabled?: boolean
+  onToggleCorrectionCapture?: () => void
 }
 
 export function Sidebar({
@@ -100,6 +103,9 @@ export function Sidebar({
   onToggleHighContrast,
   provider,
   onSetProvider,
+  // v1.2.1: correction capture
+  correctionCaptureEnabled,
+  onToggleCorrectionCapture,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -275,6 +281,9 @@ export function Sidebar({
             onToggleHighContrast={onToggleHighContrast}
             provider={provider}
             onSetProvider={onSetProvider}
+            // v1.2.1: correction capture
+            correctionCaptureEnabled={correctionCaptureEnabled}
+            onToggleCorrectionCapture={onToggleCorrectionCapture}
           />
         </div>
       )}

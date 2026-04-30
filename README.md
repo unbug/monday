@@ -569,7 +569,7 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 - [x] **Memory namespaces** — Memories scoped to three levels: global (all sessions),
       per-persona, per-skill; the active session inherits the union of applicable
       namespaces
-- [ ] **Correction capture** — When a user edits or regenerates a message, optionally
+- [x] **Correction capture** — When a user edits or regenerates a message, optionally
       record the correction as a named memory entry ("Prefer concise answers",
       "Always use TypeScript strict mode"); visible in the memories panel
 - [ ] **Ontology store** — Typed entity graph: Person, Project, Task, Event, Document;

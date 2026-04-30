@@ -384,6 +384,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.2.1',
+    date: '2026-05-01',
+    title: 'Self-Improving Agent — Correction Capture',
+    description:
+      'When a user edits or regenerates a message, the correction is automatically captured as a named memory entry. These corrections appear in the Memory panel and help the persona learn user preferences over time. A toggle in Settings lets users disable correction capture.',
+    changes: [
+      { type: 'added', text: 'MemoryEntry.source field — distinguishes manual entries from auto-captured corrections' },
+      { type: 'added', text: 'CorrectionEvent type — messageId, type (edit/regenerate), oldContent, newContent in storage.ts' },
+      { type: 'added', text: 'saveCorrection() — creates correction-type memory entries in IndexedDB' },
+      { type: 'added', text: 'editMessage correction capture — diffs old/new content and saves as correction entry' },
+      { type: 'added', text: 'regenerateMessage correction capture — captures old assistant content before regeneration, saves diff after' },
+      { type: 'added', text: 'Correction capture toggle in Settings — enable/disable via switch; persists in localStorage' },
+      { type: 'added', text: 'PersistentMemoryPanel correction filter — new Corrections tab showing auto-captured entries' },
+      { type: 'added', text: 'Correction badges — ✏️ Edit / 🔄 Regenerate badges on correction memory cards' },
+      { type: 'added', text: 'Correction capture i18n — en/zh translations for corrections filter and badge labels' },
+      { type: 'added', text: 'Correction card CSS — accent-colored left border, correction badge styling, toggle switch' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

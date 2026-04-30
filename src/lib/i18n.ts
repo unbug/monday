@@ -368,6 +368,11 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.highContrastHint': 'Increase contrast for better visibility. Works with both light and dark themes.',
     'settings.highContrastOn': 'High Contrast On',
     'settings.highContrastOff': 'High Contrast Off',
+    // v1.2.1: correction capture
+    'settings.correctionCapture': 'Capture Corrections',
+    'settings.correctionCaptureHint': 'Automatically save message edits and regenerations as memory entries. The model uses these to learn your preferences.',
+    'settings.correctionCaptureOn': 'Corrections captured',
+    'settings.correctionCaptureOff': 'Corrections not captured',
   },
   zh: {
     'settings.title': '设置',
@@ -397,6 +402,11 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.highContrastHint': '提高对比度以增强可见性。同时适用于亮色和暗色主题。',
     'settings.highContrastOn': '高对比度已开启',
     'settings.highContrastOff': '高对比度已关闭',
+    // v1.2.1: correction capture
+    'settings.correctionCapture': '捕获修正',
+    'settings.correctionCaptureHint': '自动将消息编辑和重新生成为记忆条目。模型通过这些学习你的偏好。',
+    'settings.correctionCaptureOn': '已捕获修正',
+    'settings.correctionCaptureOff': '未捕获修正',
   },
 }
 
@@ -1763,6 +1773,10 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
     'memory.targetSkill': 'Skill',
     'memory.selectPersona': 'Select a persona…',
     'memory.selectSkill': 'Select a skill…',
+    // v1.2.1: correction capture
+    'memory.corrections': 'Corrections',
+    'memory.correctionEdit': '✏️ Edit',
+    'memory.correctionRegen': '🔄 Regenerate',
   },
   zh: {
     'memory.title': '持久记忆',
@@ -1794,6 +1808,10 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
     'memory.targetSkill': '技能',
     'memory.selectPersona': '选择人格…',
     'memory.selectSkill': '选择技能…',
+    // v1.2.1: correction capture
+    'memory.corrections': '修正',
+    'memory.correctionEdit': '✏️ 编辑',
+    'memory.correctionRegen': '🔄 重新生成',
   },
 }
 

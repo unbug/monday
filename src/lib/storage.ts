@@ -785,6 +785,7 @@ export async function createMemory(key: string, value: string, namespace: Memory
     namespace,
     targetId,
     sessionId,
+    source: 'manual',
     createdAt: now,
     updatedAt: now,
   }
@@ -801,4 +802,48 @@ export async function updateMemory(id: string, key: string, value: string): Prom
     memories[idx].updatedAt = Date.now()
     await saveMemories(memories)
   }
+}
+
+// ── Correction capture (v1.2.1) ─────────────────────────────────────────────
+// Auto-captures message edits/regenerations as named memory entries.
+// The persona reads these corrections at session start to infer user preferences.
+
+export interface CorrectionEvent {
+  /** Message ID that was corrected */
+  messageId: string
+  /** Correction type */
+  type: 'edit' | 'regenerate'
+  /** Old content (before correction) */
+  oldContent: string
+  /** New content (after correction) */
+  newContent: string
+}
+
+export async function saveCorrection(
+  correction: CorrectionEvent,
+  sessionId: string,
+): Promise<MemoryEntry> {
+  const now = Date.now()
+  const typeLabel = correction.type === 'edit' ? 'edit' : 'regen'
+  const key = `correction:${typeLabel}`
+  const value = JSON.stringify({
+    messageId: correction.messageId,
+    type: correction.type,
+    oldContent: correction.oldContent,
+    newContent: correction.newContent,
+    capturedAt: now,
+  })
+  const memory: MemoryEntry = {
+    id: crypto.randomUUID(),
+    key,
+    value,
+    namespace: 'global',
+    targetId: null,
+    sessionId,
+    createdAt: now,
+    updatedAt: now,
+    source: 'correction',
+  }
+  await saveMemories([...(await loadMemories()), memory])
+  return memory
 }

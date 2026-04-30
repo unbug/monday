@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings, loadSkills } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings, loadSkills, saveCorrection } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { streamLmStudio } from '../lib/lmStudioApi'
@@ -93,6 +93,14 @@ export function useChat(
   const [isSearching, setIsSearching] = useState(false)
   const [searchResults, setSearchResults] = useState<SearXNGResult[] | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>('')
+  // v1.2.1: correction capture toggle
+  const [correctionCaptureEnabled, setCorrectionCaptureEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('monday-correction-capture') !== 'false'
+    } catch {
+      return true
+    }
+  })
   // v0.27: tool call events for display
   const [toolCallEvents, setToolCallEvents] = useState<ToolCallEvent[]>([])
   // v0.30: model chaining state
@@ -221,6 +229,7 @@ export function useChat(
       images?: Array<{ id: string; data: string; name?: string }>,
       files?: Array<{ id: string; name: string; size: number; type: string; content: string }>,
       citations?: CitationEntry[],
+      oldAssistantContent?: string,
     ) => {
       let currentSessions = [...sessions]
       let sessionId = activeSessionId
@@ -893,6 +902,14 @@ export function useChat(
         }
 
         await persistSessions(currentSessions)
+
+        // v1.2.1: capture regeneration correction
+        if (correctionCaptureEnabled && oldAssistantContent && oldAssistantContent !== fullContent && sessionId) {
+          saveCorrection(
+            { messageId: assistantMsg.id, type: 'regenerate', oldContent: oldAssistantContent, newContent: fullContent },
+            sessionId,
+          ).catch(() => { /* correction capture is best-effort */ })
+        }
       } catch (err) {
         tokenStats.finishStreaming({
           promptTokens: 0,
@@ -931,6 +948,7 @@ export function useChat(
       persistSessions,
       tokenStats,
       options?.onGenerationComplete,
+      correctionCaptureEnabled,
     ],
   )
 
@@ -1001,6 +1019,10 @@ export function useChat(
 
       // Find the current assistant message
       const assistantMsg = active.messages.find((m) => m.isStreaming)
+      if (!assistantMsg) return
+
+      // Capture old content for correction capture
+      const oldAssistantContent = assistantMsg.content
 
       // Clear the current assistant response
       const updatedSessions = sessions.map((s) =>
@@ -1017,14 +1039,30 @@ export function useChat(
       )
       setSessions(updatedSessions)
 
-      // Re-send the last user message
-      sendUserMessage(lastUserMsg.content, lastUserMsg, assistantMsg)
+      // Re-send the last user message with old content for correction capture
+      sendUserMessage(lastUserMsg.content, lastUserMsg, assistantMsg, undefined, undefined, undefined, undefined, oldAssistantContent)
     },
     [sessions, activeSessionId, sendUserMessage],
   )
 
   const editMessage = useCallback(
     (messageId: string, newContent: string) => {
+      const active = sessions.find((s) => s.id === activeSessionId)
+      if (!active) return
+      const msg = active.messages.find((m) => m.id === messageId)
+      if (!msg) return
+
+      const oldContent = msg.content
+      if (oldContent === newContent) return // no actual change
+
+      // v1.2.1: capture correction as memory entry
+      if (correctionCaptureEnabled && activeSessionId) {
+        saveCorrection(
+          { messageId, type: 'edit', oldContent, newContent },
+          activeSessionId,
+        ).catch(() => { /* correction capture is best-effort */ })
+      }
+
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId
           ? {
@@ -1041,7 +1079,7 @@ export function useChat(
       setSessions(updatedSessions)
       persistSessions(updatedSessions)
     },
-    [sessions, activeSessionId, persistSessions],
+    [sessions, activeSessionId, persistSessions, correctionCaptureEnabled],
   )
 
   const deleteSession = useCallback(
@@ -1259,5 +1297,8 @@ export function useChat(
     searchResults,
     searchQuery,
     toggleSearch,
+    // v1.2.1: correction capture
+    correctionCaptureEnabled,
+    setCorrectionCaptureEnabled,
   }
 }

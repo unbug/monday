@@ -26,13 +26,16 @@ interface Props {
   onToggleHighContrast?: (hc: boolean) => void
   onSetProvider?: (provider: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null) => void
   provider?: 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek' | null
+  // v1.2.1: correction capture
+  correctionCaptureEnabled?: boolean
+  onToggleCorrectionCapture?: () => void
 }
 
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_TOP_P = 0.9
 const DEFAULT_MAX_TOKENS = 1024
 
-export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast, onSetProvider, provider }: Props) {
+export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast, onSetProvider, provider, correctionCaptureEnabled, onToggleCorrectionCapture }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const notifications = useNotifications()
 
@@ -601,6 +604,31 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 highContrast={highContrast ?? false}
                 onChange={onToggleHighContrast}
               />
+            </div>
+          )}
+
+          {/* v1.2.1: Correction Capture */}
+          {onToggleCorrectionCapture !== undefined && (
+            <div className="settings-section">
+              <div className="settings-section-header">
+                <span className="settings-section-title">{t('settings.correctionCapture')}</span>
+              </div>
+              <p className="settings-hint">
+                {t('settings.correctionCaptureHint')}
+              </p>
+              <div className="settings-toggle-row">
+                <span className={`settings-toggle-label ${correctionCaptureEnabled ? 'active' : ''}`}>
+                  {correctionCaptureEnabled ? t('settings.correctionCaptureOn') : t('settings.correctionCaptureOff')}
+                </span>
+                <button
+                  className={`settings-toggle-btn ${correctionCaptureEnabled ? 'on' : 'off'}`}
+                  onClick={onToggleCorrectionCapture}
+                  role="switch"
+                  aria-checked={correctionCaptureEnabled}
+                >
+                  <span className="settings-toggle-knob" />
+                </button>
+              </div>
             </div>
           )}
 

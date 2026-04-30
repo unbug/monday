@@ -74,7 +74,7 @@ export function PersistentMemoryPanel({
   const [newKey, setNewKey] = useState('')
   const [newValue, setNewValue] = useState('')
   const [showAdd, setShowAdd] = useState(false)
-  const [filter, setFilter] = useState<'all' | 'global' | 'persona' | 'skill'>('all')
+  const [filter, setFilter] = useState<'all' | 'global' | 'persona' | 'skill' | 'correction'>('all')
   const [newNamespace, setNewNamespace] = useState<MemoryEntry['namespace']>('global')
   const [personaTarget, setPersonaTarget] = useState('')
   const [skillTarget, setSkillTarget] = useState('')
@@ -137,15 +137,15 @@ export function PersistentMemoryPanel({
 
       {/* Filter tabs */}
       <div className="persistent-memory-filters">
-        {(['all', 'global', 'persona', 'skill'] as const).map((ns) => (
+        {(['all', 'global', 'persona', 'skill', 'correction'] as const).map((ns) => (
           <button
             key={ns}
             className={`persistent-memory-filter ${filter === ns ? 'active' : ''}`}
             onClick={() => setFilter(ns)}
           >
-            {ns === 'all' ? t('memory.all') : namespaceLabel(ns)}
+            {ns === 'all' ? t('memory.all') : ns === 'correction' ? t('memory.corrections') : namespaceLabel(ns)}
             <span className="persistent-memory-count">
-              {ns === 'all' ? memories.length : memories.filter((m) => m.namespace === ns).length}
+              {ns === 'all' ? memories.length : ns === 'correction' ? memories.filter((m) => m.source === 'correction').length : memories.filter((m) => m.namespace === ns).length}
             </span>
           </button>
         ))}
@@ -249,9 +249,15 @@ export function PersistentMemoryPanel({
         ) : (
           filtered.map((memory) => {
             const targetName = targetLabel(memory, personas, skills)
+            const isCorrection = memory.source === 'correction'
             return (
-              <div key={memory.id} className="persistent-memory-card">
+              <div key={memory.id} className={`persistent-memory-card ${isCorrection ? 'persistent-memory-card-correction' : ''}`}>
                 <div className="persistent-memory-card-header">
+                  {isCorrection && (
+                    <span className="persistent-memory-correction-badge">
+                      {memory.key.includes('edit') ? t('memory.correctionEdit') : t('memory.correctionRegen')}
+                    </span>
+                  )}
                   <span className="persistent-memory-key">
                     {editingId === memory.id ? (
                       <input
