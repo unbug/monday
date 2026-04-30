@@ -572,7 +572,7 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 - [x] **Correction capture** — When a user edits or regenerates a message, optionally
       record the correction as a named memory entry ("Prefer concise answers",
       "Always use TypeScript strict mode"); visible in the memories panel
-- [ ] **Ontology store** — Typed entity graph: Person, Project, Task, Event, Document;
+- [x] **Ontology store** — Typed entity graph: Person, Project, Task, Event, Document;
       entities have properties + relationships; browsable/editable in a side panel;
       injected as a compact context block when relevant entities are mentioned
 - [ ] **Session compaction with learning** — When compacting long sessions (v0.30
