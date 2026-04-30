@@ -267,6 +267,24 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1.1',
+    date: '2026-04-30',
+    title: 'Skills System — Community Skill Registry',
+    description:
+      'A curated community skill registry with 26 launch skills across 6 categories (Coding, Writing, Research, Data, Language, Creative). Browse, search, and install skills from the Skill Registry view (sidebar nav → Skills icon). Each skill includes structured instructions that are injected into the system prompt when attached to a session. Skills are marked as recommended where appropriate and can be uninstalled from the marketplace.',
+    changes: [
+      { type: 'added', text: 'Community skill registry (data/skillRegistry.ts) — 26 curated skills across 6 categories: Coding (7), Writing (4), Research (3), Data (3), Language (3), Creative (4)' },
+      { type: 'added', text: 'SkillRegistry component — marketplace UI with category filter, search, recommended badges, install/uninstall toggle, and tag display' },
+      { type: 'added', text: 'Skill Registry view route (/monday/skill-registry) — accessible from sidebar nav and command palette' },
+      { type: 'added', text: 'Install flow — clicking Install creates a Skill entry in IndexedDB; Installed state shows with uninstall option' },
+      { type: 'added', text: 'Search and filter — real-time search across name, description, and tags; category pills for filtering' },
+      { type: 'added', text: 'Recommended badge — ⭐ Recommended indicator on skills recommended for beginners' },
+      { type: 'added', text: 'Skill registry i18n — en/zh translations for title, subtitle, search, install, installed, recommended, no results strings' },
+      { type: 'added', text: 'Skill registry CSS — full dark terminal-style with light theme overrides for cards, grid, buttons, and badges' },
+      { type: 'changed', text: 'Updated version to v1.1.1' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

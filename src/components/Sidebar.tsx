@@ -48,6 +48,7 @@ interface Props {
   onOpenAgent?: () => void
   onOpenUsageAnalytics?: () => void
   onOpenComparison?: () => void
+  onOpenSkillRegistry?: () => void
   onOpenShortcuts?: () => void
   onOpenInNewWindow?: (sessionId: string) => void
   onShare?: () => void
@@ -83,6 +84,7 @@ export function Sidebar({
   onOpenAgent,
   onOpenUsageAnalytics,
   onOpenComparison,
+  onOpenSkillRegistry,
   onOpenShortcuts,
   onOpenInNewWindow,
   onShare,
@@ -414,6 +416,19 @@ export function Sidebar({
                   <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
                   <line x1="16" y1="8" x2="2" y2="22" />
                   <line x1="17.5" y1="15" x2="9" y2="15" />
+                </svg>
+              </button>
+            )}
+            {onOpenSkillRegistry && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenSkillRegistry}
+                title={t('sidebar.skills')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
                 </svg>
               </button>
             )}

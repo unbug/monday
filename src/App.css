@@ -13650,3 +13650,292 @@ textarea:focus:not(:focus-visible),
 [data-theme="light"] .skill-composer-search-input::placeholder {
   color: #999;
 }
+
+/* ── Skill Registry (v1.1) ─────────────────────────────────────────── */
+
+.skill-registry {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.skill-registry-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.skill-registry-title-area {
+  flex: 1;
+}
+
+.skill-registry-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+
+.skill-registry-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.skill-registry-back-btn {
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.skill-registry-back-btn:hover {
+  border-color: var(--accent-color);
+  background: var(--bg-elevated);
+}
+
+.skill-registry-categories {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.skill-registry-cat-btn {
+  padding: 6px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.skill-registry-cat-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.skill-registry-cat-btn.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
+
+.skill-registry-search {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.skill-registry-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.skill-registry-search-input {
+  width: 100%;
+  padding: 10px 36px 10px 38px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.skill-registry-search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.skill-registry-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.skill-registry-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+
+.skill-registry-search-clear:hover {
+  color: var(--text-primary);
+}
+
+.skill-registry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.skill-registry-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.skill-registry-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.skill-registry-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.skill-registry-card-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.skill-registry-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.skill-registry-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 2px;
+  color: var(--text-primary);
+}
+
+.skill-registry-card-category {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.skill-registry-recommended-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.skill-registry-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.skill-registry-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.skill-registry-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-tertiary);
+}
+
+.skill-registry-card-actions {
+  margin-top: 4px;
+}
+
+.skill-registry-install-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: var(--accent-color);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.skill-registry-install-btn:hover {
+  opacity: 0.9;
+}
+
+.skill-registry-install-btn:active {
+  transform: scale(0.98);
+}
+
+.skill-registry-installed-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.skill-registry-installed-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.skill-registry-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+/* Light theme overrides */
+[data-theme="light"] .skill-registry-card {
+  background: #fff;
+}
+
+[data-theme="light"] .skill-registry-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .skill-registry-tag {
+  background: #f5f5f5;
+}
+
+[data-theme="light"] .skill-registry-installed-btn:hover {
+  background: #fef2f2;
+}

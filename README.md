@@ -535,7 +535,7 @@ how to do* (domain instructions, workflow steps, required-plugin declarations).
 - [x] **Skill composer** — Per-session skill panel: attach 1–N skills alongside a
       persona; active skills shown as chips in the session header; skill instructions
       appended to the system prompt before each turn
-- [ ] **Skill registry** — Community skill registry (curated JSON file in the repo,
+- [x] **Skill registry** — Community skill registry (curated JSON file in the repo,
       like persona registry) with 20+ launch skills across categories: Coding,
       Writing, Research, Data, Language, Creative
 - [ ] **Skill builder UI** — In-app skill editor: name, description, tag picker,

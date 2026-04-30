@@ -45,6 +45,7 @@ import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay'
 import { UpdateBanner } from './components/UpdateBanner'
 import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import { SkillComposer } from './components/SkillComposer'
+import { SkillRegistry } from './components/SkillRegistry'
 import type { ModelInfo, CitationEntry, Skill } from './types'
 import type { SearXNGResult } from './lib/searxngApi'
 import type { ImportResult } from './lib/dataImport'
@@ -61,7 +62,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry'
 
 const BASE = '/monday'
 
@@ -82,6 +83,7 @@ const VIEW_PATH: Record<View, string> = {
   agent: BASE + '/agent',
   'usage-analytics': BASE + '/usage-analytics',
   comparison: BASE + '/comparison',
+  'skill-registry': BASE + '/skill-registry',
 }
 
 function viewFromPath(pathname: string): View {
@@ -467,6 +469,10 @@ export default function App() {
               setView('persona-marketplace')
               closeSidebarOnMobile()
             }}
+            onOpenSkillRegistry={() => {
+              setView('skill-registry')
+              closeSidebarOnMobile()
+            }}
             onOpenKnowledge={() => {
               setView('knowledge')
               closeSidebarOnMobile()
@@ -810,6 +816,15 @@ export default function App() {
                 </button>
               </div>
             )}
+          </div>
+        ) : view === 'skill-registry' ? (
+          <div className="main-content main-content--skill-registry">
+            <SkillRegistry
+              onBack={() => setView('chat')}
+              onInstall={(skill) => {
+                // Skill installed — user can attach it from the skill composer
+              }}
+            />
           </div>
         ) : showBatch ? (
           <div className="chat-layout">

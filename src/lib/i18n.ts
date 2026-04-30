@@ -45,6 +45,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.memory': 'Memory',
     'sidebar.agent': "Agent Mode",
     'sidebar.analytics': 'Usage Analytics',
+    'sidebar.skills': 'Skill Registry',
     'sidebar.hotkeys': 'Keyboard Shortcuts',
     'sidebar.share': 'Share conversation',
     'sidebar.changelog': "What's New",
@@ -122,6 +123,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.memory': '记忆',
     'sidebar.agent': 'Agent 模式',
     'sidebar.analytics': '使用分析',
+    'sidebar.skills': '技能库',
     'sidebar.hotkeys': '键盘快捷键',
     'sidebar.share': '分享对话',
     'sidebar.changelog': '更新日志',
@@ -797,6 +799,32 @@ const skill: Record<Locale, Record<string, string>> = {
     'skill.category.language': '语言',
     'skill.category.creative': '创意',
     'skill.category.other': '其他',
+  },
+}
+
+// ── Skill Registry (v1.1) ──
+const skillRegistry: Record<Locale, Record<string, string>> = {
+  en: {
+    'skillRegistry.title': 'Skill Registry',
+    'skillRegistry.subtitle': 'Browse and install {count} community skills',
+    'skillRegistry.searchPlaceholder': 'Search skills…',
+    'skillRegistry.install': 'Install',
+    'skillRegistry.installed': 'Installed',
+    'skillRegistry.recommended': 'Recommended',
+    'skillRegistry.noResults': 'No skills found',
+    'skillRegistry.noResultsCategory': 'No skills in this category',
+    'skillRegistry.clearSearch': 'Clear search',
+  },
+  zh: {
+    'skillRegistry.title': '技能库',
+    'skillRegistry.subtitle': '浏览并安装 {count} 个社区技能',
+    'skillRegistry.searchPlaceholder': '搜索技能…',
+    'skillRegistry.install': '安装',
+    'skillRegistry.installed': '已安装',
+    'skillRegistry.recommended': '推荐',
+    'skillRegistry.noResults': '未找到技能',
+    'skillRegistry.noResultsCategory': '此分类暂无技能',
+    'skillRegistry.clearSearch': '清除搜索',
   },
 }
 
@@ -1651,6 +1679,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...searxng[locale],
     ...provider[locale],
     ...skill[locale],
+    ...skillRegistry[locale],
   }
 }
 
