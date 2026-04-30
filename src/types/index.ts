@@ -64,6 +64,8 @@ export interface ChatSession {
   generationParams: GenerationParams
   personaId: string | null
   knowledgeBaseId: string | null
+  /** Skill IDs attached to this session (v1.1) */
+  skillIds: string[]
   /** Parent session ID — set when this session was forked from another */
   forkId: string | null
   /** Auto-generated conversation summaries for context compression (v0.30) */

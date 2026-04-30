@@ -44,7 +44,8 @@ import { OfflineIndicator } from './components/OfflineIndicator'
 import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay'
 import { UpdateBanner } from './components/UpdateBanner'
 import { BatchGenerationPanel } from './components/BatchGenerationPanel'
-import type { ModelInfo, CitationEntry } from './types'
+import { SkillComposer } from './components/SkillComposer'
+import type { ModelInfo, CitationEntry, Skill } from './types'
 import type { SearXNGResult } from './lib/searxngApi'
 import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
@@ -55,6 +56,7 @@ import { importMondayData } from './lib/dataImport'
 import { resetModelUsage } from './lib/modelUsage'
 import { getRecentModels, resetRecentModels as resetRecent } from './lib/recentModels'
 import { getLocale, setLocale, detectLocale, t } from './lib/i18n'
+import { loadSkills } from './lib/storage'
 import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
@@ -137,6 +139,8 @@ export default function App() {
 
   // v0.31: collapsible personas panel above chat input
   const [showPersonas, setShowPersonas] = useState(false)
+  // v1.1: collapsible skills panel above chat input
+  const [showSkills, setShowSkills] = useState(false)
 
   // v0.30.5: i18n locale
   const { locale, changeLocale: handleChangeLocale } = useLocale()
@@ -178,6 +182,21 @@ export default function App() {
   }, [theme.resolved])
 
   const activePersonaId = chat.activeSession?.personaId ?? null
+  // v1.1: active skills for header chips
+  const activeSkillsRef = useRef<Skill[]>([])
+  useEffect(() => {
+    if (chat.activeSession?.skillIds?.length) {
+      loadSkills().then((all) => {
+        activeSkillsRef.current = chat.activeSession!.skillIds!
+          .map((id) => all.find((s) => s.id === id))
+          .filter((s): s is Skill => !!s)
+      }).catch(() => {
+        activeSkillsRef.current = []
+      })
+    } else {
+      activeSkillsRef.current = []
+    }
+  }, [chat.activeSession?.skillIds])
   // v0.29.3: multi-window support
   const multiWindow = useMultiWindow()
   // v0.30: agent mode
@@ -582,6 +601,24 @@ export default function App() {
               provider={chat.activeSession?.provider ?? null}
               onChange={chat.setProvider}
             />
+            {/* v1.1: skill chips */}
+            {chat.activeSession?.skillIds && chat.activeSession.skillIds.length > 0 && (
+              <div className="header-skills">
+                {chat.activeSession.skillIds.map((skillId) => {
+                  const skill = activeSkillsRef.current?.find((s) => s.id === skillId)
+                  if (!skill) return null
+                  return (
+                    <span
+                      key={skillId}
+                      className="header-skill-chip"
+                      title={skill.description}
+                    >
+                      {skill.icon} {skill.name}
+                    </span>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           <ThemeToggle mode={theme.mode} onChange={theme.setMode} />
@@ -881,6 +918,58 @@ export default function App() {
                       const idx = updated.findIndex((s) => s.id === session.id)
                       if (idx !== -1) {
                         updated[idx] = { ...session, systemPrompt: prompt, updatedAt: Date.now() }
+                        chat.updateSessions(updated)
+                      }
+                    }}
+                  />
+                )}
+              </div>
+            )}
+            {/* v1.1: collapsible skills panel */}
+            {chat.activeSession && (
+              <div className="chat-skills">
+                <button
+                  className={`chat-skills-toggle ${showSkills ? 'chat-skills-toggle--open' : ''} ${chat.activeSession.skillIds?.length ? 'chat-skills-toggle--active' : ''}`}
+                  onClick={() => setShowSkills((v) => !v)}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                    <polyline points="2 17 12 22 22 17" />
+                    <polyline points="2 12 12 17 22 12" />
+                  </svg>
+                  <span>Skills{chat.activeSession.skillIds?.length ? ` ● ${chat.activeSession.skillIds.length}` : ''}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    className="chat-skills-chevron">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                {showSkills && (
+                  <SkillComposer
+                    activeSkillIds={chat.activeSession.skillIds ?? []}
+                    onAttach={(skill) => {
+                      const session = chat.activeSession
+                      if (!session) return
+                      const updated = [...chat.sessions]
+                      const idx = updated.findIndex((s) => s.id === session.id)
+                      if (idx !== -1) {
+                        const existing = updated[idx].skillIds ?? []
+                        if (!existing.includes(skill.id)) {
+                          updated[idx] = { ...session, skillIds: [...existing, skill.id], updatedAt: Date.now() }
+                          chat.updateSessions(updated)
+                        }
+                      }
+                    }}
+                    onDetach={(skillId) => {
+                      const session = chat.activeSession
+                      if (!session) return
+                      const updated = [...chat.sessions]
+                      const idx = updated.findIndex((s) => s.id === session.id)
+                      if (idx !== -1) {
+                        updated[idx] = {
+                          ...session,
+                          skillIds: (session.skillIds ?? []).filter((id) => id !== skillId),
+                          updatedAt: Date.now(),
+                        }
                         chat.updateSessions(updated)
                       }
                     }}

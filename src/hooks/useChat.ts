@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings, loadSkills } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { streamLmStudio } from '../lib/lmStudioApi'
@@ -291,7 +291,23 @@ export function useChat(
         sessionSummaries = latestSession?.summaries ?? []
 
         // v0.30: build system prompt with summaries injected
-        const summarizedPrompt = memory.getSummarizedSystemPrompt(opts.systemPrompt ?? '')
+        let summarizedPrompt = memory.getSummarizedSystemPrompt(opts.systemPrompt ?? '')
+
+        // v1.1: inject active skill instructions into system prompt
+        if (latestSession?.skillIds?.length) {
+          try {
+            const allSkills = await loadSkills()
+            const activeSkills = latestSession.skillIds
+              .map((id) => allSkills.find((s) => s.id === id))
+              .filter((s): s is NonNullable<typeof s> => !!s)
+            if (activeSkills.length > 0) {
+              const skillBlocks = activeSkills.map((s) => `## Skill: ${s.name}\n${s.instructions}`).join('\n\n')
+              summarizedPrompt = summarizedPrompt + '\n\n' + skillBlocks
+            }
+          } catch {
+            // Skill loading failed — continue without it
+          }
+        }
 
         // v0.30: check if active persona has model chaining configured
         const activePersona = getActivePersona(latestSession ?? active)
@@ -1156,6 +1172,7 @@ export function useChat(
         generationParams: { ...source.generationParams },
         personaId: source.personaId,
         knowledgeBaseId: source.knowledgeBaseId,
+        skillIds: [],
         forkId: source.id,
         summaries: [],
         provider: source.provider,

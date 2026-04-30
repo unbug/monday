@@ -532,7 +532,7 @@ how to do* (domain instructions, workflow steps, required-plugin declarations).
 - [x] **Skill format** — Skill spec stored in IndexedDB: `name`, `description`,
       `instructions` (markdown injected into system prompt), `requiredPlugins` (list
       of plugin URLs/IDs), `version`, `tags`, `icon`
-- [ ] **Skill composer** — Per-session skill panel: attach 1–N skills alongside a
+- [x] **Skill composer** — Per-session skill panel: attach 1–N skills alongside a
       persona; active skills shown as chips in the session header; skill instructions
       appended to the system prompt before each turn
 - [ ] **Skill registry** — Community skill registry (curated JSON file in the repo,

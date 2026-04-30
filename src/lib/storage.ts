@@ -122,6 +122,19 @@ function openDB(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(SKILLS_STORE)) {
         db.createObjectStore(SKILLS_STORE, { keyPath: 'id' })
       }
+      // Migration v16→v17: add skillIds field to existing sessions for v1.1 Skill composer
+      if (oldVersion > 0 && oldVersion < 17) {
+        const sessionsStore = upgradeTx.objectStore(SESSIONS_STORE)
+        const req = sessionsStore.getAll()
+        req.onsuccess = () => {
+          for (const session of req.result as ChatSession[]) {
+            if (session.skillIds === undefined) {
+              session.skillIds = []
+              sessionsStore.put(session)
+            }
+          }
+        }
+      }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
         const sessionsStore = upgradeTx.objectStore(SESSIONS_STORE)
@@ -207,6 +220,7 @@ export function createSession(modelId: string): ChatSession {
     generationParams: { temperature: 0.7, top_p: 0.9, maxTokens: 1024 },
     personaId: null,
     knowledgeBaseId: null,
+    skillIds: [],
     forkId: null,
     summaries: [],
     provider: null,

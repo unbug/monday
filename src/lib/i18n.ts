@@ -764,6 +764,42 @@ const provider: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Skill Composer (v1.1) ──
+const skill: Record<Locale, Record<string, string>> = {
+  en: {
+    'skill.title': 'Skills',
+    'skill.subtitle': 'Attach skills to enhance the model\'s capabilities',
+    'skill.searchPlaceholder': 'Search skills…',
+    'skill.noResults': 'No skills found',
+    'skill.empty': 'No skills yet. Create one from the Skill Builder.',
+    'skill.loading': 'Loading skills…',
+    'skill.delete': 'Delete skill',
+    'skill.category.coding': 'Coding',
+    'skill.category.writing': 'Writing',
+    'skill.category.research': 'Research',
+    'skill.category.data': 'Data',
+    'skill.category.language': 'Language',
+    'skill.category.creative': 'Creative',
+    'skill.category.other': 'Other',
+  },
+  zh: {
+    'skill.title': '技能',
+    'skill.subtitle': '附加技能以增强模型能力',
+    'skill.searchPlaceholder': '搜索技能…',
+    'skill.noResults': '未找到技能',
+    'skill.empty': '暂无技能。从技能构建器创建一个。',
+    'skill.loading': '加载技能中…',
+    'skill.delete': '删除技能',
+    'skill.category.coding': '编程',
+    'skill.category.writing': '写作',
+    'skill.category.research': '研究',
+    'skill.category.data': '数据',
+    'skill.category.language': '语言',
+    'skill.category.creative': '创意',
+    'skill.category.other': '其他',
+  },
+}
+
 // ── Plugin Manager ──
 const plugin: Record<Locale, Record<string, string>> = {
   en: {
@@ -1614,6 +1650,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...deepseek[locale],
     ...searxng[locale],
     ...provider[locale],
+    ...skill[locale],
   }
 }
 
