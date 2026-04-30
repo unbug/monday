@@ -11,7 +11,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { saveSkills, loadSkills, deleteSkill } from '../lib/storage'
+import { saveSkills, loadSkills, deleteSkill, emitSkillsChanged } from '../lib/storage'
 import { t } from '../lib/i18n'
 import type { Skill } from '../types'
 
@@ -95,6 +95,8 @@ export function SkillBuilder({ onBack, initialSkill, onSave }: SkillBuilderProps
       }
       await saveSkills([...filtered, skill])
       setSaveStatus('saved')
+      // Notify other components that skills changed (hot-reload)
+      emitSkillsChanged()
       setTimeout(() => setSaveStatus('idle'), 2000)
       onSave?.()
     } catch {

@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import type { Skill } from '../types'
-import { loadSkills, saveSkills, deleteSkill } from '../lib/storage'
+import { loadSkills, saveSkills, deleteSkill, onSkillsChanged } from '../lib/storage'
 import { t } from '../lib/i18n'
 
 interface Props {
@@ -20,6 +20,10 @@ export function SkillComposer({ activeSkillIds, onAttach, onDetach }: Props) {
       setLoading(false)
     }).catch(() => {
       setLoading(false)
+    })
+    // Subscribe to skills-changed events for hot-reload
+    return onSkillsChanged(() => {
+      loadSkills().then((s) => setSkills(s))
     })
   }, [])
 

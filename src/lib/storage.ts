@@ -698,3 +698,25 @@ export async function deleteSkill(id: string): Promise<void> {
     tx.onerror = () => reject(tx.error)
   })
 }
+
+// ── Skills event emitter (v1.1.6 — hot-reload) ──────────────────────────────
+// Lightweight pub/sub used to notify UI components when skills change.
+// The engine-level hot-reload already works because sendUserMessage() calls
+// loadSkills() fresh each turn; this emitter refreshes the SkillComposer
+// UI so the user sees updated skill data without leaving the chat.
+
+type SkillsListener = () => void
+
+const skillsListeners = new Set<SkillsListener>()
+
+export function onSkillsChanged(listener: SkillsListener): () => void {
+  skillsListeners.add(listener)
+  return () => skillsListeners.delete(listener)
+}
+
+export function emitSkillsChanged(): void {
+  for (const listener of skillsListeners) {
+    try { listener() }
+    catch { /* ignore listener errors */ }
+  }
+}

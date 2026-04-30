@@ -353,6 +353,20 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1.6',
+    date: '2026-04-30',
+    title: 'Skills System — Skill Hot-Reload',
+    description:
+      'Changes to an active skill now take effect on the next message send without requiring a session restart. A lightweight pub/sub event emitter in storage.ts bridges the SkillBuilder and SkillComposer: editing and saving a skill in the builder triggers a reload of the SkillComposer panel so the user sees the updated skill list immediately. The engine-level hot-reload already worked because sendUserMessage() calls loadSkills() fresh each turn; this emitter closes the UI gap.',
+    changes: [
+      { type: 'added', text: 'onSkillsChanged() — lightweight pub/sub listener registration in storage.ts for skill-change events' },
+      { type: 'added', text: 'emitSkillsChanged() — fires the skills-changed event to all subscribers' },
+      { type: 'added', text: 'SkillBuilder emits skills-changed — handleSave() calls emitSkillsChanged() after saving a skill' },
+      { type: 'added', text: 'SkillComposer subscribes to skills-changed — useEffect registers listener that reloads skills from IndexedDB on event' },
+      { type: 'added', text: 'Hot-reload cleanup — listener unmounts on SkillComposer unmount via returned unsubscribe function' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',
