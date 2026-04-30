@@ -24,6 +24,7 @@ import { AgentPanel } from './components/AgentPanel'
 import { useAgentMode } from './hooks/useAgentMode'
 import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
+import { PersistentMemoryPanel } from './components/PersistentMemoryPanel'
 import { ProviderSwitcher } from './components/ProviderSwitcher'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
@@ -96,6 +97,7 @@ function viewFromPath(pathname: string): View {
 
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
+  const [memories, setMemories] = useState<import('./types').MemoryEntry[]>([])
   const [view, setView] = useState<View>(() => {
     // Handle redirect encoded by 404.html on GitHub Pages
     const redirect = sessionStorage.getItem('redirect')
@@ -170,6 +172,13 @@ export default function App() {
   const vectorStore = useVectorStore()
   const embedding = useEmbeddingModel()
   const mcpServers = useMcpServers()
+
+  // v1.2: load persistent memories when memory view is open
+  useEffect(() => {
+    if (view === 'memory') {
+      import('./lib/storage').then((m) => m.loadMemories().then(setMemories))
+    }
+  }, [view])
 
   // Apply base filter to vector store when active base changes
   useEffect(() => {
@@ -795,6 +804,23 @@ export default function App() {
               onCancelCompress={chat.memory.cancelSummarization}
               onEditSummary={chat.memory.editSummary}
               onDeleteSummary={chat.memory.deleteSummary}
+              onClose={() => setView('chat')}
+            />
+            <PersistentMemoryPanel
+              memories={memories}
+              onAdd={async (key, value) => {
+                const m = await import('./lib/storage')
+                const mem = await m.createMemory(key, value, 'global', null, chat.activeSession?.id ?? 'unknown')
+                setMemories((prev) => [mem, ...prev])
+              }}
+              onEdit={async (id, key, value) => {
+                await import('./lib/storage').then((m) => m.updateMemory(id, key, value))
+                setMemories((prev) => prev.map((m) => m.id === id ? { ...m, key, value, updatedAt: Date.now() } : m))
+              }}
+              onDelete={async (id) => {
+                await import('./lib/storage').then((m) => m.deleteMemory(id))
+                setMemories((prev) => prev.filter((m) => m.id !== id))
+              }}
               onClose={() => setView('chat')}
             />
           </div>

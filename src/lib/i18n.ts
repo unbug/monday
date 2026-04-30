@@ -1731,6 +1731,62 @@ const a11y = {
 }
 
 
+// ── Persistent Memory (v1.2) ──
+const persistentMemory: Record<Locale, Record<string, string>> = {
+  en: {
+    'memory.title': 'Persistent Memories',
+    'memory.subtitle': 'Cross-session key-value memories. The model reads these at session start.',
+    'memory.addNew': 'Add Memory',
+    'memory.all': 'All',
+    'memory.namespaceGlobal': 'Global',
+    'memory.namespacePersona': 'Persona',
+    'memory.namespaceSkill': 'Skill',
+    'memory.keyPlaceholder': 'Memory key (e.g. coding-style)',
+    'memory.valuePlaceholder': 'Memory content (markdown supported)',
+    'memory.save': 'Save',
+    'memory.cancel': 'Cancel',
+    'memory.edit': 'Edit',
+    'memory.discard': 'Discard',
+    'memory.delete': 'Delete',
+    'memory.confirmDelete': 'Delete this memory?',
+    'memory.clickToEdit': 'Click to edit',
+    'memory.empty': 'No memories yet',
+    'memory.emptyHint': 'Add your first persistent memory above',
+    'memory.edited': 'Edited',
+    'memory.created': 'Created',
+    'memory.justNow': 'just now',
+    'memory.minutesAgo': '{{count}}m ago',
+    'memory.hoursAgo': '{{count}}h ago',
+    'memory.daysAgo': '{{count}}d ago',
+  },
+  zh: {
+    'memory.title': '持久记忆',
+    'memory.subtitle': '跨会话键值记忆。模型在会话开始时读取这些记忆。',
+    'memory.addNew': '添加记忆',
+    'memory.all': '全部',
+    'memory.namespaceGlobal': '全局',
+    'memory.namespacePersona': '人格',
+    'memory.namespaceSkill': '技能',
+    'memory.keyPlaceholder': '记忆键（如 coding-style）',
+    'memory.valuePlaceholder': '记忆内容（支持 Markdown）',
+    'memory.save': '保存',
+    'memory.cancel': '取消',
+    'memory.edit': '编辑',
+    'memory.discard': '丢弃',
+    'memory.delete': '删除',
+    'memory.confirmDelete': '删除此记忆？',
+    'memory.clickToEdit': '点击编辑',
+    'memory.empty': '暂无记忆',
+    'memory.emptyHint': '在上方添加你的第一条持久记忆',
+    'memory.edited': '编辑于',
+    'memory.created': '创建于',
+    'memory.justNow': '刚刚',
+    'memory.minutesAgo': '{{count}} 分钟前',
+    'memory.hoursAgo': '{{count}} 小时前',
+    'memory.daysAgo': '{{count}} 天前',
+  },
+}
+
 // ── Merge all into one dictionary ──
 const all: Record<Locale, Record<string, string>> = { en: {}, zh: {} }
 for (const locale of ['en', 'zh'] as Locale[]) {
@@ -1744,6 +1800,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...knowledgePanel[locale],
     ...memory[locale],
     ...memoryPanel[locale],
+    ...persistentMemory[locale],
     ...settings[locale],
     ...msgList[locale],
     ...cache[locale],

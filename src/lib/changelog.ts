@@ -367,6 +367,23 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.2',
+    date: '2026-04-30',
+    title: 'Self-Improving Agent — Persistent Memory Store',
+    description:
+      'Cross-session persistent memory: a key-value store backed by IndexedDB where the model can read memories at session start and write new ones during conversation. Memories are scoped to namespaces (global, persona, skill) and managed via a new panel in the Memory view.',
+    changes: [
+      { type: 'added', text: 'MemoryEntry type — id, key, value, namespace (global/persona/skill), targetId, sessionId, createdAt, updatedAt' },
+      { type: 'added', text: 'Persistent memory storage — saveMemories(), loadMemories(), loadMemoriesByNamespace(), deleteMemory(), createMemory(), updateMemory() in storage.ts' },
+      { type: 'added', text: 'IndexedDB migration v17→v18 — adds memories object store' },
+      { type: 'added', text: 'PersistentMemoryPanel component — memories list with filter tabs (All/Global/Persona/Skill), add/edit/delete UI, namespace badges, relative timestamps' },
+      { type: 'added', text: 'Persistent memory in Memory view — rendered alongside the v0.30 MemoryPanel (conversation summaries)' },
+      { type: 'added', text: 'Persistent memory i18n — en/zh translations for all memory panel strings' },
+      { type: 'added', text: 'Persistent memory CSS — dark terminal-style cards with namespace color badges, hover states, light theme overrides' },
+      { type: 'added', text: 'Schema governance — memories store documented in migrationRegistry.ts SCHEMA_STORES and MIGRATION_REGISTRY' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

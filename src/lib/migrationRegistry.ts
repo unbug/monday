@@ -24,7 +24,7 @@
 // ── Frozen schema version ────────────────────────────────────────────────────
 // This is the current DB_VERSION in storage.ts. DO NOT edit this constant
 // without bumping DB_VERSION and adding a migration in storage.ts.
-export const SCHEMA_VERSION = 17
+export const SCHEMA_VERSION = 18
 
 // ── Object stores (frozen) ──────────────────────────────────────────────────
 // The following stores are part of the frozen v1.0 schema. Future migrations
@@ -115,6 +115,12 @@ export const SCHEMA_STORES = [
     keyPath: 'id',
     sinceVersion: 16,
   },
+  {
+    name: 'memories',
+    purpose: 'Persistent cross-session memories (key-value store for v1.2)',
+    keyPath: 'id',
+    sinceVersion: 18,
+  },
 ] as const
 
 // ── Migration history ───────────────────────────────────────────────────────
@@ -142,6 +148,7 @@ export const MIGRATION_REGISTRY: MigrationEntry[] = [
   { version: 15, description: 'Add searxngSettings store (v1.0.7)', stores: ['searxngSettings'] },
   { version: 16, description: 'Add skills store for v1.1 Skills System', stores: ['skills'] },
   { version: 17, description: 'Add skillIds field on sessions for v1.1 Skill composer', stores: ['sessions'] },
+  { version: 18, description: 'Add memories store for v1.2 Persistent memory', stores: ['memories'] },
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

@@ -385,3 +385,23 @@ export interface Skill {
   /** Author / publisher of the skill */
   author: string
 }
+
+// v1.2: Persistent memory (cross-session key-value store)
+export interface MemoryEntry {
+  /** Unique memory ID */
+  id: string
+  /** Short key/name for the memory (e.g. 'coding-style', 'preferences') */
+  key: string
+  /** Full memory content (markdown supported) */
+  value: string
+  /** Memory namespace: global, persona, or skill */
+  namespace: 'global' | 'persona' | 'skill'
+  /** Namespace target: persona ID or skill ID (null for global) */
+  targetId: string | null
+  /** Session ID where this memory was created */
+  sessionId: string
+  /** When the memory was created (timestamp) */
+  createdAt: number
+  /** When the memory was last edited (timestamp) */
+  updatedAt: number
+}

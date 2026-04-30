@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -17,6 +17,7 @@ const VLLM_SETTINGS_STORE = 'vllmSettings'
 const DEEPSEEK_SETTINGS_STORE = 'deepseekSettings'
 const SEARXNG_SETTINGS_STORE = 'searxngSettings'
 const SKILLS_STORE = 'skills'
+const MEMORIES_STORE = 'memories'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -134,6 +135,10 @@ function openDB(): Promise<IDBDatabase> {
             }
           }
         }
+      }
+      // Migration v17→v18: add memories object store for v1.2 Persistent memory
+      if (!db.objectStoreNames.contains(MEMORIES_STORE)) {
+        db.createObjectStore(MEMORIES_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -718,5 +723,82 @@ export function emitSkillsChanged(): void {
   for (const listener of skillsListeners) {
     try { listener() }
     catch { /* ignore listener errors */ }
+  }
+}
+
+// ── Persistent Memory storage (v1.2) ────────────────────────────────────────
+// Cross-session key-value memories. The model can read these at session start
+// and write new ones during conversation. Memories are scoped to namespaces:
+// global (all sessions), persona (per-persona), or skill (per-skill).
+
+export async function saveMemories(memories: MemoryEntry[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(MEMORIES_STORE, 'readwrite')
+  const store = tx.objectStore(MEMORIES_STORE)
+  store.clear()
+  for (const memory of memories) {
+    store.put(memory)
+  }
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadMemories(): Promise<MemoryEntry[]> {
+  const db = await openDB()
+  const tx = db.transaction(MEMORIES_STORE, 'readonly')
+  const store = tx.objectStore(MEMORIES_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.getAll()
+    request.onsuccess = () => {
+      const memories = request.result as MemoryEntry[]
+      memories.sort((a, b) => b.updatedAt - a.updatedAt)
+      resolve(memories)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function loadMemoriesByNamespace(namespace: MemoryEntry['namespace'], targetId: string | null): Promise<MemoryEntry[]> {
+  const memories = await loadMemories()
+  return memories.filter((m) => m.namespace === 'global' || (m.namespace === namespace && m.targetId === targetId))
+}
+
+export async function deleteMemory(id: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(MEMORIES_STORE, 'readwrite')
+  const store = tx.objectStore(MEMORIES_STORE)
+  store.delete(id)
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function createMemory(key: string, value: string, namespace: MemoryEntry['namespace'], targetId: string | null, sessionId: string): Promise<MemoryEntry> {
+  const now = Date.now()
+  const memory: MemoryEntry = {
+    id: crypto.randomUUID(),
+    key,
+    value,
+    namespace,
+    targetId,
+    sessionId,
+    createdAt: now,
+    updatedAt: now,
+  }
+  await saveMemories([...(await loadMemories()), memory])
+  return memory
+}
+
+export async function updateMemory(id: string, key: string, value: string): Promise<void> {
+  const memories = await loadMemories()
+  const idx = memories.findIndex((m) => m.id === id)
+  if (idx !== -1) {
+    memories[idx].key = key
+    memories[idx].value = value
+    memories[idx].updatedAt = Date.now()
+    await saveMemories(memories)
   }
 }

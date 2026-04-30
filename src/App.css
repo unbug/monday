@@ -14720,3 +14720,456 @@ textarea:focus:not(:focus-visible),
   background: #f3f4f6;
 }
 
+/* ── Persistent Memory Panel (v1.2) ─────────────────────────────────── */
+
+.main-content--memory {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  gap: 20px;
+  overflow-y: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.persistent-memory-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.persistent-memory-header {
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.persistent-memory-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.persistent-memory-title-row h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.persistent-memory-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.persistent-memory-close {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.persistent-memory-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Filter tabs */
+.persistent-memory-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.persistent-memory-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.persistent-memory-filter:hover {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.persistent-memory-filter.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
+
+.persistent-memory-count {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.persistent-memory-filter.active .persistent-memory-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Add button */
+.persistent-memory-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.persistent-memory-add-btn:hover {
+  border-color: var(--accent-color);
+  background: var(--bg-tertiary);
+}
+
+/* Add form */
+.persistent-memory-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.persistent-memory-input,
+.persistent-memory-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.persistent-memory-input:focus,
+.persistent-memory-textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.persistent-memory-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.persistent-memory-add-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.persistent-memory-save-btn {
+  padding: 8px 16px;
+  background: var(--accent-color);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.persistent-memory-save-btn:hover {
+  opacity: 0.9;
+}
+
+.persistent-memory-cancel-btn,
+.persistent-memory-discard-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.persistent-memory-cancel-btn:hover,
+.persistent-memory-discard-btn:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+/* Memories list */
+.persistent-memory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.persistent-memory-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.15s;
+}
+
+.persistent-memory-card:hover {
+  border-color: var(--border-hover);
+}
+
+.persistent-memory-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.persistent-memory-key {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.persistent-memory-edit-key {
+  flex: 1;
+  padding: 4px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.persistent-memory-edit-key:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.persistent-memory-namespace-badge {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.persistent-memory-namespace-badge[style*="global"] {
+  background: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+
+.persistent-memory-namespace-badge[style*="persona"] {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.persistent-memory-namespace-badge[style*="skill"] {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.persistent-memory-content {
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.persistent-memory-content:hover {
+  background: var(--bg-tertiary);
+}
+
+.persistent-memory-edit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.persistent-memory-edit-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+.persistent-memory-edit-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.persistent-memory-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.persistent-memory-delete-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.persistent-memory-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.persistent-memory-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 12px;
+}
+
+.persistent-memory-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.persistent-memory-edit-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.persistent-memory-edit-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Empty state */
+.persistent-memory-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.persistent-memory-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.persistent-memory-empty p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0 0 8px;
+}
+
+.persistent-memory-empty-hint {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+/* Light theme overrides */
+[data-theme="light"] .persistent-memory-panel {
+  /* inherit from base */
+}
+
+[data-theme="light"] .persistent-memory-header {
+  background: #f9fafb;
+}
+
+[data-theme="light"] .persistent-memory-filters {
+  gap: 6px;
+}
+
+[data-theme="light"] .persistent-memory-filter {
+  background: #fff;
+  border-color: #e5e7eb;
+}
+
+[data-theme="light"] .persistent-memory-filter:hover {
+  border-color: #a78bfa;
+}
+
+[data-theme="light"] .persistent-memory-card {
+  background: #fff;
+  border-color: #e5e7eb;
+}
+
+[data-theme="light"] .persistent-memory-card:hover {
+  border-color: #d1d5db;
+}
+
+[data-theme="light"] .persistent-memory-content {
+  background: #f9fafb;
+}
+
+[data-theme="light"] .persistent-memory-content:hover {
+  background: #f3f4f6;
+}
+
+[data-theme="light"] .persistent-memory-input,
+[data-theme="light"] .persistent-memory-textarea,
+[data-theme="light"] .persistent-memory-edit-textarea {
+  background: #fff;
+  border-color: #e5e7eb;
+}
+
+[data-theme="light"] .persistent-memory-input:focus,
+[data-theme="light"] .persistent-memory-textarea:focus,
+[data-theme="light"] .persistent-memory-edit-textarea:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+}
+

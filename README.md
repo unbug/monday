@@ -563,7 +563,7 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 `ontology` typed memory graph (171k downloads), and `self-improving + proactive agent`
 (174k downloads). All state is local-only — nothing leaves IndexedDB.
 
-- [ ] **Persistent memory store** — Cross-session key-value memory backed by IndexedDB;
+- [x] **Persistent memory store** — Cross-session key-value memory backed by IndexedDB;
       the model can read memories at session start and write new ones during the
       conversation; memories panel shows all entries with edit/delete
 - [ ] **Memory namespaces** — Memories scoped to three levels: global (all sessions),
