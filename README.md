@@ -566,7 +566,7 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 - [x] **Persistent memory store** — Cross-session key-value memory backed by IndexedDB;
       the model can read memories at session start and write new ones during the
       conversation; memories panel shows all entries with edit/delete
-- [ ] **Memory namespaces** — Memories scoped to three levels: global (all sessions),
+- [x] **Memory namespaces** — Memories scoped to three levels: global (all sessions),
       per-persona, per-skill; the active session inherits the union of applicable
       namespaces
 - [ ] **Correction capture** — When a user edits or regenerates a message, optionally
