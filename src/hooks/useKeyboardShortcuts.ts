@@ -28,6 +28,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenAgent?: () => void
   onOpenUsageAnalytics?: () => void
   onOpenComparison?: () => void
+  onOpenOntology?: () => void
   onOpenSkillRegistry?: () => void
   onOpenSkillBuilder?: () => void
   onOpenShortcuts?: () => void
@@ -234,6 +235,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Model Comparison',
               icon: '⚖️',
               action: options.onOpenComparison,
+            },
+          ]
+        : []),
+      ...(options.onOpenOntology
+        ? [
+            {
+              id: 'open-ontology',
+              label: 'Ontology',
+              icon: '🔗',
+              action: options.onOpenOntology,
             },
           ]
         : []),

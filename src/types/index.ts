@@ -407,3 +407,33 @@ export interface MemoryEntry {
   /** Source: 'manual' = user-created, 'correction' = auto-captured from message edit/regenerate (v1.2.1) */
   source: 'manual' | 'correction'
 }
+
+// ── v1.2.2: Ontology Store (typed entity graph) ─────────────────────────────
+
+export type EntityType = 'person' | 'project' | 'task' | 'event' | 'document'
+
+export interface OntologyEntity {
+  /** Unique entity ID */
+  id: string
+  /** Entity type: person, project, task, event, or document */
+  type: EntityType
+  /** Display name of the entity */
+  name: string
+  /** Key-value properties of the entity (e.g. status, priority, dueDate) */
+  properties: Record<string, string>
+  /** Related entity IDs */
+  relationships: string[]
+  /** When the entity was created (timestamp) */
+  createdAt: number
+  /** When the entity was last modified (timestamp) */
+  updatedAt: number
+}
+
+export interface OntologyRelationship {
+  /** Source entity ID */
+  fromId: string
+  /** Target entity ID */
+  toId: string
+  /** Relationship label (e.g. 'assigned-to', 'part-of', 'created-by') */
+  label: string
+}

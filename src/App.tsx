@@ -48,6 +48,7 @@ import { UpdateBanner } from './components/UpdateBanner'
 import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import { SkillComposer } from './components/SkillComposer'
 import { SkillRegistry } from './components/SkillRegistry'
+import { OntologyPanel } from './components/OntologyPanel'
 import { SkillBuilder } from './components/SkillBuilder'
 import type { ModelInfo, CitationEntry, Skill } from './types'
 import type { SearXNGResult } from './lib/searxngApi'
@@ -65,7 +66,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder' | 'ontology'
 
 const BASE = '/monday'
 
@@ -88,6 +89,7 @@ const VIEW_PATH: Record<View, string> = {
   comparison: BASE + '/comparison',
   'skill-registry': BASE + '/skill-registry',
   'skill-builder': BASE + '/skill-builder',
+  ontology: BASE + '/ontology',
 }
 
 function viewFromPath(pathname: string): View {
@@ -176,6 +178,7 @@ export default function App() {
 
   // v1.2: load persistent memories and skills when memory view is open
   const [installedSkills, setInstalledSkills] = useState<Skill[]>([])
+  const [ontologyEntities, setOntologyEntities] = useState<import('./types').OntologyEntity[]>([])
   useEffect(() => {
     if (view === 'memory') {
       Promise.all([
@@ -185,6 +188,12 @@ export default function App() {
         setMemories(mems)
         setInstalledSkills(sks)
       })
+    }
+  }, [view])
+
+  useEffect(() => {
+    if (view === 'ontology') {
+      import('./lib/storage').then((m) => m.loadOntologyEntities()).then((ents) => setOntologyEntities(ents))
     }
   }, [view])
 
@@ -533,6 +542,10 @@ export default function App() {
               setView('comparison')
               closeSidebarOnMobile()
             }}
+            onOpenOntology={() => {
+              setView('ontology')
+              closeSidebarOnMobile()
+            }}
             onOpenShortcuts={() => {
               setShowShortcuts(true)
               closeSidebarOnMobile()
@@ -838,6 +851,40 @@ export default function App() {
               onDelete={async (id) => {
                 await import('./lib/storage').then((m) => m.deleteMemory(id))
                 setMemories((prev) => prev.filter((m) => m.id !== id))
+              }}
+              onClose={() => setView('chat')}
+            />
+          </div>
+        ) : view === 'ontology' ? (
+          <div className="main-content main-content--ontology">
+            <OntologyPanel
+              entities={ontologyEntities}
+              onAdd={async (type, name, props) => {
+                const m = await import('./lib/storage')
+                const ent = await m.createOntologyEntity(type, name, props)
+                setOntologyEntities((prev) => [ent, ...prev])
+              }}
+              onEdit={async (id, name, props) => {
+                await import('./lib/storage').then((m) => m.updateOntologyEntity(id, name, props))
+                setOntologyEntities((prev) => prev.map((e) => e.id === id ? { ...e, name, properties: props, updatedAt: Date.now() } : e))
+              }}
+              onDelete={async (id) => {
+                await import('./lib/storage').then((m) => m.deleteOntologyEntity(id))
+                setOntologyEntities((prev) => prev.filter((e) => e.id !== id))
+              }}
+              onAddRelationship={async (fromId, toId, label) => {
+                await import('./lib/storage').then((m) => m.addEntityRelationship(fromId, toId, label))
+                setOntologyEntities((prev) => prev.map((e) => e.id === fromId ? { ...e, relationships: [...e.relationships, toId], updatedAt: Date.now() } : e))
+              }}
+              onRemoveRelationship={async (fromId, toId) => {
+                await import('./lib/storage').then((m) => m.removeEntityRelationship(fromId, toId))
+                setOntologyEntities((prev) => prev.map((e) => e.id === fromId ? { ...e, relationships: e.relationships.filter((r) => r !== toId), updatedAt: Date.now() } : e))
+              }}
+              onInjectAsContext={() => {
+                import('./lib/storage').then((m) => {
+                  const ctx = ontologyEntities.map((e) => `[${e.type}] ${e.name}${Object.keys(e.properties).length > 0 ? ' {' + Object.entries(e.properties).map(([k, v]) => ` ${k}: ${v}`).join(', ') + ' }' : ''}`).join('; ')
+                  navigator.clipboard.writeText(ctx)
+                })
               }}
               onClose={() => setView('chat')}
             />

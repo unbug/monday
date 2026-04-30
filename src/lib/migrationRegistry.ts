@@ -24,7 +24,7 @@
 // ── Frozen schema version ────────────────────────────────────────────────────
 // This is the current DB_VERSION in storage.ts. DO NOT edit this constant
 // without bumping DB_VERSION and adding a migration in storage.ts.
-export const SCHEMA_VERSION = 18
+export const SCHEMA_VERSION = 19
 
 // ── Object stores (frozen) ──────────────────────────────────────────────────
 // The following stores are part of the frozen v1.0 schema. Future migrations
@@ -121,6 +121,12 @@ export const SCHEMA_STORES = [
     keyPath: 'id',
     sinceVersion: 18,
   },
+  {
+    name: 'ontology',
+    purpose: 'Typed entity graph (Person, Project, Task, Event, Document) for v1.2.2',
+    keyPath: 'id',
+    sinceVersion: 19,
+  },
 ] as const
 
 // ── Migration history ───────────────────────────────────────────────────────
@@ -149,6 +155,7 @@ export const MIGRATION_REGISTRY: MigrationEntry[] = [
   { version: 16, description: 'Add skills store for v1.1 Skills System', stores: ['skills'] },
   { version: 17, description: 'Add skillIds field on sessions for v1.1 Skill composer', stores: ['sessions'] },
   { version: 18, description: 'Add memories store for v1.2 Persistent memory', stores: ['memories'] },
+  { version: 19, description: 'Add ontology store for v1.2.2 Ontology store', stores: ['ontology'] },
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

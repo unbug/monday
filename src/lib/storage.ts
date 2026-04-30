@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -18,6 +18,7 @@ const DEEPSEEK_SETTINGS_STORE = 'deepseekSettings'
 const SEARXNG_SETTINGS_STORE = 'searxngSettings'
 const SKILLS_STORE = 'skills'
 const MEMORIES_STORE = 'memories'
+const ONTOLOGY_STORE = 'ontology'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -139,6 +140,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v17→v18: add memories object store for v1.2 Persistent memory
       if (!db.objectStoreNames.contains(MEMORIES_STORE)) {
         db.createObjectStore(MEMORIES_STORE, { keyPath: 'id' })
+      }
+      // Migration v18→v19: add ontology object store for v1.2.2 Ontology store
+      if (!db.objectStoreNames.contains(ONTOLOGY_STORE)) {
+        db.createObjectStore(ONTOLOGY_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -846,4 +851,153 @@ export async function saveCorrection(
   }
   await saveMemories([...(await loadMemories()), memory])
   return memory
+}
+
+// ── Ontology Store (v1.2.2) ─────────────────────────────────────────────────
+// Typed entity graph: Person, Project, Task, Event, Document.
+// Entities have properties + relationships; browsable/editable in a side panel;
+// injected as a compact context block when relevant entities are mentioned.
+
+export async function saveOntologyEntities(entities: OntologyEntity[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(ONTOLOGY_STORE, 'readwrite')
+  const store = tx.objectStore(ONTOLOGY_STORE)
+  store.clear()
+  for (const entity of entities) {
+    store.put(entity)
+  }
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadOntologyEntities(): Promise<OntologyEntity[]> {
+  const db = await openDB()
+  const tx = db.transaction(ONTOLOGY_STORE, 'readonly')
+  const store = tx.objectStore(ONTOLOGY_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.getAll()
+    request.onsuccess = () => {
+      const entities = request.result as OntologyEntity[]
+      entities.sort((a, b) => b.updatedAt - a.updatedAt)
+      resolve(entities)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function loadOntologyEntitiesByType(type: EntityType): Promise<OntologyEntity[]> {
+  const entities = await loadOntologyEntities()
+  return entities.filter((e) => e.type === type)
+}
+
+export async function getOntologyEntity(id: string): Promise<OntologyEntity | null> {
+  const db = await openDB()
+  const tx = db.transaction(ONTOLOGY_STORE, 'readonly')
+  const store = tx.objectStore(ONTOLOGY_STORE)
+  return new Promise((resolve, reject) => {
+    const request = store.get(id)
+    request.onsuccess = () => {
+      resolve((request.result as OntologyEntity | undefined) ?? null)
+    }
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function createOntologyEntity(
+  type: EntityType,
+  name: string,
+  properties: Record<string, string>,
+): Promise<OntologyEntity> {
+  const now = Date.now()
+  const entity: OntologyEntity = {
+    id: crypto.randomUUID(),
+    type,
+    name,
+    properties,
+    relationships: [],
+    createdAt: now,
+    updatedAt: now,
+  }
+  const entities = await loadOntologyEntities()
+  await saveOntologyEntities([...entities, entity])
+  return entity
+}
+
+export async function updateOntologyEntity(
+  id: string,
+  name: string,
+  properties: Record<string, string>,
+): Promise<void> {
+  const entities = await loadOntologyEntities()
+  const idx = entities.findIndex((e) => e.id === id)
+  if (idx !== -1) {
+    entities[idx].name = name
+    entities[idx].properties = properties
+    entities[idx].updatedAt = Date.now()
+    await saveOntologyEntities(entities)
+  }
+}
+
+export async function deleteOntologyEntity(id: string): Promise<void> {
+  const entities = await loadOntologyEntities()
+  const filtered = entities.filter((e) => e.id !== id)
+  // Also remove this entity from other entities' relationship lists
+  for (const entity of filtered) {
+    if (entity.relationships.includes(id)) {
+      entity.relationships = entity.relationships.filter((r) => r !== id)
+    }
+  }
+  await saveOntologyEntities(filtered)
+}
+
+export async function addEntityRelationship(fromId: string, toId: string, label: string): Promise<void> {
+  const entities = await loadOntologyEntities()
+  const fromIdx = entities.findIndex((e) => e.id === fromId)
+  if (fromIdx !== -1 && !entities[fromIdx].relationships.includes(toId)) {
+    entities[fromIdx].relationships.push(toId)
+    entities[fromIdx].updatedAt = Date.now()
+    await saveOntologyEntities(entities)
+  }
+}
+
+export async function removeEntityRelationship(fromId: string, toId: string): Promise<void> {
+  const entities = await loadOntologyEntities()
+  const fromIdx = entities.findIndex((e) => e.id === fromId)
+  if (fromIdx !== -1) {
+    entities[fromIdx].relationships = entities[fromIdx].relationships.filter((r) => r !== toId)
+    entities[fromIdx].updatedAt = Date.now()
+    await saveOntologyEntities(entities)
+  }
+}
+
+export async function searchOntologyEntities(query: string): Promise<OntologyEntity[]> {
+  const entities = await loadOntologyEntities()
+  const lower = query.toLowerCase()
+  return entities.filter(
+    (e) =>
+      e.name.toLowerCase().includes(lower) ||
+      Object.values(e.properties).some((v) => v.toLowerCase().includes(lower)),
+  )
+}
+
+export function getEntityIcon(type: EntityType): string {
+  switch (type) {
+    case 'person': return '👤'
+    case 'project': return '📁'
+    case 'task': return '✅'
+    case 'event': return '📅'
+    case 'document': return '📄'
+  }
+}
+
+export function getEntityColor(type: EntityType): string {
+  switch (type) {
+    case 'person': return '#3b82f6'
+    case 'project': return '#8b5cf6'
+    case 'task': return '#10b981'
+    case 'event': return '#f59e0b'
+    case 'document': return '#ef4444'
+  }
 }

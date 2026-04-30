@@ -48,6 +48,7 @@ interface Props {
   onOpenAgent?: () => void
   onOpenUsageAnalytics?: () => void
   onOpenComparison?: () => void
+  onOpenOntology?: () => void
   onOpenSkillRegistry?: () => void
   onOpenSkillBuilder?: () => void
   onOpenShortcuts?: () => void
@@ -88,6 +89,7 @@ export function Sidebar({
   onOpenAgent,
   onOpenUsageAnalytics,
   onOpenComparison,
+  onOpenOntology,
   onOpenSkillRegistry,
   onOpenSkillBuilder,
   onOpenShortcuts,
@@ -400,6 +402,25 @@ export function Sidebar({
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="3" width="8" height="18" rx="1" />
                   <rect x="13" y="3" width="8" height="18" rx="1" />
+                </svg>
+              </button>
+            )}
+            {onOpenOntology && (
+              <button
+                className="sidebar-nav-btn"
+                onClick={onOpenOntology}
+                title={t('sidebar.ontology')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <circle cx="5" cy="6" r="2" />
+                  <circle cx="19" cy="6" r="2" />
+                  <circle cx="5" cy="18" r="2" />
+                  <circle cx="19" cy="18" r="2" />
+                  <line x1="7.5" y1="7" x2="10" y2="10" />
+                  <line x1="16.5" y1="7" x2="14" y2="10" />
+                  <line x1="7" y1="17" x2="9.5" y2="14" />
+                  <line x1="17" y1="17" x2="14.5" y2="14" />
                 </svg>
               </button>
             )}
