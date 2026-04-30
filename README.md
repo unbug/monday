@@ -547,7 +547,7 @@ how to do* (domain instructions, workflow steps, required-plugin declarations).
 - [x] **SOUL.md equivalent** — "Soul" tab in the persona editor: a persistent
       cross-session identity prompt that survives `/new` and session resets; stored
       in IndexedDB alongside the persona; separate from the per-session system prompt
-- [ ] **Skill marketplace UI** — Browse/search/install from the community registry;
+- [x] **Skill marketplace UI** — Browse/search/install from the community registry;
       show tags, install count (local-only counter), author; one-click install
 - [ ] **Skill hot-reload** — Changes to an active skill take effect on the next
       message send (no session restart required)
