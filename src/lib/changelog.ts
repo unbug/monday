@@ -321,6 +321,23 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1.4',
+    date: '2026-04-30',
+    title: 'SOUL.md Equivalent — Persistent Identity Prompt',
+    description:
+      'Personas now have a persistent "soul" — a cross-session identity prompt that survives /new and session resets. Stored in IndexedDB alongside the persona; separate from the per-session system prompt.',
+    changes: [
+      { type: 'added', text: 'ChatSession.personaSoul field — stores the persistent identity prompt per session' },
+      { type: 'added', text: 'Soul tab in PersonaPublish — separate tab for editing the persona soul alongside the Identity tab' },
+      { type: 'added', text: 'MarketplacePersona.soul field — registry personas can declare a soul' },
+      { type: 'added', text: 'getActivePersona returns soul — checks builtin, custom, and marketplace personas' },
+      { type: 'changed', text: 'applyPersona injects soul into system prompt — [soul, systemPrompt, customPrompt] ordering' },
+      { type: 'changed', text: 'clearPersona clears personaSoul from session and removes soul from system prompt' },
+      { type: 'added', text: 'i18n for persona soul — en/zh translations for the Soul tab' },
+      { type: 'added', text: 'CSS for soul textarea — dark terminal-style with light theme overrides' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

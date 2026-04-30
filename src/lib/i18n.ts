@@ -1662,6 +1662,19 @@ const personaPublish: Record<Locale, Record<string, string>> = {
   },
 }
 
+const personaSoul: Record<Locale, Record<string, string>> = {
+  en: {
+    'personaSoul.tab': 'Soul',
+    'personaSoul.hint': 'Your persistent cross-session identity. This text is injected before the persona system prompt on every turn. It defines who you are, not what you do.',
+    'personaSoul.placeholder': 'You are a warm, witty, and slightly sarcastic AI companion. You speak with confidence but never pretend to be human. You care about being helpful, honest, and entertaining.',
+  },
+  zh: {
+    'personaSoul.tab': '灵魂',
+    'personaSoul.hint': '你的跨会话持久身份。这段文字会在每次对话时注入到人格系统提示之前，定义你是谁，而不是你做什么。',
+    'personaSoul.placeholder': '你是一个温暖、风趣又略带讽刺的 AI 伴侣。你说话充满自信但从不假装是人类。你关心的是有用、诚实和有趣。',
+  },
+}
+
 
 // ── Accessibility (a11y) ──
 const a11y = {
@@ -1743,6 +1756,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...persona[locale],
     ...personaMarketplace[locale],
     ...personaPublish[locale],
+    ...personaSoul[locale],
     ...modelComparison[locale],
     ...toolCallPanel[locale],
     ...toolCallInspector[locale],

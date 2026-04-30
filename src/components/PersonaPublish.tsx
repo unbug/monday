@@ -12,6 +12,7 @@ interface PublishPersonaForm {
   icon: string
   description: string
   systemPrompt: string
+  soul: string
   category: MarketplacePersona['category']
   tags: string
 }
@@ -21,6 +22,7 @@ const DEFAULT_FORM: PublishPersonaForm = {
   icon: '✨',
   description: '',
   systemPrompt: '',
+  soul: '',
   category: 'coding',
   tags: '',
 }
@@ -29,6 +31,7 @@ export function PersonaPublish() {
   const [form, setForm] = useState<PublishPersonaForm>(DEFAULT_FORM)
   const [copied, setCopied] = useState(false)
   const [step, setStep] = useState<'form' | 'preview' | 'json'>('form')
+  const [personaTab, setPersonaTab] = useState<'identity' | 'soul'>('identity')
 
   const updateField = useCallback(
     (field: keyof PublishPersonaForm, value: string) => {
@@ -50,6 +53,7 @@ export function PersonaPublish() {
       category: form.category,
       description: form.description.trim(),
       systemPrompt: form.systemPrompt.trim(),
+      soul: form.soul.trim(),
       tags: form.tags
         .split(',')
         .map((t) => t.trim())
@@ -157,16 +161,48 @@ export function PersonaPublish() {
             />
           </div>
 
-          <div className="persona-publish-field">
-            <label className="persona-publish-label">System Prompt *</label>
-            <textarea
-              className="persona-publish-textarea"
-              placeholder="Describe the persona's behavior, tone, and expertise..."
-              rows={8}
-              value={form.systemPrompt}
-              onChange={(e) => updateField('systemPrompt', e.target.value)}
-            />
+          {/* Persona identity tabs: Identity (system prompt) / Soul (cross-session identity) */}
+          <div className="persona-publish-tabs">
+            <button
+              className={`persona-publish-tab-btn ${personaTab === 'identity' ? 'active' : ''}`}
+              onClick={() => setPersonaTab('identity')}
+            >
+              🎭 Identity
+            </button>
+            <button
+              className={`persona-publish-tab-btn ${personaTab === 'soul' ? 'active' : ''}`}
+              onClick={() => setPersonaTab('soul')}
+            >
+              🔮 Soul
+            </button>
           </div>
+
+          {personaTab === 'identity' ? (
+            <div className="persona-publish-field">
+              <label className="persona-publish-label">System Prompt *</label>
+              <textarea
+                className="persona-publish-textarea"
+                placeholder="Describe the persona's behavior, tone, and expertise..."
+                rows={8}
+                value={form.systemPrompt}
+                onChange={(e) => updateField('systemPrompt', e.target.value)}
+              />
+            </div>
+          ) : (
+            <div className="persona-publish-field">
+              <label className="persona-publish-label">Soul (Cross-Session Identity)</label>
+              <textarea
+                className="persona-publish-textarea persona-publish-textarea--soul"
+                placeholder="Define the persona's core identity — who they are at their core. This persists across all sessions and survives /new. Separate from the session-specific system prompt above."
+                rows={8}
+                value={form.soul}
+                onChange={(e) => updateField('soul', e.target.value)}
+              />
+              <span className="persona-publish-field-hint">
+                This becomes the persona's persistent identity, injected before the system prompt in every session.
+              </span>
+            </div>
+          )}
 
           <div className="persona-publish-field">
             <label className="persona-publish-label">Tags</label>

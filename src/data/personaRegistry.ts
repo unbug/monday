@@ -10,6 +10,8 @@ export interface MarketplacePersona {
   category: 'coding' | 'writing' | 'analysis' | 'creative'
   description: string
   systemPrompt: string
+  /** Cross-session identity prompt (survives /new and session resets) */
+  soul?: string
   tags: string[]
   /** Model ID used for fast draft generation (v0.30) */
   draftModelId?: string

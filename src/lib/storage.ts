@@ -203,6 +203,7 @@ function migrateSession(session: ChatSession): ChatSession {
     migrated.generationParams = { temperature: 0.7, top_p: 0.9, maxTokens: 1024 }
   }
   if (migrated.personaId === undefined) migrated.personaId = null
+  if (migrated.personaSoul === undefined) migrated.personaSoul = ''
   if (migrated.knowledgeBaseId === undefined) migrated.knowledgeBaseId = null
   if (migrated.forkId === undefined) migrated.forkId = null
   if (migrated.summaries === undefined) migrated.summaries = []
@@ -219,6 +220,7 @@ export function createSession(modelId: string): ChatSession {
     systemPrompt: '',
     generationParams: { temperature: 0.7, top_p: 0.9, maxTokens: 1024 },
     personaId: null,
+    personaSoul: '',
     knowledgeBaseId: null,
     skillIds: [],
     forkId: null,

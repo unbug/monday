@@ -66,6 +66,8 @@ export interface ChatSession {
   knowledgeBaseId: string | null
   /** Skill IDs attached to this session (v1.1) */
   skillIds: string[]
+  /** Cross-session identity from persona (v1.1.4) */
+  personaSoul: string
   /** Parent session ID — set when this session was forked from another */
   forkId: string | null
   /** Auto-generated conversation summaries for context compression (v0.30) */

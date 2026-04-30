@@ -41,13 +41,14 @@ function paramsForSession(session: ChatSession | undefined) {
     maxTokens: params?.maxTokens ?? 1024,
     systemPrompt: session?.systemPrompt,
     personaId: session?.personaId,
+    personaSoul: session?.personaSoul,
   }
 }
 
 /**
  * Get the persona (built-in, custom, or marketplace) for a session.
  */
-function getActivePersona(session: ChatSession | null): { draftModelId?: string; refineModelId?: string } | null {
+function getActivePersona(session: ChatSession | null): { draftModelId?: string; refineModelId?: string; soul?: string } | null {
   if (!session?.personaId) return null
   // Check built-in personas
   const builtin = PROMPT_TEMPLATES.find((p) => p.id === session.personaId)
@@ -58,7 +59,18 @@ function getActivePersona(session: ChatSession | null): { draftModelId?: string;
     if (raw) {
       const custom: CustomPersona[] = JSON.parse(raw)
       const found = custom.find((p) => p.id === session.personaId)
-      if (found) return { draftModelId: found.draftModelId, refineModelId: found.refineModelId }
+      if (found) return { draftModelId: found.draftModelId, refineModelId: found.refineModelId, soul: found.soul }
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  // Check marketplace personas
+  try {
+    const raw = localStorage.getItem('monday-persona-marketplace')
+    if (raw) {
+      const market: MarketplacePersona[] = JSON.parse(raw)
+      const found = market.find((p) => p.id === session.personaId)
+      if (found && found.soul) return { draftModelId: found.draftModelId, refineModelId: found.refineModelId, soul: found.soul }
     }
   } catch {
     // Ignore parse errors
@@ -1060,17 +1072,20 @@ export function useChat(
   /**
    * Apply a persona to the active session.
    * The persona's system prompt is merged with the session's custom system prompt.
+   * The persona's soul (cross-session identity) is stored separately.
    */
   const applyPersona = useCallback(
     (persona: PromptTemplate | MarketplacePersona) => {
       if (!activeSessionId) return
+      const personaSoul = 'soul' in persona ? persona.soul ?? '' : ''
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId
           ? {
               ...s,
               personaId: persona.id,
-              // Merge persona system prompt with existing custom prompt
-              systemPrompt: [persona.systemPrompt, s.systemPrompt]
+              personaSoul,
+              // Merge soul + persona system prompt with existing custom prompt
+              systemPrompt: [personaSoul, persona.systemPrompt, s.systemPrompt]
                 .filter(Boolean)
                 .join('\n\n'),
               updatedAt: Date.now(),
@@ -1090,11 +1105,16 @@ export function useChat(
     if (!activeSessionId) return
     const updatedSessions = sessions.map((s) => {
       if (s.id !== activeSessionId) return s
-      // Remove persona prefix from system prompt
+      // Remove persona prefix + soul prefix from system prompt
+      let newSystemPrompt = s.systemPrompt
+      // Remove soul prefix if present
+      if (s.personaSoul && newSystemPrompt.startsWith(s.personaSoul)) {
+        newSystemPrompt = newSystemPrompt.slice(s.personaSoul.length).replace(/^\n\n+/, '')
+      }
+      // Remove persona system prompt prefix
       const personaPrompts = [
         PROMPT_TEMPLATES.find((p) => p.id === s.personaId)?.systemPrompt,
       ].filter(Boolean)
-      let newSystemPrompt = s.systemPrompt
       for (const pp of personaPrompts) {
         if (pp && newSystemPrompt.startsWith(pp)) {
           newSystemPrompt = newSystemPrompt.slice(pp.length).replace(/^\n\n+/, '')
@@ -1103,6 +1123,7 @@ export function useChat(
       return {
         ...s,
         personaId: null,
+        personaSoul: '',
         systemPrompt: newSystemPrompt,
         updatedAt: Date.now(),
       }
@@ -1171,6 +1192,7 @@ export function useChat(
         systemPrompt: source.systemPrompt,
         generationParams: { ...source.generationParams },
         personaId: source.personaId,
+        personaSoul: source.personaSoul ?? '',
         knowledgeBaseId: source.knowledgeBaseId,
         skillIds: [],
         forkId: source.id,

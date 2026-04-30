@@ -282,6 +282,7 @@ function PersonaForm({ persona, onSave, onClose, models }: PersonaFormProps) {
       createdAt: persona?.createdAt ?? Date.now(),
       draftModelId: draftModelId || undefined,
       refineModelId: refineModelId || undefined,
+      soul: persona?.soul ?? '',
     })
   }
 

@@ -23,7 +23,10 @@ export interface CustomPersona {
   name: string
   description: string
   icon: string
+  /** Per-session system prompt (user-editable, reset on /new) */
   systemPrompt: string
+  /** Cross-session identity prompt (survives /new and session resets) */
+  soul: string
   category: 'custom'
   builtin: false
   createdAt: number
