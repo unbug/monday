@@ -892,6 +892,32 @@ const skillBuilder: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Plugin Binding (Skill → Plugin) ──
+const pluginBinding: Record<Locale, Record<string, string>> = {
+  en: {
+    'pluginBinding.title': 'Required Plugins',
+    'pluginBinding.desc': 'This skill requires the following plugins to function. Install them to unlock full capabilities.',
+    'pluginBinding.missingLabel': '{{count}} missing plugin{{plural}}',
+    'pluginBinding.allInstalled': 'All required plugins are installed!',
+    'pluginBinding.installUrl': 'Paste plugin manifest URL',
+    'pluginBinding.install': 'Install',
+    'pluginBinding.installing': 'Installing…',
+    'pluginBinding.skip': 'Install skill only',
+    'pluginBinding.continue': 'Continue',
+  },
+  zh: {
+    'pluginBinding.title': '必需插件',
+    'pluginBinding.desc': '此技能需要以下插件才能正常工作。安装它们以解锁全部功能。',
+    'pluginBinding.missingLabel': '缺少 {{count}} 个插件{{plural}}',
+    'pluginBinding.allInstalled': '所有必需插件已安装！',
+    'pluginBinding.installUrl': '粘贴插件清单 URL',
+    'pluginBinding.install': '安装',
+    'pluginBinding.installing': '安装中…',
+    'pluginBinding.skip': '仅安装技能',
+    'pluginBinding.continue': '继续',
+  },
+}
+
 // ── Plugin Manager ──
 const plugin: Record<Locale, Record<string, string>> = {
   en: {
@@ -1745,6 +1771,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...skill[locale],
     ...skillRegistry[locale],
     ...skillBuilder[locale],
+    ...pluginBinding[locale],
   }
 }
 

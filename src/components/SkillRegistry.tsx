@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import {
   SKILL_REGISTRY,
   SKILL_CATEGORIES,
@@ -9,6 +9,7 @@ import type { RegistrySkill } from '../data/skillRegistry'
 import type { Skill } from '../types'
 import { saveSkills } from '../lib/storage'
 import { t } from '../lib/i18n'
+import { PluginBindingModal } from './PluginBindingModal'
 
 interface Props {
   onBack: () => void
@@ -19,6 +20,8 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [installedIds, setInstalledIds] = useState<Set<string>>(new Set())
+  const [pendingSkill, setPendingSkill] = useState<RegistrySkill | null>(null)
+  const installRef = useRef<(skill: RegistrySkill) => void>(() => {})
 
   // Load installed skills to track which ones are already installed
   useEffect(() => {
@@ -54,6 +57,37 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
     },
     [onInstall],
   )
+
+  installRef.current = handleInstall
+
+  const handleRegistryInstall = useCallback(
+    async (skill: RegistrySkill) => {
+      if (skill.requiredPlugins && skill.requiredPlugins.length > 0) {
+        setPendingSkill(skill)
+      } else {
+        await handleInstall(skill)
+      }
+    },
+    [handleInstall],
+  )
+
+  const handleInstallAll = useCallback(() => {
+    if (pendingSkill) {
+      installRef.current(pendingSkill)
+      setPendingSkill(null)
+    }
+  }, [pendingSkill])
+
+  const handleSkip = useCallback(() => {
+    if (pendingSkill) {
+      installRef.current(pendingSkill)
+      setPendingSkill(null)
+    }
+  }, [pendingSkill])
+
+  const handleCloseModal = useCallback(() => {
+    setPendingSkill(null)
+  }, [])
 
   const handleUninstall = useCallback(
     async (skillId: string) => {
@@ -192,7 +226,7 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
                   ) : (
                     <button
                       className="skill-registry-install-btn"
-                      onClick={() => handleInstall(skill)}
+                      onClick={() => handleRegistryInstall(skill)}
                     >
                       {t('skillRegistry.install')}
                     </button>
@@ -203,6 +237,17 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
           })
         )}
       </div>
+
+      {/* Plugin binding modal */}
+      {pendingSkill && (
+        <PluginBindingModal
+          skillName={pendingSkill.name}
+          requiredPluginUrls={pendingSkill.requiredPlugins}
+          onInstallAll={handleInstallAll}
+          onSkip={handleSkip}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   )
 }

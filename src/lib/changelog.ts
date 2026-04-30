@@ -304,6 +304,23 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1.3',
+    date: '2026-04-30',
+    title: 'Skills System — Skill + Plugin Binding',
+    description:
+      'Skills can now declare required plugins. When installing a skill from the registry, a modal prompts to install any missing plugins automatically — same flow as the v0.27 plugin install system.',
+    changes: [
+      { type: 'added', text: 'PluginBindingModal — modal that shows when a skill has required plugins, lists missing plugins, and offers one-click install' },
+      { type: 'added', text: 'Skill registry plugin binding — clicking Install on a skill with requiredPlugins triggers the plugin binding modal' },
+      { type: 'added', text: 'Install-all flow — after installing missing plugins, one click installs the skill and closes the modal' },
+      { type: 'added', text: 'Skip flow — user can skip plugin installation and install the skill anyway' },
+      { type: 'added', text: 'All-installed detection — when all plugins are already installed, shows a confirmation message' },
+      { type: 'added', text: 'i18n for plugin binding — en/zh translations for the binding modal' },
+      { type: 'added', text: 'CSS for plugin binding modal — dark terminal-style with light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.1.3' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

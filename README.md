@@ -541,7 +541,7 @@ how to do* (domain instructions, workflow steps, required-plugin declarations).
 - [x] **Skill builder UI** — In-app skill editor: name, description, tag picker,
       markdown instructions with live token-count estimate, required-plugin picker,
       export as `.monday-skill` JSON
-- [ ] **Skill + plugin binding** — A skill can declare required plugins by URL/ID;
+- [x] **Skill + plugin binding** — A skill can declare required plugins by URL/ID;
       installing a skill from the registry auto-prompts to install any missing
       plugins (same flow as v0.27 plugin install)
 - [ ] **SOUL.md equivalent** — "Soul" tab in the persona editor: a persistent
