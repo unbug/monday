@@ -46,6 +46,7 @@ import { UpdateBanner } from './components/UpdateBanner'
 import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import { SkillComposer } from './components/SkillComposer'
 import { SkillRegistry } from './components/SkillRegistry'
+import { SkillBuilder } from './components/SkillBuilder'
 import type { ModelInfo, CitationEntry, Skill } from './types'
 import type { SearXNGResult } from './lib/searxngApi'
 import type { ImportResult } from './lib/dataImport'
@@ -62,7 +63,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder'
 
 const BASE = '/monday'
 
@@ -84,6 +85,7 @@ const VIEW_PATH: Record<View, string> = {
   'usage-analytics': BASE + '/usage-analytics',
   comparison: BASE + '/comparison',
   'skill-registry': BASE + '/skill-registry',
+  'skill-builder': BASE + '/skill-builder',
 }
 
 function viewFromPath(pathname: string): View {
@@ -143,6 +145,8 @@ export default function App() {
   const [showPersonas, setShowPersonas] = useState(false)
   // v1.1: collapsible skills panel above chat input
   const [showSkills, setShowSkills] = useState(false)
+  // v1.1.2: skill builder state
+  const [skillBuilderSkill, setSkillBuilderSkill] = useState<Skill | null>(null)
 
   // v0.30.5: i18n locale
   const { locale, changeLocale: handleChangeLocale } = useLocale()
@@ -391,6 +395,8 @@ export default function App() {
     onOpenAgent: () => setView('agent'),
     onOpenUsageAnalytics: () => setView('usage-analytics'),
     onOpenComparison: () => setView('comparison'),
+    onOpenSkillRegistry: () => setView('skill-registry'),
+    onOpenSkillBuilder: () => { setSkillBuilderSkill(null); setView('skill-builder'); },
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -471,6 +477,11 @@ export default function App() {
             }}
             onOpenSkillRegistry={() => {
               setView('skill-registry')
+              closeSidebarOnMobile()
+            }}
+            onOpenSkillBuilder={() => {
+              setSkillBuilderSkill(null)
+              setView('skill-builder')
               closeSidebarOnMobile()
             }}
             onOpenKnowledge={() => {
@@ -824,6 +835,14 @@ export default function App() {
               onInstall={(skill) => {
                 // Skill installed — user can attach it from the skill composer
               }}
+            />
+          </div>
+        ) : view === 'skill-builder' ? (
+          <div className="main-content main-content--skill-builder">
+            <SkillBuilder
+              onBack={() => setView('chat')}
+              initialSkill={skillBuilderSkill}
+              onSave={() => setView('skill-registry')}
             />
           </div>
         ) : showBatch ? (

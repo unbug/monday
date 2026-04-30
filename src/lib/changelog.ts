@@ -285,6 +285,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1.2',
+    date: '2026-04-30',
+    title: 'Skills System — Skill Builder UI',
+    description:
+      'An in-app skill editor for creating and managing custom skills. Write Markdown instructions, pick tags, attach required plugins, preview the skill, and export/import as .monday-skill JSON files. Includes a live token-count estimate and a preview tab.',
+    changes: [
+      { type: 'added', text: 'SkillBuilder component — in-app skill editor with icon, name, description, tag picker, Markdown instructions, required-plugin URL picker, and version field' },
+      { type: 'added', text: 'Live token-count estimate — rough estimate displayed inline while editing instructions' },
+      { type: 'added', text: 'Preview tab — renders the skill as a formatted card showing all fields' },
+      { type: 'added', text: 'Export .monday-skill JSON — download the current skill as a JSON file' },
+      { type: 'added', text: 'Import .monday-skill JSON — load a skill from a downloaded JSON file' },
+      { type: 'added', text: 'Skill Builder view route (/monday/skill-builder) — accessible from sidebar nav and command palette' },
+      { type: 'added', text: '40+ tag suggestions — comprehensive tag list across all skill categories' },
+      { type: 'added', text: 'i18n for skill builder — en/zh translations for all editor fields and actions' },
+      { type: 'added', text: 'CSS for skill builder — full dark terminal-style with light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.1.2' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

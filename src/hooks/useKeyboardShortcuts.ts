@@ -28,6 +28,8 @@ interface UseKeyboardShortcutsOptions {
   onOpenAgent?: () => void
   onOpenUsageAnalytics?: () => void
   onOpenComparison?: () => void
+  onOpenSkillRegistry?: () => void
+  onOpenSkillBuilder?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -281,6 +283,26 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
                 }
                 input.click()
               },
+            },
+          ]
+        : []),
+      ...(options.onOpenSkillRegistry
+        ? [
+            {
+              id: 'skill-registry',
+              label: 'Skill Registry',
+              icon: '📚',
+              action: options.onOpenSkillRegistry,
+            },
+          ]
+        : []),
+      ...(options.onOpenSkillBuilder
+        ? [
+            {
+              id: 'skill-builder',
+              label: 'Skill Builder',
+              icon: '✏️',
+              action: options.onOpenSkillBuilder,
             },
           ]
         : []),

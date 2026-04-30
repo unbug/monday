@@ -538,7 +538,7 @@ how to do* (domain instructions, workflow steps, required-plugin declarations).
 - [x] **Skill registry** — Community skill registry (curated JSON file in the repo,
       like persona registry) with 20+ launch skills across categories: Coding,
       Writing, Research, Data, Language, Creative
-- [ ] **Skill builder UI** — In-app skill editor: name, description, tag picker,
+- [x] **Skill builder UI** — In-app skill editor: name, description, tag picker,
       markdown instructions with live token-count estimate, required-plugin picker,
       export as `.monday-skill` JSON
 - [ ] **Skill + plugin binding** — A skill can declare required plugins by URL/ID;
