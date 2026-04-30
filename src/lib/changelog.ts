@@ -338,6 +338,21 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.1.5',
+    date: '2026-04-30',
+    title: 'Skills System — Author Attribution on Registry Cards',
+    description:
+      'The Skill Registry marketplace now shows the author of each skill on the card, making it easy to credit creators. The RegistrySkill type gained an optional `author` field, the Skill persisted type includes it, and all 24 launch skills are attributed to "Monday Team". The SkillBuilder also includes the author field for custom skills.',
+    changes: [
+      { type: 'added', text: 'RegistrySkill.author field — optional author/publisher attribution on registry skills' },
+      { type: 'added', text: 'Skill.author field — persisted author attribution on installed skills' },
+      { type: 'added', text: 'Author display on registry cards — "by Monday Team" shown below the category label on each skill card' },
+      { type: 'added', text: 'Author CSS — subtle muted text below category in .skill-registry-card-author' },
+      { type: 'added', text: 'Author attribution on all 24 launch skills — each registry skill now has author: "Monday Team"' },
+      { type: 'added', text: 'SkillBuilder author support — custom skills include author field in save and export' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',
