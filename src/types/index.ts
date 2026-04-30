@@ -380,4 +380,8 @@ export interface Skill {
   createdAt: number
   /** Last time the skill was attached to a session (timestamp) */
   lastUsedAt: number | null
+  /** Number of sessions this skill has been installed in (local-only counter) */
+  installCount: number
+  /** Author / publisher of the skill */
+  author: string
 }

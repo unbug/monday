@@ -20,15 +20,35 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [installedIds, setInstalledIds] = useState<Set<string>>(new Set())
+  const [installCounts, setInstallCounts] = useState<Record<string, number>>({})
   const [pendingSkill, setPendingSkill] = useState<RegistrySkill | null>(null)
   const installRef = useRef<(skill: RegistrySkill) => void>(() => {})
 
-  // Load installed skills to track which ones are already installed
+  // Load installed skills + local install counts
   useEffect(() => {
     import('../lib/storage').then(({ loadSkills }) => {
       loadSkills().then((skills) => {
         setInstalledIds(new Set(skills.map((s) => s.id)))
       })
+    })
+    // Load local install counts from localStorage
+    try {
+      const raw = localStorage.getItem('monday-skill-install-counts')
+      if (raw) setInstallCounts(JSON.parse(raw))
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const incrementInstallCount = useCallback((skillId: string) => {
+    setInstallCounts((prev) => {
+      const next = { ...prev, [skillId]: (prev[skillId] ?? 0) + 1 }
+      try {
+        localStorage.setItem('monday-skill-install-counts', JSON.stringify(next))
+      } catch {
+        // ignore
+      }
+      return next
     })
   }, [])
 
@@ -49,9 +69,12 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
           icon: skill.icon,
           createdAt: now,
           lastUsedAt: null,
+          installCount: 0,
+          author: skill.author ?? '',
         }
         await saveSkills([...existing, newSkill])
         setInstalledIds((prev) => new Set(prev).add(skill.id))
+        incrementInstallCount(skill.id)
         onInstall(skill)
       }
     },
@@ -200,10 +223,20 @@ export function SkillRegistry({ onBack, onInstall }: Props) {
                     <span className="skill-registry-card-category">
                       {SKILL_CATEGORY_LABELS[skill.category]?.replace(/^.\s*/, '')}
                     </span>
+                    {skill.author && (
+                      <span className="skill-registry-card-author">
+                        by {skill.author}
+                      </span>
+                    )}
                   </div>
                   {skill.recommended && (
                     <span className="skill-registry-recommended-badge">
                       ⭐ {t('skillRegistry.recommended')}
+                    </span>
+                  )}
+                  {installCounts[skill.id] > 0 && (
+                    <span className="skill-registry-install-count">
+                      {t('skillRegistry.installs', { count: installCounts[skill.id] })}
                     </span>
                   )}
                 </div>

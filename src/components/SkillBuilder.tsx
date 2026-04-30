@@ -84,6 +84,8 @@ export function SkillBuilder({ onBack, initialSkill, onSave }: SkillBuilderProps
         icon: icon || '📄',
         createdAt: initialSkill?.createdAt ?? Date.now(),
         lastUsedAt: null,
+        installCount: 0,
+        author: '',
       }
       // Remove existing with same id (editing) or check for name conflict (new)
       const filtered = skills.filter((s) => s.id !== skill.id)
@@ -118,6 +120,8 @@ export function SkillBuilder({ onBack, initialSkill, onSave }: SkillBuilderProps
       icon: icon || '📄',
       createdAt: initialSkill?.createdAt ?? Date.now(),
       lastUsedAt: null,
+      installCount: 0,
+      author: '',
     }
     const json = JSON.stringify(skill, null, 2)
     const blob = new Blob([json], { type: 'application/json' })

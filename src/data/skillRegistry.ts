@@ -31,6 +31,8 @@ export interface RegistrySkill {
   category: 'coding' | 'writing' | 'research' | 'data' | 'language' | 'creative'
   /** Whether this skill is recommended for beginners */
   recommended?: boolean
+  /** Author / publisher of the skill */
+  author?: string
 }
 
 export const SKILL_REGISTRY: RegistrySkill[] = [
@@ -56,6 +58,7 @@ Always prefer minimal reproductions over speculative fixes. If the user provides
     icon: '🐛',
     category: 'coding',
     recommended: true,
+    author: 'Monday Team',
   },
   {
     id: 'typescript-auditor',
@@ -75,6 +78,7 @@ Provide concrete code fixes. Never accept \`any\` as a final answer — always s
     tags: ['coding', 'typescript', 'type-system'],
     icon: '🔍',
     category: 'coding',
+    author: 'Monday Team',
   },
   {
     id: 'api-designer',
@@ -95,6 +99,7 @@ Always provide complete endpoint definitions with request/response examples in O
     tags: ['coding', 'api-design', 'rest'],
     icon: '🔌',
     category: 'coding',
+    author: 'Monday Team',
   },
   {
     id: 'react-patterns',
@@ -115,6 +120,7 @@ Always explain the trade-offs of each pattern choice.`,
     tags: ['coding', 'react', 'frontend'],
     icon: '⚛️',
     category: 'coding',
+    author: 'Monday Team',
   },
   {
     id: 'sql-analyst',
@@ -134,6 +140,7 @@ Always provide the EXPLAIN plan output and explain what it means in plain langua
     tags: ['coding', 'sql', 'database'],
     icon: '🗃️',
     category: 'coding',
+    author: 'Monday Team',
   },
   {
     id: 'git-workflow',
@@ -153,6 +160,7 @@ Always show the exact commands with explanations. Never suggest \`git push --for
     tags: ['coding', 'git', 'workflow'],
     icon: '📦',
     category: 'coding',
+    author: 'Monday Team',
   },
   {
     id: 'docker-dev',
@@ -172,6 +180,7 @@ Always provide complete, copy-pasteable configs with comments explaining each di
     tags: ['coding', 'docker', 'devops'],
     icon: '🐳',
     category: 'coding',
+    author: 'Monday Team',
   },
 
   // ── Writing (4 skills) ─────────────────────────────────────────────
@@ -196,6 +205,7 @@ When writing API docs, always include: endpoint, method, path params, query para
     icon: '📝',
     category: 'writing',
     recommended: true,
+    author: 'Monday Team',
   },
   {
     id: 'email-composer',
@@ -216,6 +226,7 @@ Always provide the email in a clean format ready to copy-paste, with a brief exp
     tags: ['writing', 'email', 'business'],
     icon: '📧',
     category: 'writing',
+    author: 'Monday Team',
   },
   {
     id: 'blog-creator',
@@ -236,6 +247,7 @@ Provide the post in markdown format with meta title, description, and suggested 
     tags: ['writing', 'blog', 'seo'],
     icon: '✒️',
     category: 'writing',
+    author: 'Monday Team',
   },
   {
     id: 'code-explainer',
@@ -256,6 +268,7 @@ Use the "Explain Like I'm 5" (ELI5) approach for beginners, gradually adding tec
     tags: ['writing', 'education', 'code-review'],
     icon: '📖',
     category: 'writing',
+    author: 'Monday Team',
   },
 
   // ── Research (3 skills) ────────────────────────────────────────────
@@ -280,6 +293,7 @@ Always distinguish between what the paper *claims* and what the evidence *actual
     icon: '🔬',
     category: 'research',
     recommended: true,
+    author: 'Monday Team',
   },
   {
     id: 'literature-review',
@@ -300,6 +314,7 @@ Provide a structured outline before writing the full review. Use clear signposti
     tags: ['research', 'synthesis', 'literature'],
     icon: '📚',
     category: 'research',
+    author: 'Monday Team',
   },
   {
     id: 'hypothesis-generator',
@@ -320,6 +335,7 @@ Use the format: "If [mechanism], then [prediction], because [rationale]. Alterna
     tags: ['research', 'hypothesis', 'scientific-method'],
     icon: '💡',
     category: 'research',
+    author: 'Monday Team',
   },
 
   // ── Data (3 skills) ────────────────────────────────────────────────
@@ -344,6 +360,7 @@ Always note assumptions and limitations. Distinguish between correlation and cau
     icon: '📊',
     category: 'data',
     recommended: true,
+    author: 'Monday Team',
   },
   {
     id: 'data-visualizer',
@@ -368,6 +385,7 @@ Always explain why each design choice was made.`,
     tags: ['data', 'visualization', 'd3js'],
     icon: '📈',
     category: 'data',
+    author: 'Monday Team',
   },
   {
     id: 'etl-engineer',
@@ -388,6 +406,7 @@ Provide complete pipeline code (Python/pandas, SQL, or shell) with error handlin
     tags: ['data', 'etl', 'pipeline'],
     icon: '⚙️',
     category: 'data',
+    author: 'Monday Team',
   },
 
   // ── Language (3 skills) ────────────────────────────────────────────
@@ -412,6 +431,7 @@ For technical content, preserve exact terminology. For creative content, priorit
     icon: '🌐',
     category: 'language',
     recommended: true,
+    author: 'Monday Team',
   },
   {
     id: 'grammar-checker',
@@ -432,6 +452,7 @@ Present findings in priority order: critical errors first, then style suggestion
     tags: ['language', 'grammar', 'writing'],
     icon: '✏️',
     category: 'language',
+    author: 'Monday Team',
   },
   {
     id: 'japanese-teacher',
@@ -452,6 +473,7 @@ Always provide romaji, kanji, and furigana (where helpful). Explain the "why" be
     tags: ['language', 'japanese', 'education'],
     icon: '🇯🇵',
     category: 'language',
+    author: 'Monday Team',
   },
 
   // ── Creative (4 skills) ────────────────────────────────────────────
@@ -475,6 +497,7 @@ Follow the Nielsen Norman Group's UX writing guidelines: clarity, conciseness, c
     tags: ['creative', 'ux-writing', 'microcopy'],
     icon: '🎯',
     category: 'creative',
+    author: 'Monday Team',
   },
   {
     id: 'game-designer',
@@ -495,6 +518,7 @@ Always consider the target platform and audience. Mobile games need shorter sess
     tags: ['creative', 'games', 'design'],
     icon: '🎮',
     category: 'creative',
+    author: 'Monday Team',
   },
   {
     id: 'creative-writer',
@@ -515,6 +539,7 @@ For poetry: pay attention to rhythm, meter, rhyme scheme, and figurative languag
     tags: ['creative', 'fiction', 'storytelling'],
     icon: '📖',
     category: 'creative',
+    author: 'Monday Team',
   },
   {
     id: 'brand-voice',
@@ -535,6 +560,7 @@ Apply the voice consistently across all requested content. Flag any section that
     tags: ['creative', 'branding', 'copywriting'],
     icon: '🏷️',
     category: 'creative',
+    author: 'Monday Team',
   },
 ]
 
