@@ -1758,6 +1758,11 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
     'memory.minutesAgo': '{{count}}m ago',
     'memory.hoursAgo': '{{count}}h ago',
     'memory.daysAgo': '{{count}}d ago',
+    'memory.namespace': 'Scope',
+    'memory.targetPersona': 'Persona',
+    'memory.targetSkill': 'Skill',
+    'memory.selectPersona': 'Select a persona…',
+    'memory.selectSkill': 'Select a skill…',
   },
   zh: {
     'memory.title': '持久记忆',
@@ -1784,6 +1789,11 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
     'memory.minutesAgo': '{{count}} 分钟前',
     'memory.hoursAgo': '{{count}} 小时前',
     'memory.daysAgo': '{{count}} 天前',
+    'memory.namespace': '范围',
+    'memory.targetPersona': '人格',
+    'memory.targetSkill': '技能',
+    'memory.selectPersona': '选择人格…',
+    'memory.selectSkill': '选择技能…',
   },
 }
 

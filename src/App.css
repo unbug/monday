@@ -15173,3 +15173,91 @@ textarea:focus:not(:focus-visible),
   box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
 }
 
+
+/* ── Persistent Memory namespace/target selectors ───────────────────── */
+
+.persistent-memory-ns-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.persistent-memory-ns-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.persistent-memory-ns-select {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.persistent-memory-ns-select:hover {
+  border-color: var(--accent-color);
+}
+
+.persistent-memory-ns-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+}
+
+.persistent-memory-target-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.persistent-memory-target-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.persistent-memory-target-select {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.persistent-memory-target-select:hover {
+  border-color: var(--accent-color);
+}
+
+.persistent-memory-target-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+}
+
+/* Target chip on memory cards */
+.persistent-memory-target-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  margin: 4px 0;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .persistent-memory-ns-select,
+[data-theme="light"] .persistent-memory-target-select {
+  background: #fff;
+  border-color: #e5e7eb;
+}

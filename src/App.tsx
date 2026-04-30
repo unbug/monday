@@ -14,6 +14,7 @@ import { CodeArena } from './components/CodeArena'
 import { ModelBenchmark } from './components/ModelBenchmark'
 import { CustomModelImport } from './components/CustomModelImport'
 import { PersonaMarketplace } from './components/PersonaMarketplace'
+import { PERSONA_REGISTRY } from './data/personaRegistry'
 import { KnowledgePanel } from './components/KnowledgePanel'
 import { ToolCallInspector } from './components/ToolCallInspector'
 import { PluginManager } from './components/PluginManager'
@@ -173,10 +174,17 @@ export default function App() {
   const embedding = useEmbeddingModel()
   const mcpServers = useMcpServers()
 
-  // v1.2: load persistent memories when memory view is open
+  // v1.2: load persistent memories and skills when memory view is open
+  const [installedSkills, setInstalledSkills] = useState<Skill[]>([])
   useEffect(() => {
     if (view === 'memory') {
-      import('./lib/storage').then((m) => m.loadMemories().then(setMemories))
+      Promise.all([
+        import('./lib/storage').then((m) => m.loadMemories()),
+        loadSkills(),
+      ]).then(([mems, sks]) => {
+        setMemories(mems)
+        setInstalledSkills(sks)
+      })
     }
   }, [view])
 
@@ -808,9 +816,11 @@ export default function App() {
             />
             <PersistentMemoryPanel
               memories={memories}
-              onAdd={async (key, value) => {
+              personas={PERSONA_REGISTRY}
+              skills={installedSkills}
+              onAdd={async (key, value, namespace, targetId) => {
                 const m = await import('./lib/storage')
-                const mem = await m.createMemory(key, value, 'global', null, chat.activeSession?.id ?? 'unknown')
+                const mem = await m.createMemory(key, value, namespace, targetId, chat.activeSession?.id ?? 'unknown')
                 setMemories((prev) => [mem, ...prev])
               }}
               onEdit={async (id, key, value) => {
