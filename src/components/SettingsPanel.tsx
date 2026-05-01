@@ -647,57 +647,19 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
                 <label className="settings-label">
                   {t('openai.providerLabel')}
                 </label>
-                <div className="api-provider-toggle">
-                  <button
-                    className={`api-provider-btn ${!provider || provider === 'web-llm' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('web-llm')}
-                    type="button"
-                  >
-                    {t('openai.providerLocal')}
-                  </button>
-                  <button
-                    className={`api-provider-btn ${provider === 'ollama' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('ollama')}
-                    type="button"
-                  >
-                    Ollama
-                  </button>
-                  <button
-                    className={`api-provider-btn ${provider === 'lmstudio' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('lmstudio')}
-                    type="button"
-                  >
-                    LM Studio
-                  </button>
-                  <button
-                    className={`api-provider-btn ${provider === 'llamacpp' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('llamacpp')}
-                    type="button"
-                  >
-                    llama.cpp
-                  </button>
-                  <button
-                    className={`api-provider-btn ${provider === 'vllm' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('vllm')}
-                    type="button"
-                  >
-                    vLLM
-                  </button>
-                  <button
-                    className={`api-provider-btn ${provider === 'deepseek' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('deepseek')}
-                    type="button"
-                  >
-                    DeepSeek
-                  </button>
-                  <button
-                    className={`api-provider-btn ${provider === 'openai' ? 'api-provider-btn--active' : ''}`}
-                    onClick={() => onSetProvider('openai')}
-                    type="button"
-                  >
-                    {t('openai.providerRemote')}
-                  </button>
-                </div>
+                <select
+                  className="settings-input"
+                  value={provider ?? 'web-llm'}
+                  onChange={(e) => onSetProvider(e.target.value as any)}
+                >
+                  <option value="web-llm">{t('openai.providerLocal')}</option>
+                  <option value="openai">{t('openai.providerRemote')}</option>
+                  <option value="ollama">Ollama</option>
+                  <option value="lmstudio">LM Studio</option>
+                  <option value="llamacpp">llama.cpp</option>
+                  <option value="vllm">vLLM</option>
+                  <option value="deepseek">DeepSeek</option>
+                </select>
               </div>
             )}
 
