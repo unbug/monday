@@ -482,7 +482,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    version: '0.31.5',
+    version: '0.31.8',
     date: '2026-04-28',
     title: 'Code Arena — Recording & Video Export',
     description:
@@ -497,7 +497,7 @@ export const CHANGELOG: ChangelogEntry[] = [
       { type: 'added', text: 'VP9 codec preference with video/webm fallback — MediaRecorder picks best available codec' },
       { type: 'added', text: 'Recording controls CSS — dark terminal-style controls with pulse animation and disabled state' },
       { type: 'added', text: 'Recording i18n — en/zh translations for record, recording, stop, download, fps, duration strings' },
-      { type: 'changed', text: 'Updated version to v0.31.5' },
+      { type: 'changed', text: 'Updated version to v0.31.8' },
     ],
   },
   {

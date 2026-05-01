@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 const LATEST_VERSION_URL = "https://raw.githubusercontent.com/unbug/monday/main/package.json"
 import { BorderBeam } from 'border-beam'
+import { CHANGELOG } from '../lib/changelog'
 import type { ChatSession } from '../types'
 import type { Locale } from '../lib/i18n'
 import { t } from '../lib/i18n'
@@ -115,7 +116,7 @@ export function Sidebar({
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
   const [navExpanded, setNavExpanded] = useState(false)
 
-  const [latestVersion, setLatestVersion] = useState<string>("0.31.5")
+  const [latestVersion, setLatestVersion] = useState<string>(CHANGELOG[0]?.version ?? '1.2.3')
 
   useEffect(() => {
     fetch(LATEST_VERSION_URL)
