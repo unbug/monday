@@ -20,7 +20,7 @@ import {
   loadKnowledgeBases,
   loadKnowledgeDocs,
 } from '../lib/storage'
-import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent, MemorySummary } from '../types'
+import type { ChatSession, ChatMessage, CitationEntry, ToolCallEvent, MemorySummary, LearningItem } from '../types'
 import type { PromptTemplate, CustomPersona } from '../lib/prompts'
 import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
@@ -101,6 +101,13 @@ export function useChat(
       return true
     }
   })
+
+  // v1.2.3: pending learning items from compaction (user must review before committing)
+  const [pendingLearningItems, setPendingLearningItems] = useState<{
+    summary: string
+    items: LearningItem[]
+    sessionId: string
+  } | null>(null)
   // v0.27: tool call events for display
   const [toolCallEvents, setToolCallEvents] = useState<ToolCallEvent[]>([])
   // v0.30: model chaining state
@@ -127,6 +134,10 @@ export function useChat(
             : s,
         )
         await persistSessions(updated)
+      },
+      // v1.2.3: learning review callback
+      onLearningReady: async (result) => {
+        setPendingLearningItems(result)
       },
     },
   )
@@ -1300,5 +1311,8 @@ export function useChat(
     // v1.2.1: correction capture
     correctionCaptureEnabled,
     setCorrectionCaptureEnabled,
+    // v1.2.3: pending learning items for review
+    pendingLearningItems,
+    setPendingLearningItems,
   }
 }

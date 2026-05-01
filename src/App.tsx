@@ -50,7 +50,8 @@ import { SkillComposer } from './components/SkillComposer'
 import { SkillRegistry } from './components/SkillRegistry'
 import { OntologyPanel } from './components/OntologyPanel'
 import { SkillBuilder } from './components/SkillBuilder'
-import type { ModelInfo, CitationEntry, Skill } from './types'
+import { LearningReviewDialog } from './components/LearningReviewDialog'
+import type { ModelInfo, CitationEntry, Skill, LearningItem } from './types'
 import type { SearXNGResult } from './lib/searxngApi'
 import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
@@ -101,6 +102,12 @@ function viewFromPath(pathname: string): View {
 export default function App() {
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
   const [memories, setMemories] = useState<import('./types').MemoryEntry[]>([])
+  // v1.2.3: pending learning items from compaction review
+  const [pendingLearningItems, setPendingLearningItems] = useState<{
+    summary: string
+    items: LearningItem[]
+    sessionId: string
+  } | null>(null)
   const [view, setView] = useState<View>(() => {
     // Handle redirect encoded by 404.html on GitHub Pages
     const redirect = sessionStorage.getItem('redirect')
@@ -854,6 +861,37 @@ export default function App() {
               }}
               onClose={() => setView('chat')}
             />
+            {/* v1.2.3: learning review dialog */}
+            {chat.pendingLearningItems && (
+              <LearningReviewDialog
+                items={chat.pendingLearningItems.items}
+                summary={chat.pendingLearningItems.summary}
+                onApproveAll={async () => {
+                  const result = chat.pendingLearningItems
+                  if (!result) return
+                  const approvedItems = result.items.filter((i) => true)
+                  if (approvedItems.length > 0) {
+                    const m = await import('./lib/storage')
+                    const newMemories: typeof memories = []
+                    for (const item of approvedItems) {
+                      const mem = await m.createMemory(
+                        item.title,
+                        item.content,
+                        item.type === 'preference' ? 'global' : 'skill',
+                        null,
+                        result.sessionId,
+                      )
+                      newMemories.push(mem)
+                    }
+                    setMemories((prev) => [...newMemories, ...prev])
+                  }
+                  chat.setPendingLearningItems(null)
+                }}
+                onDismiss={() => {
+                  chat.setPendingLearningItems(null)
+                }}
+              />
+            )}
           </div>
         ) : view === 'ontology' ? (
           <div className="main-content main-content--ontology">

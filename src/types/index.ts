@@ -437,3 +437,29 @@ export interface OntologyRelationship {
   /** Relationship label (e.g. 'assigned-to', 'part-of', 'created-by') */
   label: string
 }
+
+// ── v1.2.3: Session compaction with learning ────────────────────────────────
+
+export type LearningItemType = 'preference' | 'entity'
+
+export interface LearningItem {
+  /** Unique item ID */
+  id: string
+  /** Item type: preference or entity mention */
+  type: LearningItemType
+  /** Short title/key for the item */
+  title: string
+  /** Full content of the extracted item */
+  content: string
+  /** Confidence score 0-1 (auto-extracted by the model) */
+  confidence: number
+}
+
+export interface LearningResult {
+  /** The summary text (same as from summarization) */
+  summary: string
+  /** Extracted learning items from the conversation */
+  items: LearningItem[]
+  /** Session ID this learning result belongs to */
+  sessionId: string
+}

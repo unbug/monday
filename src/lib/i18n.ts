@@ -1817,6 +1817,30 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Session Compaction — Learning Review (v1.2.3) ──
+const learning: Record<Locale, Record<string, string>> = {
+  en: {
+    'learning.title': 'Learning Review',
+    'learning.subtitle': 'Review extracted preferences and entity mentions before committing to memory.',
+    'learning.preference': 'Preference',
+    'learning.entity': 'Entity',
+    'learning.approvedCount': '{{count}} approved',
+    'learning.showSummary': 'Show summary',
+    'learning.approveAll': 'Approve All',
+    'learning.dismiss': 'Dismiss',
+  },
+  zh: {
+    'learning.title': '学习审查',
+    'learning.subtitle': '在提交到持久记忆之前，审查提取的偏好和实体提及。',
+    'learning.preference': '偏好',
+    'learning.entity': '实体',
+    'learning.approvedCount': '已批准 {{count}} 个',
+    'learning.showSummary': '查看摘要',
+    'learning.approveAll': '全部批准',
+    'learning.dismiss': '关闭',
+  },
+}
+
 // ── Ontology Store (v1.2.2) ──
 const ontology: Record<Locale, Record<string, string>> = {
   en: {
@@ -1940,6 +1964,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...skillBuilder[locale],
     ...pluginBinding[locale],
     ...ontology[locale],
+    ...learning[locale],
   }
 }
 

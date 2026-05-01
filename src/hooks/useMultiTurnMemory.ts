@@ -4,8 +4,8 @@
  */
 
 import { useState, useCallback, useRef } from 'react'
-import type { MemorySummary } from '../types'
-import { summarizeMessages, summarizeMessagesStreaming } from '../lib/summarizer'
+import type { MemorySummary, LearningResult } from '../types'
+import { summarizeMessages, summarizeMessagesStreaming, extractLearningItems } from '../lib/summarizer'
 
 export interface MemoryState {
   /** Current summaries for the active session */
@@ -23,6 +23,8 @@ export interface UseMultiTurnMemoryOptions {
   onSummaryGenerated?: (sessionId: string, summary: MemorySummary) => void
   /** Callback when summaries are edited */
   onSummariesUpdated?: (sessionId: string, summaries: MemorySummary[]) => void
+  /** Callback when learning items are extracted from the summary */
+  onLearningReady?: (result: LearningResult) => void
 }
 
 /**
@@ -108,6 +110,27 @@ export function useMultiTurnMemory(
           summary: result.summary,
           generatedAt: Date.now(),
           editedAt: null,
+        }
+
+        // v1.2.3: extract learning items from the summary
+        let learningItems: LearningResult['items'] = []
+        try {
+          learningItems = await extractLearningItems(
+            result.summary,
+            toSummarize,
+            { temperature: 0.2, maxTokens: 256 },
+          )
+        } catch {
+          // Extraction is best-effort — continue without it
+        }
+
+        // Notify about learning results if callback is provided
+        if (learningItems.length > 0 && options.onLearningReady && sessionId) {
+          options.onLearningReady({
+            summary: result.summary,
+            items: learningItems,
+            sessionId,
+          })
         }
 
         const newSummaries = [...summaries, summary]

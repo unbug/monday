@@ -432,6 +432,24 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.2.3',
+    date: '2026-05-01',
+    title: 'Session Compaction with Learning',
+    description:
+      'During session compaction, the model extracts preference signals and entity mentions from the conversation summary. A review dialog lets the user approve or dismiss each item before committing to persistent memory. Approved items are saved as named memory entries with confidence scores.',
+    changes: [
+      { type: 'added', text: 'LearningItem type — preference and entity extraction with confidence score' },
+      { type: 'added', text: 'LearningResult type — summary + extracted items + sessionId' },
+      { type: 'added', text: 'extractLearningItems() in summarizer.ts — asks the loaded model to extract structured learning signals from the summary' },
+      { type: 'added', text: 'LearningReviewDialog component — overlay with per-item approve/deny toggle, confidence indicator, summary preview, approve-all/dismiss actions' },
+      { type: 'added', text: 'onLearningReady callback in useMultiTurnMemory — fires when compaction extracts learning items' },
+      { type: 'added', text: 'Learning review wired into App.tsx memory view — dialog appears after compaction with approved items saved to IndexedDB' },
+      { type: 'added', text: 'Learning i18n — en/zh translations for review dialog strings' },
+      { type: 'added', text: 'Learning Review CSS — dark terminal-style overlay, per-item cards with type icons, confidence colors, approve-all button, light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.2.3' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',
