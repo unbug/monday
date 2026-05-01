@@ -56,6 +56,19 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '0.31.5',
+    date: '2026-04-28',
+    title: 'Chat Layout Refactor — Inline Personas & Skills Panels',
+    description:
+      'Personas and Skills panels moved inline above the chat input as collapsible toggle panels, matching a consistent panel design pattern. Model selector simplified for inline use.',
+    changes: [
+      { type: 'added', text: 'Collapsible personas panel — toggle button with icon, label, and chevron above chat input' },
+      { type: 'added', text: 'Collapsible skills panel — toggle button with icon, label, and chevron above chat input' },
+      { type: 'added', text: 'Inline model selector — compact model selection panel matching Personas/Skills pattern' },
+      { type: 'changed', text: 'Updated version to v0.31.5' },
+    ],
+  },
+  {
     version: '0.31.7',
     date: '2026-04-29',
     title: 'Code Arena — Verdict & Local Leaderboard',

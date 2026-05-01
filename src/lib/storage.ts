@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -19,6 +19,7 @@ const SEARXNG_SETTINGS_STORE = 'searxngSettings'
 const SKILLS_STORE = 'skills'
 const MEMORIES_STORE = 'memories'
 const ONTOLOGY_STORE = 'ontology'
+const WORKSHOP_STORE = 'workshop'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -144,6 +145,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v18→v19: add ontology object store for v1.2.2 Ontology store
       if (!db.objectStoreNames.contains(ONTOLOGY_STORE)) {
         db.createObjectStore(ONTOLOGY_STORE, { keyPath: 'id' })
+      }
+      // Migration v19→v20: add workshop proposals store for v1.2.4 Skill Workshop
+      if (!db.objectStoreNames.contains(WORKSHOP_STORE)) {
+        db.createObjectStore(WORKSHOP_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -1001,3 +1006,66 @@ export function getEntityColor(type: EntityType): string {
     case 'document': return '#ef4444'
   }
 }
+
+// ── v1.2.4: Skill Workshop — workshop proposals CRUD ────────────────────────
+
+export async function saveWorkshopProposals(proposals: WorkshopProposal[]): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(WORKSHOP_STORE, 'readwrite')
+  const store = tx.objectStore(WORKSHOP_STORE)
+  for (const p of proposals) {
+    store.put(p)
+  }
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadWorkshopProposals(): Promise<WorkshopProposal[]> {
+  const db = await openDB()
+  const tx = db.transaction(WORKSHOP_STORE, 'readonly')
+  const store = tx.objectStore(WORKSHOP_STORE)
+  const req = store.getAll()
+  return new Promise<WorkshopProposal[]>((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result as WorkshopProposal[])
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function updateWorkshopProposal(id: string, patch: Partial<WorkshopProposal>): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(WORKSHOP_STORE, 'readwrite')
+  const store = tx.objectStore(WORKSHOP_STORE)
+  const getReq = store.get(id)
+  await new Promise<void>((resolve, reject) => {
+    getReq.onsuccess = () => {
+      const existing = getReq.result as WorkshopProposal
+      if (existing) {
+        Object.assign(existing, patch)
+        store.put(existing)
+        resolve()
+      } else {
+        reject(new Error('Workshop proposal not found'))
+      }
+    }
+    getReq.onerror = () => reject(getReq.error)
+  })
+}
+
+export async function deleteWorkshopProposal(id: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(WORKSHOP_STORE, 'readwrite')
+  const store = tx.objectStore(WORKSHOP_STORE)
+  store.delete(id)
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadPendingWorkshopProposals(): Promise<WorkshopProposal[]> {
+  const proposals = await loadWorkshopProposals()
+  return proposals.filter((p) => p.status === 'pending')
+}
+

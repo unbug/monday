@@ -55,7 +55,7 @@ import type { ModelInfo, CitationEntry, Skill, LearningItem } from './types'
 import type { SearXNGResult } from './lib/searxngApi'
 import type { ImportResult } from './lib/dataImport'
 import { PROMPT_TEMPLATES } from './lib/prompts'
-import { getModelById } from './lib/models'
+import { getModelById, MODELS } from './lib/models'
 import { shareSession } from './lib/shareExport'
 import { exportMondayData } from './lib/dataExport'
 import { importMondayData } from './lib/dataImport'
@@ -67,7 +67,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder' | 'ontology'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder' | 'ontology' | 'workshop'
 
 const BASE = '/monday'
 
@@ -91,6 +91,7 @@ const VIEW_PATH: Record<View, string> = {
   'skill-registry': BASE + '/skill-registry',
   'skill-builder': BASE + '/skill-builder',
   ontology: BASE + '/ontology',
+  workshop: BASE + '/workshop',
 }
 
 function viewFromPath(pathname: string): View {
@@ -157,6 +158,8 @@ export default function App() {
   const [showPersonas, setShowPersonas] = useState(false)
   // v1.1: collapsible skills panel above chat input
   const [showSkills, setShowSkills] = useState(false)
+  // v0.31.5: collapsible inline model selector panel
+  const [showModels, setShowModels] = useState(false)
   // v1.1.2: skill builder state
   const [skillBuilderSkill, setSkillBuilderSkill] = useState<Skill | null>(null)
 
@@ -1131,6 +1134,64 @@ export default function App() {
                       }
                     }}
                   />
+                )}
+              </div>
+            )}
+            {/* v0.31.5: collapsible inline model selector panel */}
+            {chat.activeSession && (
+              <div className="chat-models">
+                <button
+                  className={`chat-models-toggle ${showModels ? 'chat-models-toggle--open' : ''} ${selectedModelId ? 'chat-models-toggle--active' : ''}`}
+                  onClick={() => setShowModels((v) => !v)}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                  </svg>
+                  <span>Model{selectedModelId ? ' ●' : ''}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    className="chat-models-chevron">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                {showModels && (
+                  <div className="chat-models-panel">
+                    <div className="chat-models-grid">
+                      {MODELS.map((m) => {
+                        const isActive = selectedModelId === m.id
+                        const isDownloaded = model.downloadedModelIds.has(m.id)
+                        return (
+                          <button
+                            key={m.id}
+                            className={`chat-model-card ${isActive ? 'chat-model-card-active' : ''}`}
+                            onClick={() => {
+                              handleSelectModel(m)
+                              setShowModels(false)
+                            }}
+                            disabled={!isReady && !isDownloaded}
+                            title={isDownloaded ? m.name : 'Not downloaded'}
+                          >
+                            <div className="chat-model-card-header">
+                              <span className="chat-model-card-name">{m.name}</span>
+                              {isActive && <span className="chat-model-card-active-dot">●</span>}
+                            </div>
+                            <div className="chat-model-card-meta">
+                              <span>{m.parameters} params</span>
+                              <span>{m.size}</span>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <div className="chat-models-footer">
+                      <button
+                        className="chat-models-open-full"
+                        onClick={() => setView('models')}
+                      >
+                        View all models
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             )}

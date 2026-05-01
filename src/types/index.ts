@@ -455,6 +455,44 @@ export interface LearningItem {
   confidence: number
 }
 
+// ── v1.2.4: Skill Workshop (browser edition) ─────────────────────────────
+
+export type WorkshopHunkType = 'instructions' | 'description' | 'tags' | 'systemPrompt' | 'custom'
+
+export interface WorkshopHunk {
+  /** Type of change this hunk represents */
+  type: WorkshopHunkType
+  /** Field label for display */
+  fieldLabel: string
+  /** Old content (removed lines) */
+  oldContent: string
+  /** New content (added lines) */
+  newContent: string
+}
+
+export type WorkshopProposalStatus = 'pending' | 'approved' | 'rejected'
+
+export interface WorkshopProposal {
+  /** Unique proposal ID */
+  id: string
+  /** Which skill this proposal targets */
+  skillId: string
+  /** Display name of the target skill */
+  skillName: string
+  /** Short title describing the proposed change */
+  title: string
+  /** Diff hunks describing the proposed changes */
+  hunks: WorkshopHunk[]
+  /** Proposal status */
+  status: WorkshopProposalStatus
+  /** Session IDs that contributed to this proposal */
+  sessionIds: string[]
+  /** When the proposal was created (timestamp) */
+  createdAt: number
+  /** When the proposal was approved/rejected (timestamp) */
+  resolvedAt: number | null
+}
+
 export interface LearningResult {
   /** The summary text (same as from summarization) */
   summary: string
