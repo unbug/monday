@@ -578,7 +578,7 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 - [x] **Session compaction with learning** — When compacting long sessions (v0.30
       multi-turn memory), extract preference signals and entity mentions into the
       memory store, not just a plain summary; user reviews before committing
-- [ ] **Skill Workshop (browser edition)** — After a session ends, the model proposes
+- [x] **Skill Workshop (browser edition)** — After a session ends, the model proposes
       skill refinements based on corrections, regenerations, and user edits;
       proposals shown in a diff view; user approves → saved to the relevant skill
       in IndexedDB

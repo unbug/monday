@@ -48,6 +48,7 @@ import { UpdateBanner } from './components/UpdateBanner'
 import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import { SkillComposer } from './components/SkillComposer'
 import { SkillRegistry } from './components/SkillRegistry'
+import { SkillWorkshop } from './components/SkillWorkshop'
 import { OntologyPanel } from './components/OntologyPanel'
 import { SkillBuilder } from './components/SkillBuilder'
 import { LearningReviewDialog } from './components/LearningReviewDialog'
@@ -162,6 +163,10 @@ export default function App() {
   const [showProviders, setShowProviders] = useState(false)
   // v1.1.2: skill builder state
   const [skillBuilderSkill, setSkillBuilderSkill] = useState<Skill | null>(null)
+  const [workshopCorrections, setWorkshopCorrections] = useState<Array<{ message: string; timestamp: number }>>([])
+  const [workshopMemories, setWorkshopMemories] = useState<Array<{ key: string; value: string; namespace: string }>>([])
+  const [workshopSessionIds, setWorkshopSessionIds] = useState<string[]>([])
+  const [workshopProposalCount, setWorkshopProposalCount] = useState(0)
 
   // v0.30.5: i18n locale
   const { locale, changeLocale: handleChangeLocale } = useLocale()
@@ -433,6 +438,7 @@ export default function App() {
     onOpenComparison: () => setView('comparison'),
     onOpenSkillRegistry: () => setView('skill-registry'),
     onOpenSkillBuilder: () => { setSkillBuilderSkill(null); setView('skill-builder'); },
+    onOpenWorkshop: () => setView('workshop'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -554,6 +560,10 @@ export default function App() {
             }}
             onOpenOntology={() => {
               setView('ontology')
+              closeSidebarOnMobile()
+            }}
+            onOpenWorkshop={() => {
+              setView('workshop')
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -969,6 +979,18 @@ export default function App() {
               onBack={() => setView('chat')}
               initialSkill={skillBuilderSkill}
               onSave={() => setView('skill-registry')}
+            />
+          </div>
+        ) : view === 'workshop' ? (
+          <div className="main-content main-content--workshop">
+            <SkillWorkshop
+              onBack={() => setView('chat')}
+              corrections={workshopCorrections}
+              memories={workshopMemories}
+              sessionIds={workshopSessionIds}
+              onProposalsGenerated={(count) => {
+                setWorkshopProposalCount((prev) => prev + count)
+              }}
             />
           </div>
         ) : showBatch ? (

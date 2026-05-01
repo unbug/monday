@@ -12,6 +12,8 @@ import { generateWorkshopProposals, applyProposalsToSkill } from '../lib/worksho
 import { t } from '../lib/i18n'
 
 interface SkillWorkshopProps {
+  /** Callback to go back */
+  onBack?: () => void
   /** Corrections from the current/recent session */
   corrections: Array<{ message: string; timestamp: number }>
   /** Memories from the current/recent session */
@@ -35,7 +37,7 @@ function formatDiff(hunk: WorkshopProposal['hunks'][0]): string {
   return lines.join('\n') || '(empty)'
 }
 
-export function SkillWorkshop({ corrections, memories, sessionIds, onProposalsGenerated }: SkillWorkshopProps) {
+export function SkillWorkshop({ onBack, corrections, memories, sessionIds, onProposalsGenerated }: SkillWorkshopProps) {
   const [proposals, setProposals] = useState<WorkshopProposal[]>([])
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
@@ -163,6 +165,15 @@ export function SkillWorkshop({ corrections, memories, sessionIds, onProposalsGe
       {/* Header */}
       <div className="skill-workshop-header">
         <div className="skill-workshop-title-bar">
+          {onBack && (
+            <button
+              className="skill-workshop-back-btn"
+              onClick={onBack}
+              title="Back"
+            >
+              ←
+            </button>
+          )}
           <span className="skill-workshop-icon">🔧</span>
           <span className="skill-workshop-title">{t('workshop.title')}</span>
           <span className="skill-workshop-subtitle">{t('workshop.subtitle')}</span>

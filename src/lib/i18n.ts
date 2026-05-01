@@ -47,6 +47,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.analytics': 'Usage Analytics',
     'sidebar.skills': 'Skill Registry',
     'sidebar.skillBuilder': 'Skill Builder',
+    'sidebar.workshop': 'Skill Workshop',
     'sidebar.hotkeys': 'Keyboard Shortcuts',
     'sidebar.share': 'Share conversation',
     'sidebar.changelog': "What's New",
@@ -127,6 +128,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.analytics': '使用分析',
     'sidebar.skills': '技能库',
     'sidebar.skillBuilder': '技能构建器',
+    'sidebar.workshop': '技能工坊',
     'sidebar.hotkeys': '键盘快捷键',
     'sidebar.share': '分享对话',
     'sidebar.changelog': '更新日志',
@@ -1841,6 +1843,46 @@ const learning: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Skill Workshop (v1.2.4) ──
+const workshop: Record<Locale, Record<string, string>> = {
+  en: {
+    'workshop.title': 'Skill Workshop',
+    'workshop.subtitle': 'Review and approve skill refinements',
+    'workshop.loading': 'Loading workshop…',
+    'workshop.generate': 'Generate Proposals',
+    'workshop.generateTooltip': 'Analyze corrections and memories to propose skill improvements',
+    'workshop.pending': 'Pending',
+    'workshop.history': 'History',
+    'workshop.noSignals': 'No corrections or memories to analyze yet.',
+    'workshop.noProposals': 'No proposals yet. Generate from corrections and memories.',
+    'workshop.noHistory': 'No workshop history yet.',
+    'workshop.approveAll': 'Approve All',
+    'workshop.approve': 'Approve',
+    'workshop.dismiss': 'Dismiss',
+    'workshop.showDiff': 'Show diff',
+    'workshop.confidence': 'Confidence score',
+    'workshop.applyApproved': 'Apply Approved',
+  },
+  zh: {
+    'workshop.title': '技能工坊',
+    'workshop.subtitle': '审查并批准技能改进建议',
+    'workshop.loading': '加载中…',
+    'workshop.generate': '生成建议',
+    'workshop.generateTooltip': '基于修正和记忆分析技能改进建议',
+    'workshop.pending': '待审核',
+    'workshop.history': '历史',
+    'workshop.noSignals': '暂无修正或记忆数据可供分析。',
+    'workshop.noProposals': '暂无建议。可从修正和记忆生成。',
+    'workshop.noHistory': '暂无工坊历史。',
+    'workshop.approveAll': '全部批准',
+    'workshop.approve': '批准',
+    'workshop.dismiss': '丢弃',
+    'workshop.showDiff': '查看差异',
+    'workshop.confidence': '置信度',
+    'workshop.applyApproved': '应用已批准的',
+  },
+}
+
 // ── Ontology Store (v1.2.2) ──
 const ontology: Record<Locale, Record<string, string>> = {
   en: {
@@ -1965,6 +2007,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...pluginBinding[locale],
     ...ontology[locale],
     ...learning[locale],
+    ...workshop[locale],
   }
 }
 

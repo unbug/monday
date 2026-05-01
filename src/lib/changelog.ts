@@ -463,6 +463,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.2.4',
+    date: '2026-05-02',
+    title: 'Skill Workshop (browser edition)',
+    description:
+      'After a session ends, the Skill Workshop analyzes corrections and memories to propose skill refinements. Proposals are shown in a diff view; the user approves or dismisses each one. Approved proposals are saved to the relevant skill in IndexedDB. A generate button triggers analysis of pending signals.',
+    changes: [
+      { type: 'added', text: 'SkillWorkshop component — pending/history tabs, proposal diff view, approve/dismiss per item, approve-all action' },
+      { type: 'added', text: 'Workshop proposal generation — analyzes corrections and memories to propose skill instruction refinements' },
+      { type: 'added', text: 'Workshop proposal storage — IndexedDB CRUD for workshop proposals with approval state' },
+      { type: 'added', text: 'Workshop view route — /monday/workshop accessible from sidebar nav and command palette' },
+      { type: 'added', text: 'Workshop state in App.tsx — workshopCorrections, workshopMemories, workshopSessionIds, workshopProposalCount' },
+      { type: 'added', text: 'Workshop command palette entry — ⌘K → Skill Workshop' },
+      { type: 'added', text: 'Workshop sidebar nav button — wrench icon with tooltip' },
+      { type: 'added', text: 'Workshop i18n — en/zh translations for all workshop UI strings' },
+      { type: 'added', text: 'Workshop CSS — dark terminal-style panel with tabs, proposal cards, diff view, approval buttons, light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.2.4' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

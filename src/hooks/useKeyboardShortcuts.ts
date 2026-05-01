@@ -31,6 +31,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenOntology?: () => void
   onOpenSkillRegistry?: () => void
   onOpenSkillBuilder?: () => void
+  onOpenWorkshop?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -314,6 +315,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Skill Builder',
               icon: '✏️',
               action: options.onOpenSkillBuilder,
+            },
+          ]
+        : []),
+      ...(options.onOpenWorkshop
+        ? [
+            {
+              id: 'workshop',
+              label: 'Skill Workshop',
+              icon: '🔧',
+              action: options.onOpenWorkshop,
             },
           ]
         : []),
