@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { WorkshopProposal, Skill } from '../types'
 import { loadWorkshopProposals, updateWorkshopProposal, saveWorkshopProposals, loadSkills } from '../lib/storage'
 import { generateWorkshopProposals, applyProposalsToSkill } from '../lib/workshop'
-import { useI18n } from '../lib/i18n'
+import { t } from '../lib/i18n'
 
 interface SkillWorkshopProps {
   /** Corrections from the current/recent session */
@@ -36,7 +36,6 @@ function formatDiff(hunk: WorkshopProposal['hunks'][0]): string {
 }
 
 export function SkillWorkshop({ corrections, memories, sessionIds, onProposalsGenerated }: SkillWorkshopProps) {
-  const t = useI18n()
   const [proposals, setProposals] = useState<WorkshopProposal[]>([])
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
