@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+const LATEST_VERSION_URL = "https://raw.githubusercontent.com/unbug/monday/main/package.json"
 import { BorderBeam } from 'border-beam'
 import type { ChatSession } from '../types'
 import type { Locale } from '../lib/i18n'
@@ -8,7 +9,6 @@ import { SettingsPanel } from './SettingsPanel'
 import { SessionSearch } from './SessionSearch'
 import type { DateFilter } from './SessionSearch'
 import { getLocalDataSize } from '../lib/recentModels'
-import { version } from '../../package.json'
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B'
@@ -114,6 +114,15 @@ export function Sidebar({
   const [searchQuery, setSearchQuery] = useState('')
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
   const [navExpanded, setNavExpanded] = useState(false)
+
+  const [latestVersion, setLatestVersion] = useState<string>("0.31.5")
+
+  useEffect(() => {
+    fetch(LATEST_VERSION_URL)
+      .then((res) => res.json())
+      .then((p) => setLatestVersion(p.version))
+      .catch(() => {})
+  }, [])
   const activeSession = sessions.find((s) => s.id === activeSessionId)
 
   // Filter sessions by search query and date filter
@@ -560,7 +569,7 @@ export function Sidebar({
           onClick={onVersionClick}
           title="View changelog"
         >
-          v{version}
+          v{latestVersion}
         </button>
         <span className="sidebar-separator">·</span>
         <span className="sidebar-storage-info" title="localStorage usage">

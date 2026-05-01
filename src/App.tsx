@@ -658,12 +658,6 @@ export default function App() {
                 </span>
               </BorderBeam>
             )}
-            {!online && <OfflineIndicator online={online} />}
-            <ProviderSwitcher
-              provider={chat.activeSession?.provider ?? null}
-              onChange={chat.setProvider}
-            />
-            {/* v1.1: skill chips */}
             {chat.activeSession?.skillIds && chat.activeSession.skillIds.length > 0 && (
               <div className="header-skills">
                 {chat.activeSession.skillIds.map((skillId) => {
@@ -1140,6 +1134,10 @@ export default function App() {
                 )}
               </div>
             )}
+            <ProviderSwitcher
+              provider={chat.activeSession?.provider ?? null}
+              onChange={chat.setProvider}
+            />
             <ChatInput
               onSend={handleSend}
               onBatchSend={handleOpenBatch}
