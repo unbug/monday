@@ -13518,6 +13518,121 @@ textarea:focus:not(:focus-visible),
   transform: rotate(180deg);
 }
 
+/* ===== Providers panel (same layout as Personas / Skills) ===== */
+.chat-providers {
+  padding: 0 16px 4px;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.chat-providers-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-light);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin: 4px 0 2px;
+}
+
+.chat-providers-toggle:hover {
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.chat-providers-toggle--active {
+  color: var(--color-primary);
+}
+
+.chat-providers-toggle--active:hover {
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.chat-providers-chevron {
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+
+.chat-providers-toggle--open .chat-providers-chevron {
+  transform: rotate(180deg);
+}
+
+.chat-providers-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0 8px;
+}
+
+.chat-provider-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 20px;
+  color: var(--color-text-light);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.chat-provider-chip:hover {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.chat-provider-chip--active {
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.chat-provider-chip--active:hover {
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.chat-provider-chip-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.chat-provider-chip-label {
+  font-weight: 500;
+}
+
+/* Light theme */
+[data-theme="light"] .chat-providers {
+  background: var(--color-bg);
+}
+
+[data-theme="light"] .chat-provider-chip {
+  background: var(--color-surface);
+  border-color: var(--color-border-subtle);
+}
+
+[data-theme="light"] .chat-provider-chip:hover {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
+[data-theme="light"] .chat-provider-chip--active {
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary);
+}
+
 /* Skill Composer panel */
 .skill-composer {
   background: transparent;

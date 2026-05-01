@@ -16,7 +16,7 @@ interface Props {
   onChange: (provider: ProviderType) => void
 }
 
-const PROVIDERS: Array<{
+export const PROVIDERS: Array<{
   id: ProviderType
   label: string
   icon: string

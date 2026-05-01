@@ -26,7 +26,7 @@ import { useAgentMode } from './hooks/useAgentMode'
 import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
 import { PersistentMemoryPanel } from './components/PersistentMemoryPanel'
-import { ProviderSwitcher } from './components/ProviderSwitcher'
+import { ProviderSwitcher, PROVIDERS } from './components/ProviderSwitcher'
 import { useKnowledge } from './hooks/useKnowledge'
 import { useKnowledgeBases } from './hooks/useKnowledgeBases'
 import { useVectorStore } from './hooks/useVectorStore'
@@ -158,8 +158,8 @@ export default function App() {
   const [showPersonas, setShowPersonas] = useState(false)
   // v1.1: collapsible skills panel above chat input
   const [showSkills, setShowSkills] = useState(false)
-  // v0.31.5: collapsible inline model selector panel
-  const [showModels, setShowModels] = useState(false)
+  // v1.2: collapsible providers panel above chat input
+  const [showProviders, setShowProviders] = useState(false)
   // v1.1.2: skill builder state
   const [skillBuilderSkill, setSkillBuilderSkill] = useState<Skill | null>(null)
 
@@ -1137,68 +1137,44 @@ export default function App() {
                 )}
               </div>
             )}
-            {/* v0.31.5: collapsible inline model selector panel */}
+            {/* providers panel — same pattern as Personas / Skills */}
             {chat.activeSession && (
-              <div className="chat-models">
+              <div className="chat-providers">
                 <button
-                  className={`chat-models-toggle ${showModels ? 'chat-models-toggle--open' : ''} ${selectedModelId ? 'chat-models-toggle--active' : ''}`}
-                  onClick={() => setShowModels((v) => !v)}
+                  className={`chat-providers-toggle ${showProviders ? 'chat-providers-toggle--open' : ''} ${chat.activeSession.provider ? 'chat-providers-toggle--active' : ''}`}
+                  onClick={() => setShowProviders((v) => !v)}
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v6l4 2"/>
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
                   </svg>
-                  <span>Model{selectedModelId ? ' ●' : ''}</span>
+                  <span>Provider{chat.activeSession.provider ? ' ●' : ''}</span>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                    className="chat-models-chevron">
-                    <polyline points="6 9 12 15 18 9"/>
+                    className="chat-providers-chevron">
+                    <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
-                {showModels && (
-                  <div className="chat-models-panel">
-                    <div className="chat-models-grid">
-                      {MODELS.map((m) => {
-                        const isActive = selectedModelId === m.id
-                        const isDownloaded = model.downloadedModelIds.has(m.id)
-                        return (
-                          <button
-                            key={m.id}
-                            className={`chat-model-card ${isActive ? 'chat-model-card-active' : ''}`}
-                            onClick={() => {
-                              handleSelectModel(m)
-                              setShowModels(false)
-                            }}
-                            disabled={!isReady && !isDownloaded}
-                            title={isDownloaded ? m.name : 'Not downloaded'}
-                          >
-                            <div className="chat-model-card-header">
-                              <span className="chat-model-card-name">{m.name}</span>
-                              {isActive && <span className="chat-model-card-active-dot">●</span>}
-                            </div>
-                            <div className="chat-model-card-meta">
-                              <span>{m.parameters} params</span>
-                              <span>{m.size}</span>
-                            </div>
-                          </button>
-                        )
-                      })}
-                    </div>
-                    <div className="chat-models-footer">
+                {showProviders && (
+                  <div className="chat-providers-panel">
+                    {PROVIDERS.map((p) => (
                       <button
-                        className="chat-models-open-full"
-                        onClick={() => setView('models')}
+                        key={p.id ?? 'local'}
+                        className={`chat-provider-chip ${chat.activeSession?.provider === p.id ? 'chat-provider-chip--active' : ''}`}
+                        onClick={() => {
+                          chat.setProvider(p.id)
+                          setShowProviders(false)
+                        }}
+                        type="button"
+                        title={p.desc}
                       >
-                        View all models
+                        <span className="chat-provider-chip-icon">{p.icon}</span>
+                        <span className="chat-provider-chip-label">{p.label}</span>
                       </button>
-                    </div>
+                    ))}
                   </div>
                 )}
               </div>
             )}
-            <ProviderSwitcher
-              provider={chat.activeSession?.provider ?? null}
-              onChange={chat.setProvider}
-            />
             <ChatInput
               onSend={handleSend}
               onBatchSend={handleOpenBatch}
