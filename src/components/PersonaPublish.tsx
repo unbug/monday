@@ -4,8 +4,9 @@
  */
 
 import { useState, useCallback } from 'react'
-import { MARKETPLACE_CATEGORIES, MARKETPLACE_CATEGORY_LABELS } from '../data/personaRegistry'
+import { MARKETPLACE_CATEGORIES, MARKETPLACE_CATEGORY_LABELS, type MemoryNamespace } from '../data/personaRegistry'
 import type { MarketplacePersona } from '../data/personaRegistry'
+import { t } from '../lib/i18n'
 
 interface PublishPersonaForm {
   name: string
@@ -15,6 +16,7 @@ interface PublishPersonaForm {
   soul: string
   category: MarketplacePersona['category']
   tags: string
+  readNamespaces: MemoryNamespace[]
 }
 
 const DEFAULT_FORM: PublishPersonaForm = {
@@ -25,6 +27,7 @@ const DEFAULT_FORM: PublishPersonaForm = {
   soul: '',
   category: 'coding',
   tags: '',
+  readNamespaces: [],
 }
 
 export function PersonaPublish() {
@@ -34,7 +37,7 @@ export function PersonaPublish() {
   const [personaTab, setPersonaTab] = useState<'identity' | 'soul'>('identity')
 
   const updateField = useCallback(
-    (field: keyof PublishPersonaForm, value: string) => {
+    (field: keyof PublishPersonaForm, value: string | MemoryNamespace[]) => {
       setForm((prev) => ({ ...prev, [field]: value }))
     },
     [],
@@ -58,6 +61,7 @@ export function PersonaPublish() {
         .split(',')
         .map((t) => t.trim())
         .filter(Boolean),
+      readNamespaces: form.readNamespaces.length > 0 ? form.readNamespaces : undefined,
     }
     const json = JSON.stringify(entry, null, 2)
     navigator.clipboard.writeText(json).then(() => {
@@ -82,6 +86,7 @@ export function PersonaPublish() {
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean),
+    readNamespaces: form.readNamespaces,
   }
 
   return (
@@ -215,6 +220,32 @@ export function PersonaPublish() {
             />
           </div>
 
+          {/* Memory namespace selector */}
+          <div className="persona-publish-field">
+            <label className="persona-publish-label">{t('memory.readableNamespaces')}</label>
+            <div className="persona-publish-ns-selector">
+              {(['global', 'persona', 'skill'] as const).map((ns) => (
+                <label
+                  key={ns}
+                  className={`persona-publish-ns-chip ${form.readNamespaces.includes(ns) ? 'active' : ''}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.readNamespaces.includes(ns)}
+                    onChange={(e) => {
+                      const updated = e.target.checked
+                        ? [...form.readNamespaces, ns]
+                        : form.readNamespaces.filter((n) => n !== ns)
+                      updateField('readNamespaces', updated as MemoryNamespace[])
+                    }}
+                    className="persona-publish-ns-checkbox"
+                  />
+                  <span>{t(`memory.namespace${ns.charAt(0).toUpperCase() + ns.slice(1)}`)}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <div className="persona-publish-actions">
             <button className="persona-publish-btn persona-publish-btn--primary" onClick={handleGenerate}>
               Preview →
@@ -244,6 +275,18 @@ export function PersonaPublish() {
                 </span>
               ))}
             </div>
+            {preview.readNamespaces && preview.readNamespaces.length > 0 && (
+              <div className="persona-publish-preview-namespaces">
+                <span className="persona-publish-preview-ns-label">{t('memory.reads')}:</span>
+                <div className="persona-publish-preview-ns-chips">
+                  {preview.readNamespaces.map((ns) => (
+                    <span key={ns} className="persona-publish-preview-ns-chip">
+                      {t(`memory.namespace${ns.charAt(0).toUpperCase() + ns.slice(1)}`)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
             <details className="persona-publish-preview-prompt">
               <summary className="persona-publish-preview-prompt-summary">System Prompt</summary>
               <pre className="persona-publish-preview-prompt-text">{preview.systemPrompt}</pre>

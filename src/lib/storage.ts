@@ -223,6 +223,7 @@ function migrateSession(session: ChatSession): ChatSession {
   if (migrated.forkId === undefined) migrated.forkId = null
   if (migrated.summaries === undefined) migrated.summaries = []
   if (migrated.provider === undefined) migrated.provider = null
+  if (migrated.personaReadNamespaces === undefined) migrated.personaReadNamespaces = []
   return migrated
 }
 
@@ -236,6 +237,7 @@ export function createSession(modelId: string): ChatSession {
     generationParams: { temperature: 0.7, top_p: 0.9, maxTokens: 1024 },
     personaId: null,
     personaSoul: '',
+    personaReadNamespaces: [],
     knowledgeBaseId: null,
     skillIds: [],
     forkId: null,

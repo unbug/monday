@@ -482,6 +482,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.2.5',
+    date: '2026-05-02',
+    title: 'Memory-aware personas',
+    description:
+      'Personas can now declare which memory namespaces they read on activation (global, per-persona, per-skill). The persona marketplace includes a Memory tab that previews which memories each persona can access. The persona publish editor includes a namespace selector.',
+    changes: [
+      { type: 'added', text: 'MemoryNamespace type — union of global, persona, skill for namespace scoping' },
+      { type: 'added', text: 'MarketplacePersona.readNamespaces — persona declaration of readable memory namespaces' },
+      { type: 'added', text: 'ChatSession.personaReadNamespaces — persisted session field for the applied persona namespace config' },
+      { type: 'added', text: 'MemoryPreviewPanel component — shows readable namespaces, accessible memories with filter tabs, namespace chips, correction badges' },
+      { type: 'added', text: 'Persona marketplace Memory tab — persona list with namespace count badges + MemoryPreviewPanel preview' },
+      { type: 'added', text: 'PersonaPublish namespace selector — multi-select chips for global/persona/skill namespaces in the persona editor' },
+      { type: 'added', text: 'applyPersona hook logic — stores persona readNamespaces on the session; forkSession copies personaReadNamespaces' },
+      { type: 'added', text: 'Memory namespace i18n — readableNamespaces, reads, personas, noPersonas, noMemories, previewSelectPersona, none, all, emptyHint, correctionEdit, correctionRegen, edited, created, justNow, minutesAgo, hoursAgo, daysAgo (en/zh)' },
+      { type: 'added', text: 'Memory preview CSS — panel, header, namespace chips, filter tabs, memory cards, correction badges, light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.2.5' },
+    ],
+  },
+  {
     version: '0.31.6',
     date: '2026-04-29',
     title: 'Code Arena — PNG Share Card',

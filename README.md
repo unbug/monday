@@ -582,7 +582,7 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
       skill refinements based on corrections, regenerations, and user edits;
       proposals shown in a diff view; user approves → saved to the relevant skill
       in IndexedDB
-- [ ] **Memory-aware personas** — A persona can declare which memory namespaces it
+- [x] **Memory-aware personas** — A persona can declare which memory namespaces it
       reads on activation (e.g. "global" + "per:this-persona"); persona editor shows
       a memory preview panel
 

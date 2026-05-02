@@ -774,6 +774,8 @@ export default function App() {
                 chat.applyPersona(persona)
                 setView('chat')
               }}
+              memories={memories}
+              personas={PERSONA_REGISTRY}
             />
           </div>
         ) : view === 'knowledge' ? (

@@ -1127,12 +1127,14 @@ export function useChat(
     (persona: PromptTemplate | MarketplacePersona) => {
       if (!activeSessionId) return
       const personaSoul = 'soul' in persona ? persona.soul ?? '' : ''
+      const readNamespaces = 'readNamespaces' in persona ? (persona.readNamespaces ?? []) : []
       const updatedSessions = sessions.map((s) =>
         s.id === activeSessionId
           ? {
               ...s,
               personaId: persona.id,
               personaSoul,
+              personaReadNamespaces: readNamespaces,
               // Merge soul + persona system prompt with existing custom prompt
               systemPrompt: [personaSoul, persona.systemPrompt, s.systemPrompt]
                 .filter(Boolean)
@@ -1242,6 +1244,7 @@ export function useChat(
         generationParams: { ...source.generationParams },
         personaId: source.personaId,
         personaSoul: source.personaSoul ?? '',
+        personaReadNamespaces: source.personaReadNamespaces ?? [],
         knowledgeBaseId: source.knowledgeBaseId,
         skillIds: [],
         forkId: source.id,

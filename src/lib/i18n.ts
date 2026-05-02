@@ -1781,6 +1781,14 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
     'memory.corrections': 'Corrections',
     'memory.correctionEdit': '✏️ Edit',
     'memory.correctionRegen': '🔄 Regenerate',
+    // v1.2.5: memory-aware personas
+    'memory.readableNamespaces': 'Readable Namespaces',
+    'memory.reads': 'Reads',
+    'memory.personas': 'Personas',
+    'memory.noPersonas': 'No personas yet',
+    'memory.noMemories': 'No accessible memories',
+    'memory.previewSelectPersona': 'Select a persona to preview accessible memories',
+    'memory.none': 'None',
   },
   zh: {
     'memory.title': '持久记忆',
@@ -1816,6 +1824,14 @@ const persistentMemory: Record<Locale, Record<string, string>> = {
     'memory.corrections': '修正',
     'memory.correctionEdit': '✏️ 编辑',
     'memory.correctionRegen': '🔄 重新生成',
+    // v1.2.5: memory-aware personas
+    'memory.readableNamespaces': '可读命名空间',
+    'memory.reads': '读取',
+    'memory.personas': '人格',
+    'memory.noPersonas': '暂无人格',
+    'memory.noMemories': '暂无可访问记忆',
+    'memory.previewSelectPersona': '选择一个人格以预览可访问的记忆',
+    'memory.none': '无',
   },
 }
 

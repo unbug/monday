@@ -1,3 +1,5 @@
+export type MemoryNamespace = 'global' | 'persona' | 'skill'
+
 export type ModelTag = 'vision' | 'tools' | 'thinking' | 'embedding'
 
 export type KnowledgeDocType = 'pdf' | 'txt' | 'md'
@@ -68,6 +70,8 @@ export interface ChatSession {
   skillIds: string[]
   /** Cross-session identity from persona (v1.1.4) */
   personaSoul: string
+  /** Memory namespaces this persona reads (v1.2.5) */
+  personaReadNamespaces: MemoryNamespace[]
   /** Parent session ID — set when this session was forked from another */
   forkId: string | null
   /** Auto-generated conversation summaries for context compression (v0.30) */
