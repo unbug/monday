@@ -590,6 +590,8 @@ Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downlo
 automatically captured preferences; a Skill Workshop proposal is generated, approved,
 and the next session reflects the updated skill instructions.
 
+Released: 2026-05-03
+
 #### v1.3 — Browser-Use & Computer-Use (In-Browser Agent Loop)
 
 Inspired by [Claude Code's `computer_use` tool](https://github.com/anthropics/claude-code)
