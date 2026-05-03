@@ -557,6 +557,8 @@ it to a new session alongside a persona, sends a debugging question, and the mod
 follows the skill's specialized workflow; the skill persists on page reload; the session
 header shows the active skill chip.
 
+Released: 2026-05-03
+
 #### v1.2 — Self-Improving Agent & Persistent Memory
 
 Inspired by the top-trending ClawHub skills: `self-improving-agent` (411k downloads),
