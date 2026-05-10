@@ -619,7 +619,7 @@ in-browser computer-use system.
   (navigate real URLs, fill forms, run tests) with model in the loop; every
   action logged in the existing tool-call inspector.
 
-- [ ] **Agent action primitives** — `navigate`, `click`, `type`, `scroll`,
+- [x] **Agent action primitives** — `navigate`, `click`, `type`, `scroll`,
       `extract-text`, `take-screenshot`, `read-dom`; each is a named MCP-style
       tool callable by the model via the v0.27 function-calling layer
 - [ ] **Sandboxed iframe execution loop (Tier 1)** — generate → render in

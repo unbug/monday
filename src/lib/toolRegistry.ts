@@ -5,6 +5,7 @@
 
 import type { ToolDefinition, ToolCall, ToolCallResult } from '../types'
 import { getBuiltInTools, getToolHandler } from './tools'
+import { getBrowserUseTools, getBrowserUseHandler } from './browserUseTools'
 
 interface RegisteredTool {
   definition: ToolDefinition
@@ -18,6 +19,13 @@ class ToolRegistry {
     // Register all built-in tools
     for (const tool of getBuiltInTools()) {
       const handler = getToolHandler(tool.name)
+      if (handler) {
+        this.tools.set(tool.name, { definition: tool, handler })
+      }
+    }
+    // Register browser-use agent action primitives (v1.3)
+    for (const tool of getBrowserUseTools()) {
+      const handler = getBrowserUseHandler(tool.name)
       if (handler) {
         this.tools.set(tool.name, { definition: tool, handler })
       }

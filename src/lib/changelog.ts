@@ -1388,6 +1388,26 @@ export const CHANGELOG: ChangelogEntry[] = [
       { type: 'changed', text: 'Updated version to v0.31.0' },
     ],
   },
+  {
+    version: '1.3.0',
+    date: '2026-05-10',
+    title: 'Browser-Use — Agent Action Primitives',
+    description:
+      'Seven MCP-style browser-use tools let an autonomous agent interact with sandboxed iframes: navigate, click, type, scroll, extract-text, take-screenshot, and read-dom. These primitives form Tier 1 of the browser-use system — enabling screenshot → observe → action loops entirely in the browser without external dependencies.',
+    changes: [
+      { type: 'added', text: 'browserUseTools.ts — 7 browser-use tool definitions and handlers: navigate, click, type, scroll, extract-text, take-screenshot, read-dom' },
+      { type: 'added', text: 'Sandbox iframe registry — lifecycle management for agent iframes (getOrCreateIframe, getSandboxIframe, removeSandboxIframe)' },
+      { type: 'added', text: 'navigate tool — navigate sandboxed iframe to URL, creates new iframe if needed' },
+      { type: 'added', text: 'click tool — click element by CSS selector in sandboxed iframe with event dispatching' },
+      { type: 'added', text: 'type tool — type text into input elements with focus, input/change events, optional submit' },
+      { type: 'added', text: 'scroll tool — scroll iframe or element by pixels or direction keyword (up/down/left/right/toTop/toBottom/toLeft/toRight)' },
+      { type: 'added', text: 'extract-text tool — extract visible text from elements by CSS selector' },
+      { type: 'added', text: 'take-screenshot tool — render iframe to canvas and return base64 PNG with SVG foreignObject fallback' },
+      { type: 'added', text: 'read-dom tool — serialize DOM as compact accessibility-tree JSON with depth/node budget limits' },
+      { type: 'added', text: 'Tool registry integration — browser-use tools auto-registered in ToolRegistry constructor' },
+      { type: 'changed', text: 'Updated version to v1.3.0' },
+    ],
+  },
 ]
 
 // Sort descending by version (latest first)
