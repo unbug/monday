@@ -18050,3 +18050,356 @@ textarea:focus:not(:focus-visible),
   border-color: #d9770640;
   background: #d9770610;
 }
+
+/* ── v1.3.4: Playwright MCP Bridge ── */
+
+.mcp-server-manager-pw-section {
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #111827;
+}
+
+.mcp-server-manager-pw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mcp-server-manager-pw-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.mcp-server-manager-pw-desc {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.mcp-server-manager-pw-conn-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mcp-server-manager-pw-url-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #e5e7eb;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.mcp-server-manager-pw-url-input:focus {
+  border-color: #8b5cf6;
+}
+
+.mcp-server-manager-pw-url-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mcp-server-manager-pw-discover-btn,
+.mcp-server-manager-pw-connect-btn,
+.mcp-server-manager-pw-disconnect-btn {
+  padding: 8px 16px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.mcp-server-manager-pw-discover-btn:hover:not(:disabled),
+.mcp-server-manager-pw-connect-btn:hover:not(:disabled) {
+  background: #374151;
+  border-color: #8b5cf6;
+}
+
+.mcp-server-manager-pw-disconnect-btn {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+.mcp-server-manager-pw-disconnect-btn:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.mcp-server-manager-pw-discover-btn:disabled,
+.mcp-server-manager-pw-connect-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mcp-server-manager-pw-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #374151;
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: mcp-pw-spin 0.6s linear infinite;
+}
+
+@keyframes mcp-pw-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mcp-server-manager-pw-status {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.mcp-server-manager-pw-connected {
+  color: #22c55e;
+  background: #22c55e15;
+  border: 1px solid #22c55e30;
+}
+
+.mcp-server-manager-pw-discovered {
+  color: #22c55e;
+  background: #22c55e15;
+  border: 1px solid #22c55e30;
+}
+
+.mcp-server-manager-pw-error {
+  color: #ef4444;
+  background: #ef444415;
+  border: 1px solid #ef444430;
+}
+
+.mcp-server-manager-pw-config {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mcp-server-manager-pw-config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mcp-server-manager-pw-config-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mcp-server-manager-pw-config-textarea {
+  padding: 8px 10px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #e5e7eb;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.mcp-server-manager-pw-config-textarea:focus {
+  border-color: #8b5cf6;
+}
+
+.mcp-server-manager-pw-config-textarea::placeholder {
+  color: #6b7280;
+}
+
+.mcp-server-manager-pw-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mcp-server-manager-pw-save-btn,
+.mcp-server-manager-pw-clear-btn {
+  padding: 6px 14px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #e5e7eb;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mcp-server-manager-pw-save-btn:hover:not(:disabled) {
+  background: #374151;
+  border-color: #8b5cf6;
+}
+
+.mcp-server-manager-pw-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mcp-server-manager-pw-clear-btn:hover {
+  background: #374151;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.mcp-server-manager-pw-tools {
+  border-top: 1px solid #374151;
+  padding-top: 12px;
+}
+
+.mcp-server-manager-pw-tools-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+  margin: 0 0 10px 0;
+}
+
+.mcp-server-manager-pw-tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mcp-server-manager-pw-tool-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 6px;
+}
+
+.mcp-server-manager-pw-tool-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b5cf6;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  white-space: nowrap;
+}
+
+.mcp-server-manager-pw-tool-display {
+  font-size: 12px;
+  color: #d1d5db;
+}
+
+.mcp-server-manager-pw-tool-desc {
+  font-size: 11px;
+  color: #6b7280;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcp-server-manager-pw-no-tools {
+  margin-top: 12px;
+  padding: 12px;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Light theme overrides */
+[data-theme='light'] .mcp-server-manager-pw-section {
+  border-color: #d1d5db;
+  background: #ffffff;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-title {
+  color: #111827;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-desc {
+  color: #6b7280;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-url-input,
+[data-theme='light'] .mcp-server-manager-pw-config-textarea {
+  border-color: #d1d5db;
+  background: #f9fafb;
+  color: #111827;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-url-input:focus,
+[data-theme='light'] .mcp-server-manager-pw-config-textarea:focus {
+  border-color: #8b5cf6;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-discover-btn,
+[data-theme='light'] .mcp-server-manager-pw-connect-btn,
+[data-theme='light'] .mcp-server-manager-pw-disconnect-btn,
+[data-theme='light'] .mcp-server-manager-pw-save-btn,
+[data-theme='light'] .mcp-server-manager-pw-clear-btn {
+  border-color: #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-discover-btn:hover:not(:disabled),
+[data-theme='light'] .mcp-server-manager-pw-connect-btn:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #8b5cf6;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-disconnect-btn {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-tool-card {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-tool-name {
+  color: #7c3aed;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-tool-desc {
+  color: #9ca3af;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-tools-title {
+  color: #6b7280;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-no-tools {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
+[data-theme='light'] .mcp-server-manager-pw-config-label {
+  color: #6b7280;
+}

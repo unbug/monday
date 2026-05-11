@@ -338,6 +338,16 @@ export interface SearXngSettings {
   url: string
 }
 
+// v1.3.4: Playwright MCP bridge settings
+export interface PlaywrightMcpSettings {
+  /** WebSocket URL of the @playwright/mcp server (default: ws://localhost:8931) */
+  url: string
+  /** Domain allowlist — only these domains can be navigated to */
+  domainAllowlist: string[]
+  /** Blocked origins — these origins are always denied */
+  blockedOrigins: string[]
+}
+
 export type Provider = 'web-llm' | 'openai' | 'ollama' | 'lmstudio' | 'llamacpp' | 'vllm' | 'deepseek'
 
 export interface OpenAIUsage {

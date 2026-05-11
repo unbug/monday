@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal, PlaywrightMcpSettings } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -20,6 +20,7 @@ const SKILLS_STORE = 'skills'
 const MEMORIES_STORE = 'memories'
 const ONTOLOGY_STORE = 'ontology'
 const WORKSHOP_STORE = 'workshop'
+const PLAYWRIGHT_MCP_SETTINGS_STORE = 'playwrightMcpSettings'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -149,6 +150,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v19→v20: add workshop proposals store for v1.2.4 Skill Workshop
       if (!db.objectStoreNames.contains(WORKSHOP_STORE)) {
         db.createObjectStore(WORKSHOP_STORE, { keyPath: 'id' })
+      }
+      // Migration v20→v21: add playwrightMcpSettings object store for v1.3.4 Playwright MCP bridge
+      if (!db.objectStoreNames.contains(PLAYWRIGHT_MCP_SETTINGS_STORE)) {
+        db.createObjectStore(PLAYWRIGHT_MCP_SETTINGS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -1069,5 +1074,40 @@ export async function deleteWorkshopProposal(id: string): Promise<void> {
 export async function loadPendingWorkshopProposals(): Promise<WorkshopProposal[]> {
   const proposals = await loadWorkshopProposals()
   return proposals.filter((p) => p.status === 'pending')
+}
+
+// ── v1.3.4: Playwright MCP settings ─────────────────────────────────────────
+
+export async function savePlaywrightMcpSettings(settings: PlaywrightMcpSettings): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(PLAYWRIGHT_MCP_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(PLAYWRIGHT_MCP_SETTINGS_STORE)
+  store.put({ id: 'playwrightMcp', ...settings })
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadPlaywrightMcpSettings(): Promise<PlaywrightMcpSettings | null> {
+  const db = await openDB()
+  const tx = db.transaction(PLAYWRIGHT_MCP_SETTINGS_STORE, 'readonly')
+  const store = tx.objectStore(PLAYWRIGHT_MCP_SETTINGS_STORE)
+  const req = store.get('playwrightMcp')
+  return new Promise<PlaywrightMcpSettings | null>((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result ?? null)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function deletePlaywrightMcpSettings(): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(PLAYWRIGHT_MCP_SETTINGS_STORE, 'readwrite')
+  const store = tx.objectStore(PLAYWRIGHT_MCP_SETTINGS_STORE)
+  store.delete('playwrightMcp')
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
 }
 

@@ -1434,6 +1434,24 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.3.4',
+    date: '2026-05-12',
+    title: 'Browser-Use — Playwright MCP Bridge (Tier 3)',
+    description:
+      'Connect Monday\'s MCP client to a locally-running @playwright/mcp server for full external-browser control. Includes auto-discovery on the default port (8931), domain allowlist + blocked-origins enforcement, and a tool listing panel.',
+    changes: [
+      { type: 'added', text: 'playwrightMcp.ts — McpClient lifecycle management: connect, disconnect, list tools, call tools; auto-discovery on ws://localhost:8931; connection state notifications' },
+      { type: 'added', text: 'Playwright MCP section in McpServerManager — auto-discover button, connect/disconnect controls, domain allowlist textarea, blocked origins textarea, save/clear actions, tool listing with name/display/description' },
+      { type: 'added', text: 'PlaywrightMcpSettings type — url, domainAllowlist (string[]), blockedOrigins (string[]) stored in IndexedDB' },
+      { type: 'added', text: 'IndexedDB storage for Playwright MCP settings — save/load/clear in storage.ts' },
+      { type: 'added', text: 'Migration v20→v21 — adds playwrightMcpSettings object store to IndexedDB' },
+      { type: 'added', text: 'migrationRegistry.ts — SCHEMA_VERSION bumped to 21, playwrightMcpSettings store registered' },
+      { type: 'added', text: 'i18n — playwrightMcp.* en/zh translations (title, desc, url, autoDiscover, connect, disconnect, connected, connecting, error, discovered, notFound, domainAllowlist, blockedOrigins, save, clear, toolsTitle, noTools, toolParams, toolDesc)' },
+      { type: 'added', text: 'CSS — dark terminal-style Playwright MCP section with light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.3.4' },
+    ],
+  },
+  {
     version: '1.3.2',
     date: '2026-05-11',
     title: 'Browser-Use — DOM-State Capture (Tier 2)',

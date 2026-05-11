@@ -1742,6 +1742,54 @@ const personaSoul: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Playwright MCP bridge (v1.3.4) ──
+const playwrightMcp: Record<Locale, Record<string, string>> = {
+  en: {
+    'playwrightMcp.title': 'Playwright MCP',
+    'playwrightMcp.desc': 'Connect to a locally-running @playwright/mcp server for full browser automation. Monday auto-discovers the server and loads available tools.',
+    'playwrightMcp.placeholderUrl': 'ws://localhost:8931',
+    'playwrightMcp.autoDiscover': 'Auto-Discover',
+    'playwrightMcp.discovering': 'Discovering…',
+    'playwrightMcp.connect': 'Connect',
+    'playwrightMcp.connecting': 'Connecting…',
+    'playwrightMcp.disconnect': 'Disconnect',
+    'playwrightMcp.connected': 'Connected',
+    'playwrightMcp.discovered': 'Playwright MCP server found!',
+    'playwrightMcp.notFound': 'No Playwright MCP server found. Install @playwright/mcp and start the server.',
+    'playwrightMcp.domainAllowlist': 'Domain Allowlist',
+    'playwrightMcp.domainAllowlistHint': 'Allowed domains, one per line\nexample.com\napi.example.com',
+    'playwrightMcp.blockedOrigins': 'Blocked Origins',
+    'playwrightMcp.blockedOriginsHint': 'Blocked origins, one per line\nhttps://evil.com\nfile://',
+    'playwrightMcp.save': 'Save Settings',
+    'playwrightMcp.saved': 'Saved!',
+    'playwrightMcp.clear': 'Clear',
+    'playwrightMcp.toolsTitle': 'Available Tools',
+    'playwrightMcp.noTools': 'Connected but no tools available. The server may not be a Playwright MCP server.',
+  },
+  zh: {
+    'playwrightMcp.title': 'Playwright MCP',
+    'playwrightMcp.desc': '连接到本地运行的 @playwright/mcp 服务器以实现完整的浏览器自动化。Monday 会自动发现服务器并加载可用工具。',
+    'playwrightMcp.placeholderUrl': 'ws://localhost:8931',
+    'playwrightMcp.autoDiscover': '自动发现',
+    'playwrightMcp.discovering': '发现中…',
+    'playwrightMcp.connect': '连接',
+    'playwrightMcp.connecting': '连接中…',
+    'playwrightMcp.disconnect': '断开连接',
+    'playwrightMcp.connected': '已连接',
+    'playwrightMcp.discovered': '找到 Playwright MCP 服务器！',
+    'playwrightMcp.notFound': '未找到 Playwright MCP 服务器。请安装 @playwright/mcp 并启动服务器。',
+    'playwrightMcp.domainAllowlist': '域名白名单',
+    'playwrightMcp.domainAllowlistHint': '允许的域名，每行一个\nexample.com\napi.example.com',
+    'playwrightMcp.blockedOrigins': '阻止的源',
+    'playwrightMcp.blockedOriginsHint': '阻止的源，每行一个\nhttps://evil.com\nfile://',
+    'playwrightMcp.save': '保存设置',
+    'playwrightMcp.saved': '已保存！',
+    'playwrightMcp.clear': '清除',
+    'playwrightMcp.toolsTitle': '可用工具',
+    'playwrightMcp.noTools': '已连接但没有可用工具。该服务器可能不是 Playwright MCP 服务器。',
+  },
+}
+
 
 // ── Accessibility (a11y) ──
 const a11y = {
@@ -2075,6 +2123,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...ontology[locale],
     ...learning[locale],
     ...workshop[locale],
+    ...playwrightMcp[locale],
   }
 }
 

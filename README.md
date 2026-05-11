@@ -632,7 +632,7 @@ in-browser computer-use system.
 - [x] **Vision mode (Tier 1/2)** — `OffscreenCanvas` / `html2canvas` screenshot
       attached as base64 image in the next LLM call; requires a multimodal model
       (e.g. Qwen-VL); falls back to DOM-state mode for non-vision models automatically
-- [ ] **Playwright MCP bridge (Tier 3)** — one-click connect in the MCP panel;
+- [x] **Playwright MCP bridge (Tier 3)** — one-click connect in the MCP panel;
       Monday auto-discovers `@playwright/mcp` if already configured;
       domain allowlist + blocked-origins enforced per task brief
 - [ ] **Task brief (AGENTS.md / CLAUDE.md equivalent)** — per-task markdown config
