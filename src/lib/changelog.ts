@@ -1470,6 +1470,23 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.3.6',
+    date: '2026-05-12',
+    title: 'Browser-Use — Agent Audit Trail',
+    description:
+      'Chronological audit trail of every agent action + observation + screenshot thumbnail. Inspired by Codex CLI terminal-log citation model and Codex Web task-delegation audit view. Each step is collapsible with type icon, tool call/args, result text, and screenshot thumbnail with zoom preview.',
+    changes: [
+      { type: 'added', text: 'AgentAuditTrail component — chronological log with collapsible per-step entries showing type icon, tool name, args, result, screenshot thumbnail with zoom preview' },
+      { type: 'added', text: 'AgentAuditEntry type — structured audit entry: step number, type (thought/tool_call/tool_result/observation/final_answer), timestamp, thought, tool args, result, error, screenshot, final answer, duration' },
+      { type: 'added', text: 'Audit trail auto-collection — AgentLoopPanel merges steps data + iteration screenshots into a unified chronological audit log' },
+      { type: 'added', text: 'Screenshot thumbnail preview — click any screenshot thumbnail to open a full-screen modal overlay' },
+      { type: 'added', text: 'Expand/collapse all toggle — bulk toggle all audit entries with count display' },
+      { type: 'added', text: 'i18n — agent.auditTitle/auditSteps/auditExpand/auditCollapse/auditExpandAll/auditCollapseAll/auditEmpty/auditTruncated/observation en/zh translations' },
+      { type: 'added', text: 'CSS — dark terminal-style audit trail with light theme overrides, screenshot preview modal' },
+      { type: 'changed', text: 'Updated version to v1.3.6' },
+    ],
+  },
+  {
     version: '1.3.2',
     date: '2026-05-11',
     title: 'Browser-Use — DOM-State Capture (Tier 2)',

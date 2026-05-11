@@ -638,7 +638,7 @@ in-browser computer-use system.
 - [x] **Task brief (AGENTS.md / CLAUDE.md equivalent)** — per-task markdown config
       declaring goal, allowed domains, step budget, and stop criteria;
       stored in IndexedDB; shown as a collapsible header above the agent thread
-- [ ] **Agent audit trail** — chronological log of every action + observation +
+- [x] **Agent audit trail** — chronological log of every action + observation +
       screenshot thumbnail; collapsible per step inside the chat thread; inspired by
       Codex CLI's terminal-log citation model and Codex Web's task-delegation audit view
 - [ ] **Async task queue** — "delegate and come back" UI inspired by Codex Web:
