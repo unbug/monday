@@ -10,6 +10,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { getOrCreateIframe, getSandboxIframe, removeSandboxIframe } from '../lib/browserUseTools'
 import { extractHTMLCode } from '../lib/htmlExtract'
+import { serializeIframeDomState, type SerializeOptions } from '../lib/domState'
 
 export type AgentLoopStatus = 'idle' | 'running' | 'paused' | 'error'
 
@@ -36,6 +37,10 @@ export interface UseAgentLoopOptions {
   onScreenshot?: (dataUrl: string, iteration: number) => void
   /** Called when iteration completes — receives iteration count and HTML */
   onIterationComplete?: (html: string | null, iteration: number) => void
+  /** Called before each model turn — receives serialized DOM-state JSON for context injection */
+  onDomState?: (domState: string, iteration: number) => void
+  /** DOM-state serialization options (depth + node-count budget) */
+  domStateOptions?: SerializeOptions
   /** Debounce delay in ms for auto-refresh (default: 500) */
   autoRefreshDelay?: number
   /** Iframe target ID (default: 'agent-loop') */
@@ -134,11 +139,14 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
   state: AgentLoopState
   actions: AgentLoopActions
   iframeEl: HTMLIFrameElement | null
+  currentDomState: string | null
   screenshotRef: React.RefCallback<HTMLIFrameElement>
 } {
   const {
     onScreenshot,
     onIterationComplete,
+    onDomState,
+    domStateOptions,
     autoRefreshDelay = 500,
     iframeId = 'agent-loop',
   } = options
@@ -153,12 +161,15 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
     lastScreenshotAt: null,
   })
 
+  const [currentDomState, setCurrentDomState] = useState<string | null>(null)
+
   const statusRef = useRef<AgentLoopStatus>('idle')
   const htmlRef = useRef<string | null>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const abortRef = useRef(false)
   const autoRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const iterationRef = useRef(0)
+  const domStateOptionsRef = useRef(domStateOptions)
 
   // Create iframe on mount
   useEffect(() => {
@@ -179,6 +190,11 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
       iframeRef.current = el
     }
   }, [])
+
+  // Update DOM-state options ref when they change
+  useEffect(() => {
+    domStateOptionsRef.current = domStateOptions
+  }, [domStateOptions])
 
   const start = useCallback(
     (goal: string) => {
@@ -247,6 +263,39 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
         }))
       }
 
+      // Capture DOM-state for context injection (Tier 2)
+      const iframe = iframeRef.current
+      if (iframe && iframe.contentDocument && onDomState) {
+        const domJson = serializeIframeDomState(iframe, domStateOptionsRef.current)
+        const lines: string[] = []
+        lines.push('// DOM State Context')
+        lines.push(`// ${domJson.nodeCount} nodes, depth ${domJson.budget.depthReached}/${domJson.budget.maxDepth}`)
+        if (domJson.budget.nodesTruncated) lines.push('// ⚠️ Truncated — node budget exceeded')
+        lines.push('')
+        for (const node of domJson.tree) {
+          const indent = '  '.repeat(node.depth)
+          const attrs: string[] = []
+          if (node.id) attrs.push(`id="${node.id}"`)
+          if (node.classes) attrs.push(`class="${node.classes}"`)
+          if (node.type) attrs.push(`type="${node.type}"`)
+          if (node.name) attrs.push(`name="${node.name}"`)
+          if (node.value !== undefined) attrs.push(`value="${node.value}"`)
+          if (node.checked !== undefined) attrs.push(`checked=${node.checked}`)
+          if (node.disabled !== undefined) attrs.push(`disabled=${node.disabled}`)
+          if (node.selected !== undefined) attrs.push(`selected=${node.selected}`)
+          if (node.focused) attrs.push('focused')
+          if (node.interactive) attrs.push('interactive')
+          if (node.ariaRole) attrs.push(`role="${node.ariaRole}"`)
+          if (node.ariaLabel) attrs.push(`aria-label="${node.ariaLabel}"`)
+          const attrStr = attrs.length > 0 ? ` [${attrs.join(', ')}]` : ''
+          const text = node.text ? ` "${node.text.slice(0, 80)}"` : ''
+          lines.push(`${indent}<${node.tag}${attrStr}>${text}</${node.tag}>`)
+        }
+        const domStateStr = lines.join('\n')
+        setCurrentDomState(domStateStr)
+        onDomState(domStateStr, iteration)
+      }
+
       onIterationComplete?.(htmlRef.current, iteration)
     } catch (err) {
       setState((prev) => ({
@@ -254,7 +303,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
         error: err instanceof Error ? err.message : 'Screenshot failed',
       }))
     }
-  }, [iframeId, onScreenshot, onIterationComplete])
+  }, [iframeId, onScreenshot, onIterationComplete, onDomState])
 
   const setHtml = useCallback(
     (html: string | null) => {
@@ -323,6 +372,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
     state,
     actions: { start, stop, refresh, setHtml, clear },
     iframeEl: iframeRef.current,
+    currentDomState,
     screenshotRef,
   }
 }

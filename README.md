@@ -626,7 +626,7 @@ in-browser computer-use system.
       `sandbox="allow-scripts"` iframe → `html2canvas` screenshot → attach as
       image to next LLM call → iterate; debounced auto-refresh + manual ↻ Run;
       reuses the iframe infra planned for v0.31 Code Arena
-- [ ] **DOM-state capture (Tier 2)** — serialize active iframe's accessibility
+- [x] **DOM-state capture (Tier 2)** — serialize active iframe's accessibility
       tree (ARIA roles, labels, input states) to compact JSON injected into context
       before each model turn; depth + node-count budget to stay token-safe
 - [ ] **Vision mode (Tier 1/2)** — `OffscreenCanvas` / `html2canvas` screenshot

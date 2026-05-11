@@ -20,6 +20,8 @@ interface Props {
   onScreenshotReady?: (dataUrl: string) => void
   /** When the model generates HTML, this callback receives it for rendering */
   onHtmlGenerated?: (html: string) => void
+  /** When DOM state is captured, this callback receives the serialized DOM for context injection */
+  onDomStateReady?: (domState: string) => void
   /** Current task goal from the agent engine */
   taskGoal?: string
   /** Steps from the agent engine */
@@ -65,6 +67,7 @@ export function AgentLoopPanel({
   onBack,
   onScreenshotReady,
   onHtmlGenerated,
+  onDomStateReady,
   taskGoal,
   steps,
   agentRunning,
@@ -75,10 +78,12 @@ export function AgentLoopPanel({
   const [activeIteration, setActiveIteration] = useState<number | null>(null)
   const [iframeVisible, setIframeVisible] = useState(true)
   const [showHtml, setShowHtml] = useState(false)
+  const [showDomState, setShowDomState] = useState(false)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [domStateNodeCount, setDomStateNodeCount] = useState(0)
   const iframeContainerRef = useRef<HTMLDivElement>(null)
 
-  const { state: loopState, actions: loopActions, iframeEl, screenshotRef } = useAgentLoop({
+  const { state: loopState, actions: loopActions, iframeEl, currentDomState, screenshotRef } = useAgentLoop({
     onScreenshot: (dataUrl, iteration) => {
       setIterations((prev) => {
         const entry = {
@@ -102,6 +107,11 @@ export function AgentLoopPanel({
           )
         })
       }
+    },
+    onDomState: (domState, iteration) => {
+      const match = domState.match(/(\d+) nodes/)
+      setDomStateNodeCount(match ? parseInt(match[1], 10) : 0)
+      onDomStateReady?.(domState)
     },
     autoRefreshDelay: autoRefresh ? 800 : Infinity,
   })
@@ -302,6 +312,26 @@ export function AgentLoopPanel({
                   ({t('agent.loopTruncated') || 'truncated'})
                 </span>
               )}
+            </pre>
+          )}
+        </div>
+      )}
+
+      {/* DOM state capture (Tier 2) */}
+      {currentDomState && (
+        <div className="agent-loop-domstate-section">
+          <div className="agent-loop-domstate-header">
+            <button
+              className={`agent-loop-domstate-toggle ${showDomState ? 'active' : ''}`}
+              onClick={() => setShowDomState(!showDomState)}
+            >
+              {showDomState ? '▼' : '▶'} {t('agent.loopDomState') || 'DOM State'}
+              <span className="agent-loop-domstate-badge">{domStateNodeCount} nodes</span>
+            </button>
+          </div>
+          {showDomState && (
+            <pre className="agent-loop-domstate-source">
+              <code>{currentDomState}</code>
             </pre>
           )}
         </div>

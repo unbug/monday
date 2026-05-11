@@ -1414,6 +1414,21 @@ export const CHANGELOG: ChangelogEntry[] = [
       { type: 'changed', text: 'Updated version to v1.3.0' },
     ],
   },
+  {
+    version: '1.3.2',
+    date: '2026-05-11',
+    title: 'Browser-Use — DOM-State Capture (Tier 2)',
+    description:
+      'Serialize the active sandboxed iframe\'s DOM to a compact accessibility-tree JSON and inject it as context before each model turn. Includes depth + node-count budget limits to stay token-safe, plus a DOM State panel in the AgentLoop UI for inspection.',
+    changes: [
+      { type: 'added', text: 'domState.ts — DOM-state serialization utility: serializeIframeDomState() with ARIA roles, labels, input states, interactive detection; serializeDomStateCompact() for LLM context injection; configurable maxDepth/maxNodes budget' },
+      { type: 'added', text: 'useAgentLoop onDomState callback — captures serialized DOM state before each model turn via the refresh cycle; passes compact JSON to parent for context injection' },
+      { type: 'added', text: 'AgentLoopPanel DOM State panel — collapsible DOM state viewer with node-count badge, syntax-highlighted tree output, light theme support' },
+      { type: 'added', text: 'i18n — agent.loopDomState en/zh translation' },
+      { type: 'added', text: 'CSS — dark terminal-style DOM State panel with node-count badge, light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.3.2' },
+    ],
+  },
 ]
 
 // Sort descending by version (latest first)
