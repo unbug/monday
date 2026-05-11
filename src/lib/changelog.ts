@@ -1415,6 +1415,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.3.3',
+    date: '2026-05-11',
+    title: 'Browser-Use — Vision Mode (Tier 1/2)',
+    description:
+      'Attach iframe screenshots as base64 images to the next LLM call when the loaded model supports vision (multimodal). Uses OffscreenCanvas for fast capture with automatic DOM-state fallback for non-vision models. Includes a vision mode toggle in the AgentLoop UI with auto-detect, force-on, and force-off options.',
+    changes: [
+      { type: 'added', text: 'isVisionModel() — detects if the loaded model supports vision by checking tags or name for "vision"' },
+      { type: 'added', text: 'captureIframeScreenshotOffscreen() — OffscreenCanvas-based screenshot capture with SVG foreignObject rendering; falls back to regular canvas when OffscreenCanvas unavailable' },
+      { type: 'added', text: 'useAgentLoop visionMode option — auto-detect, force-on, or force-off vision mode; tracks current vision mode state (vision / dom-fallback)' },
+      { type: 'added', text: 'ProviderStreamOptions.visionMode — new field for vision mode control in streamChatWithProvider' },
+      { type: 'added', text: 'streamChatWithProvider auto-detect — when visionMode is auto, checks isVisionModel() and attaches screenshots as base64 images only for vision-capable models' },
+      { type: 'added', text: 'AgentLoopPanel vision mode toggle — three-button toggle (🔄 auto / 👁 on / 🚫 off) with active state highlighting' },
+      { type: 'added', text: 'Vision mode status indicator — green "👁 Vision" badge for vision mode, amber "📄 DOM-fallback" badge for DOM-state fallback' },
+      { type: 'added', text: 'i18n — agent.visionMode, agent.visionAuto, agent.visionOn, agent.visionOff en/zh translations' },
+      { type: 'added', text: 'CSS — dark terminal-style vision toggle buttons, status indicator with color coding, light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.3.3' },
+    ],
+  },
+  {
     version: '1.3.2',
     date: '2026-05-11',
     title: 'Browser-Use — DOM-State Capture (Tier 2)',

@@ -629,7 +629,7 @@ in-browser computer-use system.
 - [x] **DOM-state capture (Tier 2)** — serialize active iframe's accessibility
       tree (ARIA roles, labels, input states) to compact JSON injected into context
       before each model turn; depth + node-count budget to stay token-safe
-- [ ] **Vision mode (Tier 1/2)** — `OffscreenCanvas` / `html2canvas` screenshot
+- [x] **Vision mode (Tier 1/2)** — `OffscreenCanvas` / `html2canvas` screenshot
       attached as base64 image in the next LLM call; requires a multimodal model
       (e.g. Qwen-VL); falls back to DOM-state mode for non-vision models automatically
 - [ ] **Playwright MCP bridge (Tier 3)** — one-click connect in the MCP panel;

@@ -10,6 +10,7 @@ import {
   type InitProgressReport,
   type ChatCompletionChunk,
 } from '@mlc-ai/web-llm'
+import { MODELS } from './models'
 
 let engineInstance: MLCEngineInterface | null = null
 let currentModelId: string | null = null
@@ -53,6 +54,23 @@ export function unloadModel(): void {
 
 export function getCurrentModelId(): string | null {
   return currentModelId
+}
+
+/**
+ * Check if the currently loaded model supports vision (multimodal input).
+ * A model is vision-capable if its name or tags contain 'vision'.
+ * Used by the agent loop to decide whether to attach screenshots as images
+ * or fall back to DOM-state context injection.
+ */
+export function isVisionModel(): boolean {
+  const modelId = currentModelId
+  if (!modelId) return false
+  const model = MODELS.find((m) => m.id === modelId)
+  if (!model) return false
+  // Check tags first
+  if (model.tags?.includes('vision')) return true
+  // Check name for 'vision' (case-insensitive)
+  return model.name.toLowerCase().includes('vision')
 }
 
 export async function* streamChat(
@@ -554,6 +572,8 @@ export interface ProviderStreamOptions {
   vllmUrl?: string
   /** DeepSeek settings — required when provider === 'deepseek' */
   deepSeekSettings?: { baseUrl: string; apiKey: string; modelId: string }
+  /** Vision mode: 'auto' (detect), 'on' (force), 'off' (disable). When 'on' and the loaded model supports vision, screenshots are attached as base64 images to the next LLM call. */
+  visionMode?: 'auto' | 'on' | 'off'
 }
 
 export async function* streamChatWithProvider(
@@ -900,12 +920,25 @@ export async function* streamChatWithProvider(
     chatMessages = [...contextMessage, ...messages]
   }
 
-  const visionMessages: Array<{
+  // Vision mode: attach screenshot as base64 image when model supports vision
+  // Auto-detect: check if current model has 'vision' tag or 'Vision' in name
+  let visionMessages: Array<{
     role: 'user' | 'assistant' | 'system' | 'tool'
     content: string | Array<{ type: string; text?: string; image_url?: { url: string } }>
-  }> = options.images && options.images.length > 0
-    ? toVisionMessages(chatMessages, options.images)
-    : chatMessages
+  }>
+
+  const effectiveVisionMode = options.visionMode === 'auto'
+    ? (isVisionModel() ? 'on' : 'off')
+    : options.visionMode
+
+  if (effectiveVisionMode === 'on' && options.images && options.images.length > 0) {
+    // Model supports vision — attach screenshot as base64 image
+    visionMessages = toVisionMessages(chatMessages, options.images)
+  } else {
+    // Non-vision model or vision disabled — use DOM-state fallback
+    // (DOM-state is injected as context in the hook, not here)
+    visionMessages = chatMessages
+  }
 
   let usage: StreamUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
 

@@ -1229,6 +1229,10 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.loopSteps': 'Agent Steps',
     'agent.back': 'Back',
     'agent.justNow': 'just now',
+    'agent.visionMode': 'Vision',
+    'agent.visionAuto': 'Auto-detect',
+    'agent.visionOn': 'Force on',
+    'agent.visionOff': 'Force off',
   },
   zh: {
     'agent.title': 'Agent 模式',
@@ -1270,6 +1274,10 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.loopSteps': 'Agent 步骤',
     'agent.back': '返回',
     'agent.justNow': '刚刚',
+    'agent.visionMode': '视觉',
+    'agent.visionAuto': '自动检测',
+    'agent.visionOn': '强制开启',
+    'agent.visionOff': '强制关闭',
   },
 }
 

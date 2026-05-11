@@ -11,6 +11,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { getOrCreateIframe, getSandboxIframe, removeSandboxIframe } from '../lib/browserUseTools'
 import { extractHTMLCode } from '../lib/htmlExtract'
 import { serializeIframeDomState, type SerializeOptions } from '../lib/domState'
+import { isVisionModel } from '../lib/engine'
 
 export type AgentLoopStatus = 'idle' | 'running' | 'paused' | 'error'
 
@@ -22,6 +23,8 @@ export interface AgentLoopState {
   screenshotDataUrl: string | null
   error: string | null
   lastScreenshotAt: number | null
+  /** Whether the current model supports vision (multimodal) */
+  visionMode: 'vision' | 'dom-fallback' | null
 }
 
 export interface AgentLoopActions {
@@ -45,11 +48,115 @@ export interface UseAgentLoopOptions {
   autoRefreshDelay?: number
   /** Iframe target ID (default: 'agent-loop') */
   iframeId?: string
+  /** Vision mode: 'auto' (detect), 'on' (force), 'off' (disable) */
+  visionMode?: 'auto' | 'on' | 'off'
 }
 
 /**
- * Capture a screenshot of a sandboxed iframe using canvas + SVG foreignObject.
- * Falls back to DOM metadata if rendering fails.
+ * Capture a screenshot of a sandboxed iframe using OffscreenCanvas.
+ * Returns a base64 PNG data URL suitable for attachment to LLM calls.
+ * Falls back to DOM metadata if the browser doesn't support OffscreenCanvas.
+ */
+function captureIframeScreenshotOffscreen(
+  iframeId: string,
+  fullPage: boolean,
+): Promise<{ success: boolean; dataUrl: string | null; fallback: Record<string, unknown> }> {
+  const iframe = getSandboxIframe(iframeId)
+  if (!iframe || !iframe.contentDocument) {
+    return Promise.resolve({
+      success: false,
+      dataUrl: null,
+      fallback: { error: 'Iframe not found or not ready' },
+    })
+  }
+
+  const doc = iframe.contentDocument
+  const width = fullPage
+    ? Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth)
+    : (iframe.clientWidth || 1280)
+  const height = fullPage
+    ? Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight)
+    : (iframe.clientHeight || 720)
+
+  // Clamp to reasonable max to avoid OOM
+  const maxDim = 1920
+  const scale = Math.min(1, maxDim / Math.max(width, height))
+  const scaledW = Math.round(width * scale)
+  const scaledH = Math.round(height * scale)
+
+  // Try OffscreenCanvas first (faster, no serialization overhead)
+  if (typeof OffscreenCanvas !== 'undefined') {
+    try {
+      const offscreen = new OffscreenCanvas(scaledW, scaledH)
+      const ctx = offscreen.getContext('2d')
+      if (!ctx) throw new Error('No 2d context on OffscreenCanvas')
+
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, scaledW, scaledH)
+
+      // Render iframe content via SVG foreignObject
+      const html = doc.documentElement.outerHTML
+      const svgData = new XMLSerializer().serializeToString(
+        new DOMParser().parseFromString(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${scaledW}" height="${scaledH}">
+            <foreignObject width="100%" height="100%">
+              <div xmlns="http://www.w3.org/1999/xhtml">${html}</div>
+            </foreignObject>
+          </svg>`,
+          'text/xml',
+        ),
+      )
+
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+      const blobUrl = URL.createObjectURL(svgBlob)
+
+      return new Promise((resolve) => {
+        const img = new Image()
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, scaledW, scaledH)
+          URL.revokeObjectURL(blobUrl)
+          const bitmap = offscreen.transferToImageBitmap()
+          const pngBlob = (bitmap as any).convertToBlob({ type: 'image/png' })
+          bitmap.close()
+          pngBlob.arrayBuffer().then((buf: ArrayBuffer) => {
+            const base64 = btoa(
+              new Uint8Array(buf).reduce(
+                (data, byte) => data + String.fromCharCode(byte),
+                '',
+              ),
+            )
+            resolve({ success: true, dataUrl: `data:image/png;base64,${base64}`, fallback: {} })
+          })
+        }
+        img.onerror = () => {
+          URL.revokeObjectURL(blobUrl)
+          resolve({
+            success: false,
+            dataUrl: null,
+            fallback: {
+              bodyText: (doc.body?.textContent || '').slice(0, 500),
+              links: Array.from(doc.querySelectorAll('a')).map((a) => ({
+                href: a.href,
+                text: (a.textContent || '').slice(0, 50),
+              })),
+            },
+          })
+        }
+        img.src = blobUrl
+      })
+    } catch {
+      // OffscreenCanvas failed — fall through to regular canvas
+    }
+  }
+
+  // Fallback: regular canvas
+  return captureIframeScreenshot(iframeId, fullPage)
+}
+
+/**
+ * Capture a screenshot of a sandboxed iframe using OffscreenCanvas.
+ * Returns a base64 PNG data URL suitable for attachment to LLM calls.
+ * Falls back to DOM metadata if the browser doesn't support OffscreenCanvas.
  */
 function captureIframeScreenshot(
   iframeId: string,
@@ -140,6 +247,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
   actions: AgentLoopActions
   iframeEl: HTMLIFrameElement | null
   currentDomState: string | null
+  currentVisionMode: 'vision' | 'dom-fallback' | null
   screenshotRef: React.RefCallback<HTMLIFrameElement>
 } {
   const {
@@ -149,6 +257,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
     domStateOptions,
     autoRefreshDelay = 500,
     iframeId = 'agent-loop',
+    visionMode: visionModePref = 'auto',
   } = options
 
   const [state, setState] = useState<AgentLoopState>({
@@ -159,9 +268,11 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
     screenshotDataUrl: null,
     error: null,
     lastScreenshotAt: null,
+    visionMode: null,
   })
 
   const [currentDomState, setCurrentDomState] = useState<string | null>(null)
+  const [currentVisionMode, setCurrentVisionMode] = useState<'vision' | 'dom-fallback' | null>(null)
 
   const statusRef = useRef<AgentLoopStatus>('idle')
   const htmlRef = useRef<string | null>(null)
@@ -211,6 +322,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
         screenshotDataUrl: null,
         error: null,
         lastScreenshotAt: null,
+        visionMode: null,
       })
     },
     [],
@@ -242,7 +354,23 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
     const fullPage = true
 
     try {
-      const result = await captureIframeScreenshot(iframeId, fullPage)
+      // Determine vision mode: auto-detect from loaded model, or use user preference
+      const effectiveVisionMode = visionModePref === 'auto'
+        ? (typeof isVisionModel === 'function' && isVisionModel()
+          ? 'vision'
+          : 'dom-fallback')
+        : visionModePref === 'on'
+          ? 'vision'
+          : 'dom-fallback'
+
+      setCurrentVisionMode(effectiveVisionMode)
+
+      // Use OffscreenCanvas for vision mode, regular canvas for fallback
+      const captureFn = effectiveVisionMode === 'vision'
+        ? captureIframeScreenshotOffscreen
+        : captureIframeScreenshot
+
+      const result = await captureFn(iframeId, fullPage)
 
       if (result.success && result.dataUrl) {
         setState((prev) => ({
@@ -264,8 +392,10 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
       }
 
       // Capture DOM-state for context injection (Tier 2)
+      // Vision mode: use OffscreenCanvas screenshot attached as base64 image
+      // Non-vision fallback: use DOM-state serialized JSON
       const iframe = iframeRef.current
-      if (iframe && iframe.contentDocument && onDomState) {
+      if (iframe && iframe.contentDocument) {
         const domJson = serializeIframeDomState(iframe, domStateOptionsRef.current)
         const lines: string[] = []
         lines.push('// DOM State Context')
@@ -293,7 +423,10 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
         }
         const domStateStr = lines.join('\n')
         setCurrentDomState(domStateStr)
-        onDomState(domStateStr, iteration)
+
+        if (onDomState) {
+          onDomState(domStateStr, iteration)
+        }
       }
 
       onIterationComplete?.(htmlRef.current, iteration)
@@ -345,6 +478,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
       screenshotDataUrl: null,
       error: null,
       lastScreenshotAt: null,
+      visionMode: null,
     })
   }, [iframeId])
 
@@ -373,6 +507,7 @@ export function useAgentLoop(options: UseAgentLoopOptions = {}): {
     actions: { start, stop, refresh, setHtml, clear },
     iframeEl: iframeRef.current,
     currentDomState,
+    currentVisionMode,
     screenshotRef,
   }
 }

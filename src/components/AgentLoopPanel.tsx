@@ -81,9 +81,10 @@ export function AgentLoopPanel({
   const [showDomState, setShowDomState] = useState(false)
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [domStateNodeCount, setDomStateNodeCount] = useState(0)
+  const [visionMode, setVisionMode] = useState<'auto' | 'on' | 'off'>('auto')
   const iframeContainerRef = useRef<HTMLDivElement>(null)
 
-  const { state: loopState, actions: loopActions, iframeEl, currentDomState, screenshotRef } = useAgentLoop({
+  const { state: loopState, actions: loopActions, iframeEl, currentDomState, currentVisionMode, screenshotRef } = useAgentLoop({
     onScreenshot: (dataUrl, iteration) => {
       setIterations((prev) => {
         const entry = {
@@ -114,6 +115,7 @@ export function AgentLoopPanel({
       onDomStateReady?.(domState)
     },
     autoRefreshDelay: autoRefresh ? 800 : Infinity,
+    visionMode,
   })
 
   // Update iframe srcDoc when HTML changes
@@ -229,6 +231,33 @@ export function AgentLoopPanel({
                 />
                 <span>{t('agent.loopAutoRefresh') || 'Auto-refresh'}</span>
               </label>
+              {/* Vision mode toggle */}
+              <div className="agent-loop-vision-toggle">
+                <span className="agent-loop-vision-label">
+                  {t('agent.visionMode') || 'Vision'}:
+                </span>
+                <button
+                  className={`agent-loop-vision-btn ${visionMode === 'auto' ? 'active' : ''}`}
+                  onClick={() => setVisionMode('auto')}
+                  title={t('agent.visionAuto') || 'Auto-detect'}
+                >
+                  🔄
+                </button>
+                <button
+                  className={`agent-loop-vision-btn ${visionMode === 'on' ? 'active' : ''}`}
+                  onClick={() => setVisionMode('on')}
+                  title={t('agent.visionOn') || 'Force on'}
+                >
+                  👁
+                </button>
+                <button
+                  className={`agent-loop-vision-btn ${visionMode === 'off' ? 'active' : ''}`}
+                  onClick={() => setVisionMode('off')}
+                  title={t('agent.visionOff') || 'Force off'}
+                >
+                  🚫
+                </button>
+              </div>
             </>
           )}
 
@@ -248,6 +277,13 @@ export function AgentLoopPanel({
         {loopState.lastScreenshotAt && (
           <span className="agent-loop-stat-item">
             {t('agent.loopLastScreenshot') || 'Last screenshot'}: {relativeTime(loopState.lastScreenshotAt)}
+          </span>
+        )}
+        {currentVisionMode && (
+          <span className={`agent-loop-stat-item agent-loop-vision-indicator ${currentVisionMode}`}>
+            {currentVisionMode === 'vision'
+              ? '👁 Vision'  
+              : '📄 DOM-fallback'}
           </span>
         )}
         {loopState.error && (
