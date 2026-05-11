@@ -515,3 +515,17 @@ export interface LearningResult {
   /** Session ID this learning result belongs to */
   sessionId: string
 }
+
+/** Task brief — per-task markdown config for the agent loop (AGENTS.md / CLAUDE.md equivalent) */
+export interface TaskBrief {
+  /** Unique identifier for this task brief */
+  id: string
+  /** Human-readable name for the task brief */
+  name: string
+  /** Markdown instructions declaring goal, allowed domains, step budget, and stop criteria */
+  content: string
+  /** When this brief was created (timestamp) */
+  createdAt: number
+  /** When this brief was last modified (timestamp) */
+  updatedAt: number
+}

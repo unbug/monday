@@ -249,6 +249,8 @@ export default function App() {
   // v0.29.3: multi-window support
   const multiWindow = useMultiWindow()
   // v0.30: agent mode
+  const [activeBriefId, setActiveBriefId] = useState<string | null>(null)
+
   const agentMode = useAgentMode({
     onAgentResult: (result) => {
       // Append agent result as assistant message in current session
@@ -958,6 +960,9 @@ export default function App() {
                 steps={agentMode.state.task.steps}
                 agentRunning={agentMode.state.isRunning}
                 onAgentStop={agentMode.stop}
+                activeBriefId={activeBriefId}
+                onBriefChange={setActiveBriefId}
+                onBriefCreated={(id) => setActiveBriefId(id)}
               />
             ) : (
               <div className="agent-empty-state">

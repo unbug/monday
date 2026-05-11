@@ -13,6 +13,7 @@ import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
+import { TaskBriefEditor } from './TaskBriefEditor'
 
 interface Props {
   onBack: () => void
@@ -41,6 +42,12 @@ interface Props {
   agentRunning?: boolean
   /** Stop the agent */
   onAgentStop?: () => void
+  /** Currently active task brief ID */
+  activeBriefId?: string | null
+  /** Called when the active brief changes */
+  onBriefChange?: (id: string | null) => void
+  /** Called when a new brief is created */
+  onBriefCreated?: (id: string) => void
 }
 
 interface IterationEntry {
@@ -72,6 +79,9 @@ export function AgentLoopPanel({
   steps,
   agentRunning,
   onAgentStop,
+  activeBriefId,
+  onBriefChange,
+  onBriefCreated,
 }: Props) {
   const [taskInput, setTaskInput] = useState('')
   const [iterations, setIterations] = useState<IterationEntry[]>([])
@@ -292,6 +302,16 @@ export function AgentLoopPanel({
           </span>
         )}
       </div>
+
+      {/* Task brief (AGENTS.md / CLAUDE.md equivalent) */}
+      {activeBriefId && onBriefChange && (
+        <TaskBriefEditor
+          activeBriefId={activeBriefId}
+          onBriefChange={onBriefChange}
+          onBriefCreated={onBriefCreated}
+          expanded={false}
+        />
+      )}
 
       {/* Iframe preview */}
       {iframeVisible && (

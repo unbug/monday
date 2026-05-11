@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal, PlaywrightMcpSettings } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal, PlaywrightMcpSettings, TaskBrief } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -21,6 +21,7 @@ const MEMORIES_STORE = 'memories'
 const ONTOLOGY_STORE = 'ontology'
 const WORKSHOP_STORE = 'workshop'
 const PLAYWRIGHT_MCP_SETTINGS_STORE = 'playwrightMcpSettings'
+const TASK_BRIEFS_STORE = 'taskBriefs'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -154,6 +155,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v20→v21: add playwrightMcpSettings object store for v1.3.4 Playwright MCP bridge
       if (!db.objectStoreNames.contains(PLAYWRIGHT_MCP_SETTINGS_STORE)) {
         db.createObjectStore(PLAYWRIGHT_MCP_SETTINGS_STORE, { keyPath: 'id' })
+      }
+      // Migration v21→v22: add taskBriefs object store for v1.3 Task brief
+      if (!db.objectStoreNames.contains(TASK_BRIEFS_STORE)) {
+        db.createObjectStore(TASK_BRIEFS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -1105,6 +1110,52 @@ export async function deletePlaywrightMcpSettings(): Promise<void> {
   const tx = db.transaction(PLAYWRIGHT_MCP_SETTINGS_STORE, 'readwrite')
   const store = tx.objectStore(PLAYWRIGHT_MCP_SETTINGS_STORE)
   store.delete('playwrightMcp')
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+// ── Task Brief CRUD (v1.3 Task brief) ──────────────────────────────────────
+
+export async function saveTaskBrief(brief: TaskBrief): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(TASK_BRIEFS_STORE, 'readwrite')
+  const store = tx.objectStore(TASK_BRIEFS_STORE)
+  store.put(brief)
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadTaskBrief(id: string): Promise<TaskBrief | null> {
+  const db = await openDB()
+  const tx = db.transaction(TASK_BRIEFS_STORE, 'readonly')
+  const store = tx.objectStore(TASK_BRIEFS_STORE)
+  const req = store.get(id)
+  return new Promise<TaskBrief | null>((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result ?? null)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function loadAllTaskBriefs(): Promise<TaskBrief[]> {
+  const db = await openDB()
+  const tx = db.transaction(TASK_BRIEFS_STORE, 'readonly')
+  const store = tx.objectStore(TASK_BRIEFS_STORE)
+  const req = store.getAll()
+  return new Promise<TaskBrief[]>((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result ?? [])
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function deleteTaskBrief(id: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(TASK_BRIEFS_STORE, 'readwrite')
+  const store = tx.objectStore(TASK_BRIEFS_STORE)
+  store.delete(id)
   await new Promise<void>((resolve, reject) => {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)

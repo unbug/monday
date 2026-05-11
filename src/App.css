@@ -18403,3 +18403,357 @@ textarea:focus:not(:focus-visible),
 [data-theme='light'] .mcp-server-manager-pw-config-label {
   color: #6b7280;
 }
+
+/* ── Task Brief Editor (v1.3 Task brief) ─────────────────────────────────── */
+
+.task-brief-editor {
+  margin-bottom: 12px;
+}
+
+.task-brief-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.task-brief-selector-label {
+  font-size: 13px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.task-brief-selector-select {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 10px;
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.task-brief-selector-select:focus {
+  border-color: #8b5cf6;
+}
+
+.task-brief-selector-select option {
+  background: #1e1e2e;
+  color: #cdd6f4;
+}
+
+.task-brief-create-btn {
+  padding: 5px 12px;
+  background: #8b5cf6;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.task-brief-create-btn:hover {
+  background: #7c3aed;
+}
+
+/* Collapsible panel */
+.task-brief-panel {
+  border: 1px solid #313244;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.task-brief-collapse-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: #181825;
+  border: none;
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-brief-collapse-btn:hover {
+  color: #cdd6f4;
+  background: #1e1e2e;
+}
+
+.task-brief-content {
+  border-top: 1px solid #313244;
+}
+
+/* Preview mode */
+.task-brief-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #1e1e2e;
+  border-bottom: 1px solid #313244;
+}
+
+.task-brief-preview-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #cdd6f4;
+  margin: 0;
+}
+
+.task-brief-preview-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.task-brief-edit-btn,
+.task-brief-delete-btn {
+  padding: 3px 8px;
+  border: 1px solid #313244;
+  border-radius: 4px;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.task-brief-edit-btn:hover {
+  color: #cdd6f4;
+  border-color: #8b5cf6;
+}
+
+.task-brief-delete-btn:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.task-brief-preview-body {
+  padding: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #cdd6f4;
+}
+
+.task-brief-preview-body h1,
+.task-brief-preview-body h2,
+.task-brief-preview-body h3 {
+  color: #cdd6f4;
+  margin: 8px 0 4px;
+}
+
+.task-brief-preview-body h1 { font-size: 16px; }
+.task-brief-preview-body h2 { font-size: 14px; }
+.task-brief-preview-body h3 { font-size: 13px; }
+
+.task-brief-preview-body ul,
+.task-brief-preview-body ol {
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
+.task-brief-preview-body code {
+  background: #181825;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.task-brief-preview-body pre {
+  background: #181825;
+  padding: 8px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.task-brief-preview-body pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Edit mode */
+.task-brief-edit {
+  padding: 12px;
+}
+
+.task-brief-name-input {
+  width: 100%;
+  padding: 6px 10px;
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.task-brief-name-input:focus {
+  border-color: #8b5cf6;
+}
+
+.task-brief-content-input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.task-brief-content-input:focus {
+  border-color: #8b5cf6;
+}
+
+.task-brief-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task-brief-save-btn {
+  padding: 6px 16px;
+  background: #8b5cf6;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.task-brief-save-btn:hover {
+  background: #7c3aed;
+}
+
+.task-brief-cancel-btn {
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  color: #9ca3af;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.task-brief-cancel-btn:hover {
+  border-color: #6b7280;
+  color: #cdd6f4;
+}
+
+/* Light theme overrides */
+[data-theme='light'] .task-brief-selector-select {
+  background: #fff;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-selector-select option {
+  background: #fff;
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-panel {
+  border-color: #d1d5db;
+}
+
+[data-theme='light'] .task-brief-collapse-btn {
+  background: #f9fafb;
+  color: #6b7280;
+}
+
+[data-theme='light'] .task-brief-collapse-btn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-content {
+  border-color: #d1d5db;
+}
+
+[data-theme='light'] .task-brief-preview-header {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+[data-theme='light'] .task-brief-preview-name {
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-preview-body {
+  color: #374151;
+  background: #fff;
+}
+
+[data-theme='light'] .task-brief-preview-body h1,
+[data-theme='light'] .task-brief-preview-body h2,
+[data-theme='light'] .task-brief-preview-body h3 {
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-preview-body code {
+  background: #f3f4f6;
+  color: #7c3aed;
+}
+
+[data-theme='light'] .task-brief-preview-body pre {
+  background: #f3f4f6;
+}
+
+[data-theme='light'] .task-brief-name-input {
+  background: #fff;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-name-input:focus {
+  border-color: #8b5cf6;
+}
+
+[data-theme='light'] .task-brief-content-input {
+  background: #fff;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+[data-theme='light'] .task-brief-content-input:focus {
+  border-color: #8b5cf6;
+}
+
+[data-theme='light'] .task-brief-edit-btn,
+[data-theme='light'] .task-brief-delete-btn {
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
+[data-theme='light'] .task-brief-edit-btn:hover {
+  color: #7c3aed;
+  border-color: #7c3aed;
+}
+
+[data-theme='light'] .task-brief-delete-btn:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+[data-theme='light'] .task-brief-cancel-btn {
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
+[data-theme='light'] .task-brief-cancel-btn:hover {
+  border-color: #9ca3af;
+  color: #374151;
+}
