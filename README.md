@@ -635,7 +635,7 @@ in-browser computer-use system.
 - [x] **Playwright MCP bridge (Tier 3)** — one-click connect in the MCP panel;
       Monday auto-discovers `@playwright/mcp` if already configured;
       domain allowlist + blocked-origins enforced per task brief
-- [ ] **Task brief (AGENTS.md / CLAUDE.md equivalent)** — per-task markdown config
+- [x] **Task brief (AGENTS.md / CLAUDE.md equivalent)** — per-task markdown config
       declaring goal, allowed domains, step budget, and stop criteria;
       stored in IndexedDB; shown as a collapsible header above the agent thread
 - [ ] **Agent audit trail** — chronological log of every action + observation +

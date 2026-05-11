@@ -1452,6 +1452,24 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.3.5',
+    date: '2026-05-12',
+    title: 'Browser-Use — Task Brief (AGENTS.md / CLAUDE.md Equivalent)',
+    description:
+      'Per-task markdown config declaring goal, allowed domains, step budget, and stop criteria. Stored in IndexedDB. Shown as a collapsible header above the agent thread in the AgentLoopPanel.',
+    changes: [
+      { type: 'added', text: 'TaskBrief type — id, name, content (markdown), createdAt, updatedAt' },
+      { type: 'added', text: 'taskBriefs object store in IndexedDB with CRUD: saveTaskBrief, loadTaskBrief, loadAllTaskBriefs, deleteTaskBrief' },
+      { type: 'added', text: 'TaskBriefEditor component — brief selector dropdown, create/edit/delete, collapsible preview with markdown rendering, edit mode with name + content inputs' },
+      { type: 'added', text: 'TaskBriefEditor integrated into AgentLoopPanel as a collapsible header above the agent thread' },
+      { type: 'added', text: 'Migration v21→v22 — adds taskBriefs object store to IndexedDB' },
+      { type: 'added', text: 'migrationRegistry.ts — SCHEMA_VERSION bumped to 22, taskBriefs store registered' },
+      { type: 'added', text: 'i18n — taskBrief.* en/zh translations (title, selectorLabel, none, create, edit, delete, save, cancel, newBrief, untitled, defaultBrief, namePlaceholder, contentPlaceholder)' },
+      { type: 'added', text: 'CSS — dark terminal-style TaskBriefEditor with light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.3.5' },
+    ],
+  },
+  {
     version: '1.3.2',
     date: '2026-05-11',
     title: 'Browser-Use — DOM-State Capture (Tier 2)',
