@@ -1247,6 +1247,16 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.visionAuto': 'Auto-detect',
     'agent.visionOn': 'Force on',
     'agent.visionOff': 'Force off',
+    // Agent audit trail (v1.3)
+    'agent.auditTitle': 'Agent Audit Trail',
+    'agent.auditSteps': 'steps',
+    'agent.auditExpand': 'Expand',
+    'agent.auditCollapse': 'Collapse',
+    'agent.auditExpandAll': 'Expand all',
+    'agent.auditCollapseAll': 'Collapse all',
+    'agent.auditEmpty': 'No actions yet. Start the agent loop to see the audit trail.',
+    'agent.auditTruncated': 'truncated',
+    'agent.observation': 'Observation',
   },
   zh: {
     'agent.title': 'Agent 模式',
@@ -1306,6 +1316,16 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.visionAuto': '自动检测',
     'agent.visionOn': '强制开启',
     'agent.visionOff': '强制关闭',
+    // Agent audit trail (v1.3)
+    'agent.auditTitle': 'Agent 审计轨迹',
+    'agent.auditSteps': '步骤',
+    'agent.auditExpand': '展开',
+    'agent.auditCollapse': '收起',
+    'agent.auditExpandAll': '全部展开',
+    'agent.auditCollapseAll': '全部收起',
+    'agent.auditEmpty': '暂无操作记录。启动 Agent 循环以查看审计轨迹。',
+    'agent.auditTruncated': '已截断',
+    'agent.observation': '观察',
   },
 }
 

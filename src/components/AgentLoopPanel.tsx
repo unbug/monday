@@ -14,6 +14,7 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 import { TaskBriefEditor } from './TaskBriefEditor'
+import { AgentAuditTrail, type AgentAuditEntry } from './AgentAuditTrail'
 
 interface Props {
   onBack: () => void
@@ -92,6 +93,7 @@ export function AgentLoopPanel({
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [domStateNodeCount, setDomStateNodeCount] = useState(0)
   const [visionMode, setVisionMode] = useState<'auto' | 'on' | 'off'>('auto')
+  const [auditExpanded, setAuditExpanded] = useState(false)
   const iframeContainerRef = useRef<HTMLDivElement>(null)
 
   const { state: loopState, actions: loopActions, iframeEl, currentDomState, currentVisionMode, screenshotRef } = useAgentLoop({
@@ -162,6 +164,56 @@ export function AgentLoopPanel({
   }, [loopActions])
 
   const activeEntry = iterations.find((e) => e.iteration === activeIteration) ?? iterations[iterations.length - 1]
+
+  // Build audit trail from steps + iterations
+  const auditEntries: AgentAuditEntry[] = (() => {
+    const entries: AgentAuditEntry[] = []
+    let stepNum = 0
+    // Collect from steps (agent engine steps)
+    if (steps) {
+      for (const step of steps) {
+        stepNum++
+        let type: AgentAuditEntry['type'] = 'thought'
+        if (step.status === 'planning') type = 'thought'
+        else if (step.status === 'tool_call') type = 'tool_call'
+        else if (step.status === 'tool_result') type = 'tool_result'
+        else if (step.status === 'done') type = 'final_answer'
+        else if (step.status === 'error') type = 'tool_result'
+        const entry: AgentAuditEntry = {
+          id: `step-${step.id}`,
+          step: stepNum,
+          type,
+          timestamp: step.startedAt,
+          thought: step.thought,
+          toolName: step.toolName,
+          toolArgs: step.toolArgs,
+          toolResult: step.toolResult,
+          error: step.error,
+          durationMs: step.finishedAt ? step.finishedAt - step.startedAt : undefined,
+        }
+        entries.push(entry)
+      }
+    }
+    // Add observation entries from iterations with screenshots
+    for (const iter of iterations) {
+      stepNum++
+      if (iter.screenshotDataUrl) {
+        entries.push({
+          id: `obs-${iter.iteration}`,
+          step: stepNum,
+          type: 'observation',
+          timestamp: iter.timestamp,
+          screenshotDataUrl: iter.screenshotDataUrl,
+          toolResult: iter.error ? `Error: ${iter.error}` : undefined,
+          durationMs: undefined,
+        })
+      }
+    }
+    // Sort by timestamp
+    entries.sort((a, b) => a.timestamp - b.timestamp)
+    // Re-number sequentially
+    return entries.map((e, i) => ({ ...e, step: i + 1 }))
+  })()
 
   const statusIcon: Record<AgentLoopStatus, string> = {
     idle: '⏸',
@@ -505,6 +557,13 @@ export function AgentLoopPanel({
           </div>
         </div>
       )}
+
+      {/* Agent audit trail */}
+      <AgentAuditTrail
+        entries={auditEntries}
+        expanded={auditExpanded}
+        onExpandedChange={setAuditExpanded}
+      />
     </div>
   )
 }
