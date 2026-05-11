@@ -622,7 +622,7 @@ in-browser computer-use system.
 - [x] **Agent action primitives** — `navigate`, `click`, `type`, `scroll`,
       `extract-text`, `take-screenshot`, `read-dom`; each is a named MCP-style
       tool callable by the model via the v0.27 function-calling layer
-- [ ] **Sandboxed iframe execution loop (Tier 1)** — generate → render in
+- [x] **Sandboxed iframe execution loop (Tier 1)** — generate → render in
       `sandbox="allow-scripts"` iframe → `html2canvas` screenshot → attach as
       image to next LLM call → iterate; debounced auto-refresh + manual ↻ Run;
       reuses the iframe infra planned for v0.31 Code Arena

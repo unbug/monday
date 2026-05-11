@@ -22,7 +22,9 @@ import { McpServerManager } from './components/McpServerManager'
 import { UsageAnalytics } from './components/UsageAnalytics'
 import { WebDAVSettings } from './components/WebDAVSettings'
 import { AgentPanel } from './components/AgentPanel'
+import { AgentLoopPanel } from './components/AgentLoopPanel'
 import { useAgentMode } from './hooks/useAgentMode'
+import { useAgentLoop } from './hooks/useAgentLoop'
 import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
 import { PersistentMemoryPanel } from './components/PersistentMemoryPanel'
@@ -947,13 +949,15 @@ export default function App() {
         ) : view === 'agent' ? (
           <div className="agent-view">
             {agentMode.state.task ? (
-              <AgentPanel
-                task={agentMode.state.task}
-                onStop={agentMode.stop}
-                onClose={() => {
+              <AgentLoopPanel
+                onBack={() => {
                   setShowAgent(false)
                   setView('chat')
                 }}
+                taskGoal={agentMode.state.task.goal}
+                steps={agentMode.state.task.steps}
+                agentRunning={agentMode.state.isRunning}
+                onAgentStop={agentMode.stop}
               />
             ) : (
               <div className="agent-empty-state">
