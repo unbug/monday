@@ -675,6 +675,8 @@ Extending the persona system (v1.1) with community discovery and multimodal inpu
 switches to it in a session, and the persona's soul and system prompt are active;
 a user pastes an image into chat and the vision model processes it.
 
+Released: 2026-05-13
+
 #### Cross-cutting standing rules
 
 These apply to **every** version and are enforced by the cron:
