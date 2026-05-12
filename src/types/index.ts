@@ -529,3 +529,36 @@ export interface TaskBrief {
   /** When this brief was last modified (timestamp) */
   updatedAt: number
 }
+
+// ── v1.3 Async Task Queue ──────────────────────────────────────────────────────
+
+/** Status of an async agent task */
+export type AsyncTaskStatus =
+  | 'pending'   // queued, not yet started
+  | 'running'   // currently executing
+  | 'done'      // completed successfully
+  | 'error'     // failed
+  | 'cancelled' // user cancelled
+  | 'needs_input' // agent needs human input
+
+/** An async task in the delegate-and-come-back queue */
+export interface AsyncTask {
+  /** Unique task ID */
+  id: string
+  /** The user's task goal/description */
+  goal: string
+  /** Optional task brief ID to use for this task */
+  briefId: string | null
+  /** Current execution status */
+  status: AsyncTaskStatus
+  /** Steps taken by the agent (snapshot of the last audit trail) */
+  steps: AgentStep[]
+  /** Final answer/result when done */
+  result: string
+  /** Error message if failed */
+  error: string | null
+  /** When the task was created (timestamp) */
+  createdAt: number
+  /** When the task completed (timestamp) */
+  finishedAt: number | null
+}

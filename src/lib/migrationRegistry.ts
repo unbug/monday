@@ -24,7 +24,7 @@
 // ── Frozen schema version ────────────────────────────────────────────────────
 // This is the current DB_VERSION in storage.ts. DO NOT edit this constant
 // without bumping DB_VERSION and adding a migration in storage.ts.
-export const SCHEMA_VERSION = 22
+export const SCHEMA_VERSION = 23
 
 // ── Object stores (frozen) ──────────────────────────────────────────────────
 // The following stores are part of the frozen v1.0 schema. Future migrations
@@ -145,6 +145,12 @@ export const SCHEMA_STORES = [
     keyPath: 'id',
     sinceVersion: 22,
   },
+  {
+    name: 'asyncTasks',
+    purpose: 'Async task queue entries for v1.3 — delegate-and-come-back task management',
+    keyPath: 'id',
+    sinceVersion: 23,
+  },
 ] as const
 
 // ── Migration history ───────────────────────────────────────────────────────
@@ -177,6 +183,7 @@ export const MIGRATION_REGISTRY: MigrationEntry[] = [
   { version: 20, description: 'Add workshop proposals store for v1.2.4 Skill Workshop', stores: ['workshop'] },
   { version: 21, description: 'Add playwrightMcpSettings store for v1.3.4 Playwright MCP bridge', stores: ['playwrightMcpSettings'] },
   { version: 22, description: 'Add taskBriefs store for v1.3 Task brief', stores: ['taskBriefs'] },
+  { version: 23, description: 'Add asyncTasks store for v1.3 Async task queue', stores: ['asyncTasks'] },
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

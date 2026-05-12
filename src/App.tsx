@@ -23,6 +23,7 @@ import { UsageAnalytics } from './components/UsageAnalytics'
 import { WebDAVSettings } from './components/WebDAVSettings'
 import { AgentPanel } from './components/AgentPanel'
 import { AgentLoopPanel } from './components/AgentLoopPanel'
+import { AsyncTaskQueue } from './components/AsyncTaskQueue'
 import { useAgentMode } from './hooks/useAgentMode'
 import { useAgentLoop } from './hooks/useAgentLoop'
 import { QuickPrompts } from './components/QuickPrompts'
@@ -272,6 +273,9 @@ export default function App() {
       }
     },
   })
+
+  // v1.3: async task queue state
+  const [minimizedTaskQueue, setMinimizedTaskQueue] = useState(false)
 
   useEffect(() => {
     chat.initSessions()
@@ -950,30 +954,59 @@ export default function App() {
           </div>
         ) : view === 'agent' ? (
           <div className="agent-view">
-            {agentMode.state.task ? (
-              <AgentLoopPanel
-                onBack={() => {
-                  setShowAgent(false)
-                  setView('chat')
-                }}
-                taskGoal={agentMode.state.task.goal}
-                steps={agentMode.state.task.steps}
-                agentRunning={agentMode.state.isRunning}
-                onAgentStop={agentMode.stop}
-                activeBriefId={activeBriefId}
-                onBriefChange={setActiveBriefId}
-                onBriefCreated={(id) => setActiveBriefId(id)}
-              />
-            ) : (
-              <div className="agent-empty-state">
-                <div className="agent-empty-icon">🤖</div>
-                <h2 className="agent-empty-title">Agent Mode</h2>
-                <p className="agent-empty-desc">Send a message from the chat to start an agent task.</p>
-                <button className="agent-empty-back-btn" onClick={() => setView('chat')}>
-                  Back to Chat
-                </button>
-              </div>
-            )}
+            <div className="agent-view-main">
+              {agentMode.state.task ? (
+                <AgentLoopPanel
+                  onBack={() => {
+                    setShowAgent(false)
+                    setView('chat')
+                  }}
+                  taskGoal={agentMode.state.task.goal}
+                  steps={agentMode.state.task.steps}
+                  agentRunning={agentMode.state.isRunning}
+                  onAgentStop={agentMode.stop}
+                  activeBriefId={activeBriefId}
+                  onBriefChange={setActiveBriefId}
+                  onBriefCreated={(id) => setActiveBriefId(id)}
+                />
+              ) : (
+                <div className="agent-empty-state">
+                  <div className="agent-empty-icon">🤖</div>
+                  <h2 className="agent-empty-title">Agent Mode</h2>
+                  <p className="agent-empty-desc">Send a message from the chat to start an agent task.</p>
+                  <button className="agent-empty-back-btn" onClick={() => setView('chat')}>
+                    Back to Chat
+                  </button>
+                </div>
+              )}
+            </div>
+            <AsyncTaskQueue
+              onTaskComplete={(task) => {
+                if (notifications.permission === 'granted') {
+                  notifications.sendNotification(
+                    '✅ Task Complete',
+                    task.goal.length > 60 ? task.goal.slice(0, 60) + '...' : task.goal,
+                  )
+                }
+              }}
+              onNeedsInput={(task) => {
+                if (notifications.permission === 'granted') {
+                  notifications.sendNotification(
+                    '⚠️ Task Needs Input',
+                    task.goal.length > 60 ? task.goal.slice(0, 60) + '...' : task.goal,
+                  )
+                }
+              }}
+              onSubmitTask={(goal, briefId) => {
+                // Start the agent loop with the submitted task
+                agentMode.start(goal)
+                setActiveBriefId(briefId)
+                setShowAgent(true)
+                setView('agent')
+              }}
+              minimized={minimizedTaskQueue}
+              onToggleMinimize={() => setMinimizedTaskQueue((p) => !p)}
+            />
           </div>
         ) : view === 'skill-registry' ? (
           <div className="main-content main-content--skill-registry">

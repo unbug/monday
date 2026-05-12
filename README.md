@@ -641,7 +641,7 @@ in-browser computer-use system.
 - [x] **Agent audit trail** — chronological log of every action + observation +
       screenshot thumbnail; collapsible per step inside the chat thread; inspired by
       Codex CLI's terminal-log citation model and Codex Web's task-delegation audit view
-- [ ] **Async task queue** — "delegate and come back" UI inspired by Codex Web:
+- [x] **Async task queue** — "delegate and come back" UI inspired by Codex Web:
       submit a browser task, minimize the panel, get notified via the v0.29
       background notification system when the agent finishes or needs human input
 - [ ] **Sandbox security model** — Tier 1: `sandbox="allow-scripts"` only (no

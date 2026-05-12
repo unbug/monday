@@ -10468,6 +10468,12 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.agent-view-main {
+  flex: 1;
+  min-height: 0;
 }
 
 /* Agent overlay inside chat layout */

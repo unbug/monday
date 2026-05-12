@@ -1487,6 +1487,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.3.7',
+    date: '2026-05-12',
+    title: 'Browser-Use — Async Task Queue ("delegate and come back")',
+    description:
+      'A task queue for submitting browser tasks asynchronously. Users submit a task goal, the agent executes it in the background, and the user gets notified via the v0.29 background notification system when the task finishes or needs human input. Includes a collapsible task list UI with status indicators, expandable task details, and a minimized chip view.',
+    changes: [
+      { type: 'added', text: 'AsyncTask type — async task queue entry: id, goal, briefId, status (pending/running/done/error/cancelled/needs_input), steps, result, error, timestamps' },
+      { type: 'added', text: 'AsyncTaskStatus union type — pending | running | done | error | cancelled | needs_input' },
+      { type: 'added', text: 'AsyncTaskQueue component — task submission form with goal textarea + optional brief selector; task list with status dots, expandable details (steps count, result, error), cancel/delete actions; minimized chip mode with active/done counters' },
+      { type: 'added', text: 'AsyncTaskQueue CSS — dark terminal-style task cards with status color coding, light theme overrides, minimized pill badge' },
+      { type: 'added', text: 'Async task storage — saveAsyncTask(), getAsyncTask(), loadAsyncTasks(), deleteAsyncTask(), loadActiveAsyncTasks() in storage.ts' },
+      { type: 'added', text: 'IndexedDB migration v22→v23 — adds asyncTasks object store' },
+      { type: 'added', text: 'Notification integration — browser notifications on task completion and needs-input events via useNotifications' },
+      { type: 'added', text: 'Agent view integration — AsyncTaskQueue rendered alongside AgentLoopPanel in the agent view; task submission triggers agentMode.start()' },
+      { type: 'added', text: 'i18n — asyncTask.* en/zh translations (title, goalPlaceholder, briefLabel, submit, pending, running, done, error, cancelled, needsInput, empty, cancel, delete, etc.)' },
+      { type: 'changed', text: 'Updated version to v1.3.7' },
+    ],
+  },
+  {
     version: '1.3.2',
     date: '2026-05-11',
     title: 'Browser-Use — DOM-State Capture (Tier 2)',

@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal, PlaywrightMcpSettings, TaskBrief } from '../types'
+import type { ChatSession, ChatMessage, GenerationParams, KnowledgeDocument, KnowledgeBase, OpenAISettings, OllamaSettings, LmStudioSettings, LlamaCppSettings, VllmSettings, DeepSeekSettings, SearXngSettings, Skill, MemoryEntry, OntologyEntity, EntityType, WorkshopProposal, PlaywrightMcpSettings, TaskBrief, AsyncTask } from '../types'
 import { SCHEMA_VERSION } from './migrationRegistry'
 
 const DB_NAME = 'monday-ai'
@@ -22,6 +22,7 @@ const ONTOLOGY_STORE = 'ontology'
 const WORKSHOP_STORE = 'workshop'
 const PLAYWRIGHT_MCP_SETTINGS_STORE = 'playwrightMcpSettings'
 const TASK_BRIEFS_STORE = 'taskBriefs'
+const ASYNC_TASKS_STORE = 'asyncTasks'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -159,6 +160,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v21→v22: add taskBriefs object store for v1.3 Task brief
       if (!db.objectStoreNames.contains(TASK_BRIEFS_STORE)) {
         db.createObjectStore(TASK_BRIEFS_STORE, { keyPath: 'id' })
+      }
+      // Migration v22→v23: add asyncTasks object store for v1.3 Async task queue
+      if (!db.objectStoreNames.contains(ASYNC_TASKS_STORE)) {
+        db.createObjectStore(ASYNC_TASKS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -1160,5 +1165,61 @@ export async function deleteTaskBrief(id: string): Promise<void> {
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error)
   })
+}
+
+// ── Async Task Queue (v1.3) ───────────────────────────────────────────────────
+
+export async function saveAsyncTask(task: AsyncTask): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(ASYNC_TASKS_STORE, 'readwrite')
+  const store = tx.objectStore(ASYNC_TASKS_STORE)
+  store.put(task)
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function getAsyncTask(id: string): Promise<AsyncTask | null> {
+  const db = await openDB()
+  const tx = db.transaction(ASYNC_TASKS_STORE, 'readonly')
+  const store = tx.objectStore(ASYNC_TASKS_STORE)
+  const req = store.get(id)
+  return new Promise<AsyncTask | null>((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result ?? null)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function loadAsyncTasks(): Promise<AsyncTask[]> {
+  const db = await openDB()
+  const tx = db.transaction(ASYNC_TASKS_STORE, 'readonly')
+  const store = tx.objectStore(ASYNC_TASKS_STORE)
+  const req = store.getAll()
+  return new Promise<AsyncTask[]>((resolve, reject) => {
+    req.onsuccess = () => {
+      const tasks = req.result ?? []
+      // Sort by createdAt descending (newest first)
+      resolve(tasks.sort((a, b) => b.createdAt - a.createdAt))
+    }
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function deleteAsyncTask(id: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(ASYNC_TASKS_STORE, 'readwrite')
+  const store = tx.objectStore(ASYNC_TASKS_STORE)
+  store.delete(id)
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadActiveAsyncTasks(): Promise<AsyncTask[]> {
+  const all = await loadAsyncTasks()
+  // Return only pending or running tasks
+  return all.filter((t) => t.status === 'pending' || t.status === 'running')
 }
 
