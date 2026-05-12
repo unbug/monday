@@ -9,6 +9,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { useAgentLoop } from '../hooks/useAgentLoop'
 import type { AgentLoopStatus } from '../hooks/useAgentLoop'
 import { t } from '../lib/i18n'
+import { redactObject, redactCredentials } from '../lib/redact'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
@@ -251,6 +252,13 @@ export function AgentLoopPanel({
         <p className="agent-loop-subtitle">
           {t('agent.loopSubtitle') || 'Generate → render → screenshot → iterate'}
         </p>
+        {/* v1.3 Sandbox security model indicator */}
+        <div className="agent-loop-security-indicator">
+          <span className="agent-loop-security-dot" />{' '}
+          <span className="agent-loop-security-label">
+            {t('agent.sandboxSecure') || 'Sandboxed'}
+          </span>
+        </div>
       </div>
 
       {/* Task input */}
@@ -382,7 +390,7 @@ export function AgentLoopPanel({
           <div className="agent-loop-iframe-container" ref={iframeContainerRef}>
             <iframe
               ref={screenshotRef}
-              sandbox="allow-scripts allow-same-origin allow-forms"
+              sandbox="allow-scripts"
               className="agent-loop-iframe"
               title="Sandboxed agent preview"
             />
@@ -537,14 +545,14 @@ export function AgentLoopPanel({
                     <span className="agent-loop-step-tool-name">{step.toolName}</span>
                     {step.toolArgs && (
                       <pre className="agent-loop-step-tool-args">
-                        {JSON.stringify(step.toolArgs, null, 2).slice(0, 500)}
+                        {JSON.stringify(redactObject(step.toolArgs), null, 2).slice(0, 500)}
                       </pre>
                     )}
                   </div>
                 )}
                 {step.toolResult && (
                   <div className="agent-loop-step-result">
-                    <pre>{step.toolResult.slice(0, 1000)}</pre>
+                    <pre>{redactCredentials(step.toolResult).slice(0, 1000)}</pre>
                   </div>
                 )}
                 {step.error && (

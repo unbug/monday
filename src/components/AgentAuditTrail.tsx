@@ -18,6 +18,7 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 import { t } from '../lib/i18n'
+import { redactObject, redactCredentials } from '../lib/redact'
 
 export interface AgentAuditEntry {
   id: string
@@ -231,7 +232,7 @@ function AuditEntryCard({ entry, expanded, onToggle, onScreenshotClick }: AuditE
               <span className="agent-audit-entry-tool-name">{entry.toolName}</span>
               {entry.toolArgs && Object.keys(entry.toolArgs).length > 0 && (
                 <pre className="agent-audit-entry-tool-args">
-                  {JSON.stringify(entry.toolArgs, null, 2).slice(0, 2000)}
+                  {JSON.stringify(redactObject(entry.toolArgs), null, 2).slice(0, 2000)}
                 </pre>
               )}
             </div>
@@ -244,7 +245,7 @@ function AuditEntryCard({ entry, expanded, onToggle, onScreenshotClick }: AuditE
                 {t('agent.result') || 'Result'}
               </span>
               <pre className="agent-audit-entry-tool-result-text">
-                {entry.toolResult.slice(0, 3000)}
+                {redactCredentials(entry.toolResult).slice(0, 3000)}
                 {entry.toolResult.length > 3000 && (
                   <span className="agent-audit-entry-truncated">
                     {'... ('}

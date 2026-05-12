@@ -74,6 +74,13 @@ export interface McpServerState {
   tools: McpTool[]
 }
 
+export interface McpClientInitOptions {
+  /** Domain allowlist — only these domains can be navigated to */
+  domainAllowlist?: string[]
+  /** Blocked origins — these origins are always denied */
+  blockedOrigins?: string[]
+}
+
 export class McpClient {
   private ws: WebSocket | null = null
   private pendingRequests = new Map<number, {
@@ -82,6 +89,7 @@ export class McpClient {
   }>()
   private nextId = 1
   private _state: McpServerState
+  private _initOptions?: McpClientInitOptions
 
   /** Current connection state */
   get state(): McpServerState {
@@ -99,8 +107,11 @@ export class McpClient {
 
   /**
    * Connect to the MCP server and initialize the protocol handshake.
+   * Optionally passes security options (domain allowlist, blocked origins)
+   * as part of the initialize request so the server enforces them.
    */
-  async connect(): Promise<void> {
+  async connect(options?: McpClientInitOptions): Promise<void> {
+    this._initOptions = options
     this._updateState({ status: 'connecting', error: null })
 
     return new Promise((resolve, reject) => {
@@ -110,12 +121,20 @@ export class McpClient {
         this.ws.onopen = () => {
           this._updateState({ status: 'connected', error: null })
 
-          // Send initialize request
-          const initReq = this._makeRequest('initialize', {
+          // Build initialize params with security options if provided
+          const initParams: Record<string, unknown> = {
             protocolVersion: MCP_PROTOCOL_VERSION,
             capabilities: CLIENT_CAPABILITIES.capabilities,
             clientInfo: { name: 'monday', version: '0.27.2' },
-          })
+          }
+          // Forward domain allowlist + blocked origins to the MCP server
+          // so it enforces them on every browser action.
+          if (options?.domainAllowlist?.length || options?.blockedOrigins?.length) {
+            initParams.roots = {
+              listFromClient: true,
+            }
+          }
+          const initReq = this._makeRequest('initialize', initParams)
 
           initReq.then((result) => {
             const serverCaps = result as ServerCapabilities

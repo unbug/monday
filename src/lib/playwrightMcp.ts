@@ -75,8 +75,13 @@ function notifyStateChange(state: McpConnectionState): void {
 
 /**
  * Connect to the Playwright MCP server at the given URL.
+ * Optionally passes domainAllowlist and blockedOrigins as init parameters
+ * so the server enforces them on every browser action.
  */
-export async function connectPlaywrightMcp(url: string): Promise<boolean> {
+export async function connectPlaywrightMcp(
+  url: string,
+  options?: { domainAllowlist?: string[]; blockedOrigins?: string[] },
+): Promise<boolean> {
   if (activeClient) {
     activeClient.disconnect()
     activeClient = null
@@ -86,7 +91,7 @@ export async function connectPlaywrightMcp(url: string): Promise<boolean> {
   notifyStateChange({ url, status: 'connecting', error: null, tools: [] })
 
   try {
-    await activeClient.connect()
+    await activeClient.connect(options)
     const tools = await activeClient.listTools()
     notifyStateChange({ url, status: 'connected', error: null, tools })
     return true

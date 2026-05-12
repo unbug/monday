@@ -99,7 +99,11 @@ export function McpServerManager({ onBack, offline }: Props) {
     setPwConnecting(true)
     setPwTestResult(null)
     try {
-      const success = await connectPlaywrightMcp(pwSettings.url)
+      // Forward domain allowlist + blocked origins to Playwright MCP
+      const success = await connectPlaywrightMcp(pwSettings.url, {
+        domainAllowlist: pwDomainAllowlist.split('\n').map((s) => s.trim()).filter(Boolean),
+        blockedOrigins: pwBlockedOrigins.split('\n').map((s) => s.trim()).filter(Boolean),
+      })
       if (success) {
         setPwTestResult('ok')
         const tools = await listPlaywrightMcpTools()
