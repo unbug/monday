@@ -644,7 +644,7 @@ in-browser computer-use system.
 - [x] **Async task queue** — "delegate and come back" UI inspired by Codex Web:
       submit a browser task, minimize the panel, get notified via the v0.29
       background notification system when the agent finishes or needs human input
-- [ ] **Sandbox security model** — Tier 1: `sandbox="allow-scripts"` only (no
+- [x] **Sandbox security model** — Tier 1: `sandbox="allow-scripts"` only (no
       `allow-same-origin`); Tier 3: domain allowlist + `--blocked-origins` forwarded
       to Playwright MCP; credentials redacted in audit trail logs (mirrors
       browser-use's `fill()` debug-log redaction practice)

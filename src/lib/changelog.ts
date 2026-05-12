@@ -1506,6 +1506,25 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.3.8',
+    date: '2026-05-12',
+    title: 'Browser-Use — Sandbox Security Model',
+    description:
+      'Hardens the agent loop security model across all three execution tiers: strict sandbox isolation for Tier 1 iframes, domain allowlist + blocked-origins forwarding to Playwright MCP for Tier 3, and credential redaction in all audit trail logs. Mirrors browser-use fill() debug-log redaction practice.',
+    changes: [
+      { type: 'changed', text: 'AgentLoopPanel iframe sandbox: removed allow-same-origin and allow-forms; now sandbox="allow-scripts" only (Tier 1 strict isolation)' },
+      { type: 'added', text: 'redact.ts — credential redaction utility: redactCredentials() for string patterns (API keys, passwords, tokens, bearer headers, sk-/pk_/AKIA prefixes); redactObject() for recursive JSON object redaction by known credential key names' },
+      { type: 'added', text: 'AgentAuditTrail — tool args and tool results now pass through redactObject()/redactCredentials() before display' },
+      { type: 'added', text: 'AgentLoopPanel steps section — tool args and tool results redacted via redactObject()/redactCredentials()' },
+      { type: 'added', text: 'Playwright MCP bridge — connectPlaywrightMcp() accepts optional domainAllowlist + blockedOrigins; McpClient.connect() forwards them as init parameters' },
+      { type: 'added', text: 'McpServerManager — handlePwConnect() passes saved domainAllowlist + blockedOrigins to connectPlaywrightMcp()' },
+      { type: 'added', text: 'agent.sandboxSecure i18n — en/zh translations for sandbox security indicator' },
+      { type: 'added', text: 'AgentLoopPanel security indicator — green "Sandboxed" badge shown in agent panel header' },
+      { type: 'added', text: 'CSS — .agent-loop-security-indicator, .agent-loop-security-dot, .agent-loop-security-label + light theme overrides' },
+      { type: 'changed', text: 'Updated version to v1.3.8' },
+    ],
+  },
+  {
     version: '1.3.2',
     date: '2026-05-11',
     title: 'Browser-Use — DOM-State Capture (Tier 2)',
