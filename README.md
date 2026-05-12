@@ -661,7 +661,7 @@ Released: 2026-05-12
 
 Extending the persona system (v1.1) with community discovery and multimodal input.
 
-- [ ] **Persona marketplace browsing** — Browse community personas from the curated
+- [x] **Persona marketplace browsing** — Browse community personas from the curated
       registry (already exists as `PERSONA_REGISTRY`); add search/filter by category,
       sort by install count; one-click install to the local persona store; shows
       persona preview (system prompt snippet, params, soul) before installing

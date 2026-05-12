@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.4.0',
+    date: '2026-05-13',
+    title: 'Persona Marketplace — Install, Preview & Sort',
+    description:
+      'The Persona Marketplace now supports one-click install to a local persona store, persona preview with system prompt/soul/params, and sorting by install count — making it easy to discover and adopt community personas.',
+    changes: [
+      { type: 'added', text: 'Local persona store — IndexedDB-backed store for installed personas with install count tracking' },
+      { type: 'added', text: 'Install/Uninstall buttons — one-click install to local store; remove personas you no longer need' },
+      { type: 'added', text: 'Persona preview modal — click 👁 to see system prompt snippet, soul (identity), model params, tags, and memory namespaces before installing' },
+      { type: 'added', text: 'Sort by install count — sort personas by popularity (default, installs, A→Z)' },
+      { type: 'added', text: 'Install count badge — each persona card shows its local install count' },
+      { type: 'added', text: 'v23→v24 IndexedDB migration — adds installedPersonas object store' },
+      { type: 'changed', text: 'Updated version to v1.4.0' },
+    ],
+  },
+  {
     version: '0.31.2',
     date: '2026-04-27',
     title: 'Code Arena — Code ↔ Preview tabs per pane',
