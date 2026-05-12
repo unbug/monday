@@ -1248,6 +1248,7 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.visionAuto': 'Auto-detect',
     'agent.visionOn': 'Force on',
     'agent.visionOff': 'Force off',
+    'chat.visionNotAvailable': 'Vision not available — this model does not support image input.',
     // Agent audit trail (v1.3)
     'agent.auditTitle': 'Agent Audit Trail',
     'agent.auditSteps': 'steps',
@@ -1336,6 +1337,7 @@ const agentPanel: Record<Locale, Record<string, string>> = {
     'agent.visionAuto': '自动检测',
     'agent.visionOn': '强制开启',
     'agent.visionOff': '强制关闭',
+    'chat.visionNotAvailable': '当前模型不支持图像输入。',
     // Agent audit trail (v1.3)
     'agent.auditTitle': 'Agent 审计轨迹',
     'agent.auditSteps': '步骤',

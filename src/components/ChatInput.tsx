@@ -292,12 +292,22 @@ export function ChatInput({
 
   return (
     <div className="chat-input-wrapper">
-      {isVisionModel && images.length > 0 && (
+      {images.length > 0 && isVisionModel && (
         <ImagePreview
           images={images}
           onRemove={handleRemoveImage}
           onClear={handleClearImages}
         />
+      )}
+      {images.length > 0 && !isVisionModel && (
+        <div className="vision-not-available-hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {t('chat.visionNotAvailable')}
+        </div>
       )}
       {files.length > 0 && (
         <FileAttachment

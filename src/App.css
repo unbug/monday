@@ -6874,6 +6874,34 @@
   color: var(--accent-color, #8b5cf6);
 }
 
+/* ─── Vision Not Available Hint ─── */
+
+.vision-not-available-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: 6px;
+  color: #eab308;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.vision-not-available-hint svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* Light theme */
+.light .vision-not-available-hint {
+  background: rgba(234, 179, 8, 0.06);
+  border-color: rgba(234, 179, 8, 0.2);
+  color: #a16207;
+}
+
 /* ─── Image Upload Button ─── */
 
 .chat-input-image-btn {

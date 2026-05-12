@@ -27,6 +27,21 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.4.1',
+    date: '2026-05-13',
+    title: 'Image Input — Paste or Drop Images for Vision Models',
+    description:
+      'Users can now paste images from clipboard, drop files onto the chat input, or use the file picker to attach images. For vision-capable models, images are automatically converted to base64 data URLs and attached to the next LLM call. Non-vision models show a clear warning that vision is not available.',
+    changes: [
+      { type: 'added', text: 'Image input — paste images from clipboard, drag-and-drop, or file picker in the chat input' },
+      { type: 'added', text: 'Image compression — images are compressed to max 1MB (webp/jpeg) to avoid oversized payloads' },
+      { type: 'added', text: 'Vision model detection — images are attached as base64 data URLs only for vision-capable models' },
+      { type: 'added', text: 'Vision not available hint — clear warning shown when images are attached but the current model does not support vision' },
+      { type: 'added', text: 'Image preview — thumbnail strip with per-image remove and clear-all button' },
+      { type: 'added', text: 'en/zh translations for chat.visionNotAvailable' },
+    ],
+  },
+  {
     version: '0.31.2',
     date: '2026-04-27',
     title: 'Code Arena — Code ↔ Preview tabs per pane',
