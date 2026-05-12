@@ -24,7 +24,7 @@
 // ── Frozen schema version ────────────────────────────────────────────────────
 // This is the current DB_VERSION in storage.ts. DO NOT edit this constant
 // without bumping DB_VERSION and adding a migration in storage.ts.
-export const SCHEMA_VERSION = 23
+export const SCHEMA_VERSION = 24
 
 // ── Object stores (frozen) ──────────────────────────────────────────────────
 // The following stores are part of the frozen v1.0 schema. Future migrations
@@ -151,6 +151,12 @@ export const SCHEMA_STORES = [
     keyPath: 'id',
     sinceVersion: 23,
   },
+  {
+    name: 'installedPersonas',
+    purpose: 'User-installed personas from the marketplace (v1.4)',
+    keyPath: 'id',
+    sinceVersion: 24,
+  },
 ] as const
 
 // ── Migration history ───────────────────────────────────────────────────────
@@ -184,6 +190,7 @@ export const MIGRATION_REGISTRY: MigrationEntry[] = [
   { version: 21, description: 'Add playwrightMcpSettings store for v1.3.4 Playwright MCP bridge', stores: ['playwrightMcpSettings'] },
   { version: 22, description: 'Add taskBriefs store for v1.3 Task brief', stores: ['taskBriefs'] },
   { version: 23, description: 'Add asyncTasks store for v1.3 Async task queue', stores: ['asyncTasks'] },
+  { version: 24, description: 'Add installedPersonas store for v1.4 Persona marketplace browsing', stores: ['installedPersonas'] },
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

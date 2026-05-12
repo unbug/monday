@@ -23,6 +23,7 @@ const WORKSHOP_STORE = 'workshop'
 const PLAYWRIGHT_MCP_SETTINGS_STORE = 'playwrightMcpSettings'
 const TASK_BRIEFS_STORE = 'taskBriefs'
 const ASYNC_TASKS_STORE = 'asyncTasks'
+const INSTALLED_PERSONAS_STORE = 'installedPersonas'
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -164,6 +165,10 @@ function openDB(): Promise<IDBDatabase> {
       // Migration v22→v23: add asyncTasks object store for v1.3 Async task queue
       if (!db.objectStoreNames.contains(ASYNC_TASKS_STORE)) {
         db.createObjectStore(ASYNC_TASKS_STORE, { keyPath: 'id' })
+      }
+      // Migration v23→v24: add installedPersonas object store for v1.4 Persona marketplace
+      if (!db.objectStoreNames.contains(INSTALLED_PERSONAS_STORE)) {
+        db.createObjectStore(INSTALLED_PERSONAS_STORE, { keyPath: 'id' })
       }
       // Migration v3→v4: add knowledgeBaseId to existing sessions
       if (oldVersion > 0 && oldVersion < 4) {
@@ -1221,5 +1226,74 @@ export async function loadActiveAsyncTasks(): Promise<AsyncTask[]> {
   const all = await loadAsyncTasks()
   // Return only pending or running tasks
   return all.filter((t) => t.status === 'pending' || t.status === 'running')
+}
+
+// ── Installed Personas (v1.4) ────────────────────────────────────────────────
+
+export interface InstalledPersona {
+  /** Persona ID from the registry */
+  id: string
+  /** Install count tracked locally */
+  installCount: number
+  /** Timestamp of last install */
+  installedAt: number
+}
+
+export async function installPersona(personaId: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(INSTALLED_PERSONAS_STORE, 'readwrite')
+  const store = tx.objectStore(INSTALLED_PERSONAS_STORE)
+  const existing = await getPromise<InstalledPersona | undefined>(store.get(personaId))
+  if (existing) {
+    existing.installCount += 1
+    existing.installedAt = Date.now()
+    store.put(existing)
+  } else {
+    store.add({ id: personaId, installCount: 1, installedAt: Date.now() })
+  }
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function uninstallPersona(personaId: string): Promise<void> {
+  const db = await openDB()
+  const tx = db.transaction(INSTALLED_PERSONAS_STORE, 'readwrite')
+  const store = tx.objectStore(INSTALLED_PERSONAS_STORE)
+  store.delete(personaId)
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+export async function loadInstalledPersonas(): Promise<InstalledPersona[]> {
+  const db = await openDB()
+  const tx = db.transaction(INSTALLED_PERSONAS_STORE, 'readonly')
+  const store = tx.objectStore(INSTALLED_PERSONAS_STORE)
+  const req = store.getAll()
+  return new Promise<InstalledPersona[]>((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result ?? [])
+    req.onerror = () => reject(req.error)
+  })
+}
+
+export async function isPersonaInstalled(personaId: string): Promise<boolean> {
+  const db = await openDB()
+  const tx = db.transaction(INSTALLED_PERSONAS_STORE, 'readonly')
+  const store = tx.objectStore(INSTALLED_PERSONAS_STORE)
+  const req = store.get(personaId)
+  return new Promise<boolean>((resolve, reject) => {
+    req.onsuccess = () => resolve(!!req.result)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+function getPromise<T>(request: IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result!)
+    request.onerror = () => reject(request.error)
+  })
 }
 

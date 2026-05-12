@@ -657,7 +657,25 @@ is visible in the panel.
 
 Released: 2026-05-12
 
-### Cross-cutting standing rules
+#### v1.4 — Persona Marketplace & Image Input
+
+Extending the persona system (v1.1) with community discovery and multimodal input.
+
+- [ ] **Persona marketplace browsing** — Browse community personas from the curated
+      registry (already exists as `PERSONA_REGISTRY`); add search/filter by category,
+      sort by install count; one-click install to the local persona store; shows
+      persona preview (system prompt snippet, params, soul) before installing
+- [ ] **Image input** — Paste or drop an image into the chat input; for vision-capable
+      models, the image is attached as a base64 data URL in the next LLM call;
+      non-vision models show a graceful "vision not available" message
+- [ ] **Full PWA** — Service worker with cache-first strategy for app shell + model
+      weights; offline fallback page; install banner on repeat visits from desktop
+
+**Release gate**: a user browses the persona marketplace, installs a new persona,
+switches to it in a session, and the persona's soul and system prompt are active;
+a user pastes an image into chat and the vision model processes it.
+
+#### Cross-cutting standing rules
 
 These apply to **every** version and are enforced by the cron:
 
