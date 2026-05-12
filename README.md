@@ -655,6 +655,8 @@ submit → screenshot), the audit trail shows every step with thumbnails, the as
 task queue marks it done and triggers a notification, and the final iframe state
 is visible in the panel.
 
+Released: 2026-05-12
+
 ### Cross-cutting standing rules
 
 These apply to **every** version and are enforced by the cron:
