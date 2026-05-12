@@ -668,8 +668,8 @@ Extending the persona system (v1.1) with community discovery and multimodal inpu
 - [x] **Image input** — Paste or drop an image into the chat input; for vision-capable
       models, the image is attached as a base64 data URL in the next LLM call;
       non-vision models show a graceful "vision not available" message ✅
-- [ ] **Full PWA** — Service worker with cache-first strategy for app shell + model
-      weights; offline fallback page; install banner on repeat visits from desktop
+- [x] **Full PWA** — Service worker with cache-first strategy for app shell + model
+      weights; offline fallback page; install banner on repeat visits from desktop ✅
 
 **Release gate**: a user browses the persona marketplace, installs a new persona,
 switches to it in a session, and the persona's soul and system prompt are active;

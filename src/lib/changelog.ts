@@ -42,6 +42,21 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.4.2',
+    date: '2026-05-13',
+    title: 'Full PWA — Offline-capable Progressive Web App',
+    description:
+      'Monday is now a fully offline-capable progressive web app with cache-first service worker strategy for app shell and model weights, an offline fallback page, and an install banner for repeat visitors on desktop.',
+    changes: [
+      { type: 'added', text: 'Service worker with cache-first strategy for app shell and model weights via vite-plugin-pwa / workbox' },
+      { type: 'added', text: 'Offline fallback page (404.html) with SPA redirect for GitHub Pages' },
+      { type: 'added', text: 'Install banner — prompts desktop users to install Monday as a PWA on repeat visits' },
+      { type: 'added', text: 'Offline indicator — header chip warns when network is unavailable, auto-hides after 15s' },
+      { type: 'added', text: 'Service worker update detection — notifies users when a new SW is available with one-click reload' },
+      { type: 'added', text: 'PWA manifest — proper web app manifest with icons, theme colors, and standalone display mode' },
+    ],
+  },
+  {
     version: '0.31.2',
     date: '2026-04-27',
     title: 'Code Arena — Code ↔ Preview tabs per pane',
