@@ -694,6 +694,8 @@ inspired by [Open WebUI's voice features](https://github.com/open-webui/open-web
 and the text is sent as a message; a user plays TTS on an assistant message
 and the browser speaks the response.
 
+Released: 2026-05-13
+
 #### Cross-cutting standing rules
 
 These apply to **every** version and are enforced by the cron:
