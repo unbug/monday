@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.6.0',
+    date: '2026-05-13',
+    title: 'Context Library — Reusable Text/Code Snippets',
+    description:
+      'Users can now create, name, and organize reusable text and code snippets in a dedicated library. Snippets support category tags (code, text, template, reference, custom), search, and one-click insert to clipboard — giving the model persistent context without requiring full RAG.',
+    changes: [
+      { type: 'added', text: 'SnippetLibrary component — create, edit, delete, search, and filter snippets by category' },
+      { type: 'added', text: 'IndexedDB store with migration v24→v25 — persistent snippet storage' },
+      { type: 'added', text: 'Sidebar nav button — quick access to the context library' },
+      { type: 'added', text: 'Command palette entry (⌘K) — search and open the context library' },
+      { type: 'added', text: 'Category system — code, text, template, reference, custom with color-coded icons' },
+      { type: 'added', text: 'en/zh translations for all snippet library strings' },
+      { type: 'added', text: 'Dark terminal-style CSS + light theme overrides for snippet cards, filters, and edit form' },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-05-13',
     title: 'Persona Marketplace — Install, Preview & Sort',

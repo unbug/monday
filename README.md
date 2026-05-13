@@ -703,7 +703,7 @@ Allow users to attach reusable text and code snippets to any session.
 Snippets are injected into the system prompt before each turn, giving
 the model persistent context without requiring full RAG.
 
-- [ ] **Context library** — Create, name, and organize text/code snippets;
+- [x] **Context library** — Create, name, and organize text/code snippets;
       each snippet has a title, content (markdown), and optional category tag
 - [ ] **Session context attachment** — Attach one or more snippets to a session;
       attached snippets appear as a collapsible context block in the chat header
