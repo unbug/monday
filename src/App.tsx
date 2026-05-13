@@ -29,6 +29,7 @@ import { useAgentLoop } from './hooks/useAgentLoop'
 import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
 import { SessionContextPanel } from './components/SessionContextPanel'
+import { ContextPanel } from './components/ContextPanel'
 import { PersistentMemoryPanel } from './components/PersistentMemoryPanel'
 import { ProviderSwitcher, PROVIDERS } from './components/ProviderSwitcher'
 import { useKnowledge } from './hooks/useKnowledge'
@@ -169,6 +170,7 @@ export default function App() {
   const [showProviders, setShowProviders] = useState(false)
   // v1.6: collapsible context panel above chat input
   const [showContext, setShowContext] = useState(false)
+  const [contextText, setContextText] = useState('')
   // v1.1.2: skill builder state
   const [skillBuilderSkill, setSkillBuilderSkill] = useState<Skill | null>(null)
   const [workshopCorrections, setWorkshopCorrections] = useState<Array<{ message: string; timestamp: number }>>([])
@@ -1281,36 +1283,42 @@ export default function App() {
                   </svg>
                 </button>
                 {showContext && (
-                  <SessionContextPanel
-                    attachedIds={chat.activeSession.snippetIds ?? []}
-                    onAttach={(snippetId) => {
-                      const session = chat.activeSession
-                      if (!session) return
-                      const updated = [...chat.sessions]
-                      const idx = updated.findIndex((s) => s.id === session.id)
-                      if (idx !== -1) {
-                        const existing = updated[idx].snippetIds ?? []
-                        if (!existing.includes(snippetId)) {
-                          updated[idx] = { ...session, snippetIds: [...existing, snippetId], updatedAt: Date.now() }
+                  <>
+                    <SessionContextPanel
+                      attachedIds={chat.activeSession.snippetIds ?? []}
+                      onAttach={(snippetId) => {
+                        const session = chat.activeSession
+                        if (!session) return
+                        const updated = [...chat.sessions]
+                        const idx = updated.findIndex((s) => s.id === session.id)
+                        if (idx !== -1) {
+                          const existing = updated[idx].snippetIds ?? []
+                          if (!existing.includes(snippetId)) {
+                            updated[idx] = { ...session, snippetIds: [...existing, snippetId], updatedAt: Date.now() }
+                            chat.updateSessions(updated)
+                          }
+                        }
+                      }}
+                      onDetach={(snippetId) => {
+                        const session = chat.activeSession
+                        if (!session) return
+                        const updated = [...chat.sessions]
+                        const idx = updated.findIndex((s) => s.id === session.id)
+                        if (idx !== -1) {
+                          updated[idx] = {
+                            ...session,
+                            snippetIds: (session.snippetIds ?? []).filter((id) => id !== snippetId),
+                            updatedAt: Date.now(),
+                          }
                           chat.updateSessions(updated)
                         }
-                      }
-                    }}
-                    onDetach={(snippetId) => {
-                      const session = chat.activeSession
-                      if (!session) return
-                      const updated = [...chat.sessions]
-                      const idx = updated.findIndex((s) => s.id === session.id)
-                      if (idx !== -1) {
-                        updated[idx] = {
-                          ...session,
-                          snippetIds: (session.snippetIds ?? []).filter((id) => id !== snippetId),
-                          updatedAt: Date.now(),
-                        }
-                        chat.updateSessions(updated)
-                      }
-                    }}
-                  />
+                      }}
+                    />
+                    <ContextPanel
+                      sessionId={chat.activeSession.id}
+                      onContextChange={setContextText}
+                    />
+                  </>
                 )}
               </div>
             )}
