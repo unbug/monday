@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { streamChatWithUsage, streamChatWithProvider } from '../lib/engine'
-import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings, loadSkills, saveCorrection } from '../lib/storage'
+import { loadApiSettings, saveApiSettings, deleteApiSettings, loadOllamaSettings, loadLmStudioSettings, loadLlamaCppSettings, loadVllmSettings, loadDeepSeekSettings, loadSearXngSettings, saveSearXngSettings, deleteSearXngSettings, loadSkills, saveCorrection, loadSnippets } from '../lib/storage'
 import type { OpenAISettings } from '../lib/openaiApi'
 import type { LmStudioModel } from '../lib/lmStudioApi'
 import { streamLmStudio } from '../lib/lmStudioApi'
@@ -346,6 +346,22 @@ export function useChat(
             }
           } catch {
             // Skill loading failed — continue without it
+          }
+        }
+
+        // v1.6: inject attached snippet content into system prompt
+        if (latestSession?.snippetIds?.length) {
+          try {
+            const allSnippets = await loadSnippets()
+            const activeSnippets = latestSession.snippetIds
+              .map((id) => allSnippets.find((s) => s.id === id))
+              .filter((s): s is NonNullable<typeof s> => !!s)
+            if (activeSnippets.length > 0) {
+              const snippetBlocks = activeSnippets.map((s) => `## Context: ${s.title}\n${s.content}`).join('\n\n')
+              summarizedPrompt = summarizedPrompt + '\n\n' + snippetBlocks
+            }
+          } catch {
+            // Snippet loading failed — continue without it
           }
         }
 
@@ -1256,6 +1272,7 @@ export function useChat(
         knowledgeBaseId: source.knowledgeBaseId,
         skillIds: [],
         forkId: source.id,
+        snippetIds: [],
         summaries: [],
         provider: source.provider,
         createdAt: Date.now(),

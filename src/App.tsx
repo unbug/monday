@@ -28,6 +28,7 @@ import { useAgentMode } from './hooks/useAgentMode'
 import { useAgentLoop } from './hooks/useAgentLoop'
 import { QuickPrompts } from './components/QuickPrompts'
 import { MemoryPanel } from './components/MemoryPanel'
+import { SessionContextPanel } from './components/SessionContextPanel'
 import { PersistentMemoryPanel } from './components/PersistentMemoryPanel'
 import { ProviderSwitcher, PROVIDERS } from './components/ProviderSwitcher'
 import { useKnowledge } from './hooks/useKnowledge'
@@ -166,6 +167,8 @@ export default function App() {
   const [showSkills, setShowSkills] = useState(false)
   // v1.2: collapsible providers panel above chat input
   const [showProviders, setShowProviders] = useState(false)
+  // v1.6: collapsible context panel above chat input
+  const [showContext, setShowContext] = useState(false)
   // v1.1.2: skill builder state
   const [skillBuilderSkill, setSkillBuilderSkill] = useState<Skill | null>(null)
   const [workshopCorrections, setWorkshopCorrections] = useState<Array<{ message: string; timestamp: number }>>([])
@@ -1257,6 +1260,57 @@ export default function App() {
                       </button>
                     ))}
                   </div>
+                )}
+              </div>
+            )}
+            {/* v1.6: collapsible session context panel */}
+            {chat.activeSession && (
+              <div className="chat-context">
+                <button
+                  className={`chat-context-toggle ${showContext ? 'chat-context-toggle--open' : ''} ${(chat.activeSession.snippetIds?.length ?? 0) > 0 ? 'chat-context-toggle--active' : ''}`}
+                  onClick={() => setShowContext((v) => !v)}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                    <polyline points="13 2 13 9 20 9" />
+                  </svg>
+                  <span>{t('contextPanel.contextLabel')}{(chat.activeSession.snippetIds?.length ?? 0) > 0 ? ` ● ${chat.activeSession.snippetIds.length}` : ''}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    className="chat-context-chevron">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                {showContext && (
+                  <SessionContextPanel
+                    attachedIds={chat.activeSession.snippetIds ?? []}
+                    onAttach={(snippetId) => {
+                      const session = chat.activeSession
+                      if (!session) return
+                      const updated = [...chat.sessions]
+                      const idx = updated.findIndex((s) => s.id === session.id)
+                      if (idx !== -1) {
+                        const existing = updated[idx].snippetIds ?? []
+                        if (!existing.includes(snippetId)) {
+                          updated[idx] = { ...session, snippetIds: [...existing, snippetId], updatedAt: Date.now() }
+                          chat.updateSessions(updated)
+                        }
+                      }
+                    }}
+                    onDetach={(snippetId) => {
+                      const session = chat.activeSession
+                      if (!session) return
+                      const updated = [...chat.sessions]
+                      const idx = updated.findIndex((s) => s.id === session.id)
+                      if (idx !== -1) {
+                        updated[idx] = {
+                          ...session,
+                          snippetIds: (session.snippetIds ?? []).filter((id) => id !== snippetId),
+                          updatedAt: Date.now(),
+                        }
+                        chat.updateSessions(updated)
+                      }
+                    }}
+                  />
                 )}
               </div>
             )}

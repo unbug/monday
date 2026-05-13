@@ -24,7 +24,7 @@
 // ── Frozen schema version ────────────────────────────────────────────────────
 // This is the current DB_VERSION in storage.ts. DO NOT edit this constant
 // without bumping DB_VERSION and adding a migration in storage.ts.
-export const SCHEMA_VERSION = 25
+export const SCHEMA_VERSION = 26
 
 // ── Object stores (frozen) ──────────────────────────────────────────────────
 // The following stores are part of the frozen v1.0 schema. Future migrations
@@ -198,6 +198,7 @@ export const MIGRATION_REGISTRY: MigrationEntry[] = [
   { version: 23, description: 'Add asyncTasks store for v1.3 Async task queue', stores: ['asyncTasks'] },
   { version: 24, description: 'Add installedPersonas store for v1.4 Persona marketplace browsing', stores: ['installedPersonas'] },
   { version: 25, description: 'Add snippets store for v1.6 Context library', stores: ['snippets'] },
+  { version: 26, description: 'Add snippetIds field on sessions for v1.6 Session context attachment', stores: ['sessions'] },
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

@@ -2163,6 +2163,34 @@ const contextLibrary: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── Session Context Panel (v1.6.1) ──
+const contextPanel: Record<Locale, Record<string, string>> = {
+  en: {
+    'contextPanel.title': 'Session Context',
+    'contextPanel.contextLabel': 'Context',
+    'contextPanel.attached': 'Attached',
+    'contextPanel.available': 'Available',
+    'contextPanel.attach': 'Attach to session',
+    'contextPanel.detach': 'Detach from session',
+    'contextPanel.preview': 'Context preview',
+    'contextPanel.loading': 'Loading…',
+    'contextPanel.allAttached': 'All snippets attached.',
+    'contextPanel.noSnippets': 'No snippets created yet. Go to Context Library to create one.',
+  },
+  zh: {
+    'contextPanel.title': '会话上下文',
+    'contextPanel.contextLabel': '上下文',
+    'contextPanel.attached': '已附加',
+    'contextPanel.available': '可用',
+    'contextPanel.attach': '附加到会话',
+    'contextPanel.detach': '从会话分离',
+    'contextPanel.preview': '上下文预览',
+    'contextPanel.loading': '加载中…',
+    'contextPanel.allAttached': '所有片段已附加。',
+    'contextPanel.noSnippets': '尚未创建任何片段。前往上下文库创建一个。',
+  },
+}
+
 // ── Ontology Store (v1.2.2) ──
 const ontology: Record<Locale, Record<string, string>> = {
   en: {
@@ -2290,6 +2318,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...workshop[locale],
     ...playwrightMcp[locale],
     ...contextLibrary[locale],
+    ...contextPanel[locale],
   }
 }
 

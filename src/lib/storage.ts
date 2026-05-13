@@ -249,6 +249,8 @@ function migrateSession(session: ChatSession): ChatSession {
   if (migrated.summaries === undefined) migrated.summaries = []
   if (migrated.provider === undefined) migrated.provider = null
   if (migrated.personaReadNamespaces === undefined) migrated.personaReadNamespaces = []
+  // Migration v25→v26: add snippetIds for v1.6 session context attachment
+  if (migrated.snippetIds === undefined) migrated.snippetIds = []
   return migrated
 }
 
@@ -266,6 +268,7 @@ export function createSession(modelId: string): ChatSession {
     knowledgeBaseId: null,
     skillIds: [],
     forkId: null,
+    snippetIds: [],
     summaries: [],
     provider: null,
     createdAt: Date.now(),

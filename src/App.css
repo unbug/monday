@@ -13980,7 +13980,257 @@ textarea:focus:not(:focus-visible),
   border-color: var(--color-primary);
 }
 
-/* Skill Composer panel */
+/* ── Session Context Panel (v1.6.1) ── */
+.chat-context {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.chat-context-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-light);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.chat-context-toggle:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-light);
+  color: var(--color-text);
+}
+
+.chat-context-toggle--active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.chat-context-toggle--active:hover {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-bg-subtle);
+}
+
+.chat-context-chevron {
+  transition: transform 0.15s ease;
+  color: currentColor;
+  opacity: 0.6;
+}
+
+.chat-context-toggle--open .chat-context-chevron {
+  transform: rotate(180deg);
+}
+
+.chat-context {
+  position: relative;
+}
+
+.chat-context-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  min-width: 320px;
+  max-width: 420px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.session-context-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-context-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px;
+  margin-bottom: 2px;
+}
+
+.session-context-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.session-context-chip-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.session-context-chip-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.session-context-chip.unattached {
+  background: var(--color-bg-tertiary);
+  border: 1px solid transparent;
+}
+
+.session-context-chip.unattached:hover {
+  background: var(--color-bg-quaternary);
+  border-color: var(--color-border-light);
+}
+
+.session-context-chip.attached {
+  background: var(--color-primary-bg-subtle);
+  border: 1px solid var(--color-primary-border-subtle);
+  color: var(--color-primary);
+}
+
+.session-context-chip.attached .session-context-chip-title {
+  color: var(--color-primary);
+}
+
+.session-context-chip-attach,
+.session-context-chip-detach {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+  background: transparent;
+  color: var(--color-text-light);
+  padding: 0;
+  line-height: 1;
+}
+
+.session-context-chip-attach:hover {
+  background: var(--color-primary-bg-subtle);
+  color: var(--color-primary);
+}
+
+.session-context-chip-detach:hover {
+  background: var(--color-danger-bg-subtle);
+  color: var(--color-danger);
+}
+
+.session-context-loading {
+  font-size: 12px;
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 8px;
+}
+
+.session-context-empty {
+  font-size: 12px;
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 8px;
+  font-style: italic;
+}
+
+.session-context-preview {
+  border-top: 1px solid var(--color-border);
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.session-context-preview-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.session-context-preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.session-context-preview-block {
+  background: var(--color-bg-quaternary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.session-context-preview-label {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.session-context-preview-text {
+  padding: 6px 8px;
+  font-size: 11px;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  max-height: 80px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+[data-theme="light"] .chat-context-toggle {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border);
+  color: var(--color-text-light);
+}
+
+[data-theme="light"] .chat-context-toggle:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-light);
+  color: var(--color-text);
+}
+
+[data-theme="light"] .chat-context-toggle--active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg-subtle);
+}
+
+[data-theme="light"] .chat-context-dropdown {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .session-context-chip.unattached:hover {
+  background: var(--color-bg-quaternary);
+  border-color: var(--color-border-light);
+}
+
+/* ── Skill Composer panel ──
 .skill-composer {
   background: transparent;
   border: none;

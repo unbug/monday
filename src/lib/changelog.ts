@@ -27,6 +27,22 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.6.1',
+    date: '2026-05-13',
+    title: 'Session Context Attachment — Attach Snippets to Any Session',
+    description:
+      'Attach one or more snippets from the Context Library to any session. Attached snippets appear as a collapsible context block in the chat header and are injected into the system prompt before each turn.',
+    changes: [
+      { type: 'added', text: 'SessionContextPanel component — attach/detach snippets with live context preview' },
+      { type: 'added', text: 'snippetIds field on ChatSession — persist attached snippets per session' },
+      { type: 'added', text: 'v25→v26 IndexedDB migration — adds snippetIds to existing sessions' },
+      { type: 'added', text: 'Snippet content injected into system prompt before each turn (same pattern as skill instructions)' },
+      { type: 'added', text: 'Collapsible context toggle in chat header — shows count of attached snippets' },
+      { type: 'added', text: 'en/zh translations for session context panel strings' },
+      { type: 'added', text: 'Dark terminal-style CSS + light theme overrides for context panel' },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-05-13',
     title: 'Persona Marketplace — Install, Preview & Sort',

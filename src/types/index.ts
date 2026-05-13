@@ -74,6 +74,8 @@ export interface ChatSession {
   personaReadNamespaces: MemoryNamespace[]
   /** Parent session ID — set when this session was forked from another */
   forkId: string | null
+  /** Snippet IDs attached to this session (v1.6) */
+  snippetIds: string[]
   /** Auto-generated conversation summaries for context compression (v0.30) */
   summaries: MemorySummary[]
   /** Provider: 'web-llm' (local) or 'openai' (remote API). null = default to web-llm */
