@@ -609,6 +609,14 @@ export default function App() {
               catch { /* best-effort */ }
               return next
             })}
+            // v1.5: TTS auto-play
+            ttsAutoPlay={chat.ttsAutoPlay}
+            onToggleTtsAutoPlay={() => chat.setTtsAutoPlay((prev: boolean) => {
+              const next = !prev
+              try { localStorage.setItem('monday-tts-autoplay', String(next)) }
+              catch { /* best-effort */ }
+              return next
+            })}
           />
         </>
       )}

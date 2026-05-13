@@ -57,6 +57,23 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.5.0',
+    date: '2026-05-13',
+    title: 'Voice Input & Text-to-Speech — Multimodal I/O',
+    description:
+      'Hands-free interaction with voice input and TTS output. Users can speak into the microphone for real-time transcription with auto-send on silence, and play assistant responses aloud with a voice selector.',
+    changes: [
+      { type: 'added', text: 'Voice input — Browser Speech Recognition API for voice-to-text in the chat input' },
+      { type: 'added', text: 'Real-time interim transcription — shows live transcription while speaking' },
+      { type: 'added', text: 'Auto-send on silence — configurable timeout (default 2s) triggers automatic message send' },
+      { type: 'added', text: 'Voice selector for TTS — dropdown with language-grouped voices, persisted via localStorage' },
+      { type: 'added', text: 'TTS auto-play toggle — settings toggle to auto-play TTS on completed messages' },
+      { type: 'added', text: 'TTS settings section — Text-to-Speech section in Settings panel with auto-play toggle' },
+      { type: 'added', text: 'Graceful TTS fallback — TTSButton returns null when speechSynthesis is unavailable' },
+      { type: 'added', text: 'en/zh translations for TTS and settings strings' },
+    ],
+  },
+  {
     version: '0.31.2',
     date: '2026-04-27',
     title: 'Code Arena — Code ↔ Preview tabs per pane',

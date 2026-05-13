@@ -29,15 +29,25 @@ interface Props {
   // v1.2.1: correction capture
   correctionCaptureEnabled?: boolean
   onToggleCorrectionCapture?: () => void
+  // v1.5: TTS auto-play
+  ttsAutoPlay?: boolean
+  onToggleTtsAutoPlay?: () => void
 }
 
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_TOP_P = 0.9
 const DEFAULT_MAX_TOKENS = 1024
 
-export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast, onSetProvider, provider, correctionCaptureEnabled, onToggleCorrectionCapture }: Props) {
+export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highContrast, onToggleHighContrast, onSetProvider, provider, correctionCaptureEnabled, onToggleCorrectionCapture, ttsAutoPlay, onToggleTtsAutoPlay }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const notifications = useNotifications()
+
+  // v1.5: TTS auto-play state
+  const [ttsAutoPlayState, setTtsAutoPlayState] = useState(
+    ttsAutoPlay ?? localStorage.getItem('monday-tts-autoplay') === 'true',
+  )
+  const effectiveTtsAutoPlay = ttsAutoPlay !== undefined ? ttsAutoPlay : ttsAutoPlayState
+  const setTtsAutoPlay = onToggleTtsAutoPlay ?? setTtsAutoPlayState
 
   // v1.0.0: API settings state
   const [apiSettings, setApiSettings] = useState<OpenAISettings | null>(null)
@@ -631,6 +641,29 @@ export function SettingsPanel({ session, onUpdate, locale, onChangeLocale, highC
               </div>
             </div>
           )}
+
+          {/* v1.5: TTS Settings */}
+          <div className="settings-section">
+            <div className="settings-section-header">
+              <span className="settings-section-title">{t('settings.ttsTitle')}</span>
+            </div>
+            <p className="settings-hint">
+              {t('settings.ttsHint')}
+            </p>
+            <div className="settings-toggle-row">
+              <span className={`settings-toggle-label ${ttsAutoPlay ? 'active' : ''}`}>
+                {ttsAutoPlay ? t('settings.ttsOn') : t('settings.ttsOff')}
+              </span>
+              <button
+                className={`settings-toggle-btn ${ttsAutoPlay ? 'on' : 'off'}`}
+                onClick={() => setTtsAutoPlay(!ttsAutoPlay)}
+                role="switch"
+                aria-checked={ttsAutoPlay}
+              >
+                <span className="settings-toggle-knob" />
+              </button>
+            </div>
+          </div>
 
           {/* v1.0.0: External API Settings */}
           <div className="settings-section">

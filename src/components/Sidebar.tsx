@@ -70,6 +70,9 @@ interface Props {
   // v1.2.1: correction capture
   correctionCaptureEnabled?: boolean
   onToggleCorrectionCapture?: () => void
+  // v1.5: TTS auto-play
+  ttsAutoPlay?: boolean
+  onToggleTtsAutoPlay?: () => void
 }
 
 export function Sidebar({
@@ -111,6 +114,8 @@ export function Sidebar({
   // v1.2.1: correction capture
   correctionCaptureEnabled,
   onToggleCorrectionCapture,
+  ttsAutoPlay,
+  onToggleTtsAutoPlay,
 }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null)
@@ -298,6 +303,9 @@ export function Sidebar({
             // v1.2.1: correction capture
             correctionCaptureEnabled={correctionCaptureEnabled}
             onToggleCorrectionCapture={onToggleCorrectionCapture}
+            // v1.5: TTS auto-play
+            ttsAutoPlay={ttsAutoPlay}
+            onToggleTtsAutoPlay={onToggleTtsAutoPlay}
           />
         </div>
       )}

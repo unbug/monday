@@ -45,7 +45,20 @@ interface SpeechRecognitionInstance {
 
 type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance
 
-export function useVoiceInput(onResult: (transcript: string) => void) {
+export interface UseVoiceInputOptions {
+  /** Silence detection timeout in ms; 0 to disable (default 2000) */
+  silenceTimeout?: number
+  /** Callback fired when silence timeout triggers (auto-send) */
+  onSilence?: (transcript: string) => void
+}
+
+export function useVoiceInput(
+  onResult: (transcript: string) => void,
+  options?: UseVoiceInputOptions,
+) {
+  const silenceTimeout = options?.silenceTimeout ?? 2000
+  const onSilence = options?.onSilence
+
   const [state, setState] = useState<VoiceInputState>({
     isListening: false,
     isSupported: false,
@@ -55,6 +68,8 @@ export function useVoiceInput(onResult: (transcript: string) => void) {
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null)
   const isListeningRef = useRef(false)
+  const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastSpeechTimeRef = useRef<number>(0)
 
   // Check Speech Recognition support on mount
   useEffect(() => {
@@ -105,6 +120,9 @@ export function useVoiceInput(onResult: (transcript: string) => void) {
           interim += transcript
         }
       }
+      // Reset silence timer on new speech
+      lastSpeechTimeRef.current = Date.now()
+      resetSilenceTimer()
       setState((prev) => ({
         ...prev,
         interimTranscript: interim,
@@ -131,6 +149,7 @@ export function useVoiceInput(onResult: (transcript: string) => void) {
 
     recognition.onend = () => {
       isListeningRef.current = false
+      clearSilenceTimer()
       setState((prev) => ({
         ...prev,
         isListening: false,
@@ -173,6 +192,33 @@ export function useVoiceInput(onResult: (transcript: string) => void) {
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }))
   }, [])
+
+  const resetSilenceTimer = useCallback(() => {
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current)
+    }
+    silenceTimerRef.current = setTimeout(() => {
+      const transcript = state.interimTranscript.trim()
+      if (transcript && onSilence) {
+        onSilence(transcript)
+      }
+      silenceTimerRef.current = null
+    }, silenceTimeout)
+  }, [silenceTimeout, state.interimTranscript, onSilence])
+
+  const clearSilenceTimer = useCallback(() => {
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current)
+      silenceTimerRef.current = null
+    }
+  }, [])
+
+  // Cleanup silence timer on unmount
+  useEffect(() => {
+    return () => {
+      clearSilenceTimer()
+    }
+  }, [clearSilenceTimer])
 
   return {
     ...state,

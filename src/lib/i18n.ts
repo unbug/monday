@@ -377,6 +377,12 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.correctionCaptureHint': 'Automatically save message edits and regenerations as memory entries. The model uses these to learn your preferences.',
     'settings.correctionCaptureOn': 'Corrections captured',
     'settings.correctionCaptureOff': 'Corrections not captured',
+
+    // v1.5: TTS
+    'settings.ttsTitle': 'Text-to-Speech',
+    'settings.ttsHint': 'Read assistant responses aloud using the browser speech synthesis.',
+    'settings.ttsOn': 'Auto-play on',
+    'settings.ttsOff': 'Auto-play off',
   },
   zh: {
     'settings.title': '设置',
@@ -411,6 +417,12 @@ const settings: Record<Locale, Record<string, string>> = {
     'settings.correctionCaptureHint': '自动将消息编辑和重新生成为记忆条目。模型通过这些学习你的偏好。',
     'settings.correctionCaptureOn': '已捕获修正',
     'settings.correctionCaptureOff': '未捕获修正',
+
+    // v1.5: TTS
+    'settings.ttsTitle': '语音合成',
+    'settings.ttsHint': '使用浏览器语音合成功能朗读助手回复。',
+    'settings.ttsOn': '自动播放已开启',
+    'settings.ttsOff': '自动播放已关闭',
   },
 }
 
@@ -423,6 +435,13 @@ const msgList: Record<Locale, Record<string, string>> = {
     'msg.loadingModelHint': 'The model is being prepared. Chat will be available shortly.',
     'msg.startConversation': 'Start a conversation',
     'msg.startHint': 'Your messages are processed locally in your browser. Nothing is sent to any server.',
+
+    // v1.5: TTS
+    'tts.readAloud': 'Read aloud',
+    'tts.pause': 'Pause',
+    'tts.resume': 'Resume',
+    'tts.stop': 'Stop',
+    'tts.selectVoice': 'Select voice',
   },
   zh: {
     'msg.noModel': '未加载模型',
@@ -431,6 +450,13 @@ const msgList: Record<Locale, Record<string, string>> = {
     'msg.loadingModelHint': '模型正在准备中，聊天即将可用。',
     'msg.startConversation': '开始对话',
     'msg.startHint': '你的消息在浏览器本地处理，不会发送到任何服务器。',
+
+    // v1.5: TTS
+    'tts.readAloud': '朗读',
+    'tts.pause': '暂停',
+    'tts.resume': '恢复',
+    'tts.stop': '停止',
+    'tts.selectVoice': '选择语音',
   },
 }
 

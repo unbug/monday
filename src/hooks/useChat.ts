@@ -101,6 +101,14 @@ export function useChat(
       return true
     }
   })
+  // v1.5: TTS auto-play toggle
+  const [ttsAutoPlay, setTtsAutoPlay] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('monday-tts-autoplay') === 'true'
+    } catch {
+      return false
+    }
+  })
 
   // v1.2.3: pending learning items from compaction (user must review before committing)
   const [pendingLearningItems, setPendingLearningItems] = useState<{
@@ -1314,6 +1322,9 @@ export function useChat(
     // v1.2.1: correction capture
     correctionCaptureEnabled,
     setCorrectionCaptureEnabled,
+    // v1.5: TTS auto-play
+    ttsAutoPlay,
+    setTtsAutoPlay,
     // v1.2.3: pending learning items for review
     pendingLearningItems,
     setPendingLearningItems,

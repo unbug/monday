@@ -677,6 +677,23 @@ a user pastes an image into chat and the vision model processes it.
 
 Released: 2026-05-13
 
+#### v1.5 — Voice & TTS — Multimodal I/O
+
+Voice input and text-to-speech output for hands-free interaction,
+inspired by [Open WebUI's voice features](https://github.com/open-webui/open-webui) and
+[NextChat's voice support](https://github.com/ChatGPTNextWeb/NextChat).
+
+- [x] **Voice input** — Browser Speech Recognition API for voice-to-text in the chat input;
+      real-time transcription with interim results shown as placeholder text;
+      stop button to end recording; automatic send on silence detection (configurable timeout) ✅
+- [x] **TTS output** — Web Speech API text-to-speech for assistant responses; per-message play/pause/stop controls;
+      voice selector (if available); auto-play toggle in settings;
+      graceful fallback message when TTS is not supported ✅
+
+**Release gate**: a user speaks into the microphone, sees real-time transcription,
+and the text is sent as a message; a user plays TTS on an assistant message
+and the browser speaks the response.
+
 #### Cross-cutting standing rules
 
 These apply to **every** version and are enforced by the cron:

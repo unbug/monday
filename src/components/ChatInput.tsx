@@ -92,6 +92,15 @@ export function ChatInput({
     useCallback((transcript: string) => {
       setInput((prev) => (prev ? prev + ' ' + transcript : transcript))
     }, []),
+    {
+      silenceTimeout: 2000,
+      onSilence: (transcript: string) => {
+        // Auto-send when user stops speaking for 2s
+        if (transcript.trim()) {
+          onSend(transcript.trim())
+        }
+      },
+    },
   )
 
   // Auto-dismiss error after 5 seconds
