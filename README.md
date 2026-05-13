@@ -707,7 +707,7 @@ the model persistent context without requiring full RAG.
       each snippet has a title, content (markdown), and optional category tag
 - [x] **Session context attachment** — Attach one or more snippets to a session;
       attached snippets appear as a collapsible context block in the chat header ✅
-- [ ] **Context injection** — Attached snippets are prepended to the system
+- [x] **Context injection** — Attached snippets are prepended to the system
       prompt before each turn; context is visible in a "Context" panel alongside
       the message thread
 - [ ] **Quick context** — One-click context templates (e.g. "Project README",
