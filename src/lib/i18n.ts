@@ -2137,6 +2137,12 @@ const contextLibrary: Record<Locale, Record<string, string>> = {
     'contextLibrary.loading': 'Loading snippets…',
     'contextLibrary.noResults': 'No matching snippets found.',
     'contextLibrary.emptyHint': 'No snippets yet. Create your first one!',
+    'contextLibrary.quickContexts': 'Quick Contexts',
+    'contextLibrary.quickContextsTitle': 'One-click context templates',
+    'contextLibrary.loadTemplate': 'Load',
+    'contextLibrary.copy': 'Copy',
+    'contextLibrary.templateLoaded': 'Template loaded as new snippet!',
+    'contextLibrary.noTemplates': 'No quick context templates available.',
   },
   zh: {
     'contextLibrary.title': '上下文库',
@@ -2160,6 +2166,12 @@ const contextLibrary: Record<Locale, Record<string, string>> = {
     'contextLibrary.loading': '加载中…',
     'contextLibrary.noResults': '未找到匹配的片段。',
     'contextLibrary.emptyHint': '暂无片段。创建你的第一个！',
+    'contextLibrary.quickContexts': '快捷上下文',
+    'contextLibrary.quickContextsTitle': '一键加载上下文模板',
+    'contextLibrary.loadTemplate': '加载',
+    'contextLibrary.copy': '复制',
+    'contextLibrary.templateLoaded': '模板已作为新片段加载！',
+    'contextLibrary.noTemplates': '暂无快捷上下文模板。',
   },
 }
 

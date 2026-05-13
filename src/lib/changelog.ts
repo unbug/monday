@@ -55,6 +55,20 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.6.3',
+    date: '2026-05-13',
+    title: 'Quick Context — One-Click Context Templates',
+    description:
+      'A built-in catalog of quick context templates lets users load pre-defined context snippets with one click. Templates include Project README, API Reference, Coding Standards, Commit Conventions, PR Template, System Prompt, Dockerfile, and .gitignore — each loads as a new user snippet in the Context Library.',
+    changes: [
+      { type: 'added', text: 'quickContexts.ts — built-in catalog of 8 context templates with id, title, description, content, category, and icon' },
+      { type: 'added', text: 'Quick Contexts section in SnippetLibrary — collapsible template cards with Load and Copy buttons' },
+      { type: 'added', text: 'One-click load — clicking Load creates a new user snippet from the template content' },
+      { type: 'added', text: 'Quick Context CSS — dark terminal-style template cards with hover effects, light theme overrides' },
+      { type: 'added', text: 'en/zh translations for quick context strings' },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-05-13',
     title: 'Persona Marketplace — Install, Preview & Sort',
