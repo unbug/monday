@@ -710,8 +710,8 @@ the model persistent context without requiring full RAG.
 - [x] **Context injection** — Attached snippets are prepended to the system
       prompt before each turn; context is visible in a "Context" panel alongside
       the message thread
-- [ ] **Quick context** — One-click context templates (e.g. "Project README",
-      "API Reference", "Coding Standards") loaded from a built-in catalog
+- [x] **Quick context** — One-click context templates (e.g. "Project README",
+      "API Reference", "Coding Standards") loaded from a built-in catalog ✅
 - [ ] **Context search** — Search the snippet library by title and content;
       filter by category
 
