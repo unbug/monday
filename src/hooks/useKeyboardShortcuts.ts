@@ -32,6 +32,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenSkillRegistry?: () => void
   onOpenSkillBuilder?: () => void
   onOpenWorkshop?: () => void
+  onOpenSnippets?: () => void
   onOpenShortcuts?: () => void
   onPublishPersona?: () => void
   onShare?: () => void
@@ -325,6 +326,16 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
               label: 'Skill Workshop',
               icon: '🔧',
               action: options.onOpenWorkshop,
+            },
+          ]
+        : []),
+      ...(options.onOpenSnippets
+        ? [
+            {
+              id: 'snippets',
+              label: 'Context Library',
+              icon: '📋',
+              action: options.onOpenSnippets,
             },
           ]
         : []),

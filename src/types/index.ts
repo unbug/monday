@@ -562,3 +562,22 @@ export interface AsyncTask {
   /** When the task completed (timestamp) */
   finishedAt: number | null
 }
+
+// ── v1.6: Context library (reusable text/code snippets) ─────────────────────
+
+export type SnippetCategory = 'code' | 'text' | 'template' | 'reference' | 'custom'
+
+export interface Snippet {
+  /** Unique snippet ID */
+  id: string
+  /** Display title of the snippet */
+  title: string
+  /** Snippet content (markdown supported) */
+  content: string
+  /** Optional category tag for organization */
+  category: SnippetCategory
+  /** When the snippet was created (timestamp) */
+  createdAt: number
+  /** When the snippet was last modified (timestamp) */
+  updatedAt: number
+}

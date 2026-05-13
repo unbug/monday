@@ -52,6 +52,7 @@ import { BatchGenerationPanel } from './components/BatchGenerationPanel'
 import { SkillComposer } from './components/SkillComposer'
 import { SkillRegistry } from './components/SkillRegistry'
 import { SkillWorkshop } from './components/SkillWorkshop'
+import { SnippetLibrary } from './components/SnippetLibrary'
 import { OntologyPanel } from './components/OntologyPanel'
 import { SkillBuilder } from './components/SkillBuilder'
 import { LearningReviewDialog } from './components/LearningReviewDialog'
@@ -71,7 +72,7 @@ import type { Locale } from './lib/i18n'
 import './App.css'
 import { useLocale } from './hooks/useLocale'
 
-type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder' | 'ontology' | 'workshop'
+type View = 'chat' | 'models' | 'changelog' | 'cache' | 'arena' | 'benchmark' | 'custom-models' | 'persona-marketplace' | 'knowledge' | 'plugins' | 'mcp-servers' | 'webdav' | 'memory' | 'agent' | 'usage-analytics' | 'comparison' | 'skill-registry' | 'skill-builder' | 'ontology' | 'workshop' | 'snippets'
 
 const BASE = '/monday'
 
@@ -96,6 +97,7 @@ const VIEW_PATH: Record<View, string> = {
   'skill-builder': BASE + '/skill-builder',
   ontology: BASE + '/ontology',
   workshop: BASE + '/workshop',
+  snippets: BASE + '/snippets',
 }
 
 function viewFromPath(pathname: string): View {
@@ -447,6 +449,7 @@ export default function App() {
     onOpenSkillRegistry: () => setView('skill-registry'),
     onOpenSkillBuilder: () => { setSkillBuilderSkill(null); setView('skill-builder'); },
     onOpenWorkshop: () => setView('workshop'),
+    onOpenSnippets: () => setView('snippets'),
     onPublishPersona: () => setView('persona-marketplace'),
     onShare: handleShare,
     onExportData: handleExportData,
@@ -572,6 +575,10 @@ export default function App() {
             }}
             onOpenWorkshop={() => {
               setView('workshop')
+              closeSidebarOnMobile()
+            }}
+            onOpenSnippets={() => {
+              setView('snippets')
               closeSidebarOnMobile()
             }}
             onOpenShortcuts={() => {
@@ -1044,6 +1051,10 @@ export default function App() {
                 setWorkshopProposalCount((prev) => prev + count)
               }}
             />
+          </div>
+        ) : view === 'snippets' ? (
+          <div className="main-content main-content--snippets">
+            <SnippetLibrary onInsert={() => setView('chat')} />
           </div>
         ) : showBatch ? (
           <div className="chat-layout">

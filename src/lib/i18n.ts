@@ -129,6 +129,7 @@ const translations: Record<Locale, Record<string, string>> = {
     'sidebar.skills': '技能库',
     'sidebar.skillBuilder': '技能构建器',
     'sidebar.workshop': '技能工坊',
+    'sidebar.snippets': '上下文库',
     'sidebar.hotkeys': '键盘快捷键',
     'sidebar.share': '分享对话',
     'sidebar.changelog': '更新日志',
@@ -2112,6 +2113,56 @@ const workshop: Record<Locale, Record<string, string>> = {
   },
 }
 
+// ── v1.6: Context Library (Snippet Library) ──
+const contextLibrary: Record<Locale, Record<string, string>> = {
+  en: {
+    'contextLibrary.title': 'Context Library',
+    'contextLibrary.subtitle': 'Reusable text and code snippets for any session',
+    'contextLibrary.all': 'All',
+    'contextLibrary.cat_code': 'Code',
+    'contextLibrary.cat_text': 'Text',
+    'contextLibrary.cat_template': 'Template',
+    'contextLibrary.cat_reference': 'Reference',
+    'contextLibrary.cat_custom': 'Custom',
+    'contextLibrary.searchPlaceholder': 'Search snippets…',
+    'contextLibrary.add': 'New Snippet',
+    'contextLibrary.save': 'Save',
+    'contextLibrary.cancel': 'Cancel',
+    'contextLibrary.edit': 'Edit',
+    'contextLibrary.delete': 'Delete',
+    'contextLibrary.insert': 'Insert',
+    'contextLibrary.inserted': 'Copied to clipboard!',
+    'contextLibrary.titlePlaceholder': 'Snippet title',
+    'contextLibrary.contentPlaceholder': 'Snippet content (markdown supported)',
+    'contextLibrary.loading': 'Loading snippets…',
+    'contextLibrary.noResults': 'No matching snippets found.',
+    'contextLibrary.emptyHint': 'No snippets yet. Create your first one!',
+  },
+  zh: {
+    'contextLibrary.title': '上下文库',
+    'contextLibrary.subtitle': '可复用的文本和代码片段，用于任意会话',
+    'contextLibrary.all': '全部',
+    'contextLibrary.cat_code': '代码',
+    'contextLibrary.cat_text': '文本',
+    'contextLibrary.cat_template': '模板',
+    'contextLibrary.cat_reference': '参考',
+    'contextLibrary.cat_custom': '自定义',
+    'contextLibrary.searchPlaceholder': '搜索片段…',
+    'contextLibrary.add': '新建片段',
+    'contextLibrary.save': '保存',
+    'contextLibrary.cancel': '取消',
+    'contextLibrary.edit': '编辑',
+    'contextLibrary.delete': '删除',
+    'contextLibrary.insert': '插入',
+    'contextLibrary.inserted': '已复制到剪贴板！',
+    'contextLibrary.titlePlaceholder': '片段标题',
+    'contextLibrary.contentPlaceholder': '片段内容（支持 Markdown）',
+    'contextLibrary.loading': '加载中…',
+    'contextLibrary.noResults': '未找到匹配的片段。',
+    'contextLibrary.emptyHint': '暂无片段。创建你的第一个！',
+  },
+}
+
 // ── Ontology Store (v1.2.2) ──
 const ontology: Record<Locale, Record<string, string>> = {
   en: {
@@ -2238,6 +2289,7 @@ for (const locale of ['en', 'zh'] as Locale[]) {
     ...learning[locale],
     ...workshop[locale],
     ...playwrightMcp[locale],
+    ...contextLibrary[locale],
   }
 }
 

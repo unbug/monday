@@ -19575,3 +19575,373 @@ textarea:focus:not(:focus-visible),
   font-size: 10px;
   color: var(--color-text-muted);
 }
+
+/* ── v1.6: Snippet Library (Context Library) ─────────────────────────────── */
+
+.snippet-library {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.snippet-library-header {
+  margin-bottom: 4px;
+}
+
+.snippet-library-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 4px 0;
+}
+
+.snippet-library-subtitle {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.snippet-library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.snippet-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.snippet-filter-btn:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-hover);
+}
+
+.snippet-filter-active {
+  background: var(--color-bg-tertiary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+}
+
+.snippet-filter-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.snippet-library-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.snippet-library-search:focus {
+  border-color: var(--color-primary);
+}
+
+.snippet-library-search::placeholder {
+  color: var(--color-text-muted);
+}
+
+.snippet-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+  background: var(--color-bg-tertiary);
+}
+
+.snippet-edit-title {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+}
+
+.snippet-edit-title:focus {
+  border-color: var(--color-primary);
+}
+
+.snippet-edit-content {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.snippet-edit-content:focus {
+  border-color: var(--color-primary);
+}
+
+.snippet-edit-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.snippet-edit-category {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.snippet-edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.snippet-btn-cancel {
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.snippet-btn-cancel:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.snippet-btn-save {
+  padding: 4px 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: 6px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.snippet-btn-save:hover {
+  opacity: 0.9;
+}
+
+.snippet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.snippet-card {
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s;
+}
+
+.snippet-card:hover {
+  border-color: var(--color-border-hover);
+}
+
+.snippet-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.snippet-card-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.snippet-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.snippet-card-cat {
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.snippet-card-preview {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  overflow: hidden;
+  max-height: 3.6em;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.snippet-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.snippet-btn-insert,
+.snippet-btn-edit,
+.snippet-btn-delete {
+  padding: 3px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.snippet-btn-insert:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+}
+
+.snippet-btn-edit:hover {
+  background: var(--color-bg-quaternary);
+  border-color: var(--color-border-hover);
+}
+
+.snippet-btn-delete:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.snippet-add-btn {
+  padding: 10px;
+  border: 2px dashed var(--color-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.snippet-add-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.snippet-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+/* Light theme overrides */
+html.light .snippet-library-search,
+html.light .snippet-edit-title,
+html.light .snippet-edit-content,
+html.light .snippet-edit-category {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+html.light .snippet-library-search:focus,
+html.light .snippet-edit-title:focus,
+html.light .snippet-edit-content:focus {
+  border-color: #8b5cf6;
+}
+
+html.light .snippet-card,
+html.light .snippet-edit-form {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+html.light .snippet-card:hover {
+  border-color: #cbd5e1;
+}
+
+html.light .snippet-filter-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+html.light .snippet-filter-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+html.light .snippet-filter-active {
+  background: #f5f3ff !important;
+  border-color: #8b5cf6 !important;
+  color: #6d28d9 !important;
+}
+
+html.light .snippet-btn-cancel {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+html.light .snippet-btn-insert:hover {
+  background: #8b5cf6;
+}
+
+html.light .snippet-btn-delete:hover {
+  background: #dc2626;
+}
+
+html.light .snippet-add-btn:hover {
+  border-color: #8b5cf6;
+  color: #8b5cf6;
+  background: #f5f3ff;
+}
+
+/* ── v1.6: Snippets view ─────────────────────────────────────────────────── */
+.main-content--snippets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-content--snippets > div {
+  width: 100%;
+  max-width: 720px;
+}

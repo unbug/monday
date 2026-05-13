@@ -696,6 +696,30 @@ and the browser speaks the response.
 
 Released: 2026-05-13
 
+
+#### v1.6 — Context Injection
+
+Allow users to attach reusable text and code snippets to any session.
+Snippets are injected into the system prompt before each turn, giving
+the model persistent context without requiring full RAG.
+
+- [ ] **Context library** — Create, name, and organize text/code snippets;
+      each snippet has a title, content (markdown), and optional category tag
+- [ ] **Session context attachment** — Attach one or more snippets to a session;
+      attached snippets appear as a collapsible context block in the chat header
+- [ ] **Context injection** — Attached snippets are prepended to the system
+      prompt before each turn; context is visible in a "Context" panel alongside
+      the message thread
+- [ ] **Quick context** — One-click context templates (e.g. "Project README",
+      "API Reference", "Coding Standards") loaded from a built-in catalog
+- [ ] **Context search** — Search the snippet library by title and content;
+      filter by category
+
+**Release gate**: a user creates a snippet, attaches it to a session, and the
+model's response reflects knowledge of the snippet content.
+
+Released: 2026-05-13
+
 #### Cross-cutting standing rules
 
 These apply to **every** version and are enforced by the cron:
