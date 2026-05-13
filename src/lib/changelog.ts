@@ -43,6 +43,18 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.6.2',
+    date: '2026-05-13',
+    title: 'Context Injection — Visible Context Panel Alongside Message Thread',
+    description:
+      'The Context panel is now visible alongside the message thread, allowing users to see and edit attached context in real-time. The ContextPanel component renders below the SessionContextPanel in the chat context section, providing a freeform context editor with character count, clear action, and auto-save to localStorage.',
+    changes: [
+      { type: 'added', text: 'ContextPanel wired into chat layout — rendered alongside SessionContextPanel in the chat-context section' },
+      { type: 'added', text: 'onContextChange state in App.tsx — context text persisted per session via contextStore' },
+      { type: 'changed', text: 'Updated version to v1.6.2' },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-05-13',
     title: 'Persona Marketplace — Install, Preview & Sort',
