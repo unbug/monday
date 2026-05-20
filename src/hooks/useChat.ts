@@ -26,12 +26,12 @@ import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
 import { getModelById, MODELS } from '../lib/models'
 import { toolRegistry } from '../lib/toolRegistry'
-import { streamChatWithTools, getToolCalls } from '../lib/engine'
 import { useVectorStore } from './useVectorStore'
 import { useMultiTurnMemory } from './useMultiTurnMemory'
 import { hasModelChaining, getModelChainConfig } from '../lib/modelChaining'
 import type { ModelChainConfig, ChainProgress } from '../lib/modelChaining'
 import { recordTokenUsage } from '../lib/usageAnalytics'
+import { streamText } from 'ai'
 
 function paramsForSession(session: ChatSession | undefined) {
   const params = session?.generationParams
@@ -721,38 +721,70 @@ export function useChat(
             throw new Error(`DeepSeek error: ${msg}`)
           }
         } else if (supportsTools && toolDefs.length > 0) {
-          // --- Function calling path (v0.27) ---
+          // --- Vercel AI SDK agentic path ---
           let usedToolsPath = false
           try {
-          const events: ToolCallEvent[] = []
-          let conversationMessages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }> = [...refineMessages]
-          let maxTurns = 5
+            const { createWebLLMLanguageModel } = await import('../lib/webllmLanguageModel')
+            const { agentTools } = await import('../lib/agentTools')
 
-          while (maxTurns > 0 && !abortRef.current) {
-            const tools = toolDefs.map((t) => ({
-              function: {
-                name: t.name,
-                description: t.description,
-                parameters: t.parameters,
+            const model = createWebLLMLanguageModel(effectiveModelId)
+            const events: ToolCallEvent[] = []
+            const controller = new AbortController()
+
+            const result = streamText({
+              model,
+              messages: refineMessages.map((m) => ({
+                role: m.role as 'user' | 'assistant' | 'system',
+                content: m.content,
+              })),
+              tools: agentTools,
+              maxSteps: 10,
+              system: summarizedPrompt,
+              abortSignal: controller.signal,
+              onStepFinish({ toolCalls, toolResults }) {
+                if (toolCalls?.length) {
+                  for (const tc of toolCalls) {
+                    events.push({
+                      type: 'tool_call',
+                      call: {
+                        id: tc.toolCallId,
+                        name: tc.toolName,
+                        args: tc.args as Record<string, unknown>,
+                        rawArgs: JSON.stringify(tc.args),
+                      },
+                    })
+                  }
+                  setToolCallEvents([...events])
+                }
+
+                if (toolResults?.length) {
+                  for (const tr of toolResults) {
+                    const call = events.find((e) => e.type === 'tool_call' && e.call.id === tr.toolCallId)?.call
+                    if (call) {
+                      events.push({
+                        type: 'tool_result',
+                        call,
+                        result: {
+                          call,
+                          success: true,
+                          result: JSON.stringify(tr.result),
+                          latency: 0,
+                        },
+                      })
+                    }
+                  }
+                  setToolCallEvents([...events])
+                }
               },
-              type: 'function' as const,
-            }))
-
-            const result = streamChatWithTools(conversationMessages, {
-              ...opts,
-              systemPrompt: summarizedPrompt,
-              context: sessionContext,
-              images,
-              files,
-              tools,
-              modelId: effectiveModelId,
             })
 
-            // Stream tokens
-            for await (const token of result.generator) {
-              if (abortRef.current) break
+            for await (const delta of result.textStream) {
+              if (abortRef.current) {
+                controller.abort()
+                break
+              }
               usedToolsPath = true
-              fullContent += token
+              fullContent += delta
               tokenCount++
               tokenStats.addTokens(1)
               const captured = fullContent
@@ -771,48 +803,19 @@ export function useChat(
               setSessions([...currentSessions])
             }
 
-            // Capture usage from stream
-            if (result.usage.current) {
-              finalUsage = result.usage.current
-            }
-
-            // Check for tool calls
-            const toolCalls = getToolCalls(result.generator)
-
-            if (!toolCalls || toolCalls.length === 0) {
-              // No tool calls — done
-              break
-            }
-
-            // Execute each tool call
-            for (const tc of toolCalls) {
-              if (abortRef.current) break
-
-              const call = {
-                id: tc.id,
-                name: tc.name,
-                args: tc.args,
-                rawArgs: tc.rawArgs,
+            try {
+              const usage = await result.usage
+              finalUsage = {
+                promptTokens: usage.promptTokens,
+                completionTokens: usage.completionTokens,
+                totalTokens: usage.totalTokens,
               }
-
-              events.push({ type: 'tool_call', call })
-              setToolCallEvents([...events])
-
-              const toolResult = await toolRegistry.execute(call)
-              events.push({ type: 'tool_result', call, result: toolResult })
-              setToolCallEvents([...events])
-
-              // Append tool message to conversation
-              const toolMessage = toolRegistry.resultToToolMessage(call, toolResult)
-              conversationMessages.push(toolMessage)
+            } catch {
+              // keep estimated usage fallback
             }
 
-            maxTurns--
-          }
-
-          setToolCallEvents(events)
+            setToolCallEvents(events)
           } catch (toolErr: unknown) {
-            // If the model doesn't actually support function calling, fall back to standard streaming
             const msg = toolErr instanceof Error ? toolErr.message : String(toolErr)
             const isFunctionCallingError = msg.includes('tool') || msg.includes('function call') || msg.includes('not supported')
             if (isFunctionCallingError && !usedToolsPath) {
