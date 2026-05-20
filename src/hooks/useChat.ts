@@ -749,7 +749,7 @@ export function useChat(
                       call: {
                         id: tc.toolCallId,
                         name: tc.toolName,
-                        args: tc.args as Record<string, unknown>,
+                        args: (tc.args && typeof tc.args === 'object') ? tc.args as Record<string, unknown> : {},
                         rawArgs: JSON.stringify(tc.args),
                       },
                     })
@@ -811,7 +811,7 @@ export function useChat(
                 totalTokens: usage.totalTokens,
               }
             } catch {
-              // keep estimated usage fallback
+              // Usage metadata can be unavailable on early abort/provider interruption; keep token-count fallback.
             }
 
             setToolCallEvents(events)

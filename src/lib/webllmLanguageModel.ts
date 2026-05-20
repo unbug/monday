@@ -14,6 +14,15 @@ import {
 } from '@ai-sdk/provider'
 import { getEngine, loadModel } from './engine'
 
+const UNKNOWN_TOOL_NAME = 'unknown_tool'
+
+function generateFallbackToolCallId(index: number): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `tool_${Date.now()}_${index}`
+}
+
 type WebLLMChatMessage = {
   role: 'system' | 'user' | 'assistant' | 'tool'
   content?: string
@@ -291,18 +300,19 @@ export function createWebLLMLanguageModel(modelId: string): LanguageModelV1 {
 
       try {
         const engine = await getOrLoadEngine(modelId)
-        const response = await engine.chat.completions.create({
+        const createCompletion = engine.chat.completions.create as unknown as (request: unknown) => Promise<unknown>
+        const response = await createCompletion({
           ...callArgs,
           stream: false,
-        } as unknown as Record<string, unknown>) as WebLLMCompletionResponse
+        }) as WebLLMCompletionResponse
 
         const choice = response?.choices?.[0] ?? {}
         const message = choice?.message ?? {}
         const toolCalls = Array.isArray(message.tool_calls)
           ? message.tool_calls.map((tc, index: number): LanguageModelV1FunctionToolCall => ({
               toolCallType: 'function',
-              toolCallId: tc?.id ?? `tool_${index}`,
-              toolName: tc?.function?.name ?? 'unknown_tool',
+              toolCallId: tc?.id ?? generateFallbackToolCallId(index),
+              toolName: tc?.function?.name ?? UNKNOWN_TOOL_NAME,
               args: tc?.function?.arguments ?? '{}',
             }))
           : undefined
@@ -346,6 +356,11 @@ export function createWebLLMLanguageModel(modelId: string): LanguageModelV1 {
         throw toProviderError(error, callArgs)
       }
 
+      const loadedEngine = engine
+      if (!loadedEngine) {
+        throw toProviderError(new Error('No model loaded'), callArgs)
+      }
+
       const stream = new ReadableStream<LanguageModelV1StreamPart>({
         async start(controller) {
           const toolCallState = new Map<string, { toolName: string; args: string }>()
@@ -357,11 +372,12 @@ export function createWebLLMLanguageModel(modelId: string): LanguageModelV1 {
           let finished = false
 
           try {
-            const chunks = await engine!.chat.completions.create({
+            const createCompletion = loadedEngine.chat.completions.create as unknown as (request: unknown) => Promise<unknown>
+            const chunks = await createCompletion({
               ...callArgs,
               stream: true,
               stream_options: { include_usage: true },
-            } as unknown as Record<string, unknown>) as unknown as AsyncIterable<WebLLMChunk>
+            }) as AsyncIterable<WebLLMChunk>
 
             for await (const chunk of chunks) {
               if (chunk.usage) {
@@ -383,9 +399,9 @@ export function createWebLLMLanguageModel(modelId: string): LanguageModelV1 {
 
               if (delta?.tool_calls?.length) {
                 for (const [index, tc] of delta.tool_calls.entries()) {
-                  const key = tc.id ?? `tool_${tc.index ?? index}`
+                  const key = tc.id ?? generateFallbackToolCallId(tc.index ?? index)
                   const existing = toolCallState.get(key) ?? {
-                    toolName: tc.function?.name ?? '',
+                    toolName: tc.function?.name ?? UNKNOWN_TOOL_NAME,
                     args: '',
                   }
 
@@ -409,8 +425,8 @@ export function createWebLLMLanguageModel(modelId: string): LanguageModelV1 {
                       type: 'tool-call',
                       toolCallType: 'function',
                       toolCallId,
-                      toolName: call.toolName || 'unknown_tool',
-                      args: call.args || '{}',
+                      toolName: call.toolName ?? UNKNOWN_TOOL_NAME,
+                      args: call.args ?? '{}',
                     })
                   }
                 }

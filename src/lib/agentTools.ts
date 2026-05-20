@@ -1,6 +1,8 @@
 import { tool } from 'ai'
 import { z } from 'zod'
 
+const SEARXNG_URL_KEY = 'monday:searxng_url'
+
 export const agentTools = {
   current_time: tool({
     description: 'Get the current date and time in the user\'s local timezone.',
@@ -36,7 +38,9 @@ export const agentTools = {
       max_results: z.number().int().min(1).max(10).optional().default(5),
     }),
     execute: async ({ query, max_results }) => {
-      const searxngUrl = localStorage.getItem('monday:searxng_url')
+      const searxngUrl = typeof localStorage !== 'undefined'
+        ? localStorage.getItem(SEARXNG_URL_KEY)
+        : null
       if (!searxngUrl) {
         return {
           error: 'SearXNG URL not configured. Add a SearXNG instance URL in Settings > Integrations.',

@@ -68,7 +68,7 @@ export function useAgentChat(modelId: string) {
               const calls = toolCalls.map((tc) => ({
                 toolCallId: tc.toolCallId,
                 toolName: tc.toolName,
-                args: tc.args as Record<string, unknown>,
+                args: (tc.args && typeof tc.args === 'object') ? tc.args as Record<string, unknown> : {},
                 state: 'call' as const,
               }))
               updated.toolInvocations = [...(updated.toolInvocations ?? []), ...calls]
