@@ -69,6 +69,19 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
+    version: '1.6.4',
+    date: '2026-05-30',
+    title: 'Context Search — Title & Content Search with Category Filter',
+    description:
+      'Users can now search the snippet library by title and content, with real-time filtering by category. The search is integrated directly into the SnippetLibrary component with a search input field and category filter pills that work together.',
+    changes: [
+      { type: 'added', text: 'Real-time search by title and content in SnippetLibrary — filters snippets as you type' },
+      { type: 'added', text: 'Category filter pills — filter snippets by code, text, template, reference, or custom' },
+      { type: 'added', text: 'Combined search + filter — search results can be further filtered by category' },
+      { type: 'added', text: 'en/zh translations for search placeholder' },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-05-13',
     title: 'Persona Marketplace — Install, Preview & Sort',
