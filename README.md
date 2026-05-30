@@ -435,6 +435,8 @@ Released: 2026-04-26
 **Release gate**: a Tauri build runs on macOS with full chat + RAG +
 tools functionality; offline mode degrades gracefully.
 
+Released: 2026-05-31
+
 #### v0.30 — Agent mode & analytics
 
 - [x] **Multi-turn memory** — Auto-summarize early turns when the context
