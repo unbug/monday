@@ -718,7 +718,7 @@ the model persistent context without requiring full RAG.
 **Release gate**: a user creates a snippet, attaches it to a session, and the
 model's response reflects knowledge of the snippet content.
 
-Released: 2026-05-13
+Released: 2026-05-30
 
 #### Cross-cutting standing rules
 
