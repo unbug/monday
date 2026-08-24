@@ -42,8 +42,7 @@ export const FileAttachment = memo(function FileAttachment({
   onRemove,
   onClear,
 }: Props) {
-  if (files.length === 0) return null
-
+  // Hook must run before any early return to keep hook order stable.
   const handleRemove = useCallback(
     (id: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
@@ -52,6 +51,8 @@ export const FileAttachment = memo(function FileAttachment({
     },
     [onRemove],
   )
+
+  if (files.length === 0) return null
 
   return (
     <div className="file-attachment">

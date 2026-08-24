@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 interface UpdateBannerProps {
   onReload: () => void
@@ -20,14 +20,24 @@ export function UpdateBanner({ onReload, onDismiss }: UpdateBannerProps) {
     onDismiss()
   }, [onDismiss])
 
-  // Check if recently dismissed
-  const dismissedAt = localStorage.getItem('monday-update-dismissed')
-  if (dismissedAt) {
-    const hoursSince = (Date.now() - Number(dismissedAt)) / (1000 * 60 * 60)
-    if (hoursSince < 24) return null
-    // Expired — show again
-    localStorage.removeItem('monday-update-dismissed')
-  }
+  // Check if recently dismissed. The lazy initializer keeps the localStorage
+  // read + expired-entry cleanup out of the render body (no side effects
+  // during render).
+  const [dismissed] = useState(() => {
+    try {
+      const dismissedAt = localStorage.getItem('monday-update-dismissed')
+      if (!dismissedAt) return false
+      const hoursSince = (Date.now() - Number(dismissedAt)) / (1000 * 60 * 60)
+      if (hoursSince < 24) return true
+      // Expired — show again
+      localStorage.removeItem('monday-update-dismissed')
+    } catch {
+      // localStorage unavailable (private mode) — just show the banner
+    }
+    return false
+  })
+
+  if (dismissed) return null
 
   return (
     <div className="update-banner">

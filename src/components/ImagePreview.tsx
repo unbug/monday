@@ -17,8 +17,7 @@ export const ImagePreview = memo(function ImagePreview({
   onRemove,
   onClear,
 }: Props) {
-  if (images.length === 0) return null
-
+  // Hook must run before any early return to keep hook order stable.
   const handleRemove = useCallback(
     (id: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
@@ -27,6 +26,8 @@ export const ImagePreview = memo(function ImagePreview({
     },
     [onRemove],
   )
+
+  if (images.length === 0) return null
 
   return (
     <div className="image-preview">

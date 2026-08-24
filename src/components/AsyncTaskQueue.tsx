@@ -8,7 +8,7 @@
  * Inspired by Codex Web's task-delegation model.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { loadAsyncTasks, saveAsyncTask, deleteAsyncTask } from '../lib/storage'
 import { loadAllTaskBriefs } from '../lib/storage'
 import type { AsyncTask, TaskBrief } from '../types'
@@ -79,9 +79,6 @@ export function AsyncTaskQueue({
   const [goal, setGoal] = useState('')
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null)
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null)
-  const [pollTimer, setPollTimer] = useState<ReturnType<typeof setInterval> | null>(null)
-  const intervalRef = useRef(pollTimer)
-  intervalRef.current = pollTimer
 
   // Load tasks and briefs
   const refreshTasks = useCallback(async () => {

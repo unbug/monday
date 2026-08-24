@@ -346,3 +346,46 @@ export async function semanticSearch(
   scores.sort((a, b) => b.score - a.score)
   return scores.slice(0, topK) as SearchScore[]
 }
+
+// ── Standalone knowledge-base search (no React hook required) ───────────────
+
+import type { KnowledgeBase } from '../types'
+import { loadEmbeddingModel, generateEmbedding } from './embedding'
+
+/**
+ * Search a knowledge base by ID and return top-K chunks using the embedding
+ * model. Pure function — safe to call from event handlers / async callbacks
+ * (unlike the useVectorStore hook, which must only run during render).
+ */
+export async function searchKnowledgeBase(
+  query: string,
+  baseId: string,
+  docs: Array<{ id: string; name: string; chunks: string[] }>,
+  getBaseById: (id: string) => KnowledgeBase | undefined,
+): Promise<SearchScore[]> {
+  if (!query.trim() || !baseId || docs.length === 0) return []
+
+  try {
+    await loadEmbeddingModel()
+  } catch {
+    return []
+  }
+
+  const base = getBaseById(baseId)
+  if (!base || base.docIds.length === 0) return []
+
+  const baseDocs = docs.filter((d) => base.docIds.includes(d.id))
+  if (baseDocs.length === 0) return []
+
+  const chunks = baseDocs.flatMap((doc) =>
+    doc.chunks.map((text, i) => ({
+      id: `${doc.id}:${i}`,
+      text,
+      docName: doc.name,
+    })),
+  )
+
+  if (chunks.length === 0) return []
+
+  return semanticSearch(chunks, query, generateEmbedding, 10)
+}

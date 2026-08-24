@@ -26,7 +26,7 @@ import type { MarketplacePersona } from '../data/personaRegistry'
 import { PROMPT_TEMPLATES } from '../lib/prompts'
 import { getModelById, MODELS } from '../lib/models'
 import { toolRegistry } from '../lib/toolRegistry'
-import { useVectorStore } from './useVectorStore'
+import { searchKnowledgeBase } from '../lib/vectorStore'
 import { useMultiTurnMemory } from './useMultiTurnMemory'
 import { hasModelChaining, getModelChainConfig } from '../lib/modelChaining'
 import type { ModelChainConfig, ChainProgress } from '../lib/modelChaining'
@@ -1009,8 +1009,9 @@ export function useChat(
           const docs = await loadKnowledgeDocs()
           const base = bases.find((b) => b.id === knowledgeBaseId)
           if (base && docs.length > 0) {
-            const vs = useVectorStore()
-            searchResults = await vs.knowledgeSearch(content, knowledgeBaseId, docs, (id) => bases.find((b) => b.id === id))
+            // Use the standalone pure function — calling a React hook here
+            // (outside of render) would throw "Invalid hook call" at runtime.
+            searchResults = await searchKnowledgeBase(content, knowledgeBaseId, docs, (id) => bases.find((b) => b.id === id))
             if (searchResults.length > 0) {
               knowledgeContext = searchResults
                 .map((r) => `[${r.docName}]\n${r.text}`)

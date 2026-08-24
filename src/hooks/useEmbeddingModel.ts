@@ -8,7 +8,7 @@
  * This is part of v0.26 (RAG — embedding model).
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import {
   loadEmbeddingModel,
   unloadEmbeddingModel,
@@ -35,22 +35,12 @@ export interface UseEmbeddingModelReturn {
 
 export function useEmbeddingModel(): UseEmbeddingModelReturn {
   const [state, setState] = useState<EmbeddingEngineState>(() => getEmbeddingState())
-  const loadedRef = useRef(false)
-
-  // Check localStorage for previously loaded state
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(EMBEDDING_LOADED_KEY)
-      if (saved === 'true') {
-        loadedRef.current = true
-      }
-    } catch {
-      // localStorage unavailable
-    }
-  }, [])
 
   const load = useCallback(async () => {
-    if (loadedRef.current) {
+    // Only skip when the model is actually loaded in memory. A stale
+    // localStorage flag must never block a real load (e.g. after a page
+    // reload, where the in-memory engine state is always "not loaded").
+    if (getEmbeddingState().isLoaded) {
       setState(getEmbeddingState())
       return
     }
@@ -59,7 +49,6 @@ export function useEmbeddingModel(): UseEmbeddingModelReturn {
       await loadEmbeddingModel('Xenova/all-MiniLM-L6-v2', (p) => {
         setState((prev) => ({ ...prev, progress: p }))
       })
-      loadedRef.current = true
       localStorage.setItem(EMBEDDING_LOADED_KEY, 'true')
       setState(getEmbeddingState())
     } catch (err) {
@@ -71,14 +60,15 @@ export function useEmbeddingModel(): UseEmbeddingModelReturn {
 
   const unload = useCallback(async () => {
     await unloadEmbeddingModel()
-    loadedRef.current = false
     localStorage.removeItem(EMBEDDING_LOADED_KEY)
     setState(getEmbeddingState())
   }, [])
 
   return {
     state,
-    isLoaded: loadedRef.current,
+    // Derive from the authoritative in-memory engine state — a ref read
+    // during render could be stale and out of sync with `state`.
+    isLoaded: state.isLoaded,
     progress: state.progress,
     error: state.error,
     load,

@@ -10,8 +10,7 @@ interface Props {
 }
 
 export function OfflineIndicator({ online }: Props) {
-  if (online) return null
-
+  // Hooks must run unconditionally — the early return below is AFTER all hooks.
   const [visible, setVisible] = useState(true)
 
   // Auto-hide after 15 seconds so it doesn't nag forever
@@ -22,6 +21,8 @@ export function OfflineIndicator({ online }: Props) {
   }, [visible])
 
   const handleDismiss = useCallback(() => setVisible(false), [])
+
+  if (online || !visible) return null
 
   return (
     <div className="offline-indicator">
