@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-const LATEST_VERSION_URL = "https://raw.githubusercontent.com/unbug/monday/main/package.json"
 import { BorderBeam } from 'border-beam'
 import { CHANGELOG } from '../lib/changelog'
 import type { ChatSession } from '../types'
@@ -125,14 +124,12 @@ export function Sidebar({
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
   const [navExpanded, setNavExpanded] = useState(false)
 
-  const [latestVersion, setLatestVersion] = useState<string>(CHANGELOG[0]?.version ?? '1.2.3')
+  // Single source of truth: the bundled CHANGELOG (same data the Changelog
+  // panel renders). Fetching package.json from GitHub main previously made
+  // the sidebar show a different version than the changelog whenever the
+  // deployed bundle lagged behind the repo.
+  const latestVersion = CHANGELOG[0]?.version ?? ''
 
-  useEffect(() => {
-    fetch(LATEST_VERSION_URL)
-      .then((res) => res.json())
-      .then((p) => setLatestVersion(p.version))
-      .catch(() => {})
-  }, [])
   const activeSession = sessions.find((s) => s.id === activeSessionId)
 
   // Filter sessions by search query and date filter
