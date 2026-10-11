@@ -137,15 +137,22 @@ export function Sidebar({
     // Date filter
     if (dateFilter !== 'all') {
       const now = new Date()
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
       const cutoff =
         dateFilter === 'today'
-          ? new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-          : dateFilter === 'yesterday'
-            ? new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime()
-            : dateFilter === 'week'
-              ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).getTime()
-              : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()).getTime()
+          ? startOfToday
+          : dateFilter === 'week'
+            ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).getTime()
+            : dateFilter === 'month'
+              ? new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()).getTime()
+              : 0
       if (session.updatedAt < cutoff) return false
+      // 'yesterday' is an exact day window: [yesterday 00:00, today 00:00).
+      // Previously it only had a lower bound, so today's sessions leaked in.
+      if (dateFilter === 'yesterday') {
+        const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime()
+        if (session.updatedAt < startOfYesterday || session.updatedAt >= startOfToday) return false
+      }
     }
     // Search query
     if (searchQuery) {
