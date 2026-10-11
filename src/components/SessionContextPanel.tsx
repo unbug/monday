@@ -34,6 +34,11 @@ export function SessionContextPanel({ attachedIds, onAttach, onDetach }: Props) 
     loadSnippets().then((s) => {
       setSnippets(s)
       setLoading(false)
+    }).catch((err) => {
+      // Storage read failed — stop the spinner instead of loading forever.
+      console.warn('[monday] Failed to load snippets:', err)
+      setSnippets([])
+      setLoading(false)
     })
   }, [])
 

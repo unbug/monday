@@ -23,21 +23,29 @@ export function useServiceWorkerUpdate(): UseServiceWorkerUpdateResult {
     if (!('serviceWorker' in navigator)) return
 
     const reg = navigator.serviceWorker
+    let cancelled = false
+    // Track statechange listeners so cleanup can remove them too.
+    const trackedWorkers: Array<{ worker: ServiceWorker; handler: () => void }> = []
 
     // When a new SW is found, it replaces the active one
-    reg.addEventListener('updatefound', () => {
+    const onUpdateFound = () => {
+      if (cancelled) return
       const newWorker = (reg as ServiceWorkerContainer & { installing: ServiceWorker | null }).installing
       if (!newWorker) return
 
       setWaitingWorker(newWorker)
 
       // When the new SW reaches 'installed' state, it waits for activation
-      newWorker.addEventListener('statechange', () => {
+      const onStateChange = () => {
+        if (cancelled) return
         if (newWorker.state === 'installed') {
           setHasUpdate(true)
         }
-      })
-    })
+      }
+      newWorker.addEventListener('statechange', onStateChange)
+      trackedWorkers.push({ worker: newWorker, handler: onStateChange })
+    }
+    reg.addEventListener('updatefound', onUpdateFound)
 
     // If there's already a waiting SW (e.g. page was just reloaded after install),
     // detect it immediately
@@ -45,6 +53,14 @@ export function useServiceWorkerUpdate(): UseServiceWorkerUpdateResult {
     const active = (reg as ServiceWorkerContainer & { active: ServiceWorker | null }).active
     if (waiting && active) {
       setHasUpdate(true)
+    }
+
+    return () => {
+      cancelled = true
+      reg.removeEventListener('updatefound', onUpdateFound)
+      for (const { worker, handler } of trackedWorkers) {
+        worker.removeEventListener('statechange', handler)
+      }
     }
   }, [])
 

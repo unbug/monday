@@ -212,13 +212,22 @@ export default function App() {
       ]).then(([mems, sks]) => {
         setMemories(mems)
         setInstalledSkills(sks)
+      }).catch((err) => {
+        // IndexedDB failure (private mode, quota, corrupt store) — degrade to
+        // empty lists instead of an unhandled rejection.
+        console.warn('[monday] Failed to load memories/skills:', err)
+        setMemories([])
+        setInstalledSkills([])
       })
     }
   }, [view])
 
   useEffect(() => {
     if (view === 'ontology') {
-      import('./lib/storage').then((m) => m.loadOntologyEntities()).then((ents) => setOntologyEntities(ents))
+      import('./lib/storage').then((m) => m.loadOntologyEntities()).then((ents) => setOntologyEntities(ents)).catch((err) => {
+        console.warn('[monday] Failed to load ontology entities:', err)
+        setOntologyEntities([])
+      })
     }
   }, [view])
 
